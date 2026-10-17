@@ -78,6 +78,28 @@ class ProposedFiber(BaseModel):
     enquiry_quote: str | None
 
 
+class ProposedMethods(BaseModel):
+    """Methods the customer proposes or names: one field per method, never a free list.
+
+    A fixed shape bounds the output (a bare enum array let a model repeat one value
+    until max_tokens). Each value is a verbatim enquiry quote, checked by the sanitizer.
+    """
+    NIR: str | None = Field(description="Verbatim enquiry span that proposes or names NIR, else null.")
+    MIR: str | None = Field(description="Verbatim enquiry span that proposes or names MIR, else null.")
+    Raman: str | None = Field(description="Verbatim enquiry span that proposes or names Raman, else null.")
+    Fluorescence: str | None = Field(description="Verbatim enquiry span that proposes or names fluorescence, else null.")
+    UV_Vis: str | None = Field(description="Verbatim enquiry span that proposes or names UV-Vis, else null.")
+
+    def named(self) -> dict[str, str]:
+        """{Method value: enquiry quote} for every method with a quote."""
+        return {METHOD_FIELDS[name]: quote for name, quote in self.model_dump().items() if quote is not None}
+
+
+# ProposedMethods field name -> Method literal value.
+METHOD_FIELDS: dict[str, Method] = {"NIR": "NIR", "MIR": "MIR", "Raman": "Raman", "Fluorescence": "Fluorescence",
+                                    "UV_Vis": "UV-Vis"}
+
+
 class Intake(BaseModel):
     routes: list[Literal["in_scope", "needs_clarification", "premise_to_check", "certainty_or_approval_requested",
                          "clinical_context", "out_of_scope"]]
@@ -87,7 +109,7 @@ class Intake(BaseModel):
     sample: SampleSlots
     process: list[ProcessFact]
     customer_premises: list[Premise]
-    proposed_methods: list[Method]
+    proposed_methods: ProposedMethods
     proposed_fiber: ProposedFiber
     unknowns: list[str] = Field(description="Information needed for a method choice that the enquiry does not give.")
 

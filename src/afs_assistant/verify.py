@@ -11,7 +11,9 @@ from __future__ import annotations
 import re
 from dataclasses import asdict, dataclass, field
 
-from afs_assistant import quotes, scope
+from rapidfuzz import fuzz
+
+from afs_assistant import kb, quotes, scope
 from afs_assistant.normalize import normalize
 from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.schema import Assessment, Citation, Intake
@@ -20,9 +22,13 @@ from afs_assistant.screen import Candidate
 MAX_QUESTIONS = 7
 MAX_RECOMMENDATIONS = 5
 MAX_WORDS = 1800
-# A forbidden phrase preceded (within a few words) by one of these is a cautious negation, not a claim.
+# A forbidden phrase preceded (within a few words, same clause) by one of these is a cautious negation,
+# not a claim. The clause ends at ; . , or "but".
 _NEGATION_BEFORE = re.compile(r"\b(?:not|no|never|cannot|can't|without|nor|neither|isn't|doesn't|don't|won't)\b"
                               r"(?:\W+\w+){0,6}\W*$", re.IGNORECASE)
+_CLAUSE_BREAK = re.compile(r"[;.,]|\bbut\b", re.IGNORECASE)
+# A verbatim enquiry quote needs at least this many normalised characters (and a word character).
+MIN_ENQUIRY_QUOTE_CHARS = 4
 # Wording that asserts certainty or commercial facts the sources cannot support (REF §3 "Do not invent").
 FORBIDDEN = [
     (re.compile(r"[€$£]\s*\d|\b\d+(?:[.,]\d+)?\s*(?:EUR|USD|euro|dollars?)\b", re.IGNORECASE), "price"),
@@ -32,12 +38,15 @@ FORBIDDEN = [
     (re.compile(r"\bproven to\b|\bready for (?:clinical|surgical|in vivo|production)\b", re.IGNORECASE), "readiness claim"),
     (re.compile(r"\b[A-Z]{2,5}-\d{3,}[A-Z0-9-]*\b"), "product-code-like token"),
 ]
-# Which question wording counts as covering an unknown deciding slot.
+# Which question wording counts as covering an unknown deciding slot (whole words; \w* marks a stem).
 SLOT_WORDS = {
-    "physical_state": ("state", "liquid", "solid", "powder", "paste", "form"),
-    "optical_regime": ("clear", "turbid", "opaque", "optical", "scatter", "transparen", "colour", "color", "dark"),
-    "fluorophore": ("fluoresc", "fluorophore", "marker", "indicator"),
+    "physical_state": (r"states?", r"liquids?", r"solids?", r"powders?", r"pastes?", r"form"),
+    "optical_regime": (r"clear", r"turbid\w*", r"opaque", r"opacity", r"optical\w*", r"scatter\w*",
+                       r"transparen\w*", r"colou?rs?", r"dark\w*"),
+    "fluorophore": (r"fluoresc\w*", r"fluorophores?", r"markers?", r"indicators?"),
 }
+SLOT_PATTERNS = {slot: re.compile(r"\b(?:" + "|".join(words) + r")\b", re.IGNORECASE)
+                 for slot, words in SLOT_WORDS.items()}
 
 
 @dataclass
@@ -113,8 +122,13 @@ def check_citations(a: Assessment, report: Report) -> dict[str, list[str]]:
         for j, c in enumerate(cits):
             where = f"{loc}.citations[{j}]"
             q = quotes.verify(c.doc, c.page, c.quote)
-            report.add("quote_verified", q.ok, "hard", where,
-                       f"{c.doc} p.{c.page}: quote {q.status} (score {q.score})")
+            message = f"{c.doc} p.{c.page}: quote {q.status} (score {q.score})"
+            rule = None if q.ok else rule_paraphrased(c.quote)
+            if rule is not None:
+                sources = "; ".join(f'[{kb.citation_label(x["doc"], x["page"])}] "{x["quote"]}"' for x in rule["sources"])
+                message += (f"; this is rule {rule['id']}'s paraphrase, not source text. "
+                            f"Quote the source instead: {sources}")
+            report.add("quote_verified", q.ok, "hard", where, message)
             sc_status, sc_msg = scope.check(c.claim_kind, c.doc, c.page)
             scope_ok = sc_status != "not_supported"
             report.add("citation_scope", scope_ok, "hard", where, sc_msg)
@@ -130,6 +144,22 @@ def check_citations(a: Assessment, report: Report) -> dict[str, list[str]]:
     return verified
 
 
+def _loose(text: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", normalize(text).lower())
+
+
+def rule_paraphrased(quote: str) -> dict | None:
+    """The rule whose (our-words) statement this quote copies, if any."""
+    q = _loose(quote)
+    if len(q) < 25:          # a few words; shorter spans match rule wording by chance
+        return None
+    for rule in kb.rules():
+        statement = _loose(rule["statement"])
+        if q in statement or fuzz.partial_ratio(q, statement) >= quotes.FUZZY_MIN:
+            return rule
+    return None
+
+
 def check_numbers(a: Assessment, enquiry: str, verified: dict[str, list[str]], report: Report) -> None:
     for loc, text, _ in _items_with_citations(a):
         missing = unsupported_numbers(text, verified.get(loc, []) + [enquiry])
@@ -140,6 +170,9 @@ def check_numbers(a: Assessment, enquiry: str, verified: dict[str, list[str]], r
     loose_texts += [(f"clarification_questions[{i}]", f"{q.question} {q.why_it_matters}")
                     for i, q in enumerate(a.clarification_questions)]
     loose_texts += [(f"assumptions[{i}]", t) for i, t in enumerate(a.assumptions)]
+    loose_texts += [(f"requirements_stated[{i}]", t) for i, t in enumerate(a.requirements_stated)]
+    loose_texts += [(f"key_unknowns[{i}]", t) for i, t in enumerate(a.key_unknowns)]
+    loose_texts += [(f"not_in_sources[{i}]", t) for i, t in enumerate(a.not_in_sources)]
     for loc, text in loose_texts:
         missing = unsupported_numbers(text, [enquiry])
         report.add("numbers_uncited_text", not missing, "hard", loc,
@@ -150,13 +183,18 @@ def sanitize_intake(intake: Intake, enquiry: str) -> tuple[Intake, list[dict]]:
     """Remove intake items whose quote is not verbatim in the enquiry (no invented client facts).
 
     Facts, targets, process details and premises with a bad quote are dropped; a sample
-    slot with a bad or missing quote is reset to unknown. Returns the cleaned intake and
-    a record of every removal.
+    slot with a bad or missing quote is reset to unknown; a proposed method with a bad
+    quote is set to null. A quote must be a real span: at least MIN_ENQUIRY_QUOTE_CHARS
+    normalised characters with a word character. Returns the cleaned intake and a record
+    of every removal.
     """
     text = normalize(enquiry).lower()
 
     def ok(span: str | None) -> bool:
-        return span is not None and normalize(span).lower() in text
+        if span is None:
+            return False
+        span = normalize(span).strip().lower()
+        return len(span) >= MIN_ENQUIRY_QUOTE_CHARS and re.search(r"\w", span) is not None and span in text
 
     data = intake.model_dump()
     removed: list[dict] = []
@@ -175,6 +213,11 @@ def sanitize_intake(intake: Intake, enquiry: str) -> tuple[Intake, list[dict]]:
             removed.append({"location": f"intake.sample.{name}", "item": dict(s),
                             "reason": "slot value without a verbatim enquiry quote; reset to unknown"})
             data["sample"][name] = {"value": "unknown", "basis": "unknown", "enquiry_quote": None}
+    for name, quote in data["proposed_methods"].items():
+        if quote is not None and not ok(quote):
+            removed.append({"location": f"intake.proposed_methods.{name}", "item": {name: quote},
+                            "reason": "proposed method without a verbatim enquiry quote; set to null"})
+            data["proposed_methods"][name] = None
     fiber = data["proposed_fiber"]
     if fiber["family"] != "none" and not ok(fiber["enquiry_quote"]):
         removed.append({"location": "intake.proposed_fiber", "item": dict(fiber),
@@ -196,15 +239,15 @@ def check_against_screen(a: Assessment, candidates: list[Candidate], slots: dict
 
     # Unknown deciding slots of recommended candidates must be asked about or assumed.
     recommended = {(r.method, r.technique) for r in a.recommendations if r.role != "not_recommended"}
-    asked = " ".join(f"{q.question} {q.why_it_matters}" for q in a.clarification_questions).lower()
-    assumed = " ".join(a.assumptions).lower()
-    for slot, words in SLOT_WORDS.items():
+    asked = " ".join(f"{q.question} {q.why_it_matters}" for q in a.clarification_questions)
+    assumed = " ".join(a.assumptions)
+    for slot, pattern in SLOT_PATTERNS.items():
         if slots.get(slot, "unknown") != "unknown":
             continue
         deciding = [c for c in candidates if (c.method, c.technique) in recommended and c.status == "unknown"
                     and any(slot.replace("_", " ") in x["message"] or _slot_rule(slot, x["rule"]) for x in c.reasons)]
         if deciding:
-            covered = any(w in asked or w in assumed for w in words)
+            covered = bool(pattern.search(asked) or pattern.search(assumed))
             report.add("unknown_slot_addressed", covered, "hard", f"slot.{slot}",
                        f"{slot} is unknown and decides {[(c.method, c.technique) for c in deciding]}: "
                        f"ask about it or state an assumption")
@@ -231,7 +274,11 @@ def forbidden_hits(text: str) -> list[str]:
     hits = []
     for rx, label in FORBIDDEN:
         for m in rx.finditer(text):
-            if not _NEGATION_BEFORE.search(text[max(0, m.start() - 80):m.start()]):
+            window = text[max(0, m.start() - 80):m.start()]
+            breaks = list(_CLAUSE_BREAK.finditer(window))
+            if breaks:
+                window = window[breaks[-1].end():]
+            if not _NEGATION_BEFORE.search(window):
                 hits.append(f"{label}: {m.group(0)!r}")
     return hits
 
@@ -244,6 +291,10 @@ def check_style(a: Assessment, report: Report) -> None:
     dupes = sorted({f"{m} {tq}" for m, tq in keys if keys.count((m, tq)) > 1})
     report.add("recommendations_unique", not dupes, "hard", "recommendations",
                f"same method+technique listed more than once: {dupes}")
+    fused = [r.id for r in a.recommendations if r.role == "primary" and r.combined_with]
+    report.add("primary_single_method", not fused, "soft", "recommendations",
+               f"primary entries {fused} carry combined_with; the primary is a single method, "
+               f"a combination is a later hypothesis")
     report.add("recommendation_count", len(a.recommendations) <= MAX_RECOMMENDATIONS, "soft", "recommendations",
                f"{len(a.recommendations)} entries (max {MAX_RECOMMENDATIONS}); list only options worth testing")
     report.add("question_count", len(a.clarification_questions) <= MAX_QUESTIONS, "soft", "clarification_questions",
