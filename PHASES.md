@@ -514,6 +514,41 @@ Independent reviewer agent: code diff + all 8 outputs against the jury/end-user 
 | Model invents a cost or a sensor capability | cost is code-derived; sensors labelled; lexicon + number checks |
 | Options repeat the recommendations | options only reference M ids; the render merges them |
 
+
+### Phase 3 fixes and additions (3.R) — APPROVED 2026-10-17 14:22 (user: additions; review fixes per D-020)
+Inputs: the Phase 3 code review (APPROVE WITH FIXES), the first Phase 3 dev run, and the user's additions (14:22): "as simple as possible, complex where necessary", a confidence rating per solution, a simple but good interface (D-022, D-023).
+
+**1. Review blocking fixes**
+- B1: hard checks `ids_unique` for recommendations, solution_options and parameters (added to `RECHECK_NAMES`), with fail-fixture tests.
+- B2: finalize downgrades `proposal.basis` from `supplied` to `engineering_judgement` when neither the best option nor its recommendations keep a verified citation; logged in `removed` (`corrects: "proposal_basis"`), `flagged["proposal"]`, plus a test.
+- B3: price pattern `[€$£]|\b(?:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b` (case-insensitive; negation handling unchanged). `scripts/check_cost_class.py` scans the whole Markdown. Real currency fail-fixtures replace `test_cost_never_shows_currency`. The run's API cost leaves the Markdown footer (it stays in the run JSON and manifest), so no currency sign appears in any output.
+
+**2. Review non-blocking fixes** (cheap, all): N1 skip `single_primary` when the status is `outside_supported_scope` (D-024); N2 hard check `option_parameter_refs`; N3 an invalid `best_current_option` renders "(invalid option id)"; N4 the auxiliary label always stays, with "(cited)" added when a citation is verified; N5 prompt line: numbers in brief_answer/proposal only from the enquiry or a cited quote; N6 hide a placeholder intake item only when its value is a placeholder too; N7 the remap reason says when the role changed; N8 check_mermaid prints the parse-error line; N9 rules.yaml slot doc matches `SLOT_VALUES`; N10 check_cost_class hard-codes its own mapping. Plus the test gaps the review listed.
+
+**3. Two layers: simple first, depth on demand** (D-022)
+- **Answer** (≤ ~600 words, soft check): customer request in one line, brief answer, proposal, solution-options table (tier, methods, confidence, cost class, ease, maintenance, performance fit), setup sketch, the top 3 questions.
+- **Expert detail** (below, under one heading): parameters, premise check, requirements, all questions, recommendations, measurement concept, spectral range, risks, feasibility experiment, assumptions, not covered, optional notes, evidence, verification.
+- Remove repetition: the options table carries the method rationale in one short cell; the Recommendation section keeps rationale + conditions only once; no section repeats the brief answer.
+- Prompt: short fields (brief answer 2–4 sentences, one-line table cells, rationale ≤ 2 sentences).
+
+**4. Confidence rating per solution option** (D-022; code-derived, never written by the model)
+Pattern: GRADE (start high, downgrade per named weakness) and the IPCC AR5 calibrated-confidence language (evidence × agreement, qualitative levels). Not an accuracy, probability or performance figure.
+- Start at **High**. Downgrade one level for each (floor **Low**):
+  1. a sample slot that decides one of the option's methods is `unknown` (screen result `unknown` for that method+technique);
+  2. the option's methods are supported only by `precedent_only` citations, or by no verified supplied-source citation;
+  3. the option relies on an uncited auxiliary sensor or a `not_measurable_inline` parameter;
+  4. a customer premise is `contradicted` and the option depends on it, or the status is not `provisional_assessment`;
+  5. the option is multi-method (fusion benefit not yet shown; it must beat the best single method).
+- Rendered as a badge with the reasons ("Medium: particle size unknown; precedent only"), plus one line saying what the rating means: confidence in the basis of the advice, not a predicted accuracy.
+- The run JSON gets `option_confidence {O1: {level, reasons[]}}`. Tests per downgrade rule and the floor.
+
+**4b. Findings from the first Phase 3 dev run (14:59)**
+- D05 failed: the assess reply was cut at max_tokens (finish=length, 17,998 chars; reasoning tokens count). Diagnose with one raw call (inspect for a repetition loop as in the 10:13 D08 case), then fix: shorter fields (item 3) and, if the model allows, a higher assess/repair max_tokens. A truncated assess reply must never abort silently: it is retried and, if it still fails, the case is reported as failed (current behaviour).
+- D06: the simple and the recommended option reference the same recommendations. New hard check `options_distinct`: no two options may have the same recommendation set.
+- Body length 2,472–3,137 words before Evidence (budget 1,800; the Answer layer, item 3, targets ≤ ~600).
+
+**5. Tests, dev run, output review.** Offline tests for 1–4; re-run D01–D08; both check scripts on outputs/dev; an independent reviewer agent reviews code + outputs (G3).
+
 ---
 
 ## Phase 4 — External evidence, option B (Sat 21:00–Sun 07:00)
@@ -579,16 +614,21 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 
 **5.5 Entailment critic** (timeboxed 2 h; first on the cut list after the baseline table): an LLM from a different family judges each claim against its own quotes (binary, no rewrite); a failing claim loses its citation and is labelled. Covers the known cases (geometry cited to the dairy page, "amide" bands, "(including by water)", off-domain precedents, NIR transmission in a melt).
 
-**5.6 Demo surface** (proposed instead of the pi shell, see the approval question):
-- `afs-assist chat`: a Python REPL. Paste an enquiry → assessment; answer the clarification questions → re-assess with the added facts (the status can move from insufficient to provisional); `why <id>` shows the cited page text.
-- A static HTML evidence view per run (`outputs/<set>/<id>.html`): sections, the Mermaid chart, each quote with its page text highlighted.
+**5.6 Demo surface: a simple local web app** (D-023; replaces the `afs-assist chat` REPL and the static HTML view; approved 14:22)
+- `uv run afs-assist ui` starts a Streamlit app on localhost (`uv add streamlit`). Streamlit fits a report-style page (columns, tabs, expanders); Gradio is aimed at model demos and Chainlit at chat-first apps.
+- **Start screen:** paste an enquiry or pick a saved run (dev, adversarial, later the frozen H runs). Saved runs open instantly, which is the safe live-demo path.
+- **Running:** a progress line per pipeline step (intake, screen, assess, verify, repair, external search) and the elapsed time; runs in a background thread.
+- **Answer view:** the brief answer, the proposal, the solution options as cards (tier, methods, confidence badge with reasons, cost class, ease, maintenance, performance fit), the setup sketch (Mermaid via mermaid.js in an HTML component), and the top questions.
+- **Expert detail:** expanders for every other section. Each citation opens its verified quote and the surrounding source text (supplied page or external paragraph), with the ✓ / ⚠ badges.
+- **Clarification loop:** the questions as a form; the answers are added to the enquiry as customer facts and the case is re-assessed; the old and new status and confidence are shown side by side.
+- **Downloads:** the Markdown and JSON of the run.
+- Acceptance: a Playwright script opens the app, loads a saved run, expands a section, and takes screenshots (checked by Claude and the reviewer agent, not the user); one scripted live enquiry → answer → re-assess loop.
 
 **5.7 Baseline table** (cut first): a single-prompt baseline vs the pipeline on dev, for the slides.
 
 ### Acceptance checks
 - [ ] The eval harness runs on dev + adversarial; the summary is committed; no must-not item fails.
-- [ ] The chat REPL completes one enquiry → answer → re-assess loop in a scripted test.
-- [ ] HTML views open (Playwright screenshot check).
+- [ ] The web app (5.6): Playwright opens it, loads a saved run, expands a section and saves screenshots; one scripted live enquiry → answer → re-assess loop completes.
 
 ### Review (G5)
 Reviewer agent: eval results, adversarial outputs, demo path. Fixes before the freeze.

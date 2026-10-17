@@ -1,15 +1,15 @@
 # Status
 
-_Last updated: 2026-10-17 13:50 CEST (Claude, Phase 3 implementer)._
+_Last updated: 2026-10-17 15:02 CEST (Claude, Phase 3 implementer)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2 closed (G2 passed, user 13:33).** **Re-plan of Phases 3–6 APPROVED (13:36, user)**, with the simple chat (`afs-assist chat` + HTML view replace the pi shell). **Phase 3 (Assessment upgrade) in progress.**
-- **Validation (D-020, user 13:35):** the user no longer runs tests or reads outputs. Claude runs all checks; reviewer agents replace the user at G3–G6. Ask the user only short yes/no questions.
-- **Cache path (user 13:33):** full fetched external text → `runs/external_cache/` (already gitignored).
-- **Phase 3 implementation committed (3c7e881, 13:50)**; implementer choices in D-021. Offline checks pass (see Check results).
-- **Next:** the D01–D08 run on flash, then `scripts/check_mermaid.py` and `scripts/check_cost_class.py` on outputs/dev, then the reviewer agent (G3 ~21:00).
+**Phase 3 (Assessment upgrade), fix round 3.R.** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
+- **User mode (D-020, 14:24):** Claude is fully in charge; the user is woken (push notification) only for their decisions. At each phase end: write this handoff and tell the user to switch sessions ("do the next task").
+- **Phase 3 code** 3c7e881: pytest 248 passed, 1 skipped; ruff clean; kb check 9/9. Code review: APPROVE WITH FIXES (B1 duplicate ids, B2 proposal basis unverified, B3 price wording) → 3.R item 1.
+- **First Phase 3 dev run (13:51–14:59, $0.211):** 7/8 complete, 0 hard failures left, citations 241/241 verified, 12/12 Mermaid charts render, cost classes match Table 1 (D01–D04 checked; the check script crashed on the stale D05). **D05 failed** (assess reply truncated at max_tokens). D06 simple = recommended option. Body 2,472–3,137 words. outputs/dev/D05.* are still the 12:41 Phase 2 output.
+- **Next:** implementer for 3.R (PHASES.md "Phase 3 fixes and additions (3.R)") → re-run D01–D08 → check scripts → reviewer agent (G3) → close Phase 3 → handoff for Phase 4.
 
 ## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
