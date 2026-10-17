@@ -681,6 +681,14 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 
 ---
 
+### Phase 4 close (2026-10-17 22:46)
+- **Dev run** (code f6538ee, outputs 16f85fb, `--external=live`, D03–D08 restarted after a hung call, D-038): 8/8 pass, 0 hard failures, 227/227 supplied citations; 23 external items kept, 0 dropped; every gap has a verified item or "no usable external source found"; `external replay` 8/8 equal; external step 38–76 s and $0.0018–0.0036 per case; `check_cost_class` 8/8; `check_mermaid` 15/15; no third-party text in git beyond capped quotes (longest tracked run 43 words); no secrets.
+- **G4:** code review NEEDS_FIXES (B1–B4) → 4.R; re-review NEEDS_FIXES (B1 proposal support from sensor gaps) → fixed 314557e (D-041); **final verdict PASS WITH NON-BLOCKING** (22:46). pytest 441 passed, 2 skipped; ruff clean; kb check 10/10. Phase 4 **closed**.
+- **Known:** committed D03 output still shows the old "secondary external support E01 ¶12" basis line (D-041); re-run D03 in Phase 5 or don't show it.
+- **Carried to Phase 5** (G4 non-blocking): **must before the freeze:** N2 code guard so queries cannot carry customer/brand/place names; N5 LLM call timeouts (5.0 item 3). Others: N1 digit-hyphen loose rule too broad (keep hyphens next to digits in the loose form, drop whitespace around them); N3 off-domain abstract items (require ≥2 shared sample terms for abstract-only sources); N4 one search timeout abandons all live search; N6 sentence splitter; earlier deferred N11/N12.
+
+---
+
 ## Phase 5 — Quality, eval and demo surface (Sun 07:00–14:00)
 
 ### Steps
@@ -700,6 +708,44 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 - **Off-topic enquiries (user 22:35):** a polite one-line redirect + 2–3 example questions, without running the rest of the pipeline (implemented after Phase 4 closes, in the pipeline/intake; the UI shows it).
 - First build works on saved runs only (no API cost); the live path is wired but tested once later. Acceptance: Playwright screenshots (light/dark, desktop/phone width) checked by Claude and a reviewer agent.
 - **Speed (user 22:35):** set runs execute cases in parallel and every LLM call gets an explicit timeout (Phase 5, with the D-038 item).
+
+**5.6'' UI brief revision (user 22:41, D-040):** no card-style showcase (options = a comparison table; sections typographic); **FastAPI + Jinja2 + htmx** (vendored, offline), minimal vanilla JS; generated diagrams: SVG setup diagram (hero), SVG spectral-range diagram (only sourced ranges), "how this answer was made" process strip with timings/counts, optional parameter → measurement map; Mermaid kept for the other options. No images from the organizer PDFs.
+
+**5.6⁗ UI direction A "Answer + Ask", CHOSEN by the user (23:21) after the research (docs/ui-research.md) and the mockup canvas (claude.ai artifact J3ziNHcrv1nURmoZjqZDXk, artboard A). Replaces the long-report layout of 5.6'''; keeps its look (datasheet calm, IBM Plex, one deep-blue accent, light/dark, no cards/shadows/gradients/emoji), stack (FastAPI + Jinja2 + htmx, vendored) and endpoints, plus the UI v1 review fixes. D-043.**
+- **Start:** centred "What do you want to measure?" box, 3 example chips that fill it, *Get assessment*; "Open a finished example" list below (titles only; no run ids, models or timings).
+- **Running:** the question shown as the first turn; a vertical stepper with named stages, elapsed time, "usually a few minutes", a Stop button; answer pieces appear as stages finish; the composer is visible but disabled until the first answer.
+- **Answer turn (one centred column ~780 px):** (1) "Your question" grey block; (2) **Our recommendation**: one-sentence headline (method + probe), 2–3 plain sentences, confidence level + reason, citation tags; (3) **How it would be set up**: a Simple / Recommended / Extended switch (segmented control, not cards; Recommended preselected) that redraws the setup schematic (server-drawn SVG per option: process point → probe(s) [+ dashed auxiliary sensor] → fiber → spectrometer → model → result; icons as inline stroke SVG; hovering a node or a spec highlights the matching part) and a 4-item spec row (cost class with S01 Table 1, ease, upkeep, confidence); (4) **Help us sharpen this**: the top 3 open questions as inline inputs/choices + *Update the recommendation*; (5) folded rows: What to measure and how (parameters), Risks, First feasibility test, Literature (external, not AFS material), How this answer was made (stepper with times, verification counts), and a "Technical detail" row with the wavelength chart (simplified per review N1) and all remaining expert sections.
+- **Sources:** hovering a tag shows the quote; clicking opens the right Sources panel (quote highlighted in its page; external = stored quote + record only).
+- **Follow-ups:** a composer pinned at the bottom ("Add a detail or ask a follow-up"); any input or answered question re-assesses and appends a new turn that opens with "What changed" (status/confidence/proposal old → new); earlier turns collapse to their recommendation line.
+- **Hand-off:** "Copy as customer reply" and Print/PDF (print expands everything).
+- **Off-topic:** the turn shows the redirect line + clickable example questions.
+- **Must include the UI v1 review fixes:** B1 no number on a range a source does not state (fluorescence: "range not stated"), test that every printed number is on the cited page; B2 phone menus inside the viewport (no overflow-x clip hiding bugs); B3 figure text ≥12 px via container queries; B4 Host/Origin middleware for POSTs; plus N2–N8 (unhighlighted bars visible, no shadows, ⚠ text variant, http-only links, "Incomplete run" label, tooltip wording, <0.1 s, citation ids) and tests: render every saved run, open every citation, XSS, cross-origin POST.
+- **Checks:** Playwright screenshots (start, running, answer light/dark × 1440/390, option switch on each tier, sources panel, a re-assess turn with "What changed", off-topic), inspected by Claude, a reviewer agent, then shown to the user.
+
+**5.6''' UI plan, APPROVED by the user 22:45 (replaces the details of 5.6' and 5.6'' where they differ):**
+- **Start page:** one large text box "Paste a customer enquiry" + *Assess*; below, the saved runs (title, status, date) that open instantly; off-topic → one-line redirect + clickable example questions.
+- **Running page:** vertical step list (Reading enquiry → Screening methods → Assessing → Checking quotes → Searching literature), each ticks with its time; a running timer.
+- **Answer page (one long datasheet-style report), top to bottom:** header (title, Saved ▾, light/dark) · enquiry (2 lines) · status + confidence · ANSWER (large type, 3–4 sentences) · PROPOSAL (option, method/technique, basis with citation tags, next step) · two figures side by side: drawn **setup diagram** (vessel → probe → fiber → spectrometer → model → result) and drawn **wavelength chart** (UV-Vis | NIR | MIR | Raman, chosen methods highlighted; sourced ranges only) · **OPTIONS COMPARED** table (columns O1 Simple / O2 Recommended ▸ / O3 Extended; rows methods, cost class, ease, maintenance, fit, confidence) · OPEN QUESTIONS (top 3) → *Answer and re-assess* · collapsible Parameters, Premise check, Risks, Test plan, Literature (external, not AFS material), Verification · "How this answer was made" strip with step times.
+- **Citations:** every tag (`S01 p.10`, `E01 ¶12`) opens a right-side panel: the exact quote highlighted in its page text + ✓ verified; external: title, year, DOI, licence (stored quote only).
+- **Phone:** same order in one column; the table scrolls inside itself.
+- **Look:** engineering datasheet; off-white paper + ink text (light), deep charcoal (dark); one accent (deep blue); hairline rules; generous margins; IBM Plex Sans (text) + IBM Plex Mono (tags, numbers), vendored locally (OFL) for offline use. No cards, shadows, gradients, emoji.
+- **API:** `GET /` start · `GET /runs/{id}` answer page · `GET /runs/{id}/cite/{tag}` citation panel · `POST /assess` → `GET /jobs/{id}` start + poll · `POST /runs/{id}/clarify` re-assess with answers · `GET /runs/{id}.md` / `.json` downloads. FastAPI + Jinja2 + htmx (vendored).
+- **Checks:** Playwright screenshots light/dark × desktop/phone, reviewed by Claude and a reviewer agent, then shown to the user.
+
+**5.0 Early robustness items (user 22:41, D-040; done in a worktree while G4 runs):**
+1. **Off-topic short-circuit:** when the intake routes are only `out_of_scope` and there is no measurement target, the run stops after intake with a polite one-line redirect and 2–3 generic example questions (written by us, no scenario text); no assess/external calls. Markdown + JSON carry `off_topic`; non-optical or borderline measurement questions still get the full assessment (the jury wants a proposal).
+2. **Parallel set runs:** `afs-assist run --workers N` (default 4) with a thread pool; spend tracker and provenance commits thread-safe (lock); per-case output unchanged; summary in scenario order.
+3. **LLM timeouts:** `OpenAI(max_retries=0)` plus a per-role `timeout_s` in `config/models.yaml` (intake 240, assess/repair 600, external roles 180); a timed-out call is retried once, other transient errors as before.
+4. Offline tests for each (FakeClient; a fake slow client for the timeout path).
+
+**5.0.R fixes (review of 8a6bde7: NEEDS_FIXES; Claude, D-020 mode; D-042):**
+1. Short-circuit only when the **first** intake attempt is off-topic; if any attempt was not off-topic, never short-circuit.
+2. Stricter `is_off_topic(intake, removed, enquiry)`: routes exactly `{out_of_scope}`; no targets; no removed item under `intake.targets` / `intake.process` / `intake.customer_premises`; process and premises empty; every sample slot `unknown`; `proposed_fiber.family == "none"`; `named_methods(enquiry)` empty; the enquiry matches no generic measurement cue (measur, monitor, spectr, analys/z, sensor, probe, fiber/fibre, in-line, concentrat, calibrat, absorb, wavelength, reactor, pipe, process, NIR, Raman, FTIR, UV).
+3. Intake prompt: `out_of_scope` = "not a measurement or process-analysis question at all (e.g. travel, sales admin, general chat); a vague, non-optical or borderline measurement question is NOT out_of_scope: use needs_clarification".
+4. **Wall-clock deadline** per LLM call (the per-read httpx timeout may never fire on a slow or keep-alive reply): run the request in a daemon thread and `join(timeout_s)`, or stream with a deadline check; a call past its deadline counts as a timeout (retried once).
+5. Ctrl-C in `run --workers`: a cancel event the tracker's `check()` raises on, `shutdown(wait=False, cancel_futures=True)`, re-raise.
+6. `external replay` on an off-topic run says "off-topic run".
+7. Tests: both misrouting repros, a vague one-line measurement enquiry, the wall-clock deadline, Ctrl-C cancel, replay message; make the order test deterministic (events, not sleeps).
 
 **5.6 Demo surface: a simple local web app** (D-023; replaces the `afs-assist chat` REPL and the static HTML view; approved 14:22)
 - `uv run afs-assist ui` starts a Streamlit app on localhost (`uv add streamlit`). Streamlit fits a report-style page (columns, tabs, expanders); Gradio is aimed at model demos and Chainlit at chat-first apps.

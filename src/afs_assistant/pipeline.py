@@ -8,12 +8,15 @@ citations are removed, items that lost one or failed a number check are flagged,
 duplicates, screen violations and inconsistent status are fixed deterministically.
 With `external` set to live or cache, the external-evidence step (Phase 4) runs after
 finalize; it adds a separate secondary block and never changes the assessment.
+An off-topic enquiry (intake route only `out_of_scope` and no measurement target) stops
+after the intake with a short redirect and example questions (no screen/assess/external).
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -22,6 +25,7 @@ from functools import cache, lru_cache
 
 from afs_assistant import kb, paths, quotes
 from afs_assistant.external import step as external_step
+from afs_assistant.llm import RunCancelled
 from afs_assistant.methods import named_methods
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
@@ -45,6 +49,16 @@ PROMPTS = paths.ROOT / "prompts"
 SKILLS = paths.ROOT / "skills"
 # Skills loaded into the assess context (progressive guidance, our words with source page refs).
 ASSESS_SKILLS = ("multi-method-fusion",)
+# Off-topic redirect (D-039, D-040): one polite line and generic example questions, our own words.
+OFF_TOPIC_MESSAGE = ("Thank you for your message; this assistant answers in-line spectroscopy and process-measurement "
+                     "enquiries, such as which optical method, probe and fiber link could measure a property of a "
+                     "material in a running process.")
+OFF_TOPIC_EXAMPLES = (
+    ("Could we follow the concentration of a dissolved component in a liquid flowing through a pipe, and which "
+     "spectroscopic method should we test first?"),
+    "Is NIR or Raman spectroscopy better suited to monitor a reaction in a stirred vessel at elevated temperature?",
+    "Which probe and fiber setup suits an in-line measurement when the analyzer must stand far from the process point?",
+)
 
 
 def sha(text: str) -> str:
@@ -84,6 +98,27 @@ def knowledge_block() -> str:
     return "\n".join(lines)
 
 
+# Generic measurement words (5.0.R): an enquiry using any of them is never treated as off-topic.
+MEASUREMENT_CUE = re.compile(r"measur|monitor|spectr|analy[sz]|sensor|probe|fib(?:er|re)|in-?line|concentrat|"
+                             r"calibrat|absorb|wavelength|reactor|pipe|process|\bNIR|\bRaman\b|FT-?IR|\bUV",
+                             re.IGNORECASE)
+_SAMPLE_SLOTS = ("physical_state", "optical_regime", "aqueous", "heterogeneous", "fluorophore")
+
+
+def is_off_topic(intake: Intake, removed: list[dict], enquiry: str) -> bool:
+    """Off-topic only on strict evidence (5.0.R): the model routed it only `out_of_scope`, and nothing in
+    the intake or the enquiry hints at a measurement. Any target, process detail, premise, sample slot or
+    proposed fiber (kept, or removed by the quote check), a named method or a generic measurement word
+    sends the enquiry through the full assessment. Stated facts alone do not count."""
+    return (set(intake.routes) == {"out_of_scope"}
+            and not intake.targets and not intake.process and not intake.customer_premises
+            and all(getattr(intake.sample, name).value == "unknown" for name in _SAMPLE_SLOTS)
+            and intake.proposed_fiber.family == "none"
+            and not any(not r["location"].startswith("intake.facts_stated") for r in removed)
+            and not named_methods(enquiry)
+            and not MEASUREMENT_CUE.search(enquiry))
+
+
 def slots_from_intake(intake: Intake) -> dict:
     slots: dict = {}
     for name in ("physical_state", "optical_regime", "aqueous", "heterogeneous", "fluorophore"):
@@ -115,9 +150,9 @@ class RunResult:
     intake: Intake
     slots: dict
     candidates: list[Candidate]
-    assessment_raw: Assessment
-    assessment: Assessment
-    report: Report
+    assessment_raw: Assessment | None       # None only for an off-topic run (no assessment made)
+    assessment: Assessment | None
+    report: Report | None
     repairs: list[dict] = field(default_factory=list)
     removed: list[dict] = field(default_factory=list)
     intake_removed: list[dict] = field(default_factory=list)
@@ -128,6 +163,7 @@ class RunResult:
     named_methods: dict[str, str] = field(default_factory=dict)  # method -> enquiry span naming it
     recheck: list = field(default_factory=list)  # option/proposal/premise checks failing on the final assessment
     external: dict | None = None  # secondary external evidence (Phase 4); None when the step is off
+    off_topic: dict | None = None  # {"message", "examples"} when the run stopped after the intake
 
 
 def _assess_user(enquiry: str, intake: Intake, candidates: list[Candidate]) -> str:
@@ -368,7 +404,7 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     tracker = getattr(client, "tracker", None)
     if tracker is not None:
         tracker.start_run()
-        first_call = len(tracker.calls)
+        first_call = len(tracker.run_calls)
     timings: dict[str, float] = {}
     wall = clock = time.monotonic()
 
@@ -388,10 +424,21 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
         problems = intake_problems(intake, intake_removed)
         if best_intake is None or len(problems) < len(best_intake[2]):
             best_intake = (intake, intake_removed, problems)
-        if not problems:
+        # Only the first attempt may stop the run as off-topic (it has no target by design: no retry). A
+        # retry follows an attempt that was not off-topic, so the enquiry is assessed whatever it says (5.0.R).
+        off_topic = attempt == 1 and is_off_topic(intake, intake_removed, enquiry)
+        if not problems or off_topic:
             break
     intake, intake_removed, problems = best_intake
     lap("intake")
+    if off_topic:
+        timings["wall"] = round(time.monotonic() - wall, 3)
+        calls = tracker.run_calls[first_call:] if tracker is not None else []
+        manifest = _manifest(run_id, calls, attempt, problems, [], None, timings, None)
+        manifest["off_topic"] = True
+        return RunResult(run_id, enquiry, intake, {}, [], None, None, None, [], [], intake_removed, calls,
+                         manifest, {}, timings, named_methods(enquiry), [], None,
+                         {"message": OFF_TOPIC_MESSAGE, "examples": list(OFF_TOPIC_EXAMPLES)})
     slots = slots_from_intake(intake)
     candidates = screen(slots)
     lap("screen")
@@ -429,12 +476,27 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     if external != "off":      # the primary result is complete here; no failure of the step may discard it
         try:
             ext = external_step.run(intake, final, client, external, fetcher=fetcher)
+        except RunCancelled:            # Ctrl-C on a set run: stop the case, write nothing
+            raise
         except Exception as exc:        # noqa: BLE001 - malformed API data, cache I/O, extractor bugs, ...
             ext = external_step.failed_block(final, external, f"external step failed: {type(exc).__name__}")
         lap("external")
     timings["wall"] = round(time.monotonic() - wall, 3)
-    calls = tracker.calls[first_call:] if tracker is not None else []
-    manifest = {
+    calls = tracker.run_calls[first_call:] if tracker is not None else []
+    manifest = _manifest(run_id, calls, attempt, problems, repairs, best_round, timings, best_report)
+    if ext is not None:
+        manifest["prompt_sha256"].update(ext["prompt_sha256"])
+        manifest["external_mode"] = external
+        manifest["external_library_sha256"] = ext["library_sha256"]
+    return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
+                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing,
+                     ext)
+
+
+def _manifest(run_id: str, calls: list[dict], attempts: int, problems: list[str], repairs: list[dict],
+              best_round: int | None, timings: dict[str, float], report: Report | None) -> dict:
+    """Run metadata; `report` is None (verification null) for an off-topic run."""
+    return {
         "run_id": run_id,
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "models": sorted({c["model"] for c in calls}),
@@ -448,17 +510,10 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
                    "completion": sum(c["completion_tokens"] for c in calls),
                    "cached": sum(c["cached_tokens"] for c in calls)},
         "calls": len(calls),
-        "intake_attempts": attempt,
+        "intake_attempts": attempts,
         "intake_problems": problems,
         "repair_rounds": len(repairs),
         "kept_round": best_round,
         "timings_s": timings,
-        "verification": best_report.summary(),
+        "verification": report.summary() if report is not None else None,
     }
-    if ext is not None:
-        manifest["prompt_sha256"].update(ext["prompt_sha256"])
-        manifest["external_mode"] = external
-        manifest["external_library_sha256"] = ext["library_sha256"]
-    return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
-                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing,
-                     ext)

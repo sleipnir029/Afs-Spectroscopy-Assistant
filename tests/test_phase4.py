@@ -469,6 +469,8 @@ def test_verbatim_claim_from_a_source_stays_secondary(tmp_path):
 def test_markdown_layout_and_basis_with_external_support(tmp_path):
     judged = with_(proposal={**ASSESSMENT["proposal"], "basis": "engineering_judgement"})
     result, _, _ = run_live(tmp_path, c=client(assess=judged))
+    assert result.external["proposal_support"] == []        # G1 is a sensor gap: no support for the method choice
+    result.external["proposal_support"] = ["E01 ¶5"]
     md = render.to_markdown(result)
     answer = md.split("## Expert detail")[0]
     assert ("**Basis:** engineering judgement, with secondary external support E01 ¶5 (not AFS material)"
@@ -876,10 +878,19 @@ def test_abstract_only_sources_never_support_the_proposal(tmp_path):            
     abstract_item = item(gap="G2", source="E02", para=1,
                          quote="Water absorption limited the usable near-infrared range in this broth",
                          finding="Water absorption limited the near-infrared range in a fermentation broth.")
-    result, _, _ = run_live(tmp_path, c=client(items=[item(), abstract_item], assess=judged))
+    result, _, _ = run_live(tmp_path, c=client(items=[item(gap="G2"), abstract_item], assess=judged))
     ext = result.external
     assert [i["citation"]["label"] for i in ext["items"]] == ["E01 ¶5", "E02 ¶1"]
     assert ext["sources"][1]["access"] == "abstract_only" and ext["proposal_support"] == ["E01 ¶5"]
+
+
+def test_sensor_and_parameter_gaps_never_support_the_proposal(tmp_path):        # G4 re-review B1
+    judged = with_(proposal={**ASSESSMENT["proposal"], "basis": "engineering_judgement"})
+    result, _, _ = run_live(tmp_path, c=client(items=[item(gap="G1"), item(gap="G3")], assess=judged))
+    ext = result.external
+    assert [g["kind"] for g in ext["gaps"]] == ["auxiliary_sensor", "not_in_sources", "uncited_parameter"]
+    assert len(ext["items"]) == 2 and all(i["option_id"] == "O2" for i in ext["items"])
+    assert ext["proposal_support"] == []
 
 
 def test_a_timeout_on_one_text_url_skips_only_that_source(tmp_path):            # N7
@@ -947,3 +958,17 @@ def test_role_reasoning_setting_is_sent_only_for_roles_that_set_it(monkeypatch):
         client.complete_json(role, "s", "u", "x", {"type": "object", "properties": {}})
     assert sent[0]["reasoning"] == llm.config()["roles"]["external_evidence"]["reasoning"]
     assert "reasoning" not in sent[1]
+
+
+def test_a_cancel_during_the_external_step_stops_the_case(tmp_path):           # 5.0.R review
+    from afs_assistant.llm import RunCancelled
+
+    class Cancelling(FakeClient):
+        def complete_json(self, role, *args, **kwargs):
+            if role == "external_queries":
+                raise RunCancelled("set run cancelled")
+            return super().complete_json(role, *args, **kwargs)
+
+    c = Cancelling({"intake": [INTAKE], "assess": [ASSESSMENT], "repair": []})
+    with pytest.raises(RunCancelled):
+        pipeline.run(ENQUIRY, c, run_id="t4", external="live", fetcher=fetcher(tmp_path, Server(), "live"))

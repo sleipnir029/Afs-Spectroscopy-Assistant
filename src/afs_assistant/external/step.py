@@ -46,7 +46,7 @@ from afs_assistant.external.sources import (
     sha,
     verify_quote,
 )
-from afs_assistant.llm import SpendCapExceeded
+from afs_assistant.llm import RunCancelled, SpendCapExceeded
 from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.verify import PLACEHOLDERS, forbidden_hits
@@ -61,6 +61,7 @@ MAX_FETCH_ATTEMPTS = 8
 MIN_HIT_SCORE = 2               # shared content words between a hit and its query + gap
 SOURCE_CHARS = 6000
 MAX_TEXT_CHARS = 600            # finding / how_it_applies / limits_and_transfer_risks (and stored drop reasons)
+NO_METHOD_SUPPORT = ("auxiliary_sensor", "uncited_parameter")   # gap kinds that never support the proposal
 MAX_ID_CHARS = 40               # model-given ids (gap, option, source) as stored
 MIN_SHARED_WORDS = 2            # content words a finding must share with its own quote
 STEP_BUDGET_S = 60.0            # wall time for searching and fetching
@@ -453,7 +454,7 @@ def run(intake: Intake, a: Assessment, client, mode: str = "live", fetcher: Fetc
     """The external block of a run (metadata, verified quotes, sha256; never full text)."""
     started = time.monotonic()
     tracker = getattr(client, "tracker", None)
-    first_call = len(tracker.calls) if tracker is not None else 0
+    first_call = len(tracker.run_calls) if tracker is not None else 0
     root = cache_root or paths.EXTERNAL_CACHE
     entries = library.load() if entries is None else entries
     own_fetcher = fetcher is None
@@ -481,10 +482,12 @@ def run(intake: Intake, a: Assessment, client, mode: str = "live", fetcher: Fetc
                             for g in gaps]
     if a.proposal.basis == "engineering_judgement":
         access = {s["id"]: s.get("access") for s in block["sources"]}      # an abstract never supports it
+        kinds = {g.id: g.kind for g in gaps}     # a sensor or parameter gap says nothing about the method choice
         block["proposal_support"] = [it["citation"]["label"] for it in block["items"]
                                      if it["option_id"] == a.proposal.best_current_option
-                                     and access.get(it["citation"]["source_id"]) == "full_text"]
-    calls = tracker.calls[first_call:] if tracker is not None else []
+                                     and access.get(it["citation"]["source_id"]) == "full_text"
+                                     and kinds.get(it["gap_id"]) not in NO_METHOD_SUPPORT]
+    calls = tracker.run_calls[first_call:] if tracker is not None else []
     block["calls"] = len(calls)
     block["cost_usd"] = round(sum(c["cost_usd"] for c in calls), 6)
     block["seconds"] = round(time.monotonic() - started, 3)
@@ -516,7 +519,7 @@ def _run_steps(block: dict, intake: Intake, a: Assessment, client, gaps: list[Ga
         res = client.complete_json("external_queries", prompt("external_queries"), _queries_user(gaps, intake),
                                    "external_queries", QueryPlan.model_json_schema())
         queries, dropped_q = clean_queries(QueryPlan.model_validate(res.data), gaps)
-    except SpendCapExceeded:
+    except (SpendCapExceeded, RunCancelled):
         raise
     except (RuntimeError, ValueError) as exc:
         block["error"] = f"query plan failed: {type(exc).__name__}"
@@ -534,7 +537,7 @@ def _run_steps(block: dict, intake: Intake, a: Assessment, client, gaps: list[Ga
                                    evidence_user(intake, a, gaps, records, queries), "external_evidence",
                                    EvidenceReply.model_json_schema())
         reply = EvidenceReply.model_validate(res.data)
-    except SpendCapExceeded:
+    except (SpendCapExceeded, RunCancelled):
         raise
     except (RuntimeError, ValueError) as exc:
         block["error"] = f"evidence call failed: {type(exc).__name__}"
