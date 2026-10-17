@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 12:22 CEST (Claude)._
+_Last updated: 2026-10-17 13:02 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -10,7 +10,7 @@ _Last updated: 2026-10-17 12:22 CEST (Claude)._
 - **2.R4 (12:09):** implemented with tests (spectral-range and plan-step checks, combination key, two assess-prompt lines, dash aside, fluorimetry words; D-018). Not yet reviewed; D01–D08 re-run not done.
 - **Checks:** pytest 189 passed, 1 skipped; ruff clean; kb check PASS.
 - **Run:** done (11:53, see Check results); the D01–D08 run on 75a4469 had started 11:29; the run on 315a90a was stopped at D03.
-- **Next:** check the run → independent review of the outputs (and the 75a4469 diff) → G2 (user reads D01, D02 + 2 others) → close Phase 2 → Phase 3 plan in a new session.
+- **Next:** G2: the user reads D01, D02, D07, D08 (D04 optional) in `outputs/dev/*.md`. Then close Phase 2 and write the re-plan of Phases 3–6 in a new session (inputs: `docs/research-replan.md`, `docs/qa-notes-2026-10-17.md`, the decisions under Done).
 
 ## Next session starts with (handoff 09:55)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
@@ -118,6 +118,15 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
 None.
 
 ## Check results
+**2.R4 dev run (finished ~13:00), flash, code e208980 (+8330c8c regex, no effect on dev), session cost $0.1938:**
+- **Completion:** all 8 complete; 0 hard failures, 0 still open; citations 318/318 verified.
+- **Status:** provisional ×7, D05 insufficient_information.
+- **Review fixes confirmed:** spectral ranges present in all 8; plan steps have real text and no doubled numbers; the D01 combination is its own comparison entry (no invented technique).
+- **Length and cost:** body 1,663–2,380 words; $0.015–0.041 per case.
+- **Slower:** 146–882 s per case (repair rounds plus provider latency).
+- **New cosmetic issue (Phase 3):** D01 `combined_with` [Raman, Raman] (dedupe the list and drop the entry's own method). D01 still has two primaries (Phase 3 list).
+- Committed. **Phase 2 is ready for G2.**
+
 **Final Phase 2 dev run (finished 11:53), flash, code 75a4469, session cost $0.1455:**
 - **Completion:** all 8 complete; 0 hard failures, 0 still open, 0 finalize corrections; citations 254/254 verified.
 - **Status:** provisional ×8.
