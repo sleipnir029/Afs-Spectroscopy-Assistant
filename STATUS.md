@@ -86,6 +86,7 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
   - **Solution options:** always 2–3: simple, recommended, extended multi-method.
   - **Sketch:** a Mermaid flowchart in the Markdown, no images.
   - **Bake-off:** cut to a quick check.
+  - **Contact email for scholarly APIs (13:12, user):** stored as `CONTACT_EMAIL` in the gitignored `.env`, not in committed files. The code must read it from the environment, and the README tells others to set their own. No OpenAlex key for now (keyless plus the polite-pool email).
 - Dev model switched to `deepseek/deepseek-v4.1-flash` (10:15, user; D-011). Providers [deepinfra, atlas-cloud, coreweave] (fp8, strict JSON); max_tokens 16k/32k/32k (reasoning tokens count). Smoke test: the D08 intake runs clean on flash (DeepInfra, finish=stop, $0.0031, proposed_methods [MIR, Fluorescence]). pytest 84 passed, 1 skipped. D01–D07 outputs are still from v4-pro: re-run on flash before G2.
 - Decisions (09:29, user):
   - External reference library: **yes**. Curated, each entry with URL + verbatim quoted passage, marked secondary; to be planned in Phase 3.
