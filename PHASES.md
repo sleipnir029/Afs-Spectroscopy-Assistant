@@ -694,6 +694,13 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 
 **5.5 Entailment critic** (timeboxed 2 h; first on the cut list after the baseline table): an LLM from a different family judges each claim against its own quotes (binary, no rewrite); a failing claim loses its citation and is labelled. Covers the known cases (geometry cited to the dairy page, "amide" bands, "(including by water)", off-domain precedents, NIR transmission in a melt).
 
+**5.6' Demo surface, revised (user 22:35, D-039; replaces the Streamlit choice below, started early in parallel with Phase 4):**
+- **Custom web page, not Streamlit:** a small Python server (`uv run afs-assist ui`, localhost) + one hand-designed page (own HTML/CSS/vanilla JS, no build step). Look: **clean technical report** (calm light layout like a good engineering datasheet, dark mode too), designed, not template/"AI slop".
+- Same content as 5.6 below: start screen (paste an enquiry or open a saved run), progress per step, Answer layer (short answer, proposal, option cards, setup diagram, top questions), Expert detail on demand, every citation opens its verified quote (supplied ✓ / external marked secondary), clarification loop, downloads.
+- **Off-topic enquiries (user 22:35):** a polite one-line redirect + 2–3 example questions, without running the rest of the pipeline (implemented after Phase 4 closes, in the pipeline/intake; the UI shows it).
+- First build works on saved runs only (no API cost); the live path is wired but tested once later. Acceptance: Playwright screenshots (light/dark, desktop/phone width) checked by Claude and a reviewer agent.
+- **Speed (user 22:35):** set runs execute cases in parallel and every LLM call gets an explicit timeout (Phase 5, with the D-038 item).
+
 **5.6 Demo surface: a simple local web app** (D-023; replaces the `afs-assist chat` REPL and the static HTML view; approved 14:22)
 - `uv run afs-assist ui` starts a Streamlit app on localhost (`uv add streamlit`). Streamlit fits a report-style page (columns, tabs, expanders); Gradio is aimed at model demos and Chainlit at chat-first apps.
 - **Start screen:** paste an enquiry or pick a saved run (dev, adversarial, later the frozen H runs). Saved runs open instantly, which is the safe live-demo path.
