@@ -52,6 +52,11 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
   - If the information is not in the system, it should search online (research papers, proper scientific forums), analyse what it finds and explain how it can be used.
   - It must be able to analyse how a multispectral system can be used for a chemical process.
   - → A re-plan of Phases 3–6 is needed (what we have, what we plan, what can be integrated). Clarifying questions asked; no code changes until a plan is approved.
+- **Decisions on the jury input (12:24, user):**
+  - "Multispectral system" = several spectroscopy methods combined on one process, plus how their data are fused (not imaging).
+  - Search mode = live search when the supplied sources do not cover the question, with the curated external library as the offline fallback; every external quote is fetched and verified verbatim.
+  - Sources = free scholarly APIs (OpenAlex, Semantic Scholar, arXiv, Europe PMC, Crossref) plus general web search; external sources are always marked secondary.
+  - Process = a background research agent now (notes in `docs/research-replan.md`); the full re-plan of Phases 3–6 is written in the next session for approval.
 - Dev model switched to `deepseek/deepseek-v4.1-flash` (10:15, user; D-011). Providers [deepinfra, atlas-cloud, coreweave] (fp8, strict JSON); max_tokens 16k/32k/32k (reasoning tokens count). Smoke test: the D08 intake runs clean on flash (DeepInfra, finish=stop, $0.0031, proposed_methods [MIR, Fluorescence]). pytest 84 passed, 1 skipped. D01–D07 outputs are still from v4-pro: re-run on flash before G2.
 - Decisions (09:29, user):
   - External reference library: **yes**. Curated, each entry with URL + verbatim quoted passage, marked secondary; to be planned in Phase 3.
