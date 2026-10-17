@@ -16,7 +16,9 @@ from functools import lru_cache
 
 from afs_assistant import kb
 
-CLAIM_KINDS = ("general", "application_precedent", "performance_figure", "readiness_process", "readiness_clinical")
+CLAIM_KINDS = ("general", "application_precedent", "performance_figure", "method_gain",
+               "readiness_process", "readiness_clinical")
+_PRECEDENT_SCOPES = {"lab_example", "process_example", "research_study", "literature_map", "concept"}
 
 
 @lru_cache(maxsize=1)
@@ -44,11 +46,17 @@ def check(claim_kind: str, doc: str, page: int) -> tuple[str, str]:
             return "ok", "ok"
         return "not_supported", f"{label} is {sorted(scopes)}: no application example on this page"
     if claim_kind == "performance_figure":
-        if scopes & {"method", "component_spec", "guidance"}:
+        forbidden = scopes & readiness_forbidden_scopes()
+        if scopes & {"method", "component_spec", "guidance"} and not forbidden:
             return "ok", "ok"
-        if scopes & {"lab_example", "process_example", "research_study"}:
-            return "precedent_only", f"{label} reports a specific study/example; its figures do not transfer (R-EVI-2)"
+        if scopes & _PRECEDENT_SCOPES:
+            return "precedent_only", (f"{label} is {sorted(scopes)}: its figures come from a specific study, example "
+                                      f"or literature and do not transfer to a new setup (R-EVI-2)")
         return "not_supported", f"{label} is {sorted(scopes)}: cannot support a performance figure"
+    if claim_kind == "method_gain":
+        if scopes & _PRECEDENT_SCOPES or "guidance" in scopes:
+            return "precedent_only", f"a gain from combining methods is a hypothesis to test (R-CMB-1); {label} is precedent"
+        return "not_supported", f"{label} is {sorted(scopes)}: no basis for a combination gain"
     if claim_kind == "readiness_clinical":
         return "not_supported", f"no supplied source validates clinical use; {label} is {sorted(scopes)} (R-EVI-1, R-EVI-3)"
     # readiness_process

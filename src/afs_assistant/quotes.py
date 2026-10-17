@@ -24,7 +24,10 @@ FUZZY_MIN = 90.0
 MIN_QUOTE_CHARS = 12
 _NUM = re.compile(r"\d+(?:[.,]\d+)?")
 _GUARD_WORDS = {"not", "no", "never", "cannot", "without", "only", "below", "above", "less", "more",
-                "under", "over", "except", "neither", "nor", "none"}
+                "under", "over", "except", "neither", "nor", "none",
+                "some", "all", "most", "every", "any", "few", "many",
+                "millimolar", "micromolar", "nanomolar"}
+_GUARD_UNITS = re.compile(r"(?<![a-zµμ])(nm|µm|μm|um|mm|cm-1|cm|km|m|%|ppm|ppb)(?![a-z])")
 
 
 @dataclass
@@ -94,12 +97,14 @@ def _widen_to_words(text: str, start: int, end: int) -> tuple[int, int]:
     return start, end
 
 
-def _markers(s: str) -> tuple[list[str], set[str]]:
+def _markers(s: str) -> tuple[list[str], set[str], list[str]]:
+    lower = s.lower()
     numbers = sorted(n.replace(",", ".") for n in _NUM.findall(s))
-    words = {w for w in re.findall(r"[a-z]+", s.lower()) if w in _GUARD_WORDS}
-    return numbers, words
+    words = {w for w in re.findall(r"[a-z]+", lower) if w in _GUARD_WORDS}
+    units = sorted(_GUARD_UNITS.findall(lower))
+    return numbers, words, units
 
 
 def _same_meaning_markers(quote: str, span: str) -> bool:
-    """A near match must keep every number and negation/comparison word unchanged."""
+    """A near match must keep every number, unit and negation/comparison/quantifier word unchanged."""
     return _markers(quote) == _markers(span)

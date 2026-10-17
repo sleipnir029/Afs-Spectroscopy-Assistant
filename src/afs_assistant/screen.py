@@ -143,13 +143,17 @@ SLOT_VALUES = {
 FIBER_FAMILIES = {"silica", "chalcogenide", "polycrystalline", "hollow_waveguide", "fluoride"}
 
 
+def _rule(rule_id: str) -> dict:
+    return next(r for r in kb.rules() if r["id"] == rule_id)
+
+
 def validate_slots(slots: dict) -> None:
     for key, value in slots.items():
         if key == "proposed_fiber":
             if not isinstance(value, dict) or value.get("family") not in FIBER_FAMILIES:
-                raise ValueError(f"proposed_fiber must be {{family: one of {sorted(FIBER_FAMILIES)}, for_method?}}")
-            if value.get("for_method") not in (None, *METHOD_RANGES_UM):
-                raise ValueError(f"unknown method in proposed_fiber: {value.get('for_method')!r}")
+                raise ValueError(f"proposed_fiber must be {{family: one of {sorted(FIBER_FAMILIES)}, for_method}}")
+            if value.get("for_method") not in METHOD_RANGES_UM:
+                raise ValueError(f"proposed_fiber.for_method is required, one of {sorted(METHOD_RANGES_UM)}")
             continue
         if key not in SLOT_VALUES:
             raise ValueError(f"unknown slot {key!r}")
@@ -159,7 +163,7 @@ def validate_slots(slots: dict) -> None:
 
 def _fiber_for(cand: Candidate, slots: dict) -> str | None:
     fiber = slots.get("proposed_fiber")
-    if not fiber or fiber.get("for_method") not in (None, cand.method):
+    if not fiber or fiber["for_method"] != cand.method:
         return None
     return fiber["family"]
 
@@ -180,7 +184,7 @@ def screen(slots: dict) -> list[Candidate]:
 
     slots keys (all optional): physical_state, optical_regime, fluorophore, aqueous,
     heterogeneous (values in SLOT_VALUES or "unknown"), and proposed_fiber
-    {family, for_method?} for an existing or proposed fiber link. Missing keys = unknown.
+    {family, for_method} for an existing or proposed fiber link. Missing keys = unknown.
     """
     validate_slots(slots)
     result = []
@@ -208,9 +212,10 @@ def screen(slots: dict) -> list[Candidate]:
             if match == "no":
                 continue
             if effect == "exclude" and "technique" in target and _technique_in(target["technique"], cand.technique):
-                if cand.technique in TECHNIQUE_FAMILY["transflection"]:
-                    # Combined transmission/transflection probe: transmission is excluded, but
-                    # transflection works "in some cases" (R-GEO-5), so this stays open.
+                if (cand.technique in TECHNIQUE_FAMILY["transflection"]
+                        and _when_state(_rule("R-GEO-5")["when"], cand, slots) == "yes"):
+                    # Combined transmission/transflection probe: transmission is excluded, but where
+                    # R-GEO-5 applies, transflection works "in some cases", so this stays open.
                     cand.downgrade("unknown", rule["id"],
                                    rule["statement"] + " Transflection may still work in some cases (R-GEO-5): test it.")
                 else:

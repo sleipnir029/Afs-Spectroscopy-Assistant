@@ -80,5 +80,32 @@ def run() -> list[Finding]:
                         hits.append(f"{f.relative_to(paths.ROOT)}:{i}")
     findings.append(Finding("no_case_ids", not hits, f"scenario ids found at: {hits}"))
 
+    findings.append(_s02_guard(pages))
     findings.append(Finding("graph_present", paths.GRAPH_FILE.exists(), str(paths.GRAPH_FILE.name)))
     return findings
+
+
+def _s02_guard(pages: dict) -> Finding:
+    """S02 quotable text must be the PDF text layer plus non-empty transcribed lines, nothing else."""
+    from afs_assistant.kb_build import parse_s02_notes
+
+    problems = []
+    slides = parse_s02_notes(paths.S02_NOTES.read_text(encoding="utf-8"))
+    for number, slide in slides.items():
+        if any(not line for line in slide["image_text"]):
+            problems.append(f"slide {number}: empty transcribed line")
+        if "Figure (our description)" in pages[("S02", number)]["text"]:
+            problems.append(f"slide {number}: notes leaked into quotable text")
+    pdf_path = paths.MATERIALS / paths.SOURCE_PDFS["S02"]
+    if pdf_path.exists():
+        import pymupdf
+
+        from afs_assistant.normalize import normalize
+        for number, page in enumerate(pymupdf.open(pdf_path), start=1):
+            layer = normalize(page.get_text())
+            if not pages[("S02", number)]["text"].startswith(layer):
+                problems.append(f"slide {number}: text does not start with the PDF text layer")
+        detail = f"20 slides checked against PDF text layer; problems: {problems}"
+    else:
+        detail = f"PDF not present (text-layer comparison skipped); problems: {problems}"
+    return Finding("s02_text_provenance", not problems, detail)

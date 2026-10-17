@@ -15,7 +15,7 @@ Master plan: approved Plan v3 (2026-10-17). This file breaks it into phases.
 | Phase | Name | Goal | Gate |
 |---|---|---|---|
 | 0 | Repo hygiene and setup | Keep organizer files out of git; uv project | G0 |
-| 1 | Knowledge foundation | Verified knowledge layer + deterministic tools, no LLM | G1 |
+| 1 | Knowledge foundation | Verified knowledge layer + deterministic tools, no LLM | G1 (passed) |
 | 2 | Pipeline MVP | AFS-Ashby steps 0–8 end to end on D01–D08, with deterministic checks + provenance | G2 |
 | 3 | Quality and evaluation | Critic + repair, adversarial set, eval harness, model bake-off, baseline table | G3 |
 | 4 | Chat shell and evidence view | pi shell (SYSTEM.md, extension, skills), HTML evidence view, clarification loop | G4 |
@@ -34,7 +34,7 @@ Phases 2–6 get their detailed plans written when the previous phase closes. Th
 
 ---
 
-## Phase 1 — Knowledge foundation (APPROVED 2026-10-17 — implemented; review fixes done)
+## Phase 1 — Knowledge foundation (CLOSED 2026-10-17 09:06: review APPROVE WITH FIXES → fixed; G1 OK)
 
 **Goal.** A committed, checkable knowledge layer: page text, slide notes, scope tags, tables, generic rules, and a knowledge graph. Plus the deterministic tools that later phases use to check answers. **No LLM calls in this phase.**
 
@@ -163,3 +163,17 @@ The reviewer verdict was APPROVE WITH FIXES (B1–B8 blocking). Fixes, in order:
   - `.gitignore` comment `make kb` → `uv run afs-assist kb build` (comment only)
   - S02 header line about the text layer corrected
 - **Acceptance:** `kb check` all PASS (incl. new S02 text-layer check); `pytest` all PASS with the new tests; reviewer re-checks B1–B7 (focused re-review); then G1.
+
+**1.R re-review result:** APPROVE WITH FIXES. B1–B6 fixed, B7 partial; no new blocking issues.
+
+### Phase 1 leftovers (1.R2) — APPROVED 2026-10-17 09:04 (user); G1 content review: OK (user)
+1. `screen.py`: the transflection exception only applies when R-GEO-5's own `when` holds (NIR; clear/turbid/opaque). So UV-Vis on opaque samples, and NIR on `opaque_absorbing`, go back to `fail`.
+2. `kb check` gets the promised S02 guard: every S02 `text` starts with its PDF text-layer content, and every transcribed line is non-empty.
+3. `scope.py`: `performance_figure` uses the forbidden-tag test (a literature_map page gives `precedent_only`). Add claim kind `method_gain` → `precedent_only` (R-CMB-1).
+4. `screen.py`: `proposed_fiber.for_method` becomes required (it no longer applies globally).
+5. `rules.yaml` R-GEN-3 rewording: MIR in aqueous samples → thin layer or ATR; NIR → pathlength-limited (see R-GEN-4). Not "use ATR" for NIR.
+6. `quotes.py` guard words: add units (nm, µm, mm, m, cm-1, %), quantifiers (some, all, most, every), and molar prefixes (millimolar, micromolar, nanomolar).
+7. `numbers.py`: "+" sign in ranges ("-5 °C to +40 °C"); time units minutes/hours/days/weeks/months/years; docstring states number checks are claim-local (each claim's own verified quotes + enquiry).
+- **Acceptance:** tests for each item; pytest, kb check and ruff all pass; reproducible build.
+
+**1.R2 result (09:06):** all 7 items done; pytest 59/59, kb check 9/9, ruff clean, reproducible build. Phase 1 closed.

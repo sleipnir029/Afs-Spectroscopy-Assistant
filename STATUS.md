@@ -1,24 +1,25 @@
 # Status
 
-_Last updated: 2026-10-17 09:00 CEST (Claude). Earlier guessed times were removed (D-008)._
+_Last updated: 2026-10-17 09:06 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 1: Knowledge foundation.** Approved. Steps 1.1–1.10 implemented. Reviewer: APPROVE WITH FIXES (B1–B8). Fix plan 1.R approved; R1–R8 implemented. **Next: focused re-review, then G1.**
+**Phase 2: Pipeline MVP.** Plan being written in `PHASES.md` (awaiting approval). Phase 1 closed.
 
 ## Phase overview
 | Phase | State | Gate | Notes |
 |---|---|---|---|
 | 0 Repo hygiene and setup | Done (see D-001) | G0 retro-review pending | backup tgz, `.gitignore`, history purged, uv project + deps |
-| 1 Knowledge foundation | Review fixes done; re-review pending | G1 ~13:15 | kb check 8/8, pytest 51/51, ruff clean |
-| 2 Pipeline MVP | Not planned yet | G2 ~20:00 | |
+| 1 Knowledge foundation | **Closed** | G1 passed | pytest 59/59, kb check 9/9 | G1 ~13:15 | kb check 8/8, pytest 51/51, ruff clean |
+| 2 Pipeline MVP | Plan awaiting approval | G2 ~20:00 | |
 | 3 Quality and evaluation | Not planned yet | G3 Sun 09:00 | |
 | 4 Chat shell and evidence view | Not planned yet | G4 Sun 14:00 | |
 | 5 Freeze | Not planned yet | G5 Sun ~16:00 | |
 | 6 Deliverables | Not planned yet | Submit by 22:30 | |
 
 ## Done
+- Phase 1 closed (09:06): 1.R2 leftovers fixed (transflection exception scoped to R-GEO-5, S02 provenance guard, performance_figure/method_gain scope, `for_method` required, R-GEN-3 reworded, unit/quantifier guard words, `+` ranges and time units). pytest 59/59, kb check 9/9.
 - 1.R fixes:
   - R1: fuzzy quote matches become `fuzzy_review` (not verified); a changed number or negation is rejected.
   - R2: S02 `text` = PDF text layer + transcribed image text; our descriptions moved to `notes` (never quotable).
@@ -45,9 +46,8 @@ _Last updated: 2026-10-17 09:00 CEST (Claude). Earlier guessed times were remove
 - Phase 0. Verified: `git rev-list --objects --all` shows 0 objects under `resources/`; files still on disk; backup at `~/Desktop/aails-backup-2026-10-17.tgz`.
 
 ## Next
-1. Fixes R1–R8, then a focused re-review.
-2. G1 with the user (~13:15): S02 notes for slides 6, 7, 13, 14 + 10 rules.
-3. Plan Phase 2 (not started until approved).
+1. User approves the Phase 2 plan (+ decisions: API key in `.env`, dev model, `runs/` gitignore).
+2. 13:38 Q&A (user), using the questions in Plan v3 §10.
 
 ## Open decisions
 - External reference library: after Q&A.

@@ -1,8 +1,11 @@
 """Find numbers (with units) in generated text and check where they came from.
 
 Organizer rule: no accuracy, detection limit, response time, fiber length or other
-figure that no source supports. A number in an answer must appear, with a compatible
-unit, in a cited quote, the cited page, or the customer's enquiry.
+figure that no source supports. Checks are claim-local: a claim's numbers must appear,
+with a compatible unit, in that claim's own verified quotes or in the customer's enquiry
+(never a global pool and never the whole cited page). A real number moved onto the wrong
+subject (e.g. a silica cable length used for an MIR link) is a meaning error this module
+cannot see; rules (R-FIB-2) and the critic must catch it.
 
 Comparison is on (value, unit dimension): nm / µm / cm-1 are converted to µm; mm / cm /
 m / km to metres; %, percent, wt%, vol% are one dimension. A unitless number only matches
@@ -22,12 +25,14 @@ from afs_assistant.normalize import normalize
 SMALL_COUNT_MAX = 10
 
 # Longest first; a unit must not run into a following letter ("5 samples" is not "5 s").
-_UNITS = ["dB/km", "dB/m", "mg/L", "g/L", "wt%", "vol%", "cm-1", "cm⁻¹", "cm^-1", "percent", "ppm",
+_UNITS = ["minutes", "minute", "seconds", "second", "hours", "hour", "days", "day", "weeks", "week",
+          "months", "month", "years", "year",
+          "dB/km", "dB/m", "mg/L", "g/L", "wt%", "vol%", "cm-1", "cm⁻¹", "cm^-1", "percent", "ppm",
           "ppb", "°C", "µm", "μm", "um", "nm", "mm", "km", "cm", "m", "%", "bar", "psi", "ms", "min",
           "s", "h", "mW", "W", "kHz", "MHz", "Hz", "mM", "M", "mL", "L", "K", "-fold", "x", "×", "dB", "°"]
 _UNIT_RE = "|".join(re.escape(u) for u in _UNITS)
 _NUM = re.compile(
-    r"(?<![\w.])(?P<sign>[-−](?=\d))?(?P<num>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+)?)"
+    r"(?<![\w.])(?P<sign>[-−+](?=\d))?(?P<num>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+)?)"
     r"(?:\s*(?P<unit>" + _UNIT_RE + r")(?![A-Za-zµμ]))?"
 )
 _RANGE_SEP = re.compile(r"^\s*(?:-|–|to)\s*$")
@@ -46,6 +51,9 @@ _SPECTRAL = {"nm": 1e-3, "µm": 1.0, "μm": 1.0, "um": 1.0}
 _LENGTH = {"mm": 1e-3, "cm": 1e-2, "m": 1.0, "km": 1e3}
 _PERCENT = {"%", "percent", "wt%", "vol%"}
 _WAVENUMBER = {"cm-1", "cm⁻¹", "cm^-1"}
+_TIME_S = {"s": 1, "second": 1, "seconds": 1, "ms": 1e-3, "min": 60, "minute": 60, "minutes": 60,
+           "h": 3600, "hour": 3600, "hours": 3600, "day": 86400, "days": 86400, "week": 604800, "weeks": 604800}
+_CALENDAR = {"month": "month", "months": "month", "year": "year", "years": "year"}
 
 
 @dataclass
@@ -69,7 +77,7 @@ def _value(sign: str | None, num: str) -> float:
     else:
         num = num.replace(",", ".")
     v = float(num)
-    return -v if sign else v
+    return -v if sign in ("-", "−") else v
 
 
 def _canon(value: float, unit: str | None) -> tuple[str, float]:
@@ -85,6 +93,10 @@ def _canon(value: float, unit: str | None) -> tuple[str, float]:
         return "percent", value
     if unit in ("x", "×", "-fold"):
         return "factor", value
+    if unit in _TIME_S:
+        return "time_s", value * _TIME_S[unit]
+    if unit in _CALENDAR:
+        return _CALENDAR[unit], value
     return unit, value
 
 
@@ -104,11 +116,11 @@ def find_numbers(text: str) -> list[NumberMention]:
         a = tokens[i]
         b = tokens[i + 1] if i + 1 < len(tokens) else None
         joiner = masked[a.end():b.start()] if b else ""
-        sign_b_is_dash = bool(b and b.group("sign") and joiner.strip() == "")
+        sign_b_is_dash = bool(b and b.group("sign") in ("-", "−") and joiner.strip() == "")
         if b and (_RANGE_SEP.match(joiner) or sign_b_is_dash):
             unit = b.group("unit") or a.group("unit")
             lo_dim, lo = _canon(_value(a.group("sign"), a.group("num")), unit)
-            _, hi = _canon(_value(None, b.group("num")), unit)
+            _, hi = _canon(_value(None if sign_b_is_dash else b.group("sign"), b.group("num")), unit)
             found.append(NumberMention(text[a.start():b.end()].strip(), min(lo, hi), max(lo, hi), unit,
                                        lo_dim, a.start(), b.end()))
             i += 2

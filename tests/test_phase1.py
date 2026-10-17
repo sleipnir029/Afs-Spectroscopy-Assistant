@@ -89,10 +89,12 @@ def test_fluorescence_needs_fluorophore():
 
 def test_silica_link_fails_mir_but_not_nir():
     c = _by(screen({"physical_state": "liquid", "optical_regime": "clear",
-                    "proposed_fiber": {"family": "silica"}}))
+                    "proposed_fiber": {"family": "silica", "for_method": "MIR"}}))
     assert c[("MIR", "ATR")].status == "fail"
     assert any(r["rule"] == "R-FIB-1" for r in c[("MIR", "ATR")].reasons)
-    assert c[("NIR", "transmission_transflection")].status == "pass"
+    nir = _by(screen({"physical_state": "liquid", "optical_regime": "clear",
+                      "proposed_fiber": {"family": "silica", "for_method": "NIR"}}))
+    assert nir[("NIR", "transmission_transflection")].status == "pass"
 
 
 def test_powder_excludes_atr():
@@ -240,11 +242,13 @@ def test_proposed_fiber_applies_only_to_its_method():
 def test_dark_absorbing_sample_leaves_reflection_open():
     c = _by(screen({"physical_state": "liquid", "optical_regime": "opaque_absorbing"}))
     assert c[("NIR", "diffuse_reflection")].status == "unknown"
-    assert c[("NIR", "transmission_transflection")].status == "unknown"
+    # R-GEO-5 (transflection "in some cases") covers scattering dairy states, not dark absorbing liquids.
+    assert c[("NIR", "transmission_transflection")].status == "fail"
 
 
 @pytest.mark.parametrize("slots", [{"physical_state": "gas"}, {"colour": "red"},
-                                   {"proposed_fiber": {"family": "copper"}}])
+                                   {"proposed_fiber": {"family": "copper", "for_method": "MIR"}},
+                                   {"proposed_fiber": {"family": "silica"}}])
 def test_invalid_slots_raise(slots):
     with pytest.raises(ValueError):
         screen(slots)
@@ -265,3 +269,40 @@ def test_r_fib_2_states_no_mir_link_length():
     rule = next(r for r in kb.rules() if r["id"] == "R-FIB-2")
     assert "No source states an achievable length for an MIR link" in rule["statement"]
     assert "2 m" not in rule["statement"].replace("1-2 m", "")
+
+
+# --------------------------------------------------------------------- leftovers (1.R2)
+def test_transflection_exception_only_where_r_geo_5_applies():
+    c = _by(screen({"physical_state": "liquid", "optical_regime": "opaque"}))
+    assert c[("NIR", "transmission_transflection")].status == "unknown"
+    assert c[("UV-Vis", "transmission_transflection")].status == "fail"
+
+
+def test_performance_figure_from_literature_page_is_precedent_only():
+    assert scope.check("performance_figure", "S01", 16)[0] == "precedent_only"
+    assert scope.check("performance_figure", "S01", 10)[0] == "ok"
+
+
+def test_method_gain_is_never_proven():
+    assert scope.check("method_gain", "S01", 15)[0] == "precedent_only"
+    assert scope.check("method_gain", "S05", 1)[0] == "not_supported"
+
+
+def test_r_gen_3_does_not_send_nir_to_atr():
+    rule = next(r for r in kb.rules() if r["id"] == "R-GEN-3")
+    assert "NIR transmission needs a limited, controlled pathlength" in rule["statement"]
+
+
+@pytest.mark.parametrize("doc,page,quote", [
+    ("S01", 5, "limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 mm)"),
+    ("S01", 16, "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the micromolar range"),
+])
+def test_fuzzy_rejects_unit_and_molar_swaps(doc, page, quote):
+    assert quotes.verify(doc, page, quote).status == "not_found"
+
+
+def test_numbers_plus_sign_range_and_time_units():
+    (n,) = find_numbers("operate from -5 °C to +40 °C")
+    assert (n.low, n.high, n.dim) == (-5.0, 40.0, "°C")
+    assert not unsupported_numbers("within 20 minutes", ["20 min"])
+    assert unsupported_numbers("12 months", ["12 weeks"])

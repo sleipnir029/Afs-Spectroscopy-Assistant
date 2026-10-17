@@ -369,13 +369,14 @@ rules:
     - {doc: REF, page: 3, quote: "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision."}
 
 - id: R-GEN-3
-  statement: Water absorbs much more strongly in infrared methods than in Raman; for aqueous samples IR measurements need very short paths (ATR), while Raman tolerates water.
+  statement: Water absorbs much more strongly in infrared methods than in Raman. In aqueous samples MIR needs a very thin layer or ATR; NIR transmission needs a limited, controlled pathlength (see R-GEN-4); Raman tolerates water.
   effect: warn
   when: {aqueous: "yes", method: [MIR, NIR]}
   target: {risk: water_absorption}
   sources:
     - {doc: S01, page: 16, quote: "low absorbance for water molecules compared to infrared methods."}
     - {doc: S01, page: 5, quote: "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples"}
+    - {doc: S01, page: 18, quote: "if the pathlength is too wide, the signal is lost to absorption"}
 
 - id: R-GEN-4
   statement: In NIR transmission the optical pathlength must be controlled (usually 1-10 mm in the dairy example); too wide loses signal to absorption, too narrow samples a negligible volume.
