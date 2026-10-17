@@ -1007,8 +1007,10 @@ def test_query_guard_keeps_sentence_starts_and_domain_words():                  
     from afs_assistant.external import query_guard
 
     names = query_guard.name_like_words(["Ethanol is followed in-line. We use NIR and Raman with an ATR probe.",
-                                         "- Fermentation broth (clear)", "The Kestrelwerk plant."])
-    assert names == {"kestrelwerk"}
+                                         "- Fermentation broth (clear)", "The Kestrelwerk plant.", "we know"])
+    assert names == {"ethanol", "kestrelwerk"}     # "Ethanol" only capitalised and not in the page vocabulary:
+    names = query_guard.name_like_words(["Ethanol is followed. The ethanol", "The Kestrelwerk plant."])
+    assert names == {"kestrelwerk"}               # written in lower case once, so no name
     assert query_guard.numbers("CO2 at 1,5 bar and 20-30 nm") == {"1.5", "20", "30"}
 
 
@@ -1086,7 +1088,8 @@ def test_sample_terms_and_the_two_word_rule():                                  
     from afs_assistant.schema import Intake
 
     intake = Intake.model_validate(INTAKE)
-    assert step.sample_terms(intake) == {"ethanol", "flows", "pipe", "clear", "aqueous", "fermentation", "broth"}
+    assert step.sample_terms(intake) == {"ethanol", "pipe", "clear", "aqueous", "fermentation", "broth",
+                                         "lab"}                     # "lab" from the process facts (review N3)
     hyphen = record(["A hot-melt study of broth."], access="abstract_only")
     assert step.off_domain(hyphen, {"melt", "pellet"}) and not step.off_domain(hyphen, {"melt", "broth"})
     abstract_b = record([ABSTRACT_B], access="abstract_only")
@@ -1100,3 +1103,65 @@ def test_a_single_sample_term_must_appear_in_the_abstract():                    
     dry = record(["Near-infrared determination of sulfur in a petroleum stream."], access="abstract_only")
     assert not step.off_domain(wet, {"water"}) and step.off_domain(dry, {"water"})
     assert step.off_domain(wet, set())                                                  # no terms: dropped
+
+
+@pytest.mark.parametrize("enquiry, query", [
+    ("BASF wants to follow ethanol in a broth.", "BASF ethanol Raman"),
+    ("Kestrelwerk produces resin in a reactor.", "kestrelwerk resin NIR"),
+    ("Hi,\nKestrelwerk here. We follow ethanol.", "Kestrelwerk ethanol monitoring"),
+    ("Please ask Mr. Smith about the broth.", "Smith broth Raman"),
+    ("Several sites (e.g. Kestrelwerk) follow ethanol.", "Kestrelwerk ethanol"),
+])
+def test_names_at_a_sentence_or_line_start_are_caught(enquiry, query):            # 5.0b review B1
+    from afs_assistant.external import query_guard
+
+    assert query_guard.Guard(enquiry).problem(query).startswith("possible name from the enquiry")
+
+
+def test_mail_and_web_domains_from_the_enquiry_are_caught():                       # 5.0b review B1b
+    from afs_assistant.external import query_guard
+
+    guard = query_guard.Guard("Contact jan@kestrel.de or see www.halvard-labs.com and brightwater.org for details.")
+    for query in ("kestrel NIR", "halvard Raman broth", "brightwater ethanol"):
+        assert guard.problem(query).startswith("possible name from the enquiry"), query
+    assert guard.problem("ethanol broth Raman") is None
+    plan = step.QueryPlan.model_validate({"queries": [{"gap_id": "G1", "query": "kestrel.de Raman"}]})
+    _, dropped = step.clean_queries(plan, [gaps.Gap("G1", "x", "t", "l")])
+    assert dropped[0]["reason"] == "contains a URL, e-mail or DOI"
+
+
+def test_product_and_size_codes_are_compared_without_space_or_hyphen():          # 5.0b review N1
+    from afs_assistant.external import query_guard
+
+    guard = query_guard.Guard("Our XR-200 analyser sits on a DN 50 line.")
+    for query in ("XR200 analyser Raman", "xr 200 probe", "DN50 pipe Raman", "dn-50 in-line NIR"):
+        assert guard.problem(query) is not None, query
+    assert guard.problem("in-line Raman pipe probe") is None
+
+
+def test_whitespace_between_digits_is_kept_in_the_loose_form():                   # 5.0b review N2
+    from afs_assistant import quotes
+
+    assert not quotes.verify_text("See Table 1 100 m of cable here.", "see table 1100 m of cable", "x").ok
+    assert not quotes.verify_text("Readings between 10 20 nm apart.", "readings between 1020 nm", "x").ok
+    assert quotes.verify_text("See Table 1 100 m of cable here.", "see TABLE 1  100 m of cable", "x").status == "loose"
+    assert quotes.verify_text("See Table 1\n100 m of cable here.", "see table 1 100 m of cable", "x").status == "loose"
+
+
+def test_library_only_when_every_tried_api_failed(tmp_path):                       # 5.0b review N4
+    rt = step._Retrieval(fetcher(tmp_path, Server(fail=httpx.ConnectTimeout("t"))), tmp_path / "sources")
+    rt.out_of_time = lambda where: where == "openalex"         # OpenAlex never tried (time budget)
+    assert rt.search(QUERIES["queries"]) == []
+    assert rt.fallback == "library only: network error (ConnectTimeout) (europepmc)"
+
+
+def test_cache_mode_replays_a_per_api_failure(tmp_path):                           # 5.0b review N4
+    server = Server(fail_at={("www.ebi.ac.uk", "/europepmc/webservices/rest/search"): httpx.ReadTimeout("t")})
+    fused = [item(gap="G3", source="E01", para=3, quote="Mid-level fusion of extracted features was the most robust",
+                  finding="Mid-level fusion of features was most robust.")]
+    live, _, _ = run_live(tmp_path, server, client(items=fused))
+    replayed, _, _ = run_live(tmp_path, server=None, mode="cache", c=client(items=fused))
+    assert live.external["fallback"] is None and replayed.external["fallback"] is None
+    assert [s["api"] for s in replayed.external["sources"]] == [s["api"] for s in live.external["sources"]] == \
+        ["openalex"]
+    assert live.external["items"] == replayed.external["items"] and len(live.external["items"]) == 1

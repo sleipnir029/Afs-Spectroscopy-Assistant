@@ -3,7 +3,8 @@
 Match levels, strongest first:
   exact         normalised quote is a substring of the normalised page text
   loose         equal after also ignoring case, whitespace and hyphens; a hyphen next to a digit (only
-                whitespace between) is kept, so "1-10" matches "1 - 10" but "10-20" never matches "1020"
+                whitespace between) is kept, so "1-10" matches "1 - 10" but "10-20" never matches "1020";
+                whitespace between two digits stays one space, so "1 100" never matches "1100"
   fuzzy_review  close (rapidfuzz partial ratio >= FUZZY_MIN) with the same numbers and
                 negation/comparison words; NOT verified, needs repair or human review
 Only exact and loose count as verified (`ok`). A near match that changes a number or a
@@ -61,11 +62,26 @@ def _next_to_digit(text: str, i: int) -> bool:
     return (j >= 0 and text[j].isdigit()) or (k < len(text) and text[k].isdigit())
 
 
+def _between_digits(text: str, i: int) -> bool:
+    """Does the whitespace run starting at position i sit directly between two digits ("1 100")?"""
+    if i == 0 or text[i - 1].isspace() or not text[i - 1].isdigit():
+        return False
+    k = i + 1
+    while k < len(text) and text[k].isspace():
+        k += 1
+    return k < len(text) and text[k].isdigit()
+
+
 def _loose_with_map(text: str) -> tuple[str, list[int]]:
     """Lowercased text without whitespace and without hyphens that are not next to a digit, plus an
-    index map back to `text`. Dashes are already "-" after normalize()."""
+    index map back to `text`. Whitespace between two digits stays as one space ("1 100" is not
+    "1100"). Dashes are already "-" after normalize()."""
     chars, index = [], []
     for i, ch in enumerate(text):
+        if ch.isspace() and _between_digits(text, i):
+            chars.append(" ")
+            index.append(i)
+            continue
         if ch.isspace() or (ch == "-" and not _next_to_digit(text, i)):
             continue
         chars.append(ch.lower())
