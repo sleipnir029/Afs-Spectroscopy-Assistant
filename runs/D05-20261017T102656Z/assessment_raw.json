@@ -1,0 +1,434 @@
+{
+ "decision_status": "insufficient_information",
+ "status_reason": "The customer has not defined the biomass and metabolic signals as separate targets, and the broth's optical regime is unknown. A conditional shortlist is offered, but the deciding questions must be answered before a method can be selected.",
+ "premise_checks": [
+  {
+   "premise": "Optical measurement will help them follow growth and notice changes earlier.",
+   "verdict": "supported",
+   "explanation": "The source supports real-time biomass monitoring by UV/Vis. The word 'earlier' is not quantified and must be defined against an independent reference method.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "There are distinct biomass and metabolic signals to be measured.",
+   "verdict": "supported",
+   "explanation": "The source supports that biomass and metabolic signals can be tracked by different optical methods in bioprocessing. It does not confirm that they are distinct or measurable in this customer's broth.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "An initial feasibility study with useful reference measurements is the appropriate next step.",
+   "verdict": "supported",
+   "explanation": "This matches the guidance for a feasibility plan.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Optical measurement during yeast fermentation.",
+  "Help to follow growth and notice changes earlier.",
+  "A biomass signal and a metabolic signal have been mentioned, but not defined as separate targets.",
+  "The broth becomes more optically dense as the run develops.",
+  "An initial feasibility study with useful reference measurements is requested."
+ ],
+ "key_unknowns": [
+  "What exactly is the biomass signal (e.g., cell density, turbidity, viable count) and what reference method defines it?",
+  "What exactly is the metabolic signal (which species, concentration range, required detection limit)?",
+  "What is the expected optical density or turbidity of the broth over the run, and at what point does it become opaque?",
+  "What reference measurements are available and at what sampling frequency?",
+  "What are the required accuracy, detection limit, and response time for earlier change detection?",
+  "Is there any fluorescent species or indicator available for a fluorescence option?"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What exactly is the biomass signal (e.g., cell density, turbidity, viable count) and what independent reference method will define it?",
+   "why_it_matters": "The choice between UV-Vis transmission, UV-Vis ATR, and NIR diffuse reflection depends on the physical meaning of the biomass signal.",
+   "affects": [
+    "method",
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What exactly is the metabolic signal (which species: glucose, ethanol, glycerol, acetate, lactate, etc.), its expected concentration range, and required detection limit?",
+   "why_it_matters": "Raman and NIR are candidates, but their suitability depends on the target species and whether it is a major or trace component.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the expected optical density or turbidity of the broth over the run, and at what point does it become opaque?",
+   "why_it_matters": "This decides between transmission, ATR, and diffuse reflection geometries.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What reference measurements are available (offline HPLC, cell dry weight, OD, etc.) and at what sampling frequency?",
+   "why_it_matters": "Independent reference measurements are required for a meaningful feasibility study.",
+   "affects": [
+    "method",
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What are the required accuracy, detection limit, and response time for earlier change detection?",
+   "why_it_matters": "These numbers must come from the customer and define the go/no-go criteria.",
+   "affects": [
+    "status",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q6",
+   "question": "What is the fermentation scale and installation point (lab, pilot, production; in-line in reactor, bypass, at-line)?",
+   "why_it_matters": "This affects fiber length, probe choice, and whether an in-line measurement is practical.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "R1",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "UV-Vis can track biomass via turbidity, and a UV-ATR probe can measure high-optical-density or highly scattering fluids without dilution, which matches the broth becoming more optically dense over the run.",
+   "conditions": "Applies if the biomass signal is related to cell density or turbidity and the broth becomes too opaque for a standard transmission path. If the broth remains clear, a transmission or transflection probe is preferred for low-OD liquids.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "the signal in a standard transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "R2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman is well-suited to aqueous media and can provide a molecular fingerprint for metabolites such as glucose, acetate, or lactate, which addresses the metabolic signal for earlier change detection.",
+   "conditions": "Applies if the metabolic target is Raman-active and the broth does not swamp the Raman signal with fluorescence. The laser excitation wavelength must be stated separately from the Raman shift.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R3",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is used for opaque or highly concentrated samples and NIR is a common online method; it can track major components like glucose or glycerol in the millimolar range, but may lack sensitivity for trace compounds below 0.1 percent. It is conditional on the broth being highly scattering and the target being a major component.",
+   "conditions": "Applies only if the broth is opaque or highly scattering and the metabolic target is a major component above the trace level. If the broth is clear, NIR transmission or transflection may be preferred but is not confirmed for this sample.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "For biomass, use a UV-Vis probe; for high-OD broth, an ATR probe is indicated, with transmission or transflection as the preferred geometry only while the broth remains clear. For metabolic signals, a Raman fiber probe is indicated, with NIR diffuse reflection as a conditional alternative for opaque, scattering broth. The measurement should be in-line or at-line at a representative point in the reactor or bypass.",
+  "location": "In-line in the reactor or a bypass, or at-line if in-line is not practical. The exact point must be agreed after the optical density and fouling behaviour are known.",
+  "fiber_link": "Silica fibers are the likely link for UV-Vis and NIR; Raman also uses silica fibers. Actual fiber length, coating, and connector type depend on the selected probe and must be confirmed with AFS.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "performance_figure"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "performance_figure"
+   },
+   {
+    "doc": "REF",
+    "page": 3,
+    "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "UV-Vis",
+   "statement": "Nominal UV region is 190-360 nm. The visible range depends on the target and the probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as Raman shift in cm-1. The laser excitation wavelength must be stated separately. The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The biomass and metabolic signals are not defined, so the chosen methods may measure the wrong variable.",
+   "rule_ids": [
+    "R-PRO-2"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "The broth's optical density may exceed the usable range of the selected probe; transmission can saturate and ATR samples only a surface layer a few micrometres deep, with contact and fouling risks.",
+   "rule_ids": [
+    "R-GEO-2",
+    "R-MIR-3",
+    "R-GEN-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "the signal in a standard transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman signal may be weak or swamped by fluorescence, especially if the broth contains fluorescent compounds.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Calibration is specific to the matrix; changes in broth composition or process conditions may require re-validation.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Define the two targets and the reference measurements with the customer. For biomass, use an independent reference such as cell dry weight or viable count; for the metabolic signal, use an offline reference such as HPLC or enzymatic assay.",
+    "purpose": "Establish what the optical measurement must predict and how success will be judged.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Collect representative samples across the expected chemical and physical variation: early, mid, and late fermentation, and across the range of optical densities or turbidities.",
+    "purpose": "Cover the range of conditions the method must handle, including the increasing optical density.",
+    "citations": []
+   },
+   {
+    "step": "Measure single methods first: UV-Vis ATR (and transmission or transflection if OD is low), Raman, and NIR diffuse reflection on the same samples. Compare each method's signal against the reference measurements.",
+    "purpose": "Identify which single method best tracks each target before testing any combination.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "step": "Build and validate chemometric models on held-out runs or batches: use some fermentation runs for calibration and independent runs for validation.",
+    "purpose": "Test whether the calibration transfers to new runs and does not merely fit the calibration set.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Go/no-go: the customer defines numerical criteria (accuracy, detection limit, response time) for each target; the feasibility study passes if the single best method or a justified combination meets those criteria on held-out runs.",
+    "purpose": "Provide a clear, customer-owned basis for deciding whether to proceed.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent reference measurements must be agreed with the customer. Examples that may be relevant are cell dry weight or viable count for biomass, and HPLC or enzymatic assay for metabolites. The supplied sources do not specify which references are useful for this particular yeast fermentation.",
+  "decision_basis": "The customer must provide the numerical go/no-go criteria; without them, the study can only report relative performance."
+ },
+ "assumptions": [
+  "The broth is an aqueous liquid.",
+  "The biomass signal is related to cell density or turbidity.",
+  "The metabolic signal is a dissolved or suspended chemical species that can be measured optically.",
+  "The measurement can be made in-line or at-line without sterilisation or cleaning requirements that would rule out a fiber probe.",
+  "A suitable reference method for each target can be obtained at the required sampling frequency."
+ ],
+ "not_in_sources": [
+  "The specific biomass and metabolic targets for this customer's yeast fermentation are not defined in the supplied sources.",
+  "The required reference measurements for this customer's process are not specified in the supplied sources.",
+  "The customer's fermentation scale, installation point, cleaning requirements, and required accuracy, detection limit, and response time are not in the supplied sources."
+ ]
+}
