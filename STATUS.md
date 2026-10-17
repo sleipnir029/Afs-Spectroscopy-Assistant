@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 23:23 CEST (Claude, Phase 5 UI)._
+_Last updated: 2026-10-17 23:22 CEST (Claude, Phase 5 UI)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
