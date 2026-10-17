@@ -38,6 +38,7 @@ class LLMResult:
     cost_usd: float = 0.0
     latency_s: float = 0.0
     response_id: str = ""
+    provider: str = ""
 
 
 @dataclass
@@ -60,7 +61,8 @@ class SpendTracker:
     def add(self, role: str, result: LLMResult) -> None:
         self.run_usd += result.cost_usd
         self.session_usd += result.cost_usd
-        self.calls.append({"role": role, "model": result.model, "prompt_tokens": result.prompt_tokens,
+        self.calls.append({"role": role, "model": result.model, "provider": result.provider,
+                           "prompt_tokens": result.prompt_tokens,
                            "completion_tokens": result.completion_tokens, "cached_tokens": result.cached_tokens,
                            "cost_usd": round(result.cost_usd, 6), "latency_s": round(result.latency_s, 2)})
 
@@ -120,6 +122,7 @@ class OpenRouterClient:
         else:
             response_format = {"type": "json_object"}
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+        routing = {"require_parameters": True, **cfg.get("provider_routing", {}).get(model, {})}
 
         last_error: Exception | None = None
         for attempt in range(3):
@@ -128,7 +131,7 @@ class OpenRouterClient:
                 response = self.client.chat.completions.create(
                     model=model, messages=messages, temperature=cfg.get("temperature", 0),
                     max_tokens=role_cfg.get("max_tokens", 8000), response_format=response_format,
-                    extra_body={"provider": {"require_parameters": True}, "usage": {"include": True}},
+                    extra_body={"provider": routing, "usage": {"include": True}},
                 )
             except Exception as exc:  # retry only transient API errors
                 if type(exc).__name__ not in self.TRANSIENT:
@@ -138,9 +141,14 @@ class OpenRouterClient:
                 continue
             latency = time.monotonic() - started
             content = response.choices[0].message.content or ""
-            data = json.loads(content)
+            try:
+                data = json.loads(content)
+            except json.JSONDecodeError as exc:  # empty or truncated reply from the provider: retry
+                last_error = RuntimeError(f"invalid JSON from provider {getattr(response, 'provider', '?')} "
+                                          f"(finish={response.choices[0].finish_reason}, {len(content)} chars): {exc}")
+                continue
             result = LLMResult(data=data, model=response.model or model, latency_s=latency,
-                               response_id=response.id or "")
+                               response_id=response.id or "", provider=getattr(response, "provider", "") or "")
             usage = response.usage
             if usage is not None:
                 result.prompt_tokens = usage.prompt_tokens or 0
