@@ -1,0 +1,478 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A shortlist can be justified from the stated product and the sources: NIR diffuse reflection for an opaque, concentrated dairy product, MIR ATR as a band-resolved comparison, and NIR transmission/transflection only if some process state is semi-transparent. The final configuration, achievable accuracy and fiber link cannot be fixed until the questions below are answered. All three premises the customer raised are supported by the sources at general scope, so this is a provisional assessment rather than a premise failure.",
+ "premise_checks": [
+  {
+   "premise": "In-line spectroscopy can give earlier information about composition changes than the current laboratory sampling.",
+   "verdict": "supported",
+   "explanation": "The sources state that fiber probes integrated into production lines give on-site online analysis with results in near real time, and in-process analysis without sampling, eliminating delays. This is a general statement and is not proof for this product.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 2,
+     "quote": "enabling on-site online analysis and obtaining results in near real time.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "An initial spectroscopy concept and a practical comparison experiment can be defined before key details are known.",
+   "verdict": "supported",
+   "explanation": "The sources support starting with laboratory trials on samples of incompletely known composition in order to select the most suitable method or combination. The resulting concept is provisional, not a final configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "If the known facts cannot justify a method choice, say so, ask the questions that would decide it and propose the next step.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Retaining laboratory checks is compatible with the desired in-line spectroscopy approach.",
+   "verdict": "supported",
+   "explanation": "A feasibility plan is expected to include independent reference measurements, which is where the retained laboratory checks fit. No source states a specific accuracy target for this.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Opaque, concentrated milk product flowing through a processing line.",
+  "Current laboratory sampling for fat and protein analysis.",
+  "Wanted: earlier information about composition changes.",
+  "Product temperature and texture vary during production.",
+  "Wanted: an initial spectroscopy concept and a practical comparison experiment.",
+  "Laboratory checks are to be retained."
+ ],
+ "key_unknowns": [
+  "Concentration ranges and the magnitude of the composition changes to be detected (fat, protein and any other component).",
+  "Whether the product is semi-transparent or lower-scattering at any process state.",
+  "Temperature range and rate of temperature and texture change at the measurement point.",
+  "Installation point, line geometry and the distance from the measurement point to the spectrometer (fiber link feasibility).",
+  "Cleaning, fouling and sanitation requirements at the measurement point.",
+  "Required accuracy, detection limit and response time (go / no-go criteria)."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What concentration ranges must be covered, and how large is the composition change you need to see for fat, protein and any other component?",
+   "why_it_matters": "This decides the needed sensitivity and whether NIR diffuse reflection alone can deliver it. The sources note NIR may lack sensitivity for trace compounds below 0.1 percent in a bioprocess context.",
+   "affects": [
+    "method",
+    "technique",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Is the product semi-transparent or clearly lower-scattering at any point or process state in the line, or is it opaque throughout?",
+   "why_it_matters": "This decides whether NIR transmission or transflection is worth testing at all. Transmission is described for transparent or semi-transparent liquids and fails for thick or fat-rich samples.",
+   "affects": [
+    "technique",
+    "status"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the expected temperature range and the rate of temperature and texture change at the intended measurement point?",
+   "why_it_matters": "NIR reflection is sensitive to surface characteristics and particle/globule size, so physical variation can be confused with composition change and affects calibration stability.",
+   "affects": [
+    "technique",
+    "calibration"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Where on the line would the measurement sit, what is the pipe or vat geometry and flow, and how far is it from where the spectrometer can be installed? What cleaning and fouling conditions apply there?",
+   "why_it_matters": "This decides probe type and geometry and whether the fiber link is feasible. Long cables are stated only for low-OH silica fibers; no source states an achievable length for a MIR link.",
+   "affects": [
+    "installation",
+    "fiber",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What are your reference laboratory method and sampling protocol for fat and protein, and what accuracy, detection limit and response time would count as a useful improvement?",
+   "why_it_matters": "These are the reference values and the go / no-go criteria for the trial. No accuracy figure should be assumed from the sources.",
+   "affects": [
+    "status",
+    "go_no_go",
+    "calibration"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "R1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "The product is stated opaque and concentrated. NIR diffuse reflection is the technique the source gives for opaque or highly concentrated dairy products, and PLS regression on NIR reflection spectra is used to quantify fat and protein in milk. NIR is described as suitable for online measurement including remote measurement via fiber probes.",
+   "conditions": "Applies to the opaque, concentrated product across its stated temperature and texture variation. Requires a chemometric calibration built on this product; NIR bands overlap, and physical variation (scattering, fat globule size) can interfere with the composition signal.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Inline NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "MIR gives well-defined absorption bands and high selectivity. Because water absorbs strongly in the infrared, the source route is ATR with a very thin sampled layer, and ATR fiber probes enable the analysis of liquids. A published MIR-ATR example resolves fat through the ester carbonyl C=O band near 1740 cm-1 and protein through amide bands, which is a reason to test this technique, not proof that it works on this product.",
+   "conditions": "Needs tight contact of the product with the ATR crystal; only a surface layer a few microns deep is sampled, so deposits and surface representativeness are risks. Needs a MIR-transmitting fiber (chalcogenide CIR or polycrystalline PIR); the usable range depends on the fiber and crystal actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "the stretching vibration band of the ester carbonyl C=O at about 1740 cm-1, which is characteristic of saturated triglycerides.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R3",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Transmission is preferred for transparent or semi-transparent liquids but fails when the sample is too thick or fat-rich, because the light cannot penetrate it. A transflection probe can in some cases serve both low-fat and high-fat milk products. This option applies only if the product is, or becomes, semi-transparent and low enough in scattering at some process state.",
+   "conditions": "Deciding question: does any point in the line give a semi-transparent, low-scattering product, and is a controlled pathlength (typically 1-10 mm in the source example) practical there? If the product is opaque throughout, this option does not apply.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR diffuse reflection with a fiber probe flush-mounted into the pipe or vat so that it interacts with the flowing product; MIR ATR with the probe head in contact with the product; NIR transflection only if a controlled pathlength through a semi-transparent stream is possible. In the source dairy example the reflection probe is flush-mounted into a pipe or vat.",
+  "location": "At the point on the line where composition changes need to be seen earliest. Sample inhomogeneity and process turbulence must be considered when choosing the technique and the location.",
+  "fiber_link": "NIR can use Vis-NIR silica fibers (nominal transmission to 2400 nm); MIR needs chalcogenide CIR or polycrystalline PIR fibers. Long cables (100-300 m) are stated only for low-OH silica fibers; no source states an achievable length for a MIR link, so the MIR link length is an open question for AFS.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+    "claim_kind": "application_precedent"
+   },
+   {
+    "doc": "S01",
+    "page": 7,
+    "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "performance_figure"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal method range 780-2500 nm.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal method range 4000-400 cm-1 (2.5-25 μm).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "If Raman is used, report the Raman shift in cm-1 and state the laser excitation wavelength separately.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "The usable range depends on the instrument, fiber and probe actually selected; a nominal method range is not the range of a specific configuration.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Physical variation: product temperature and texture change during production. NIR reflection is sensitive to surface characteristics and fat globule size, so scattering and physical variation can mask or mimic a composition change.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Calibration transfer: NIR and Raman calibrations are specific to the matrix. A model built on one product state may not hold when concentration, temperature or texture change.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Magnitude of change: if the composition changes to be detected are small, NIR diffuse reflection may lack the sensitivity to see them. The source notes NIR may lack sensitivity for trace compounds below 0.1 percent in a bioprocess context; the magnitude here is unknown.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "risk": "MIR ATR practicality: only a surface layer a few microns deep is sampled and tight contact is required, so fouling or deposits and an unrepresentative surface layer can bias results. In addition, MIR light needs CIR or PIR fibers, and no source states an achievable MIR link length for an in-line installation.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-FIB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "1. Collect representative samples across the expected chemical and physical variation: the opaque concentrated product at the fat/protein levels, temperatures and textures seen in production, plus any less-concentrated process states. Keep the existing laboratory fat and protein checks as the reference.",
+    "purpose": "Representative samples and independent reference measurements.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "2. Measure each sample with NIR diffuse reflection first (single method), and with MIR ATR as the single-method comparison. No combination in this first round.",
+    "purpose": "Single methods first; combinations only after.",
+    "citations": []
+   },
+   {
+    "step": "3. Measure independent references on the same samples using the retained laboratory method and the same sampling protocol, so that every spectrum has a reference fat and protein value.",
+    "purpose": "Independent reference measurements.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "4. Build and validate a chemometric model per method, and validate on held-out runs or batches rather than on the samples used for calibration. Compare each single method against the reference. Only if a single method is insufficient, test a combination (for example fused NIR and MIR ATR data) as a later hypothesis.",
+    "purpose": "Matrix-specific calibration and comparison against the best single method.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "calibration specific to the matrix.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
+      "claim_kind": "method_gain"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   },
+   {
+    "step": "5. Go / no-go: apply the numerical accuracy, detection-limit and response-time criteria that the customer sets for a useful improvement over current sampling, and decide on those numbers rather than on any figure from the sources.",
+    "purpose": "Go / no-go basis with criteria from the customer.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Retained laboratory fat and protein analysis on the same samples, with the same sampling protocol, as the independent reference.",
+  "decision_basis": "Customer-set numerical accuracy, detection-limit and response-time criteria for a useful improvement over current sampling."
+ },
+ "assumptions": [
+  "The product behaves like a scattering, aqueous dairy matrix, so the source dairy examples are relevant to it.",
+  "The product is opaque throughout the line; no semi-transparent state has been reported.",
+  "The retained laboratory checks can serve as the independent reference for the trial.",
+  "No fluorescent species has been identified, so fluorescence and fluorescence-based combinations are left as later, conditional hypotheses."
+ ],
+ "not_in_sources": []
+}
