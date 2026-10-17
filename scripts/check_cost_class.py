@@ -8,7 +8,7 @@ script's own copy), then compare it with the cost cell of the rendered options t
 and with `option_costs` in the run JSON. The cell must say "at least" exactly when a
 combined method's Table 1 row was not identified (3.R4 N7). Also scans the Markdown for any currency sign,
 code or word, except the "Evidence (verified quotes)" and secondary-evidence sections (verbatim quotes,
-e.g. a journal abbreviation). Exit 0 if all agree, 1 otherwise.
+e.g. a journal abbreviation). Off-topic runs (no assessment) are skipped. Exit 0 if all agree, 1 otherwise.
 """
 
 from __future__ import annotations
@@ -141,6 +141,9 @@ def main(argv: list[str]) -> int:
         for json_path in sorted(d.glob("*.json")):
             md_path = json_path.with_suffix(".md")
             if not md_path.exists():
+                continue
+            if json.loads(json_path.read_text(encoding="utf-8")).get("off_topic") is not None:
+                print(f"[SKIP] {json_path.name}: off-topic run (no assessment, no options)")
                 continue
             total += 1
             problems = check_pair(json_path, md_path, table)

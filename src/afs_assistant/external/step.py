@@ -453,7 +453,7 @@ def run(intake: Intake, a: Assessment, client, mode: str = "live", fetcher: Fetc
     """The external block of a run (metadata, verified quotes, sha256; never full text)."""
     started = time.monotonic()
     tracker = getattr(client, "tracker", None)
-    first_call = len(tracker.calls) if tracker is not None else 0
+    first_call = len(tracker.run_calls) if tracker is not None else 0
     root = cache_root or paths.EXTERNAL_CACHE
     entries = library.load() if entries is None else entries
     own_fetcher = fetcher is None
@@ -484,7 +484,7 @@ def run(intake: Intake, a: Assessment, client, mode: str = "live", fetcher: Fetc
         block["proposal_support"] = [it["citation"]["label"] for it in block["items"]
                                      if it["option_id"] == a.proposal.best_current_option
                                      and access.get(it["citation"]["source_id"]) == "full_text"]
-    calls = tracker.calls[first_call:] if tracker is not None else []
+    calls = tracker.run_calls[first_call:] if tracker is not None else []
     block["calls"] = len(calls)
     block["cost_usd"] = round(sum(c["cost_usd"] for c in calls), 6)
     block["seconds"] = round(time.monotonic() - started, 3)

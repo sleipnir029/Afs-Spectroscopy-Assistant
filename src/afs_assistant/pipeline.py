@@ -8,6 +8,8 @@ citations are removed, items that lost one or failed a number check are flagged,
 duplicates, screen violations and inconsistent status are fixed deterministically.
 With `external` set to live or cache, the external-evidence step (Phase 4) runs after
 finalize; it adds a separate secondary block and never changes the assessment.
+An off-topic enquiry (intake route only `out_of_scope` and no measurement target) stops
+after the intake with a short redirect and example questions (no screen/assess/external).
 """
 
 from __future__ import annotations
@@ -45,6 +47,16 @@ PROMPTS = paths.ROOT / "prompts"
 SKILLS = paths.ROOT / "skills"
 # Skills loaded into the assess context (progressive guidance, our words with source page refs).
 ASSESS_SKILLS = ("multi-method-fusion",)
+# Off-topic redirect (D-039, D-040): one polite line and generic example questions, our own words.
+OFF_TOPIC_MESSAGE = ("Thank you for your message; this assistant answers in-line spectroscopy and process-measurement "
+                     "enquiries, such as which optical method, probe and fiber link could measure a property of a "
+                     "material in a running process.")
+OFF_TOPIC_EXAMPLES = (
+    ("Could we follow the concentration of a dissolved component in a liquid flowing through a pipe, and which "
+     "spectroscopic method should we test first?"),
+    "Is NIR or Raman spectroscopy better suited to monitor a reaction in a stirred vessel at elevated temperature?",
+    "Which probe and fiber setup suits an in-line measurement when the analyzer must stand far from the process point?",
+)
 
 
 def sha(text: str) -> str:
@@ -84,6 +96,12 @@ def knowledge_block() -> str:
     return "\n".join(lines)
 
 
+def is_off_topic(intake: Intake) -> bool:
+    """Only the `out_of_scope` route and no measurement target. A borderline or non-optical measurement
+    question (any other route, or a target) still gets the full assessment."""
+    return set(intake.routes) == {"out_of_scope"} and not intake.targets
+
+
 def slots_from_intake(intake: Intake) -> dict:
     slots: dict = {}
     for name in ("physical_state", "optical_regime", "aqueous", "heterogeneous", "fluorophore"):
@@ -115,9 +133,9 @@ class RunResult:
     intake: Intake
     slots: dict
     candidates: list[Candidate]
-    assessment_raw: Assessment
-    assessment: Assessment
-    report: Report
+    assessment_raw: Assessment | None       # None only for an off-topic run (no assessment made)
+    assessment: Assessment | None
+    report: Report | None
     repairs: list[dict] = field(default_factory=list)
     removed: list[dict] = field(default_factory=list)
     intake_removed: list[dict] = field(default_factory=list)
@@ -128,6 +146,7 @@ class RunResult:
     named_methods: dict[str, str] = field(default_factory=dict)  # method -> enquiry span naming it
     recheck: list = field(default_factory=list)  # option/proposal/premise checks failing on the final assessment
     external: dict | None = None  # secondary external evidence (Phase 4); None when the step is off
+    off_topic: dict | None = None  # {"message", "examples"} when the run stopped after the intake
 
 
 def _assess_user(enquiry: str, intake: Intake, candidates: list[Candidate]) -> str:
@@ -368,7 +387,7 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     tracker = getattr(client, "tracker", None)
     if tracker is not None:
         tracker.start_run()
-        first_call = len(tracker.calls)
+        first_call = len(tracker.run_calls)
     timings: dict[str, float] = {}
     wall = clock = time.monotonic()
 
@@ -388,10 +407,18 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
         problems = intake_problems(intake, intake_removed)
         if best_intake is None or len(problems) < len(best_intake[2]):
             best_intake = (intake, intake_removed, problems)
-        if not problems:
+        if not problems or is_off_topic(intake):     # an off-topic intake has no target by design: no retry
             break
     intake, intake_removed, problems = best_intake
     lap("intake")
+    if is_off_topic(intake):
+        timings["wall"] = round(time.monotonic() - wall, 3)
+        calls = tracker.run_calls[first_call:] if tracker is not None else []
+        manifest = _manifest(run_id, calls, attempt, problems, [], None, timings, None)
+        manifest["off_topic"] = True
+        return RunResult(run_id, enquiry, intake, {}, [], None, None, None, [], [], intake_removed, calls,
+                         manifest, {}, timings, named_methods(enquiry), [], None,
+                         {"message": OFF_TOPIC_MESSAGE, "examples": list(OFF_TOPIC_EXAMPLES)})
     slots = slots_from_intake(intake)
     candidates = screen(slots)
     lap("screen")
@@ -433,8 +460,21 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
             ext = external_step.failed_block(final, external, f"external step failed: {type(exc).__name__}")
         lap("external")
     timings["wall"] = round(time.monotonic() - wall, 3)
-    calls = tracker.calls[first_call:] if tracker is not None else []
-    manifest = {
+    calls = tracker.run_calls[first_call:] if tracker is not None else []
+    manifest = _manifest(run_id, calls, attempt, problems, repairs, best_round, timings, best_report)
+    if ext is not None:
+        manifest["prompt_sha256"].update(ext["prompt_sha256"])
+        manifest["external_mode"] = external
+        manifest["external_library_sha256"] = ext["library_sha256"]
+    return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
+                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing,
+                     ext)
+
+
+def _manifest(run_id: str, calls: list[dict], attempts: int, problems: list[str], repairs: list[dict],
+              best_round: int | None, timings: dict[str, float], report: Report | None) -> dict:
+    """Run metadata; `report` is None (verification null) for an off-topic run."""
+    return {
         "run_id": run_id,
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "models": sorted({c["model"] for c in calls}),
@@ -448,17 +488,10 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
                    "completion": sum(c["completion_tokens"] for c in calls),
                    "cached": sum(c["cached_tokens"] for c in calls)},
         "calls": len(calls),
-        "intake_attempts": attempt,
+        "intake_attempts": attempts,
         "intake_problems": problems,
         "repair_rounds": len(repairs),
         "kept_round": best_round,
         "timings_s": timings,
-        "verification": best_report.summary(),
+        "verification": report.summary() if report is not None else None,
     }
-    if ext is not None:
-        manifest["prompt_sha256"].update(ext["prompt_sha256"])
-        manifest["external_mode"] = external
-        manifest["external_library_sha256"] = ext["library_sha256"]
-    return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
-                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing,
-                     ext)

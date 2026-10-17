@@ -7,13 +7,18 @@ temperature: 0
 response_mode: json_schema
 # max_tokens includes the hidden reasoning tokens of v4.1-flash (about 5k on a short intake; up to ~28k on a hard
 # assess, which cut a reply at 32k, D-025). Routed endpoints allow >=131k output tokens (checked 2026-10-17 15:10).
+# Timeouts (D-038): the SDK client is built with max_retries=0 and the client-wide `timeout_s` below; every
+# request passes its role's `timeout_s` (seconds; a role without one uses the top-level value). A timed-out
+# request is retried once, then the call fails (RuntimeError; a set run records the case as failed and goes on).
+# Other transient errors (connection, rate limit, 5xx) keep up to 3 attempts. Values set by the user (D-040).
+timeout_s: 600
 roles:
-  intake: {model: deepseek/deepseek-v4.1-flash, max_tokens: 16000}
-  assess: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000}
-  repair: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000}
+  intake: {model: deepseek/deepseek-v4.1-flash, max_tokens: 16000, timeout_s: 240}
+  assess: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000, timeout_s: 600}
+  repair: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000, timeout_s: 600}
   # Phase 4 external evidence (gap-gated): a small query plan and one secondary-evidence call.
-  external_queries: {model: deepseek/deepseek-v4.1-flash, max_tokens: 16000, reasoning: {effort: low}}
-  external_evidence: {model: deepseek/deepseek-v4.1-flash, max_tokens: 32000, reasoning: {effort: low}}
+  external_queries: {model: deepseek/deepseek-v4.1-flash, max_tokens: 16000, reasoning: {effort: low}, timeout_s: 180}
+  external_evidence: {model: deepseek/deepseek-v4.1-flash, max_tokens: 32000, reasoning: {effort: low}, timeout_s: 180}
 # Provider routing per model: only strict-JSON capable, non-fp4 endpoints, cheapest first (checked 2026-10-17 10:14).
 provider_routing:
   deepseek/deepseek-v4.1-flash: {order: [deepinfra, atlas-cloud, coreweave], only: [deepinfra, atlas-cloud, coreweave], allow_fallbacks: true}

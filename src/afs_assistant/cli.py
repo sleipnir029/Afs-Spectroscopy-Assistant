@@ -59,7 +59,8 @@ def _assess_one(enquiry: str, scenario_id: str | None, client, out_dir=None, tit
         stem = scenario_id or result.run_id
         (out_dir / f"{stem}.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         (out_dir / f"{stem}.md").write_text(markdown, encoding="utf-8")
-    return {"run_id": result.run_id, "markdown": markdown, "summary": result.report.summary(),
+    summary = "off-topic (stopped after the intake)" if result.report is None else result.report.summary()
+    return {"run_id": result.run_id, "markdown": markdown, "summary": summary,
             "cost_usd": result.manifest["cost_usd"], "provenance_commit": commit}
 
 
@@ -78,6 +79,11 @@ def _assess(args: argparse.Namespace) -> int:
 
 
 def _run_set(args: argparse.Namespace) -> int:
+    """Assess a scenario set on `--workers` threads (1 = one after the other). A line per case as it
+    finishes, then a summary in scenario order. A spend cap (or an unexpected error) stops new cases;
+    the running ones finish, then it is raised."""
+    from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+
     from openai import APIError
 
     from afs_assistant import paths, scenarios
@@ -86,23 +92,47 @@ def _run_set(args: argparse.Namespace) -> int:
     if args.set == "final" and not args.final_ok:
         print("The final set is held out. Pass --i-know-this-is-the-final-run to generate it (Phase 5 only).")
         return 2
+    if args.workers < 1:
+        print("--workers must be at least 1.")
+        return 2
     client = OpenRouterClient()
     items = scenarios.load(args.set)
     if args.only:
         items = [s for s in items if s["id"] in args.only.split(",")]
-    failed = []
-    for s in items:
-        try:
-            out = _assess_one(s["enquiry"], s["id"], client, paths.OUTPUTS / args.set, s["title"],
-                              external=args.external)
-        except SpendCapExceeded:
-            raise
-        except (RuntimeError, ValueError, APIError) as exc:  # one bad scenario must not stop the set
-            failed.append(s["id"])
-            print(f"{s['id']}: FAILED {type(exc).__name__}: {exc}")
-            continue
-        print(f"{s['id']}: verification {out['summary']} cost ${out['cost_usd']:.4f}")
-    print(f"session cost ${client.tracker.session_usd:.4f}; failed: {failed or 'none'}")
+    lines: dict[str, str] = {}
+    failed: set[str] = set()
+    stop: Exception | None = None
+    queue = list(items)
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        running = {}
+        while queue or running:
+            while queue and stop is None and len(running) < args.workers:
+                s = queue.pop(0)
+                running[pool.submit(_assess_one, s["enquiry"], s["id"], client, paths.OUTPUTS / args.set,
+                                    s["title"], external=args.external)] = s["id"]
+            if not running:
+                break
+            done, _ = wait(running, return_when=FIRST_COMPLETED)
+            for future in done:
+                sid = running.pop(future)
+                try:
+                    out = future.result()
+                except Exception as exc:  # noqa: BLE001 - one bad scenario must not stop the set
+                    failed.add(sid)
+                    lines[sid] = f"{sid}: FAILED {type(exc).__name__}: {exc}"
+                    if isinstance(exc, SpendCapExceeded) or not isinstance(exc, (RuntimeError, ValueError, APIError)):
+                        stop = stop or exc      # a spend cap or an unexpected error: no new cases
+                else:
+                    lines[sid] = f"{sid}: verification {out['summary']} cost ${out['cost_usd']:.4f}"
+                print(lines[sid], flush=True)
+    order = [s["id"] for s in items]
+    print("summary (scenario order):")
+    for sid in order:
+        print(f"  {lines.get(sid, f'{sid}: not run (stopped)')}")
+    print(f"session cost ${client.tracker.session_usd:.4f}; "
+          f"failed: {[sid for sid in order if sid in failed] or 'none'}")
+    if stop is not None:
+        raise stop
     return 1 if failed else 0
 
 
@@ -156,6 +186,7 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--only", help="comma-separated scenario ids")
     r.add_argument("--i-know-this-is-the-final-run", dest="final_ok", action="store_true")
     r.add_argument("--external", choices=["live", "cache", "off"], default="live", help=EXTERNAL_HELP)
+    r.add_argument("--workers", type=int, default=4, help="scenarios assessed in parallel (1 = one at a time)")
     r.set_defaults(func=_run_set)
     e = sub.add_parser("external", help="external evidence commands")
     e_sub = e.add_subparsers(dest="external_command", required=True)

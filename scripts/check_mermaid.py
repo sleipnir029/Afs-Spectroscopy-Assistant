@@ -5,11 +5,12 @@ Usage: uv run python scripts/check_mermaid.py [FILE_OR_DIR ...]   (default: outp
 Each ```mermaid block is written to a temporary .mmd file and rendered to SVG with
 `npx -y @mermaid-js/mermaid-cli`. Exit 0 if all render, 1 if any fails, 2 if mmdc
 cannot run at all (e.g. npx missing or the headless browser download failed); then
-the offline structural tests in tests/ remain the check.
+the offline structural tests in tests/ remain the check. Off-topic runs are skipped.
 """
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import shutil
@@ -28,11 +29,23 @@ BROWSERS = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
             "/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser"]
 
 
+def _off_topic(md: Path) -> bool:
+    """An off-topic run (its run JSON next to the Markdown has `off_topic`) has no chart to render."""
+    run_json = md.with_suffix(".json")
+    try:
+        return json.loads(run_json.read_text(encoding="utf-8")).get("off_topic") is not None
+    except (OSError, ValueError, AttributeError):
+        return False
+
+
 def blocks(paths: list[Path]) -> list[tuple[str, int, str]]:
     found = []
     for path in paths:
         files = sorted(path.glob("*.md")) if path.is_dir() else [path]
         for f in files:
+            if _off_topic(f):
+                print(f"[SKIP] {f.name}: off-topic run (no setup sketch)")
+                continue
             for n, m in enumerate(BLOCK.finditer(f.read_text(encoding="utf-8")), 1):
                 found.append((str(f.relative_to(ROOT) if f.is_relative_to(ROOT) else f), n, m.group(1)))
     return found

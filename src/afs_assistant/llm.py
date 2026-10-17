@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 import time
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -43,28 +44,52 @@ class LLMResult:
 
 @dataclass
 class SpendTracker:
+    """Spend caps and the call log, safe to share between threads (parallel set runs).
+
+    The session total and `calls` are shared under a lock. The run total and `run_calls`
+    belong to the calling thread: `start_run` resets them for the run on that thread, so the
+    per-run cap stays per run when several runs share one tracker.
+    """
     per_run_cap: float
     per_session_cap: float
-    run_usd: float = 0.0
     session_usd: float = 0.0
     calls: list[dict] = field(default_factory=list)
+    _lock: threading.Lock = field(default_factory=threading.Lock, init=False, repr=False, compare=False)
+    _local: threading.local = field(default_factory=threading.local, init=False, repr=False, compare=False)
+
+    @property
+    def run_usd(self) -> float:
+        return getattr(self._local, "run_usd", 0.0)
+
+    @property
+    def run_calls(self) -> list[dict]:
+        """The calls of the run on this thread since its `start_run`."""
+        if not hasattr(self._local, "calls"):
+            self._local.calls = []
+        return self._local.calls
 
     def start_run(self) -> None:
-        self.run_usd = 0.0
+        self._local.run_usd = 0.0
+        self._local.calls = []
 
     def check(self) -> None:
-        if self.run_usd >= self.per_run_cap:
-            raise SpendCapExceeded(f"run spend {self.run_usd:.4f} USD reached cap {self.per_run_cap}")
-        if self.session_usd >= self.per_session_cap:
-            raise SpendCapExceeded(f"session spend {self.session_usd:.4f} USD reached cap {self.per_session_cap}")
+        with self._lock:
+            if self.run_usd >= self.per_run_cap:
+                raise SpendCapExceeded(f"run spend {self.run_usd:.4f} USD reached cap {self.per_run_cap}")
+            if self.session_usd >= self.per_session_cap:
+                raise SpendCapExceeded(f"session spend {self.session_usd:.4f} USD reached cap "
+                                       f"{self.per_session_cap}")
 
     def add(self, role: str, result: LLMResult) -> None:
-        self.run_usd += result.cost_usd
-        self.session_usd += result.cost_usd
-        self.calls.append({"role": role, "model": result.model, "provider": result.provider,
-                           "prompt_tokens": result.prompt_tokens,
-                           "completion_tokens": result.completion_tokens, "cached_tokens": result.cached_tokens,
-                           "cost_usd": round(result.cost_usd, 6), "latency_s": round(result.latency_s, 2)})
+        call = {"role": role, "model": result.model, "provider": result.provider,
+                "prompt_tokens": result.prompt_tokens,
+                "completion_tokens": result.completion_tokens, "cached_tokens": result.cached_tokens,
+                "cost_usd": round(result.cost_usd, 6), "latency_s": round(result.latency_s, 2)}
+        with self._lock:
+            self._local.run_usd = self.run_usd + result.cost_usd
+            self.session_usd += result.cost_usd
+            self.calls.append(call)
+            self.run_calls.append(call)
 
 
 def make_tracker() -> SpendTracker:
@@ -95,10 +120,21 @@ def strict_schema(schema: dict) -> dict:
     return fix(json.loads(json.dumps(schema)))
 
 
+def timeout_s(role: str) -> float:
+    """Per-request timeout of a role (seconds): its `timeout_s`, else the top-level `timeout_s`."""
+    cfg = config()
+    return float(cfg["roles"][role].get("timeout_s", cfg["timeout_s"]))
+
+
 class OpenRouterClient:
-    """Real client. Reads OPENROUTER_API_KEY from the environment or .env."""
+    """Real client. Reads OPENROUTER_API_KEY from the environment or .env.
+
+    The SDK does not retry (`max_retries=0`); this class retries transient errors itself, and a
+    timed-out request (per-role `timeout_s`) at most once, so a stalled provider cannot block a run.
+    """
 
     TRANSIENT = ("APIConnectionError", "APITimeoutError", "RateLimitError", "InternalServerError")
+    MAX_TIMEOUTS = 2        # a timed-out call is retried once; the second timeout fails the call
 
     def __init__(self, tracker: SpendTracker | None = None) -> None:
         from dotenv import load_dotenv
@@ -108,7 +144,8 @@ class OpenRouterClient:
         key = os.environ.get("OPENROUTER_API_KEY")
         if not key:
             raise RuntimeError("OPENROUTER_API_KEY is not set (put it in .env; never commit it)")
-        self.client = OpenAI(base_url=config()["base_url"], api_key=key)
+        self.client = OpenAI(base_url=config()["base_url"], api_key=key, max_retries=0,
+                             timeout=float(config()["timeout_s"]))
         self.tracker = tracker or make_tracker()
 
     def complete_json(self, role: str, system: str, user: str, schema_name: str, schema: dict) -> LLMResult:
@@ -127,6 +164,7 @@ class OpenRouterClient:
             extra["reasoning"] = role_cfg["reasoning"]
 
         last_error: Exception | None = None
+        timeouts = 0
         for attempt in range(3):
             self.tracker.check()          # per attempt: a retried call must not run past the cap
             started = time.monotonic()
@@ -134,12 +172,17 @@ class OpenRouterClient:
                 response = self.client.chat.completions.create(
                     model=model, messages=messages, temperature=cfg.get("temperature", 0),
                     max_tokens=role_cfg.get("max_tokens", 8000), response_format=response_format,
-                    extra_body=extra,
+                    extra_body=extra, timeout=timeout_s(role),
                 )
             except Exception as exc:  # retry only transient API errors
                 if type(exc).__name__ not in self.TRANSIENT:
                     raise
                 last_error = exc
+                if type(exc).__name__ == "APITimeoutError":
+                    timeouts += 1
+                    if timeouts >= self.MAX_TIMEOUTS:
+                        raise RuntimeError(f"LLM call timed out {timeouts} times ({timeout_s(role):.0f} s each, "
+                                           f"role {role})") from exc
                 time.sleep(2 * (attempt + 1))
                 continue
             # Cost every reply, including the ones discarded below (truncated or invalid JSON).
