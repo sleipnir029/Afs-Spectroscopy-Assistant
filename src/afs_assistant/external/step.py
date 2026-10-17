@@ -71,6 +71,9 @@ MAX_ID_CHARS = 40               # model-given ids (gap, option, source) as store
 MIN_SHARED_WORDS = 2            # content words a finding must share with its own quote
 MIN_ABSTRACT_SHARED = 2         # content words an abstract-only source must share with the sample/target terms
 NOT_SAMPLE_TERMS = frozenset({  # method words every source here uses, generic quantity words, function words
+    "unknown", "laboratory", "lab", "check", "checks", "offline", "send", "sent", "currently", "existing",
+    "prompt", "measurements", "reference", "useful", "build", "tell", "whether", "target", "varies",
+    "production", "assays", "exposed",
     "nir", "mir", "raman", "fluorescence", "uv-vis", "uv", "vis", "atr", "ftir", "ft-ir", "infrared",
     "near-infrared", "mid-infrared", "spectroscopy", "spectroscopic", "spectra", "spectrum", "spectral",
     "in-line", "inline", "line", "on-line", "online", "monitoring", "measurement", "measure", "measured",
@@ -330,7 +333,7 @@ def sample_terms(intake: Intake) -> set[str]:
     method, generic-quantity and function words (NOT_SAMPLE_TERMS)."""
     s = intake.sample
     texts = [t.variable for t in intake.targets] + [getattr(s, n).enquiry_quote or "" for n in type(s).model_fields]
-    texts += [p.value for p in intake.process]
+    texts += [p.value for p in intake.process if p.value.strip().lower() not in ("unknown", "not stated")]
     return _relevance_words(" ".join(texts)) - NOT_SAMPLE_TERMS
 
 

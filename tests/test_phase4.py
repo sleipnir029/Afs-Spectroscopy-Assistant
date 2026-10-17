@@ -1088,8 +1088,8 @@ def test_sample_terms_and_the_two_word_rule():                                  
     from afs_assistant.schema import Intake
 
     intake = Intake.model_validate(INTAKE)
-    assert step.sample_terms(intake) == {"ethanol", "pipe", "clear", "aqueous", "fermentation", "broth",
-                                         "lab"}                     # "lab" from the process facts (review N3)
+    assert step.sample_terms(intake) == {"ethanol", "pipe", "clear", "aqueous", "fermentation",
+                                         "broth"}                   # process filler such as "lab" is excluded
     hyphen = record(["A hot-melt study of broth."], access="abstract_only")
     assert step.off_domain(hyphen, {"melt", "pellet"}) and not step.off_domain(hyphen, {"melt", "broth"})
     abstract_b = record([ABSTRACT_B], access="abstract_only")
@@ -1137,6 +1137,9 @@ def test_product_and_size_codes_are_compared_without_space_or_hyphen():         
     for query in ("XR200 analyser Raman", "xr 200 probe", "DN50 pipe Raman", "dn-50 in-line NIR"):
         assert guard.problem(query) is not None, query
     assert guard.problem("in-line Raman pipe probe") is None
+    formulas = query_guard.Guard("We follow dissolved O2 and CO2 in a broth; AB12 is our site code.")
+    assert formulas.problem("dissolved CO2 Raman broth") is None                # chemical formulas are not codes
+    assert formulas.problem("ab12 broth NIR") is not None
 
 
 def test_whitespace_between_digits_is_kept_in_the_loose_form():                   # 5.0b review N2

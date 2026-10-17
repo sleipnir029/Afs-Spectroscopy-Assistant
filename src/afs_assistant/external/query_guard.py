@@ -38,7 +38,8 @@ _WORD = re.compile(r"[^\W\d_][^\W_]*")                        # letters first, t
 _NUMBER = re.compile(r"(?<![^\W_])\d+(?:[.,]\d+)?")          # not glued to a word before it ("CO2" is no number)
 _ADDRESS = re.compile(r"\S+@\S+|https?://\S+|www\.\S+|\b[\w-]+\.[a-z]{2,6}\b")
 _ADDRESS_PARTS = frozenset({"www", "http", "https", "com", "de", "org", "net", "eu", "ch", "at", "uk", "co", "io"})
-_CODE = re.compile(r"\b[A-Za-z]{1,5}[\s-]?\d+\b")       # "XR-200", "DN 50", "XR200"
+_CODE = re.compile(r"\b[A-Za-z]{1,5}(?:[\s-]\d+|\d{2,})\b")  # "XR-200", "DN 50", "XR200"; not "CO2", "O2"
+_FORMULA = re.compile(r"^(?:[A-Z][a-z]?\d{0,2})+$")     # "CO2", "O2", "CH4", "H2O": a formula, not a name
 
 
 @cache
@@ -56,7 +57,8 @@ def name_like_words(texts: list[str]) -> set[str]:
     vocab = vocabulary()
     lower = {w for t in texts for w in _WORD.findall(t) if w.islower()}
     return {w.lower() for t in texts for w in _WORD.findall(t)
-            if w[0].isupper() and len(w) > 1 and w.lower() not in vocab and w.lower() not in lower}
+            if w[0].isupper() and len(w) > 1 and w.lower() not in vocab and w.lower() not in lower
+            and not (_FORMULA.match(w) and any(ch.isdigit() for ch in w))}
 
 
 def address_words(text: str) -> set[str]:
