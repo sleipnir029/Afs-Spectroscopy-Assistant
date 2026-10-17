@@ -1,0 +1,526 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The sources support NIR transmission/transflection for clear liquids and NIR reflection for opaque or concentrated dairy streams, so a shortlist of methods worth testing can be justified. The required protein accuracy, the turbidity range and the reference method are not yet known, so the choice between the options stays provisional.",
+ "premise_checks": [
+  {
+   "premise": "Laboratory results can serve as the reference for the protein measurement.",
+   "verdict": "supported",
+   "explanation": "Independent reference measurements are part of a feasibility plan, so a laboratory protein value is the expected reference.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "One first measurement concept can handle the turbidity change without assuming the liquid always stays clear.",
+   "verdict": "precedent_only",
+   "explanation": "A dairy example shows a single transflection probe working for both low-fat and high-fat products, and shows value in having both transmission and reflection available; this is a reason to test, not proof for this whey stream.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "By maintaining both, a lab can calibrate models for every stage of production",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Required protein accuracy, precision, detection limit and response time",
+  "Range and dynamics of turbidity (optical density) across operating states",
+  "Laboratory reference method and its sampling frequency",
+  "Target protein species and concentration range in the stream",
+  "Installation point, flow, distance to the analyzer, cleaning and fouling",
+  "Process temperature and pressure at the measurement point"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What protein accuracy, precision and response time must the measurement meet?",
+   "why_it_matters": "It decides whether a NIR-only model can be the answer or whether a second method is needed.",
+   "affects": [
+    "method",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "How far and how quickly does the turbidity change, and what is the highest optical density the stream reaches?",
+   "why_it_matters": "It decides between transmission, diffuse reflection, or both.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Which laboratory method and sampling frequency will provide the reference protein values?",
+   "why_it_matters": "It defines the reference data the chemometric model is built and validated against.",
+   "affects": [
+    "method",
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What is the stream temperature at the measurement point, and is a temperature sensor available there?",
+   "why_it_matters": "It decides whether temperature must be an input to the model.",
+   "affects": [
+    "installation",
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Where will the probe be installed: pipe size and flow, distance to the analyzer, cleaning and hygiene requirements?",
+   "why_it_matters": "It decides the probe, the fiber link and the installation concept.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Transmission is the preferred geometry for clear, semi-transparent liquids such as whey, and NIR is the most common in-line method with fiber probes. A transflection probe can in some cases serve both low-fat and high-fat streams, which is exactly the variation here.",
+   "conditions": "Applies while the stream stays within the pathlength the probe can handle; if it becomes too opaque for the light to penetrate, a reflection geometry is needed.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Diffuse reflection is used for opaque or highly concentrated dairy products, so it is the counterpart to test for the turbid operating state. Reflection is sensitive to surface characteristics and particle size, so scatter correction and its own calibration are needed.",
+   "conditions": "Applies mainly to the more turbid state; for clear liquid it is less representative than transmission.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "reflection can work well in highly scattering environments but can be less representative for clear liquids.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "MIR ATR gives well-defined fundamental bands with high selectivity and is not limited by pathlength, so it is the fallback if the NIR models do not resolve the protein signal in the turbid state. Combining NIR with MIR is a hypothesis to test against the best single method, not a demonstrated gain for this stream.",
+   "conditions": "Applies only if the single-method NIR tests do not reach the required protein accuracy and the MIR probe contact, fouling and fiber link prove workable.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Mid-IR band spectra contain well-defined peaks (absorption bands), while NIR, UV, and fluorescence spectra contain broad, highly overlapping signals",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 14,
+     "quote": "Synergy effect of combined near and mid-infrared fibre spectroscopy for diagnostics of abdominal cancer.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR fiber probe in transmission/transflection for the clear state and a NIR reflection probe for the turbid state; MIR ATR only as a later add-on.",
+  "location": "In-line at the whey stream before the concentration stage.",
+  "fiber_link": "Silica fibers cover the NIR range; any MIR link length is an open question for AFS.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "NIR Spectrometer and NIR light source remain the same for both reflection and transmission techniques.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal MIR range 4000-400 cm-1; the usable range depends on the fiber, ATR crystal and spectrometer actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Turbidity may rise past the point where NIR light penetrates the stream, so the clear-state transmission geometry may not carry the turbid state.",
+   "rule_ids": [
+    "R-GEO-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The required protein accuracy is unknown, and NIR bands are broad and overlapping, so a NIR-only model may not reach it.",
+   "rule_ids": [
+    "R-NIR-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The dairy NIR results in the sources are precedents from other products and other streams, not proof for this whey stream.",
+   "rule_ids": [
+    "R-EVI-2"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "A MIR-ATR add-on brings contact, fouling and fiber-link limits that may not suit this in-line dairy point.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-FIB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative whey samples and process states across the expected clear-to-turbid variation, covering the stream before the concentration stage.",
+    "purpose": "Cover the expected variation",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure the single methods first, NIR transmission/transflection and NIR diffuse reflection, and keep MIR ATR and any combination for a later stage.",
+    "purpose": "Measure single methods first (NIR transmission/transflection, NIR diffuse reflection); keep MIR ATR and any combination for a later stage.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 3,
+      "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Obtain independent laboratory protein values for every sample, with replicates and a defined sampling frequency.",
+    "purpose": "Obtain independent laboratory protein values for every sample, with replicates and a defined sampling frequency.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build and validate one chemometric model per technique on held-out runs or batches, then test whether a combined NIR + MIR model beats the best single method on the same independent batches.",
+    "purpose": "Build and validate one chemometric model per technique on held-out runs or batches; only then test whether a combined NIR + MIR model beats the best single method on the same independent batches.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Compare the model error in the clear state and in the turbid state against the protein accuracy the customer requires as the go/no-go basis; the numerical thresholds come from the customer.",
+    "purpose": "Go/no-go: compare the model error in the clear state and in the turbid state against the protein accuracy the customer requires; the numerical thresholds come from the customer.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory protein values for every sample, with replicates and a defined sampling frequency.",
+  "decision_basis": "Customer-supplied protein accuracy target, assessed separately for the clear and the turbid state."
+ },
+ "assumptions": [
+  "The whey stream is a flowing aqueous liquid with a protein content that can be measured by a laboratory reference method.",
+  "The probe can be installed in-line at one point before the concentration stage.",
+  "The stream temperature varies little enough that it can be recorded rather than controlled."
+ ],
+ "not_in_sources": [
+  "No source gives an achievable protein accuracy, detection limit or response time for whey, and no source states an achievable in-line MIR fiber link length; both are open questions for AFS."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "protein concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the target the customer wants to track as the stream changes.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "using Partial Least Squares (PLS) regression to quantify fat and protein",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "turbidity / optical density",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It defines which optical regime the stream is in and therefore which geometry can be used.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "turbidity sensor",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "stream temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "NIR water and protein bands shift with temperature, so the calibration needs the temperature to separate thermal from compositional change.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Single probe, single spectrometer, established dairy geometry.",
+   "maintenance": "One probe window to clean; one calibration to maintain.",
+   "performance_fit": "Least effort; a transflection probe may cover both the clear and the turbid state.",
+   "cost_drivers": "One NIR spectrometer, one probe, one calibration and installation.",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Two probes on one NIR spectrometer and one shared light source.",
+   "maintenance": "Two windows to clean; separate calibration per technique.",
+   "performance_fit": "Transmission for the clear state, reflection for the turbid state, without assuming the stream stays clear.",
+   "cost_drivers": "One NIR spectrometer, two probes, two calibrations, switching hardware.",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "NIR Spectrometer and NIR light source remain the same for both reflection and transmission techniques.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "By maintaining both, a lab can calibrate models for every stage of production",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M1",
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Two instruments with synchronised sampling; more demanding to run.",
+   "maintenance": "Two calibrations and diagnostics; a probe change breaks the fused model.",
+   "performance_fit": "Adds MIR fundamental bands if NIR alone lacks protein selectivity.",
+   "cost_drivers": "Second spectrometer, MIR fiber probe, synchronisation and fusion work.",
+   "fusion_note": "Level: one calibration per method first, then low-level fusion of the joined spectra with block scaling so neither block dominates the model. Both probes must look at the same small area of the flowing stream, their data must be aligned to a common time step, and each block needs its own calibration and diagnostics. The second instrument is only worth keeping if the fused model beats the best single NIR model on independent batches.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Variables obtained from different spectral methods are not equivalent.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "NIR bands overlap, so a chemometric calibration is required, and it is specific to the matrix: a model built on one whey composition must be re-validated when the stream or product changes. The laboratory protein values are the reference data for building and validating that model.",
+ "realtime_tracking_note": "The measurement point is in-line and continuous, and fiber probes allow on-site analysis with results in near real time, which suits a stream that changes during operation rather than grab sampling.",
+ "future_direction": "Once the informative wavelengths are known, a compact LED-based optical multisensor system could be a later step for this measuring point.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the measured turbidity stays low in all operating states, the single-probe option O1 becomes sufficient; if NIR cannot reach the required protein accuracy, the combined option O3 becomes the candidate.",
+  "next_step": "Run the feasibility experiment on clear and turbid whey samples with laboratory protein references, then review the results with AFS."
+ },
+ "brief_answer": "Test NIR first, using a transmission/transflection geometry for the clear state and a diffuse-reflection geometry for the more turbid state, with laboratory protein values as the reference. A single transflection probe may already cover both states, so it is the least-effort first test. A MIR-ATR add-on is only a later option if NIR cannot reach the required protein accuracy. The turbidity range, accuracy target and reference method are still open."
+}
