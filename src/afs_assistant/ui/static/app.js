@@ -86,6 +86,7 @@
     function closePanel() {
       if (!panel || panel.hidden) return;
       panel.hidden = true;
+      root.classList.remove("panel-open");
       clearCurrent();
       if (opener) opener.focus();
     }
@@ -94,7 +95,7 @@
       if (tag) { opener = tag; clearCurrent(); tag.setAttribute("aria-current", "true"); }
     });
     document.body.addEventListener("htmx:afterSwap", function (ev) {
-      if (body && ev.detail.target === body) { panel.hidden = false; body.scrollTop = 0; body.focus(); }
+      if (body && ev.detail.target === body) { panel.hidden = false; root.classList.add("panel-open"); body.scrollTop = 0; body.focus(); }
     });
     if (closeBtn) closeBtn.addEventListener("click", closePanel);
     document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") closePanel(); });

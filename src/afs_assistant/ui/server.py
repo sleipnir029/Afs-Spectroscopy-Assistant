@@ -46,6 +46,8 @@ LIVE_SET = "ui"
 TURNS = "turns"
 MAX_TURNS = 12
 POLL_SECONDS = 1
+MAX_CHARS = 8000                              # per enquiry, answer or follow-up (form maxlength + server check)
+TOO_LONG = f"Please keep each text to {MAX_CHARS} characters or fewer; shorten it and send it again."
 LOCAL_HOSTS = {"127.0.0.1", "localhost"}
 # Which display step a model call belongs to (external roles are named external_*).
 ROLE_STEP = {"intake": "intake", "assess": "assess", "repair": "assess"}
@@ -126,7 +128,7 @@ class Store:
         return chain
 
     def list(self) -> list[dict]:
-        """Saved runs; first questions only (follow-up turns open from their thread)."""
+        """Finished answers to first questions (follow-up turns open from their thread)."""
         out = []
         if not self.root.exists():
             return out
@@ -141,8 +143,8 @@ class Store:
             if not isinstance(data, dict) or "enquiry" not in data:
                 continue
             rid = f"{set_name}-{stem}"
-            if self.turn(rid).get("parent"):
-                continue
+            if self.turn(rid).get("parent") or view.is_off_topic(data) or view.is_incomplete(data):
+                continue                          # finished answers only; others stay reachable by URL
             out.append({"id": rid, "set": set_name, "stem": stem, "title": view.title_of(md, data),
                         "status": view.status_label(data),
                         "date": str((data.get("manifest") or {}).get("created_utc", ""))[:10]})
@@ -298,12 +300,25 @@ def _host_of(value: str) -> str:
         return ""
 
 
+def _netloc_of(url: str) -> str:
+    """'http://127.0.0.1:8765/x' -> '127.0.0.1:8765'; anything unparsable or 'null' -> ''."""
+    try:
+        return urlsplit(url).netloc.lower()
+    except ValueError:
+        return ""
+
+
+def _too_long(*texts: str) -> bool:
+    return any(len(t) > MAX_CHARS for t in texts)
+
+
 # -------------------------------------------------------------------------------------------- app
 def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, external: str = "live",
                host: str = "127.0.0.1") -> FastAPI:
     app = FastAPI(title="AFS Spectroscopy Assistant", docs_url=None, redoc_url=None, openapi_url=None)
     app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
     templates = Jinja2Templates(directory=HERE / "templates")
+    templates.env.globals["MAX_CHARS"] = MAX_CHARS
     store = Store(outputs)
     jobs = Jobs(client_factory, store, external)
     allowed = LOCAL_HOSTS | {host.lower()}
@@ -318,7 +333,8 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
             origin = request.headers.get("origin")
             referer = request.headers.get("referer")
             source = origin if origin is not None else referer
-            if source is not None and _host_of(source) not in allowed:
+            # same origin = same host AND port as this server (another local app on :3000 is foreign)
+            if source is not None and _netloc_of(source) != request.headers.get("host", "").lower():
                 return PlainTextResponse("Cross-origin request refused.", status_code=403)
         return await call_next(request)
 
@@ -363,9 +379,9 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
     @app.post("/assess")
     def assess(request: Request, enquiry: str = Form("")):
         text = enquiry.strip()
-        if not text:
-            return page(request, "start.html", status_code=422, q="", examples=list(OFF_TOPIC_EXAMPLES),
-                        error="Describe what you want to measure first.")
+        if not text or _too_long(text):
+            return page(request, "start.html", status_code=422, q=text[:MAX_CHARS], examples=list(OFF_TOPIC_EXAMPLES),
+                        error=TOO_LONG if text else "Describe what you want to measure first.")
         job = jobs.start(text, text)
         return RedirectResponse(f"/jobs/{job.id}", status_code=303)
 
@@ -377,6 +393,8 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
         answers = [{"question": q["question"], "answer": str(form.get(f"answer_{q['id']}", "")).strip()}
                    for q in v.get("questions", [])]
         given = [a for a in answers if a["answer"]]
+        if _too_long(follow_up, *(a["answer"] for a in given)):
+            return page(request, "error.html", status_code=422, message=TOO_LONG, back=f"/runs/{rid}")
         if not given and not follow_up:
             return RedirectResponse(f"/runs/{rid}#sharpen", status_code=303)
         question = "\n".join([f"{a['question']} {a['answer']}" for a in given] + ([follow_up] if follow_up else []))

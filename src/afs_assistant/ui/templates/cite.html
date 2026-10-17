@@ -4,7 +4,8 @@
   {% if not htmx %}<p><a href="/runs/{{ v.key }}">Back to the answer</a></p>{% endif %}
   <h2 class="cite-title" id="panel-title"><span class="mono">{{ c.label }}</span></h2>
   <p class="badges">
-    {% if c.verified %}<span class="ok"><span aria-hidden="true">✓</span> Verified quote{% if c.quote_status %} · {{ c.quote_status }} match{% endif %}</span>
+    {% if c.kind == 'table' %}<span class="ok">Table 1 rows (transcribed from the supplied table)</span>
+    {% elif c.verified %}<span class="ok"><span aria-hidden="true">✓</span> Verified quote{% if c.quote_status %} · {{ c.quote_status }} match{% endif %}</span>
     {% else %}<span class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> Not verified</span>{% endif %}
   </p>
   <p class="muted small">{% if c.kind == 'external' %}<span class="ext-note">external, not AFS material</span>{% else %}AFS material{% if src %} · {{ src.title }}{% endif %}{% if c.precedent %} · precedent only: a reason to test, not proof{% endif %}{% endif %}</p>
@@ -16,6 +17,13 @@
     {% else %}
     <p class="flag">The cited page is not in the knowledge base.</p>
     {% endif %}
+  {% elif c.kind == 'table' %}
+    <div class="table-scroll"><table class="grid grid-small">
+      <thead><tr><th scope="col">Row</th><th scope="col">Method</th><th scope="col">Technique</th><th scope="col">Cost</th></tr></thead>
+      <tbody>{% for r in c.rows %}<tr><td class="mono">{{ r.row }}</td><td>{{ r.method }}</td><td>{{ r.table_technique }}</td><td>{{ r.cost }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <p class="muted small">The cost class is the table's qualitative rating for these in-line method and technique rows; it is not a price.</p>
+    {% if c.page_text %}<p class="label">Page text ({{ c.title or 'S01 p.6' }})</p><div class="source-text">{{ c.page_text }} …</div>{% endif %}
   {% else %}
     <blockquote class="quote">“{{ c.quote }}”</blockquote>
     <dl class="kv kv-small kv-stack">

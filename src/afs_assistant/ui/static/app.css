@@ -266,6 +266,8 @@ svg.fig .sp-value { font-size: 12px; fill: var(--color-muted); }
 .sp-other { fill: none; stroke: var(--color-ink); stroke-width: 1.5; }
 .sp-fiber { fill: var(--color-accent-wash); stroke: var(--color-accent); }
 .fig-full { margin: 0 0 var(--space-4); }
+.fig-notes { margin: var(--space-3) 0 0; padding-left: 1.4em; font-size: var(--text-sm); color: var(--color-ink-2); }
+.grid-small { min-width: 0; font-size: var(--text-sm); }
 
 /* ---------------------------------------------------------------- sharpen */
 .sharpen > .muted { margin: var(--space-2) 0 var(--space-4); }
@@ -354,6 +356,10 @@ svg.fig .sp-value { font-size: 12px; fill: var(--color-muted); }
 .badges { margin: 0 0 var(--space-1); font-size: var(--text-sm); }
 .source-text { font-size: 0.9375rem; line-height: 1.65; border-top: var(--rule); padding: var(--space-4) 0; margin: var(--space-3) 0; overflow-wrap: anywhere; }
 .source-text mark { background: var(--color-mark); color: var(--color-ink); padding: 0.05em 0.1em; text-decoration: underline; text-decoration-color: var(--color-accent); text-underline-offset: 3px; }
+/* wide screens: the open panel pushes the answer column aside instead of covering it */
+@media (min-width: 1180px) {
+  .panel-open .main, .panel-open .composer { padding-right: calc(var(--panel) + var(--space-5)); }
+}
 @media (prefers-reduced-motion: no-preference) {
   .panel:not([hidden]) { animation: slide-in var(--dur) var(--ease-out); }
   @keyframes slide-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }

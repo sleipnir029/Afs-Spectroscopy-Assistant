@@ -78,14 +78,14 @@
     </div>
     {% for o in v.options %}
     <div class="opt" role="tabpanel" id="opt-{{ o.id }}" aria-labelledby="tab-{{ o.id }}"{% if not o.is_best %} data-hidden{% endif %}>
-      <p class="opt-title"><strong>{{ o.id }} · {{ o.tier_label }}</strong>{% if o.is_best %} <span class="best-mark">proposed</span>{% endif %}
+      <p class="opt-title"><strong>{{ o.tier_label }}</strong>{% if o.is_best %} <span class="best-mark">proposed</span>{% endif %}
         — {% for m in o.methods %}{{ m.label }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %} {{ flag(o.flag) }}</p>
       <figure class="fig-setup-wrap">
         {{ figure(o.figure, 'fw-setup') }}
-        <figcaption>Drawn by code from option {{ o.id }}: a schematic, not a configuration. Dashed: auxiliary sensor, availability to be confirmed with AFS.</figcaption>
+        <figcaption>Drawn by code from this option: a schematic, not a configuration. Dashed: auxiliary sensor, availability to be confirmed with AFS.</figcaption>
       </figure>
       <dl class="specs">
-        <div data-parts="probe spec"><dt>Cost class</dt><dd>{{ o.cost.label or '—' }} <span class="muted small mono d-block">{{ v.cost_citation }}</span></dd></div>
+        <div data-parts="probe spec"><dt>Cost class</dt><dd>{{ o.cost.label or '—' }} <span class="d-block">{{ tags(v, o.cost.cites) }}</span></dd></div>
         <div data-parts="probe"><dt>Ease of use</dt><dd>{{ o.ease }}</dd></div>
         <div data-parts="probe fiber"><dt>Upkeep</dt><dd>{{ o.maintenance }}</dd></div>
         <div data-parts="model"><dt>Confidence</dt><dd>{{ meter(o.confidence.level) }} {{ o.confidence.level }}{% if o.confidence.plain %}<span class="muted small d-block">{{ o.confidence.plain | join('; ') }}</span>{% endif %}</dd></div>
@@ -105,7 +105,7 @@
       <div class="q">
         <label for="answer_{{ q.id }}"><strong>{{ loop.index }}.</strong> {{ q.question }} {{ flag(q.flag) }}</label>
         <span class="why">Why it matters: {{ q.why }}</span>
-        <input type="text" id="answer_{{ q.id }}" name="answer_{{ q.id }}" placeholder="The customer’s answer, if known" autocomplete="off">
+        <input type="text" id="answer_{{ q.id }}" name="answer_{{ q.id }}" maxlength="{{ MAX_CHARS }}" placeholder="The customer’s answer, if known" autocomplete="off">
       </div>
       {% endfor %}
       <div class="form-row">
@@ -250,7 +250,7 @@
 <div class="composer">
   <form class="composer-in" method="post" action="/runs/{{ v.key }}/clarify">
     <label for="ask" class="sr-only">Add a detail or ask a follow-up</label>
-    <input id="ask" name="followup" type="text" autocomplete="off" placeholder="Add a detail or ask a follow-up, e.g. the line runs at 60 °C"{% if busy %} disabled{% endif %}>
+    <input id="ask" name="followup" type="text" autocomplete="off" maxlength="{{ MAX_CHARS }}" placeholder="Add a detail or ask a follow-up, e.g. the line runs at 60 °C"{% if busy %} disabled{% endif %}>
     <button class="btn" type="submit"{% if busy %} disabled{% endif %}>Send</button>
   </form>
 </div>

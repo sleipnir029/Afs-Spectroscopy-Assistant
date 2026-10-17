@@ -88,12 +88,13 @@ def test_start_page_and_examples(outputs):
     assert client.get("/?q=hello").text.count(">hello</textarea>") == 1
 
 
-def test_list_runs_labels(outputs):
+def test_list_runs_holds_finished_answers_only(outputs):
     client, _ = app_client(outputs)
     runs = {r["id"]: r for r in client.get("/api/runs").json()}
     assert runs[f"dev-{SAVED}"]["status"] == "Provisional feasibility assessment"
-    assert runs["dev-X90"]["status"] == "Off topic"
-    assert runs["dev-X91"]["status"] == "Incomplete run"
+    assert "dev-X90" not in runs and "dev-X91" not in runs           # off-topic / incomplete: by URL only
+    assert view.status_label(OFF_TOPIC_RUN) == "Off topic" and view.status_label(INCOMPLETE_RUN) == "Incomplete run"
+    assert client.get("/runs/dev-X90").status_code == 200 and client.get("/runs/dev-X91").status_code == 200
 
 
 # --------------------------------------------------------------------------------- answer turn
@@ -126,7 +127,30 @@ def test_every_saved_run_renders_and_every_citation_opens(stem):
     assert [i for i in ids if i.startswith("s")] == [f"s{k}" for k in range(1, 1 + sum(i[0] == "s" for i in ids))]
     for cid in ids:
         r = client.get(f"/runs/dev-{stem}/cite/{cid}", headers=HX)
-        assert r.status_code == 200 and "Verified quote" in r.text, (stem, cid)
+        expected = "Table 1 rows" if cid.startswith("t") else "Verified quote"
+        assert r.status_code == 200 and expected in r.text, (stem, cid)
+
+
+@pytest.mark.parametrize("stem", DEV)
+def test_setup_diagrams_show_full_text(stem):
+    """No node text is cut: every option's wide and narrow setup figure is free of an ellipsis, and every
+    node carries its full text as a <title>."""
+    v = server.Store(paths.OUTPUTS).view(f"dev-{stem}")
+    for o in v["options"]:
+        for key in ("wide", "narrow"):
+            svg = o["figure"][key]
+            assert "…" not in svg, (stem, o["id"], key)
+            assert svg.count('<g class="sn') == svg.count("<title>"), (stem, o["id"], key)
+
+
+@pytest.mark.parametrize("stem", DEV)
+def test_main_view_shows_no_internal_ids(stem):
+    client, _ = app_client(paths.OUTPUTS)
+    html = client.get(f"/runs/dev-{stem}").text
+    main = html[:html.index('<section class="more"')]
+    main = re.sub(r"<svg.*?</svg>", " ", main, flags=re.DOTALL)
+    main = re.sub(r"<title>.*?</title>|<script.*?</script>|<[^>]+>", " ", main, flags=re.DOTALL)
+    assert not re.search(r"\bO\d\b|\bP\d+\b|\bQ\d+\b", main), re.findall(r".{40}\b[OPQ]\d+\b.{20}", main)[:3]
 
 
 def test_citation_panel_supplied_and_external(outputs):
@@ -145,7 +169,7 @@ def test_citation_panel_supplied_and_external(outputs):
 def test_tag_tooltip_shows_quote_and_says_not_verified(outputs):
     data = json.loads((outputs / "dev" / f"{SAVED}.json").read_text())
     v = view.build(data, "", "dev-x")
-    assert all(c["verified"] for c in v["citations"].values())
+    assert all(c["verified"] for c in v["citations"].values() if c["kind"] != "table")
     data["verification"]["citations"] = []                        # nothing on record as verified
     client, _ = app_client(outputs)
     (outputs / "dev" / "X92.json").write_text(json.dumps(data), encoding="utf-8")
@@ -218,7 +242,8 @@ def test_foreign_host_is_refused(outputs):
 
 
 @pytest.mark.parametrize("header", [{"origin": "http://evil.example"}, {"referer": "http://evil.example/x"},
-                                    {"origin": "null"}])
+                                    {"origin": "null"}, {"origin": "http://localhost:3000"},
+                                    {"origin": "http://127.0.0.1:1"}, {"referer": "http://127.0.0.1:9999/runs"}])
 def test_cross_origin_post_is_refused(outputs, header):
     client, app = app_client(outputs)
     r = client.post("/assess", data={"enquiry": ENQUIRY}, headers=header, follow_redirects=False)
@@ -295,6 +320,17 @@ def test_empty_enquiry_is_rejected(outputs):
     assert client.post("/assess", data={"enquiry": "  "}).status_code == 422
 
 
+def test_overlong_texts_are_refused_with_a_message(outputs):
+    client, app = app_client(outputs)
+    long = "x" * (server.MAX_CHARS + 1)
+    r = client.post("/assess", data={"enquiry": long})
+    assert r.status_code == 422 and "characters or fewer" in r.text
+    r = client.post(f"/runs/dev-{SAVED}/clarify", data={"followup": long})
+    assert r.status_code == 422 and "characters or fewer" in r.text and app.state.jobs.jobs == {}
+    assert f'maxlength="{server.MAX_CHARS}"' in client.get("/").text
+    assert client.get(f"/runs/dev-{SAVED}").text.count(f'maxlength="{server.MAX_CHARS}"') >= 2
+
+
 def test_follow_up_appends_a_turn_with_what_changed(outputs, no_provenance):
     seen: list = []
     client, _ = app_client(outputs, fake_factory(seen))
@@ -310,6 +346,8 @@ def test_follow_up_appends_a_turn_with_what_changed(outputs, no_provenance):
     rid = snap["result"]
     html = client.get(f"/runs/{rid}").text
     assert "Your follow-up" in html and "The line runs at 50 C." in html and "What changed" in html
+    changed = html[html.index("What changed"):html.index("Our recommendation")]
+    assert "Recommended" in changed and not re.search(r"\bO\d\b", changed)          # tiers, not option ids
     assert 'class="turn-folded"' in html and f'href="/runs/dev-{SAVED}"' in html       # earlier turn collapsed
     assert all(r["id"] != rid for r in client.get("/api/runs").json())              # follow-ups not listed
     assert (outputs / "ui" / "turns" / f"{rid[3:]}.json").exists()
@@ -364,6 +402,18 @@ def test_figure_text_is_at_least_12px():
     sizes = [float(x) for x in re.findall(r"svg\.fig [^{]*\{[^}]*font-size:\s*([\d.]+)px", css)]
     assert sizes and min(sizes) >= 12
     assert diagrams.SMALL >= 12 and diagrams.TEXT >= 12
+
+
+def test_id_words_and_cost_tag(outputs):
+    v = server.Store(outputs).view(f"dev-{SAVED}")
+    a = view.Assessment.model_validate(json.loads((outputs / "dev" / f"{SAVED}.json").read_text())["assessment"])
+    words = view.id_words(a)
+    assert words("see Q1 to Q3 and O1") == "see questions 1 to 3 and the simple option"
+    tag = v["options"][0]["cost"]["cites"]
+    assert tag and v["citations"][tag[0]]["kind"] == "table" and v["citations"][tag[0]]["rows"]
+    client, _ = app_client(outputs)
+    panel = client.get(f"/runs/dev-{SAVED}/cite/{tag[0]}", headers=HX).text
+    assert "Table 1 rows" in panel and "Not verified" not in panel and "<td" in panel
 
 
 def test_customer_reply_text(outputs):

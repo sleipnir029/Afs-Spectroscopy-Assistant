@@ -1,6 +1,6 @@
 {% macro tags(v, cids) -%}
 {%- if cids -%}
-<span class="tags">{% for cid in cids %}{% set c = v.citations[cid] %}<a class="tag tag-{{ c.kind }}" data-cid="{{ cid }}" href="/runs/{{ v.key }}/cite/{{ cid }}" hx-get="/runs/{{ v.key }}/cite/{{ cid }}" hx-target="#panel-body" hx-swap="innerHTML" data-panel title="“{{ c.quote | truncate(220) }}”{{ ' (external, not AFS material)' if c.kind == 'external' else '' }} · {{ 'open the verified quote' if c.verified else 'not verified: open the quote' }}">{{ c.label }}</a>{% endfor %}</span>
+<span class="tags">{% for cid in cids %}{% set c = v.citations[cid] %}<a class="tag tag-{{ c.kind }}" data-cid="{{ cid }}" href="/runs/{{ v.key }}/cite/{{ cid }}" hx-get="/runs/{{ v.key }}/cite/{{ cid }}" hx-target="#panel-body" hx-swap="innerHTML" data-panel title="{% if c.kind == 'table' %}{{ c.quote }} · open the table rows{% else %}“{{ c.quote | truncate(220) }}”{{ ' (external, not AFS material)' if c.kind == 'external' else '' }} · {{ 'open the verified quote' if c.verified else 'not verified: open the quote' }}{% endif %}">{{ c.label }}</a>{% endfor %}</span>
 {%- endif -%}
 {%- endmacro %}
 
@@ -19,8 +19,8 @@
 
 {% macro figure(svgs, cls) -%}
 <div class="fig-wrap {{ cls }}">
-  <div class="fig-wide">{{ svgs.wide | safe }}</div>
-  <div class="fig-narrow">{{ svgs.narrow | safe }}</div>
+  <div class="fig-wide">{{ svgs.wide | safe }}{% if svgs.wide_notes %}<ol class="fig-notes">{% for n in svgs.wide_notes %}<li>{{ n }}</li>{% endfor %}</ol>{% endif %}</div>
+  <div class="fig-narrow">{{ svgs.narrow | safe }}{% if svgs.narrow_notes %}<ol class="fig-notes">{% for n in svgs.narrow_notes %}<li>{{ n }}</li>{% endfor %}</ol>{% endif %}</div>
 </div>
 {%- endmacro %}
 

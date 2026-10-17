@@ -43,7 +43,7 @@ from afs_assistant.ui import diagrams
 from afs_assistant.verify import ANSWER_QUESTIONS
 
 CONTEXT_CHARS = 700          # page text shown on each side of a verified quote
-WIDE, NARROW = 720.0, 340.0  # native figure widths (CSS shows wide from a 720 px container up)
+WIDE, NARROW = 720.0, 300.0  # native figure widths: wide from a 720 px container; narrow keeps >= 12 px text at 360 px
 # Display steps of a run and the pipeline stages (`RunResult.timings`) each one covers.
 STEPS = (("intake", "Reading enquiry", ("intake",)), ("screen", "Screening methods", ("screen",)),
          ("assess", "Assessing", ("assess", "repair")), ("verify", "Checking quotes", ("verify", "finalize")),
@@ -155,7 +155,7 @@ class _Registry:
     def __init__(self, data: dict) -> None:
         self.items: dict[str, dict] = {}
         self._ids: dict[tuple, str] = {}
-        self._count = {"s": 0, "e": 0}
+        self._count = {"s": 0, "e": 0, "t": 0}
         self._checked = {(c["doc"], int(c["page"]), c["quote"]): c
                          for c in (data.get("verification") or {}).get("citations", [])}
         ext = data.get("external") or {}
@@ -206,6 +206,43 @@ class _Registry:
             out.append(self._ids[key])
         return out
 
+    def table(self, cost: dict) -> list[str]:
+        """The S01 Table 1 rows behind an option's cost class (transcribed table, not a text quote)."""
+        rows = cost.get("rows") or []
+        if not rows:
+            return []
+        key = ("t",) + tuple(r["row"] for r in rows)
+        if key not in self._ids:
+            cid = self._new("t", key)
+            page = kb.page("S01", 6) or {}
+            summary = "; ".join(f"row {r['row']}: {r['method']}, {r['table_technique']}, cost {r['cost']}" for r in rows)
+            self.items[cid] = {
+                "id": cid, "kind": "table", "label": TABLE1_CITATION, "doc": "S01", "page": 6, "quote": summary,
+                "verified": False, "quote_status": "", "rows": rows, "title": page.get("title", ""),
+                "page_text": str(page.get("text", ""))[:2 * CONTEXT_CHARS],
+            }
+        return [self._ids[key]]
+
+
+_ID = re.compile(r"\b([OPQM])(\d+)\b")
+_Q_RANGE = re.compile(r"\bQ(\d+)\s*(?:to|-|–)\s*Q(\d+)\b")
+
+
+def id_words(a: Assessment):
+    """Replace internal ids in model text with what the page shows: options by tier, questions by their
+    number on the page, parameters and methods by name (the reader never sees O2, Q1, P3 or M1)."""
+    names = {o.id: f"the {o.tier} option" for o in a.solution_options}
+    names |= {q.id: f"question {i}" for i, q in enumerate(a.clarification_questions, 1)}
+    names |= {p.id: p.name for p in a.parameters}
+    names |= {r.id: method_label(r.method, r.technique) for r in a.recommendations}
+
+    def sub(text: str) -> str:
+        if not text:
+            return text
+        text = _Q_RANGE.sub(lambda m: f"questions {m.group(1)} to {m.group(2)}", text)
+        return _ID.sub(lambda m: names.get(m.group(0), m.group(0)), text)
+    return sub
+
 
 def _source_record(src: dict) -> dict:
     """Display fields of an external source (our stored record; never the full text)."""
@@ -255,6 +292,13 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
     costs = data.get("option_costs") or {}
 
     top_ids = [q.id for q in a.clarification_questions[:ANSWER_QUESTIONS]]
+    words = id_words(a)                    # main view: no internal ids (the expert rows keep and define them)
+    drawn = a.model_copy(deep=True)        # the figures show model text too (location, names, sensors)
+    drawn.measurement_concept.location = words(drawn.measurement_concept.location)
+    for p in drawn.parameters:
+        p.name = words(p.name)
+        if p.measured_by.sensor:
+            p.measured_by.sensor = words(p.measured_by.sensor)
     options = []
     for i, o in enumerate(a.solution_options):
         methods = []
@@ -264,23 +308,27 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
                             "combined_with": list(r.combined_with) if r else []})
         c, cost = conf.get(o.id, {}), costs.get(o.id, {})
         short = " + ".join(dict.fromkeys(m for m, _ in option_parts(o, recs))) or "—"
+        wide_svg, wide_notes = diagrams.schematic(drawn, o, slots, WIDE)
+        narrow_svg, narrow_notes = diagrams.setup(drawn, o, slots, NARROW)
         options.append({
             "id": o.id, "tier": o.tier, "tier_label": TIER_LABEL[o.tier], "tab": o.tier.capitalize(),
             "tab_sub": f"{short} · {TAB_SUB.get(o.tier, '')}".rstrip(" ·"), "is_best": o is best,
             "methods": methods, "confidence": {"level": c.get("level", ""), "reasons": c.get("reasons", []),
                                                "plain": plain_reasons(c.get("reasons", []), top_ids)},
-            "cost": {"label": cost.get("label", ""), "class": cost.get("cost_class", "")},
-            "ease": o.ease_of_use, "maintenance": o.maintenance, "performance_fit": o.performance_fit,
-            "parameters": list(o.parameter_ids), "cost_drivers": o.cost_drivers, "fusion_note": o.fusion_note,
+            "cost": {"label": cost.get("label", ""), "class": cost.get("cost_class", ""), "cites": reg.table(cost)},
+            "ease": words(o.ease_of_use), "maintenance": words(o.maintenance),
+            "performance_fit": words(o.performance_fit), "parameters": list(o.parameter_ids),
+            "cost_drivers": o.cost_drivers, "fusion_note": o.fusion_note,
             "cites": reg.supplied(option_citations(o, recs)), "flag": flags.get(f"solution_options[{i}]"),
-            "figure": {"wide": diagrams.schematic(a, o, slots, WIDE), "narrow": diagrams.setup(a, o, slots, NARROW)},
+            "figure": {"wide": wide_svg, "narrow": narrow_svg, "wide_notes": wide_notes,
+                       "narrow_notes": narrow_notes},
         })
     if options and not any(o["is_best"] for o in options):
         options[0]["is_best"] = True       # a proposal pointing at a removed option still opens on one tab
     view["options"] = options
     best_view = next((o for o in options if o["is_best"]), None)
     view["recommendation"] = {
-        "headline": headline(a, best), "text": a.brief_answer, "flag": flags.get("brief_answer"),
+        "headline": headline(a, best), "text": words(a.brief_answer), "flag": flags.get("brief_answer"),
         "confidence": best_view["confidence"] if best_view else None,
         "cites": best_view["cites"] if best_view else [],
         "external_support": reg.external(support) if pr.basis == "engineering_judgement" else [],
@@ -288,7 +336,8 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
     view["proposal"] = {
         "best": {"id": best.id, "tier": TIER_LABEL[best.tier]} if best else None,
         "basis": basis_text(run), "basis_code": pr.basis, "basis_label": BASIS_LABEL[pr.basis],
-        "what_would_change_it": pr.what_would_change_it, "next_step": pr.next_step,
+        "what_would_change_it": words(pr.what_would_change_it), "next_step": words(pr.next_step),
+        "tier": TIER_LABEL[best.tier] if best else None,
         "methods": best_view["methods"] if best_view else [],
         "confidence": best_view["confidence"] if best_view else None,
         "flags": {k: flags[f"proposal{s}"] for k, s in (("best", ""), ("change", ".what_would_change_it"),
@@ -298,7 +347,8 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
     view["cost_note"] = COST_NOTE
     view["cost_citation"] = TABLE1_CITATION
 
-    view["questions"] = [{"id": q.id, "question": q.question, "why": q.why_it_matters, "affects": q.affects,
+    view["questions"] = [{"id": q.id, "question": words(q.question), "why": words(q.why_it_matters),
+                          "affects": q.affects,
                           "flag": flags.get(f"clarification_questions[{i}]")}
                          for i, q in enumerate(a.clarification_questions)]
     view["top_questions"] = view["questions"][:ANSWER_QUESTIONS]
@@ -443,7 +493,7 @@ def summary(view: dict) -> dict:
     best = view["proposal"]["best"]
     conf = view["proposal"]["confidence"] or {}
     methods = "; ".join(m["label"] for m in view["proposal"]["methods"]) or None
-    return {"status": view["status"]["label"], "best": f"{best['id']} ({best['tier']})" if best else None,
+    return {"status": view["status"]["label"], "best": best["tier"] if best else None,
             "method": methods, "confidence": conf.get("level")}
 
 

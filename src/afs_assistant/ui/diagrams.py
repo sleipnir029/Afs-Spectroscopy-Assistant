@@ -30,6 +30,8 @@ SMALL = 12.0         # px, captions, ticks, sub-labels (the floor)
 CHAR_W = 0.56        # average glyph width in em (IBM Plex Sans, mixed case)
 LINE = 1.3
 MAX_AUX = 3
+SUB_LINES = 6        # node text lines shown in full; longer text moves to a note under the figure
+PROC_LINES = 10      # process point and result sit alone in their columns: room for more lines
 _ids = itertools.count(1)
 
 # Line-art icons (24x24, stroke): our own drawings.
@@ -44,13 +46,37 @@ ICONS = {
 }
 
 
-def _wrap(text: str, width_px: float, max_lines: int, size: float) -> list[str]:
+def _lines(text: str, width_px: float, size: float) -> list[str]:
     chars = max(6, int(width_px / (size * CHAR_W)))
-    lines = textwrap.wrap(" ".join(str(text).split()), chars, break_long_words=False) or [""]
+    return textwrap.wrap(" ".join(str(text).split()), chars, break_long_words=False) or [""]
+
+
+def _wrap(text: str, width_px: float, max_lines: int, size: float) -> list[str]:
+    """Wrapped lines; past `max_lines` the last line is cut at a word boundary and ends in an ellipsis."""
+    chars = max(6, int(width_px / (size * CHAR_W)))
+    lines = _lines(text, width_px, size)
     if len(lines) > max_lines:
         lines = lines[:max_lines]
-        lines[-1] = lines[-1][: max(1, chars - 1)].rstrip(" ,;:.") + "…"
+        words = lines[-1].split()
+        while words and len(" ".join(words)) > chars - 1:
+            words.pop()
+        lines[-1] = (" ".join(words) or lines[-1][: chars - 1]).rstrip(" ,;:.") + "…"
     return lines
+
+
+def _fit(title: str, text: str, width_px: float, max_lines: int, size: float, notes: list[str]) -> list[str]:
+    """Node text in full; text longer than `max_lines` moves to a numbered note under the figure."""
+    if not text:
+        return []
+    lines = _lines(text, width_px, size)
+    if len(lines) <= max_lines:
+        return lines
+    notes.append(f"{title}: {text}")
+    return _lines(f"see note {len(notes)} below", width_px, size)
+
+
+def _title(title: str, text: str) -> str:
+    return f"<title>{escape(title)}{': ' + escape(text) if text else ''}</title>"
 
 
 def _text(x: float, y: float, lines: list[str], cls: str, size: float, anchor: str = "start") -> str:
@@ -96,20 +122,26 @@ def option_nodes(a: Assessment, option: SolutionOption, slots: dict) -> dict:
             "result": ", ".join(spectro) or "measured parameters"}
 
 
-def schematic(a: Assessment, option: SolutionOption, slots: dict, width: float = 760.0) -> str:
-    """Wide layout: icon nodes left to right, one row per method; auxiliary sensors on top, dashed."""
+def schematic(a: Assessment, option: SolutionOption, slots: dict, width: float = 760.0) -> tuple[str, list[str]]:
+    """Wide layout: icon nodes left to right, one row per method; auxiliary sensors on top, dashed.
+
+    Returns the SVG and the notes for node text too long to show in full (never cut)."""
     n = option_nodes(a, option, slots)
     cols, icon = 6, 48.0
     col_w = width / cols
     text_w = col_w - 10
     top_pad = 4.0 + (len(n["aux"]) * 8 + 6 if n["aux"] else 0)
+    notes: list[str] = []
+    probe_notes: list[str] = []                       # sizing pass only
 
     def block_h(title: str, sub: str) -> float:
-        return icon + 8 + TEXT * LINE * len(_wrap(title, text_w, 2, TEXT)) + SMALL * LINE * len(
-            _wrap(sub, text_w, 3, SMALL)) + 14
+        return icon + 8 + TEXT * LINE * len(_lines(title, text_w, TEXT)) + SMALL * LINE * len(
+            _fit(title, sub, text_w, PROC_LINES if title in ("Process point", "Result") else SUB_LINES, SMALL, probe_notes)) + 14
 
     aux_h = max([block_h("Auxiliary sensor", s) for s in n["aux"]] or [0])
-    lane_h = max(block_h(f"{ln['method']} spectrometer", ln["fiber"]) for ln in n["lanes"]) if n["lanes"] else 120
+    lane_h = max(max(block_h("Fiber link", ln["fiber"]), block_h(ln["probe_title"], ln["probe_sub"]))
+                 for ln in n["lanes"]) if n["lanes"] else 120
+    lane_h = max(lane_h, block_h("Result", n["result"]) / max(1, len(n["lanes"])))
     lane_h = max(lane_h, block_h("Process point", n["location"]) / max(1, len(n["lanes"])))
     y_lanes = top_pad + aux_h
     lanes = max(1, len(n["lanes"]))
@@ -130,8 +162,7 @@ def schematic(a: Assessment, option: SolutionOption, slots: dict, width: float =
         nodes.append(("model", 4, span_y, n["model"], n["model_sub"], ""))
     nodes.append(("result", 5, span_y, "Result", n["result"], "sn-result"))
     for j, s in enumerate(n["aux"]):
-        nodes.append(("aux", max(3 - j, 1), top_pad, "Auxiliary sensor", s + " (confirm with AFS)",
-                      "sn-aux"))
+        nodes.append(("aux", max(3 - j, 1), top_pad, "Auxiliary sensor", s, "sn-aux"))
     mid, defs = _marker()
     body = [defs]
 
@@ -170,28 +201,30 @@ def schematic(a: Assessment, option: SolutionOption, slots: dict, width: float =
                     f'marker-end="url(#{mid})"/>')
     for part, col, y, title, sub, cls in nodes:
         x = cx(col)
-        body.append(f'<g class="sn {cls}" data-part="{part}">'
+        body.append(f'<g class="sn {cls}" data-part="{part}">{_title(title, sub)}'
                     f'<rect class="sn-box" x="{x - half:.1f}" y="{y:.1f}" width="{icon:.0f}" height="{icon:.0f}" rx="6"/>'
                     f'<g transform="translate({x - 14:.1f},{y + half - 14:.1f}) scale(1.1667)">'
                     f'<path class="sn-icon" d="{ICONS[part]}"/></g>')
-        t_lines = _wrap(title, text_w, 2, TEXT)
+        t_lines = _lines(title, text_w, TEXT)
         body.append(_text(x, y + icon + 8 + TEXT, t_lines, "sn-title", TEXT, "middle"))
-        if sub:
-            body.append(_text(x, y + icon + 8 + TEXT + len(t_lines) * TEXT * LINE, _wrap(sub, text_w, 3, SMALL),
-                              "sn-sub", SMALL, "middle"))
+        sub_lines = _fit(title, sub, text_w, PROC_LINES if part in ("proc", "result") else SUB_LINES, SMALL, notes)
+        if sub_lines:
+            body.append(_text(x, y + icon + 8 + TEXT + len(t_lines) * TEXT * LINE, sub_lines, "sn-sub", SMALL,
+                              "middle"))
         body.append("</g>")
-    height = y_lanes + lanes * lane_h + 4
+    height = max([y_lanes + lanes * lane_h] + [y + block_h(title, sub) for _, _, y, title, sub, _ in nodes]) + 4
     label = (f"Setup of option {option.id}: process point ({n['location']}), "
              + "; ".join(f"{ln['label']} via {ln['fiber']} fiber to a {ln['method']} spectrometer" for ln in n["lanes"])
              + f"; {n['model'] or 'one model per method'}; result: {n['result']}"
              + (f"; auxiliary sensors (dashed): {', '.join(n['aux'])}" if n["aux"] else ""))
-    return _svg(width, height, body, label, "fig-schematic")
+    return _svg(width, height, body, label, "fig-schematic"), notes
 
 
-def setup(a: Assessment, option: SolutionOption, slots: dict, width: float = 340.0) -> str:
+def setup(a: Assessment, option: SolutionOption, slots: dict, width: float = 300.0) -> tuple[str, list[str]]:
     """Narrow layout: boxes top to bottom, lanes as columns; auxiliary sensors full width below the result,
-    joined to the model by a dashed line up the right edge."""
+    joined to the model by a dashed line up the right edge. Returns the SVG and its notes (see `_fit`)."""
     n = option_nodes(a, option, slots)
+    notes: list[str] = []
     lanes = max(1, len(n["lanes"]))
     nodes = [{"part": "proc", "cap": "Process point", "text": n["location"], "row": 0, "lane": 0, "span": lanes}]
     for k, ln in enumerate(n["lanes"]):
@@ -216,8 +249,8 @@ def setup(a: Assessment, option: SolutionOption, slots: dict, width: float = 340
     lane_w = usable / lanes
     for nd in nodes:
         w = nd["span"] * lane_w + (nd["span"] - 1) * gap_lane
-        nd["w"], nd["cap_lines"] = w, _wrap(nd["cap"], w - 16, 2, SMALL)
-        nd["lines"] = _wrap(nd["text"], w - 16, 5, TEXT)
+        nd["w"], nd["cap_lines"] = w, _lines(nd["cap"], w - 16, SMALL)
+        nd["lines"] = _fit(nd["cap"], nd["text"], w - 16, SUB_LINES, TEXT, notes) or [""]
         nd["h"] = (10 + (24 if nd["part"] == "proc" else 0) + len(nd["cap_lines"]) * SMALL * LINE
                    + len(nd["lines"]) * TEXT * LINE + 8)
     rows = max(nd["row"] for nd in nodes) + 1
@@ -259,7 +292,8 @@ def setup(a: Assessment, option: SolutionOption, slots: dict, width: float = 340
     for nd in nodes:
         x0, y0, x1, y1 = nd["box"]
         cls = {"fiber": "sn-fiber", "aux": "sn-aux", "result": "sn-result", "probe": "sn-probe"}.get(nd["part"], "")
-        body.append(f'<g class="sn {cls}" data-part="{nd["part"]}"><rect class="sn-box" x="{x0:.1f}" y="{y0:.1f}" '
+        body.append(f'<g class="sn {cls}" data-part="{nd["part"]}">{_title(nd["cap"], nd["text"])}'
+                    f'<rect class="sn-box" x="{x0:.1f}" y="{y0:.1f}" '
                     f'width="{x1 - x0:.1f}" height="{y1 - y0:.1f}" rx="{10 if nd["part"] == "fiber" else 3}"/>')
         top = y0 + 10 + SMALL * 0.85
         if nd["part"] == "proc":
@@ -272,7 +306,7 @@ def setup(a: Assessment, option: SolutionOption, slots: dict, width: float = 340
         body.append("</g>")
     height = max(nd["box"][3] for nd in nodes) + pad
     label = "Setup sketch: " + "; ".join(f"{nd['cap']}: {nd['text']}" for nd in nodes)
-    return _svg(width, height, body, label, "fig-setup")
+    return _svg(width, height, body, label, "fig-setup"), notes
 
 
 # --------------------------------------------------------------------------------------- spectral
