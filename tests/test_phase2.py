@@ -299,4 +299,7 @@ def test_combination_is_rendered_as_hypothesis():
     combo = copy.deepcopy(ASSESSMENT)
     combo["recommendations"][0]["combined_with"] = ["NIR"]
     result, _ = run_with(assess=combo)
-    assert "Raman + NIR (combination: a hypothesis to test)" in render.to_markdown(result)
+    md = render.to_markdown(result)
+    assert "Primary candidate: Raman, raman probe.**" in md and "Raman + NIR" not in md
+    assert "Later hypothesis, after single-method tests: combine with NIR." in md
+    assert any(c.name == "primary_single_method" for c in result.report.soft_failures)
