@@ -14,7 +14,6 @@ import re
 
 from afs_assistant import kb, scope
 from afs_assistant.fibers import method_fiber_coverage
-from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.options import (
     CONFIDENCE_NOTE,
     TABLE1_CITATION,
@@ -33,7 +32,6 @@ from afs_assistant.schema import Assessment, Parameter, SolutionOption
 from afs_assistant.verify import (
     ANSWER_QUESTIONS,
     RECHECK_NAMES,
-    forbidden_hits,
     request_text,
 )
 
@@ -62,10 +60,12 @@ _STEP_NUMBER = re.compile(r"^\s*\d+[.)](?!\d)\s*")   # not a decimal such as "1.
 class _Citer:
     """Numbers citations in order of appearance and collects them for the evidence list.
 
-    An identical quote (same document, page and text) keeps its first number (3.R3 item 8)."""
+    An identical quote (same document, page and text) keeps its first number (3.R3 item 8); the
+    entry is marked precedent if any of the merged citations is precedent (3.R4 N4)."""
 
     def __init__(self) -> None:
         self.entries: list = []
+        self.precedent: list[bool] = []
         self._numbers: dict[tuple, int] = {}
 
     def refs(self, citations) -> str:
@@ -76,7 +76,10 @@ class _Citer:
             key = (c.doc, c.page, c.quote)
             if key not in self._numbers:
                 self.entries.append(c)
+                self.precedent.append(False)
                 self._numbers[key] = len(self.entries)
+            n = self._numbers[key]
+            self.precedent[n - 1] |= scope.check(c.claim_kind, c.doc, c.page)[0] == "precedent_only"
             marks.append(f"[{self._numbers[key]}: {kb.citation_label(c.doc, c.page)}]")
         return " " + " ".join(marks)
 
@@ -213,18 +216,11 @@ def request_label(r: RunResult) -> str:
     return "Customer request (our summary)" if summary and request_line(r) == summary else "Customer request"
 
 
-def _intake_text(text: str, quote: str, enquiry: str) -> str:
-    """Model wording of an intake item, unless it adds a figure or forbidden wording; then its enquiry quote."""
-    text = " ".join(text.split())
-    return quote if unsupported_numbers(text, [enquiry]) or forbidden_hits(text) else text
-
-
 def stated_from_intake(r: RunResult) -> list[str]:
-    """The intake's verified facts and targets, for when the assessment states no requirement (3.R3 B5)."""
-    items = [_intake_text(f.text, f.enquiry_quote, r.enquiry) for f in r.intake.facts_stated]
-    items += [_intake_text(f"Target: {t.variable} ({t.purpose})", t.enquiry_quote, r.enquiry)
-              for t in r.intake.targets]
-    return items
+    """The customer's own words for when the assessment states no requirement (3.R3 B5, 3.R4 B2):
+    the verified enquiry quotes of the intake facts and targets, de-duplicated, never the model's paraphrase."""
+    quotes = [f.enquiry_quote for f in r.intake.facts_stated] + [t.enquiry_quote for t in r.intake.targets]
+    return [f'"{q}"' for q in dict.fromkeys(" ".join(q.split()) for q in quotes)]
 
 
 def to_markdown(r: RunResult, title: str = "") -> str:
@@ -378,8 +374,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         out += ["### Further notes", ""] + [f"- **{label}:** {text}{warn(n)}" for label, text, n in notes] + [""]
 
     out += ["### Evidence (verified quotes)", ""]
-    for i, c in enumerate(cite.entries, 1):
-        precedent = scope.check(c.claim_kind, c.doc, c.page)[0] == "precedent_only"
+    for i, (c, precedent) in enumerate(zip(cite.entries, cite.precedent, strict=True), 1):
         badge = "✓ (precedent only)" if precedent else "✓"
         out.append(f"{i}. {badge} **{kb.citation_label(c.doc, c.page)}** ({c.claim_kind.replace('_', ' ')}): "
                    f"\"{c.quote}\"")
@@ -406,6 +401,8 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     if intake_removed:
         out.append(f"- Removed {len(intake_removed)} intake item(s) not quoted verbatim from the enquiry:")
         out += [f"  - {x['location']}: {x['reason']}" for x in intake_removed]
+    for p in r.manifest.get("intake_problems", []):
+        out.append(f"- ⚠ Intake incomplete after {r.manifest.get('intake_attempts', 1)} attempt(s): {p}")
     # The API cost stays in the run JSON and manifest: no currency sign in any Markdown output.
     out += ["", f"*Run {r.run_id} · models {', '.join(r.manifest.get('models', []))}*", ""]
     return "\n".join(out)

@@ -74,8 +74,7 @@ SLOT_PATTERNS = {slot: re.compile(r"\b(?:" + "|".join(words) + r")\b", re.IGNORE
                  for slot, words in SLOT_WORDS.items()}
 # What a clarification question may affect (3.R3 B3): these words or a recommendation id (M1, ...).
 AFFECTS_WORDS = ("method", "technique", "installation", "status")
-AFFECTS_SYNONYMS = {"method_choice": "method"}
-_REC_ID = re.compile(r"^m\d+$")
+_REC_ID = re.compile(r"^[mo]\d+$")     # a recommendation id (M1) or an option id (O1; 3.R4 N2)
 # The request line falls back to the enquiry unless the summary is Latin script and shares content words.
 MIN_LATIN_SHARE = 0.9
 MIN_SHARED_WORDS = 3
@@ -297,24 +296,28 @@ def intake_problems(intake: Intake, removed: list[dict]) -> list[str]:
     """Hard intake check (3.R3 B1): a collapsed intake must not reach the assessment.
 
     Fails when no target is left, or when half or more of the facts, targets, process details
-    and premises were removed by sanitizing (placeholders included)."""
+    and premises were removed by sanitizing. A dropped placeholder ("unknown", "n/a") carried no
+    information, so it counts neither as removed nor in the total (3.R4 B1)."""
     problems = []
     if not intake.targets:
         problems.append("no target left after checking the quotes against the enquiry")
-    dropped = sum(1 for r in removed if r["location"].split("[")[0].removeprefix("intake.") in INTAKE_LISTS)
+    dropped = sum(1 for r in removed if not r.get("placeholder")
+                  and r["location"].split("[")[0].removeprefix("intake.") in INTAKE_LISTS)
     total = dropped + sum(len(getattr(intake, k)) for k in INTAKE_LISTS)
     if total and dropped * 2 >= total:
-        problems.append(f"{dropped} of {total} intake items removed (quote not verbatim in the enquiry, "
-                        f"or a placeholder)")
+        problems.append(f"{dropped} of {total} intake items removed (quote not verbatim in the enquiry)")
     return problems
 
 
 def normalize_affects(values: list[str]) -> tuple[list[str], list[str]]:
-    """(kept, dropped): affects items in the fixed vocabulary or as recommendation ids, order kept."""
+    """(kept, dropped): affects items in the fixed vocabulary or as recommendation/option ids, order kept.
+
+    Any word starting with "method" ("method_choice", "methods") means the method choice."""
     kept, dropped = [], []
     for value in values:
         word = re.sub(r"[\s-]+", "_", str(value).strip().lower())
-        word = AFFECTS_SYNONYMS.get(word, word)
+        if word.startswith("method"):
+            word = "method"
         if _REC_ID.match(word):
             word = word.upper()
         elif word not in AFFECTS_WORDS:

@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 18:13 CEST (Claude, 3.R3 implementer)._
+_Last updated: 2026-10-17 18:25 CEST (Claude, 3.R4 implementer)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 3 (Assessment upgrade), fix round 3.R3.** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
+**Phase 3 (Assessment upgrade), fix round 3.R4.** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
 - **User mode (D-020, 14:24):** Claude is fully in charge; the user is woken (push notification) only for their decisions. At each phase end: write this handoff and tell the user to switch sessions ("do the next task").
 - **Phase 3 code** 3c7e881: pytest 248 passed, 1 skipped; ruff clean; kb check 9/9. Code review: APPROVE WITH FIXES (B1 duplicate ids, B2 proposal basis unverified, B3 price wording) → 3.R item 1.
 - **First Phase 3 dev run (13:51–14:59, $0.211):** 7/8 complete, 0 hard failures left, citations 241/241 verified, 12/12 Mermaid charts render, cost classes match Table 1 (D01–D04 checked; the check script crashed on the stale D05). **D05 failed** (assess reply truncated at max_tokens). D06 simple = recommended option. Body 2,472–3,137 words. outputs/dev/D05.* are still the 12:41 Phase 2 output.
@@ -15,7 +15,9 @@ _Last updated: 2026-10-17 18:13 CEST (Claude, 3.R3 implementer)._
 - **3.R2 dev run (16:58–17:55, $0.175, code 7ebe590):** 8/8, 0 hard failures, 227/227 citations, 14/14 charts, 8/8 cost; confidence 2 High / 7 Medium / 13 Low.
 - **G3 review (18:05): NEEDS_FIXES:** D05 intake collapsed (Russian request line), D08 fluorescence wrongly failed by the screen, `affects` vocabulary, comparison treated as fusion, empty stated requirements, extended options undercosted; calibration driven by the temperature-sensor and fusion rules.
 - **3.R3 implemented (18:13, offline):** items 1–9 done (intake check + one retry + request-line fallback; screen near-match neighbours soft_solid/paste; `affects` vocabulary normalised in finalize; fusion only for extended / fusion_note / combined_with, per-method models in the sketch; stated-requirements fallback; borrowed technique or "at least" cost; confidence: required parameters only, open question caps at Medium; simplicity items). pytest 354 passed, 1 skipped; ruff clean; kb check 9/9. graph.json unchanged (the state mapping does not feed it). Implementer choices in D-030. Offline recompute of the 3.R2 dev outputs with the new rules: 19 Medium / 3 Low of 22 (every option carries an open method question). Not yet run live; outputs/dev are still the 3.R2 run.
-- **Next:** independent code review of 3.R3 → re-run D01–D08 → check scripts → short re-review (D05, D08) → close Phase 3 → handoff for Phase 4.
+- **3.R3 code review: APPROVE WITH FIXES** (B1 intake warning not visible, B2 paraphrase in the stated fallback; N1–N7) → 3.R4 (D-032). The 3.R3 dev run started 18:19 was stopped at D01; outputs/dev/D01.* in the working tree are from that stopped run (not committed).
+- **3.R4 implemented (18:25, offline):** items 1–8 done (⚠ intake-incomplete line in Verification, placeholders not counted as removed; stated fallback = verified enquiry quotes only; near match keeps the dark-sample / unknown-regime reason; `affects` accepts O ids and any method* word, an O id in a top-3 question affects that option; finalize logs only dropped affects items; merged Evidence entry keeps the precedent badge; confidence starts at Medium with an open method/option question, then one level per weakness; check_cost_class checks "at least"). pytest 372 passed, 1 skipped; ruff check clean; kb check 9/9. Implementer choices in D-033. Offline recompute of the 3.R2 dev outputs (bab11a7): 0 High / 8 Medium / 14 Low of 22 (the 3.R3 cap gave 0 / 19 / 3); every case still has an open method question in the top 3. Not yet run live.
+- **Next:** independent review of 3.R4 → re-run D01–D08 → both check scripts → short re-review (D05, D08) → G3 → close Phase 3 → handoff for Phase 4.
 
 ## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.

@@ -356,11 +356,11 @@ def test_confidence_rule1_unscreened_or_undetermined_technique(method, technique
 def test_confidence_rule1_open_top_question_on_the_option():
     a = _clean()
     a.clarification_questions[0].affects = ["M1"]
-    assert _conf(a, "O2") == {"level": "Medium", "reasons": ["open question: Q1 (at most Medium)"]}
+    assert _conf(a, "O2") == {"level": "Medium", "reasons": ["open question: Q1 (starts at Medium)"]}
     assert _conf(a, "O1")["reasons"] == []                       # Q1 does not affect M2
     for word in ("method", "method_choice", "Method choice"):    # the model's real spelling is "method"
         a.clarification_questions[0].affects = [word]
-        assert _conf(a, "O1")["reasons"] == _conf(a, "O2")["reasons"] == ["open question: Q1 (at most Medium)"]
+        assert _conf(a, "O1")["reasons"] == _conf(a, "O2")["reasons"] == ["open question: Q1 (starts at Medium)"]
 
 
 def test_confidence_rule1_ignores_a_question_below_the_top_three():
@@ -372,7 +372,7 @@ def test_confidence_rule1_ignores_a_question_below_the_top_three():
     assert _conf(a, "O2")["level"] == "High"
     a.clarification_questions[1].affects = ["M1"]
     a.clarification_questions[2].affects = ["method_choice"]
-    assert _conf(a, "O2")["reasons"] == ["open question: Q2, Q3 (at most Medium)"]
+    assert _conf(a, "O2")["reasons"] == ["open question: Q2, Q3 (starts at Medium)"]
 
 
 def test_confidence_rule2_no_verified_citation_and_precedent_only():
@@ -439,9 +439,9 @@ def test_confidence_floor_is_low_and_all_reasons_are_kept():
     a.parameters[1].necessity = "required"
     conf = _conf(a, "O3", {"physical_state": "liquid"})
     assert conf["level"] == "Low" and len(conf["reasons"]) == 6
-    assert confidence_label(conf) == ("Low: sample clarity unknown; no verified source citation; "
-                                      "uncited auxiliary sensor; status: insufficient information; "
-                                      "multi-method, fusion benefit not yet shown; open question: Q1 (at most Medium)")
+    assert confidence_label(conf) == ("Low: open question: Q1 (starts at Medium); sample clarity unknown; "
+                                      "no verified source citation; uncited auxiliary sensor; "
+                                      "status: insufficient information; multi-method, fusion benefit not yet shown")
 
 
 def test_confidence_is_rendered_and_in_the_json():
@@ -449,7 +449,7 @@ def test_confidence_is_rendered_and_in_the_json():
     result, _ = run_with(assess=a)
     md = render.to_markdown(result)
     assert "| O3 | Extended (multi-method) | M1 Raman probe; M2 NIR, transmission/transflection probe | " \
-           "Medium: multi-method, fusion benefit not yet shown; open question: Q1 (at most Medium) | " \
+           "Low: open question: Q1 (starts at Medium); multi-method, fusion benefit not yet shown | " \
            "high cost (rows 7, 12) |" in md
     assert CONFIDENCE_NOTE in md and "not a predicted accuracy" in CONFIDENCE_NOTE
     data = render.to_json(result)
@@ -507,7 +507,7 @@ def test_confidence_is_computed_per_option_row_even_with_repeated_ids():
     md = render.to_markdown(run_with(assess=a, repairs=[a, a])[0])
     rows = [line for line in md.splitlines() if line.startswith("| O1 |")]
     assert len(rows) == 2
-    assert "Medium: open question: Q1 (at most Medium) |" in rows[0] and "| High |" in rows[1]
+    assert "Medium: open question: Q1 (starts at Medium) |" in rows[0] and "| High |" in rows[1]
 
 
 def test_model_never_writes_the_confidence():

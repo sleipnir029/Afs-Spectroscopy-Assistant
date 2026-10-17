@@ -163,7 +163,7 @@ def finalize(a: Assessment, report: Report,
     4. A `supported` or `contradicted` premise with no citation left becomes `not_covered`.
     5. Status inconsistent with premises -> premise_not_supported; with recommendations
        -> insufficient_information (re-checked on the result of steps 1-4).
-    6. Question `affects` items are normalised to the fixed vocabulary; other words are dropped.
+    6. Question `affects` items are normalised to the fixed vocabulary; other words are dropped (logged).
     Locations in the change log use the numbering of `a`. Returns the assessment, the
     change log and the flagged items (path in the returned assessment -> reason) that
     render marks with a warning: items that lost a citation or failed a number check.
@@ -263,11 +263,11 @@ def finalize(a: Assessment, report: Report,
 
     for i, q in enumerate(data["clarification_questions"]):
         kept, dropped = normalize_affects(q["affects"])
-        if kept != q["affects"]:
-            note = f"; dropped {dropped} (not method, technique, installation, status or an M id)" if dropped else ""
+        if dropped:      # case and synonym normalisation is silent; only a dropped item is a change (3.R4 N3)
             removed.append({"location": f"clarification_questions[{i}].affects", "item": list(q["affects"]),
-                            "reason": f"affects normalised to {kept}{note}"})
-            q["affects"] = kept
+                            "reason": f"affects normalised to {kept}; dropped {dropped} (not method, technique, "
+                                      f"installation, status, an M id or an O id)"})
+        q["affects"] = kept
 
     interim = Report()
     check_status(Assessment.model_validate(data), interim)

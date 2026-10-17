@@ -5,7 +5,8 @@ Usage: uv run python scripts/check_cost_class.py [DIR ...]   (default: outputs/d
 For each <id>.json + <id>.md pair: re-derive each option's cost class straight from
 the Table 1 rows (independently of afs_assistant: the name mappings below are this
 script's own copy), then compare it with the cost cell of the rendered options table
-and with `option_costs` in the run JSON. Also scans the Markdown for any currency sign,
+and with `option_costs` in the run JSON. The cell must say "at least" exactly when a
+combined method's Table 1 row was not identified (3.R4 N7). Also scans the Markdown for any currency sign,
 code or word, except the "Evidence (verified quotes)" section (verbatim supplied quotes,
 e.g. a journal abbreviation). Exit 0 if all agree, 1 otherwise.
 """
@@ -65,7 +66,8 @@ def _rows(table: list[dict], method: str, technique: str) -> set[int]:
     return found
 
 
-def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None, list[int]]]:
+def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None, list[int], bool]]:
+    """Option id -> (highest cost class, rows, a combined method's row not identified)."""
     recs = {r["id"]: r for r in assessment["recommendations"]}
     result = {}
     for o in assessment["solution_options"]:
@@ -76,6 +78,7 @@ def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None,
         # A combined method without its own entry: the first other recommended entry with that method
         # that has an in-line row (3.R3 B6); none -> no row (the cell says "at least").
         own = {r["method"] for r in used}
+        unidentified = False
         for m in dict.fromkeys(m for r in used for m in r["combined_with"] if m not in own):
             for other in assessment["recommendations"]:
                 if other["method"] == m and other["role"] != "not_recommended":
@@ -83,9 +86,11 @@ def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None,
                     if found:
                         rows |= found
                         break
+            else:
+                unidentified = True
         costs = [next(x["cost"] for x in table if x["row"] == n) for n in rows]
         top = max(costs, key=ORDER.index) if costs else None
-        result[o["id"]] = (top, sorted(rows))
+        result[o["id"]] = (top, sorted(rows), unidentified and top is not None)
     return result
 
 
@@ -102,7 +107,7 @@ def check_pair(json_path: Path, md_path: Path, table: list[dict]) -> list[str]:
     cells = rendered(markdown)
     stored = data.get("option_costs", {})
     problems = []
-    for oid, (top, rows) in want.items():
+    for oid, (top, rows, at_least) in want.items():
         cell = cells.get(oid)
         if cell is None:
             problems.append(f"{oid}: no rendered row")
@@ -115,6 +120,9 @@ def check_pair(json_path: Path, md_path: Path, table: list[dict]) -> list[str]:
             got = (m.group(1), sorted(int(x) for x in m.group(2).split(","))) if m else None
             if got != (top, rows):
                 problems.append(f"{oid}: expected {top} rows {rows}, rendered {cell!r}")
+            if cell.startswith("at least ") != at_least:
+                problems.append(f"{oid}: 'at least' expected {'' if at_least else 'only '}when a combined "
+                                f"method's row is not identified; rendered {cell!r}")
         s = stored.get(oid)
         if s is None or s["cost_class"] != top or sorted(r["row"] for r in s["rows"]) != rows:
             problems.append(f"{oid}: run JSON option_costs {s} disagrees with {top} rows {rows}")

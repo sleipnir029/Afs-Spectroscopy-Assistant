@@ -200,22 +200,24 @@ def screen(slots: dict) -> list[Candidate]:
     known_types = STATE_SAMPLE_TYPES.get(state, set()) | REGIME_SAMPLE_TYPES.get(regime, set())
     for cand in candidates():
         fiber_family = _fiber_for(cand, slots)
-        # S01 Table 1 sample-type fit: pass on any overlap; unknown for a near-match state or a missing slot.
-        if known_types & cand.sample_types:
-            pass
-        elif STATE_NEIGHBOURS.get(state, set()) & cand.sample_types:
-            cand.downgrade("unknown", "S01 Table 1 (p.6)",
-                           f"Table 1 lists {sorted(cand.sample_types)} for this technique; "
-                           f"fit for {state.replace('_', ' ')} to be tested")
-        elif regime == "opaque_absorbing" and cand.technique.startswith("diffuse_reflection"):
-            cand.downgrade("unknown", "S01 Table 1 (p.6)",
-                           "dark, absorbing (non-scattering) sample: diffuse reflection signal must be tested")
-        elif UNKNOWN in (state, regime):
-            cand.downgrade("unknown", "S01 Table 1 (p.6)",
-                           "sample state or optical regime unknown: Table 1 sample-type fit not confirmed")
-        else:
-            cand.downgrade("fail", "S01 Table 1 (p.6)",
-                           f"Table 1 lists {sorted(cand.sample_types)} for this technique; sample is {state}, {regime}")
+        # S01 Table 1 sample-type fit: pass on any overlap; unknown for a near-match state, a dark sample
+        # under diffuse reflection or a missing slot. A near match keeps the other reason too (3.R4 N1).
+        near = bool(STATE_NEIGHBOURS.get(state, set()) & cand.sample_types)
+        if not known_types & cand.sample_types:
+            if near:
+                cand.downgrade("unknown", "S01 Table 1 (p.6)",
+                               f"Table 1 lists {sorted(cand.sample_types)} for this technique; "
+                               f"fit for {state.replace('_', ' ')} to be tested")
+            if regime == "opaque_absorbing" and cand.technique.startswith("diffuse_reflection"):
+                cand.downgrade("unknown", "S01 Table 1 (p.6)",
+                               "dark, absorbing (non-scattering) sample: diffuse reflection signal must be tested")
+            elif UNKNOWN in (state, regime):
+                cand.downgrade("unknown", "S01 Table 1 (p.6)",
+                               "sample state or optical regime unknown: Table 1 sample-type fit not confirmed")
+            elif not near:
+                cand.downgrade("fail", "S01 Table 1 (p.6)",
+                               f"Table 1 lists {sorted(cand.sample_types)} for this technique; "
+                               f"sample is {state}, {regime}")
 
         for rule in kb.rules():
             effect, target = rule["effect"], rule.get("target", {})

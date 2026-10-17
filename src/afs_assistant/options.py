@@ -1,9 +1,9 @@
 """Code-derived fields of solution options (never written by the model).
 
-Confidence per option (3.R item 4, D-022; calibrated in 3.R3, D-029): start at High and go
-down one level for each named weakness (GRADE-style), floor Low; an open question on the
-method caps it at Medium. IPCC-style qualitative wording. It rates the basis of the advice,
-never a predicted accuracy or probability.
+Confidence per option (3.R item 4, D-022; calibrated in 3.R4, D-032): the starting level is
+High, or Medium when an open top question affects the option or the method; it then goes
+down one level for each named weakness (GRADE-style), floor Low. IPCC-style qualitative
+wording. It rates the basis of the advice, never a predicted accuracy or probability.
 
 Cost class per option comes from the qualitative `cost` rating of S01 Table 1 (p.6)
 for each method+technique the option uses: low < average < high; an option takes
@@ -142,8 +142,8 @@ def option_costs(a: Assessment) -> dict[str, dict]:
 # ----------------------------------------------------------------- confidence (code-derived)
 CONFIDENCE_LEVELS = ("High", "Medium", "Low")
 CONFIDENCE_NOTE = ("Confidence rates the basis of the advice (how much is known and cited), not a predicted "
-                   "accuracy or probability of success. It starts at High and drops one level per weakness listed "
-                   "(floor Low); an open question on the method holds it at Medium at most.")
+                   "accuracy or probability of success. It starts at High, or at Medium when a key question on "
+                   "the method or the option is open, and drops one level per weakness listed (floor Low).")
 SLOT_PHRASE = {"physical_state": "physical state", "optical_regime": "sample clarity",
                "fluorophore": "fluorescent target", "aqueous": "water content",
                "heterogeneous": "sample homogeneity", "remote_distance": "distance to the analyzer"}
@@ -208,10 +208,11 @@ def option_citations(option: SolutionOption, recs: dict[str, Recommendation]) ->
 
 
 def open_questions(a: Assessment, option: SolutionOption) -> list[str]:
-    """Ids of the top clarification questions (as shown in the Answer) that affect the option."""
+    """Ids of the top clarification questions (as shown in the Answer) that affect the option:
+    by the option id, one of its recommendation ids, or the method choice."""
     from afs_assistant.verify import ANSWER_QUESTIONS, normalize_affects
 
-    affected = {*option.recommendation_ids, OPEN_QUESTION_ANY}
+    affected = {option.id, *option.recommendation_ids, OPEN_QUESTION_ANY}
     return [q.id for q in a.clarification_questions[:ANSWER_QUESTIONS]
             if affected & set(normalize_affects(q.affects)[0])]
 
@@ -225,15 +226,21 @@ def is_fusion(option: SolutionOption, recs: dict[str, Recommendation]) -> bool:
 
 
 def confidence(a: Assessment, option: SolutionOption, cands: list[Candidate], slots: dict) -> dict:
-    """{level, reasons}: High, minus one level per stacking rule that applies (each at most once),
-    floor Low; an open top question on the option caps the level at Medium (3.R3 item 7).
+    """{level, reasons}: the starting level (High; Medium when an open top question affects the
+    option or the method), minus one level per weakness that applies (each at most once), floor
+    Low (3.R4 item 7, D-032).
 
-    Every weakness is listed, the cap reason last. Runs on the finalized assessment, whose
-    citations are all verified.
+    The start reason is listed first, then every weakness. Runs on the finalized assessment,
+    whose citations are all verified.
     """
     recs = {r.id: r for r in a.recommendations}
     by_key = {(c.method, c.technique): c for c in cands}
     reasons: list[str] = []
+    # Starting level: an open top-3 question on the method or on the option starts it at Medium.
+    questions = open_questions(a, option)
+    start = 1 if questions else 0
+    if questions:
+        reasons.append(f"open question: {', '.join(questions)} (starts at Medium)")
 
     # (a) A sample property that decides one of the option's methods is unknown, or the technique
     #     was not screened for this sample.
@@ -286,12 +293,8 @@ def confidence(a: Assessment, option: SolutionOption, cands: list[Candidate], sl
     if is_fusion(option, recs) and len(option_methods(option, recs)) >= 2:
         reasons.append("multi-method, fusion benefit not yet shown")
 
-    level = min(len(reasons), len(CONFIDENCE_LEVELS) - 1)
-    # An open top-3 question on the method or on the option's recommendations caps at Medium; it does not stack.
-    questions = open_questions(a, option)
-    if questions:
-        reasons.append(f"open question: {', '.join(questions)} (at most Medium)")
-        level = max(level, 1)
+    weaknesses = len(reasons) - start
+    level = min(start + weaknesses, len(CONFIDENCE_LEVELS) - 1)
     return {"level": CONFIDENCE_LEVELS[level], "reasons": reasons}
 
 

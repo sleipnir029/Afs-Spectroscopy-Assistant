@@ -55,7 +55,7 @@ def test_half_of_the_intake_items_removed_fails_even_with_a_target():
     bad = copy.deepcopy(INTAKE)
     bad["facts_stated"] += [{"text": f"Invented {i}", "enquiry_quote": f"never written {i}"} for i in range(3)]
     problems = intake_problems(*sanitize_intake(Intake.model_validate(bad), ENQUIRY))
-    assert problems == ["3 of 6 intake items removed (quote not verbatim in the enquiry, or a placeholder)"]
+    assert problems == ["3 of 6 intake items removed (quote not verbatim in the enquiry)"]
 
 
 def test_collapsed_intake_is_retried_once_and_the_retry_is_used():
@@ -139,16 +139,16 @@ def test_affects_vocabulary_is_in_the_schema_and_the_prompt():
 def test_normalize_affects_maps_synonyms_and_drops_other_words():
     assert normalize_affects(["method", "Method choice", "method_choice", "m2", "status"]) == (
         ["method", "M2", "status"], [])
-    assert normalize_affects(["O1", "installation", "the budget"]) == (["installation"], ["O1", "the budget"])
+    assert normalize_affects(["o1", "installation", "the budget"]) == (["O1", "installation"], ["the budget"])
 
 
 def test_finalize_normalises_affects_and_logs_the_change():
     a = with_()
-    a["clarification_questions"][0]["affects"] = ["method_choice", "O2", "M2"]
+    a["clarification_questions"][0]["affects"] = ["method_choice", "O2", "M2", "the budget"]
     result, _ = run_with(assess=a)
-    assert result.assessment.clarification_questions[0].affects == ["method", "M2"]
+    assert result.assessment.clarification_questions[0].affects == ["method", "O2", "M2"]
     change = next(x for x in result.removed if x["location"] == "clarification_questions[0].affects")
-    assert change["item"] == ["method_choice", "O2", "M2"] and "dropped ['O2']" in change["reason"]
+    assert change["item"] == ["method_choice", "O2", "M2", "the budget"] and "dropped ['the budget']" in change["reason"]
     assert result.report.passed and not render.open_failures(result)
 
 
@@ -202,14 +202,14 @@ def test_fusion_needs_the_extended_tier_a_fusion_note_or_a_combination(change):
 def test_empty_stated_requirements_show_the_intake_facts_and_targets():
     md = render.to_markdown(run_with(assess=with_(requirements_stated=[]))[0])
     block = md.split("**Stated by the customer**\n\n", 1)[1].split("\n\n", 1)[0]
-    assert block == "- Broth is clear and aqueous\n- Target: ethanol (follow during fermentation)"
+    assert block == '- "clear aqueous fermentation broth"\n- "follow ethanol"'
 
 
 def test_intake_item_with_an_unsupported_figure_shows_its_quote():
     intake = copy.deepcopy(INTAKE)
     intake["facts_stated"][0]["text"] = "Broth is clear, about 5 % ethanol"
     md = render.to_markdown(run_with(intake=intake, assess=with_(requirements_stated=[]))[0])
-    assert "- clear aqueous fermentation broth\n" in md and "5 %" not in md
+    assert '- "clear aqueous fermentation broth"\n' in md and "5 %" not in md
 
 
 def test_stated_requirements_are_used_when_present():
@@ -258,24 +258,24 @@ def test_cost_script_agrees_with_borrowed_and_lower_bound_costs(tmp_path):
 
 
 # ----------------------------------------------------------------- item 7 calibration
-def test_open_question_caps_at_medium_and_does_not_stack():
+def test_open_question_starts_at_medium_and_a_weakness_drops_one_level():
     a = _clean()
     a.clarification_questions[0].affects = ["M1"]
     a.solution_options[1].citations = []
     a.recommendations[0].citations = [cit_precedent()]
     conf = _conf(a, "O2")
-    assert conf == {"level": "Medium", "reasons": ["precedent only", "open question: Q1 (at most Medium)"]}
+    assert conf == {"level": "Low", "reasons": ["open question: Q1 (starts at Medium)", "precedent only"]}
 
 
-def test_cap_reason_is_listed_when_the_level_is_already_low():
+def test_start_reason_is_listed_first_when_the_level_is_already_low():
     a = _clean(decision_status="insufficient_information")
     a.clarification_questions[0].affects = ["method"]
     a.solution_options[1].citations = []
     a.recommendations[0].citations = []
     conf = _conf(a, "O2")
     assert conf["level"] == "Low"
-    assert conf["reasons"] == ["no verified source citation", "status: insufficient information",
-                               "open question: Q1 (at most Medium)"]
+    assert conf["reasons"] == ["open question: Q1 (starts at Medium)", "no verified source citation",
+                               "status: insufficient information"]
 
 
 def cit_precedent():
