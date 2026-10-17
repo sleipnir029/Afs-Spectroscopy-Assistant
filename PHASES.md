@@ -177,3 +177,123 @@ The reviewer verdict was APPROVE WITH FIXES (B1–B8 blocking). Fixes, in order:
 - **Acceptance:** tests for each item; pytest, kb check and ruff all pass; reproducible build.
 
 **1.R2 result (09:06):** all 7 items done; pytest 59/59, kb check 9/9, ruff clean, reproducible build. Phase 1 closed.
+
+---
+
+## Phase 2 — Pipeline MVP (APPROVED 2026-10-17 09:12; dev model deepseek/deepseek-v4-pro-0813; `runs/` gitignored — user)
+
+**Goal.** A working end-to-end assessment pipeline for any enquiry text. It follows the AFS-Ashby steps 0–8 with deterministic checks and provenance, runs on D01–D08, and produces JSON + Markdown. Out of scope here: the cross-family critic, the eval harness, the model bake-off (Phase 3), the chat shell and HTML evidence view (Phase 4).
+
+**Inputs.** The Phase 1 knowledge layer and tools, the dev scenarios (docx D01–D08), and an OpenRouter API key in `.env`, which the user creates (`.env` is gitignored).
+
+### Steps
+
+**2.1 Config + LLM client** (`config.py`, `llm.py`).
+- OpenRouter through the OpenAI SDK.
+- Models come from `config/models.yaml`: `intake`, `assess` and `repair` roles, pinned ids, no `~latest` aliases.
+- `response_format` json_schema strict with `provider.require_parameters=true`; temperature 0; retries on transient errors only.
+- Tokens, cost and latency are logged per call.
+- A hard spend cap per run and per session lives in config.
+
+**2.2 Scenario loader** (`scenarios.py`). A generic parser:
+- `scenarios/dev.jsonl` from the docx (dev enquiry text only; facts and "useful sources" are kept for eval, not shown to the model)
+- `scenarios/final.jsonl` from the H txt (enquiry text only)
+- The parser splits on the `ID | title` pattern. No scenario IDs appear in the code; the lint stays green.
+
+**2.3 Schemas** (`schema.py`, pydantic → JSON schema).
+- **Intake** (steps 0–2):
+  - route flags (stackable): in_scope, needs_clarification, premise_to_check, certainty_or_approval_requested, clinical_context, out_of_scope
+  - `facts_stated[]`: each item is `{text, enquiry_quote}`
+  - `targets[]`: what to measure and why
+  - sample slots: `physical_state, optical_regime, aqueous, heterogeneous, fluorophore`. Each is `{value | "unknown", enquiry_quote | null}`.
+  - process constraints: location, temperature, pressure, distance/remote analyzer, hazards, cleaning, response time. Each is `{value | "unknown", enquiry_quote}`.
+  - `customer_premises[]`
+  - `proposed_methods[]` / `proposed_fiber`
+- **Assessment** (steps 5–8):
+  - `decision_status` ∈ provisional_assessment / insufficient_information / premise_not_supported / outside_supported_scope
+  - `premise_checks[]`: `{premise, verdict: supported|contradicted|not_covered, explanation, citations}`
+  - `requirements {stated[], unknowns[]}`
+  - `clarification_questions[]` (at most 7): `{question, why_it_matters, affects[] (candidate ids or decision), priority}`
+  - `recommendations[]`: `{method, technique, role: primary|comparison|conditional|not_recommended, rationale, conditions, citations}`
+  - `measurement_concept {probe_and_geometry, location, fiber_link, citations}`
+  - `spectral_ranges[]`: `{method, statement, citations}`
+  - `risks[]`: `{risk, citations, rule_ids}`
+  - `feasibility_plan {samples, reference_measurements, comparison, validation, decision_basis}`
+  - `assumptions[]`
+  - `not_in_sources[]`
+  - Every citation is `{doc, page, quote, claim_kind}`.
+
+**2.4 Pipeline** (`pipeline.py`).
+- **S0–2 Intake:** an LLM call with only the enquiry and the slot vocabulary.
+- **S3–4 Screen + fiber coverage:** code. Slots taken from the intake; unknown stays unknown.
+- **S5–8 Assess:** an LLM call. The context holds:
+  - the system prompt (AFS-Ashby procedure + style rules, our words, `prompts/assess.md`)
+  - the full page-tagged knowledge base (about 36k tokens, every page, marked `[S01 p.10] …`; S02 text only, not notes)
+  - the rules list with ids
+  - the screening table and fiber notes
+  - the intake JSON
+- **D Verify:** code, claim-local. See 2.5.
+- **Repair:** an LLM call with the failure list, fixing only the flagged items. At most 2 rounds.
+- **Finalize:**
+  - remaining failing citations are dropped
+  - items left without a valid citation are labelled "engineering judgement (no supporting source)" or removed
+  - the status is downgraded where required
+  - nothing unverified is shown as verified
+
+**2.5 Deterministic verification** (`verify.py`, MatSage-style `VerificationCheck`/`Report`, hard/soft). Hard checks:
+- every citation quote is `exact` or `loose` on its page (`fuzzy_review` = fail; the matched span is never shown)
+- the scope check passes for each citation's `claim_kind` (`precedent_only` is allowed only where the text does not assert readiness or proof)
+- numbers in each item appear in that item's own verified quotes or in the enquiry (claim-local)
+- every intake `enquiry_quote` appears verbatim in the enquiry, so no client fact is invented
+- recommended (non-`not_recommended`) items do not include a candidate the screen marked `fail`
+- a contradicted premise means the status is not `provisional_assessment`, unless the premise is explicitly corrected in the answer
+- every unknown slot that decides a candidate is either asked about or listed as an assumption
+- forbidden lexicon: prices/currency, SKU-like codes, "guarantee", "will work", "approved", "validated for", "proven"
+
+Soft checks: length budget; question count ≤7; each question has `affects`.
+
+**2.6 Render** (`render.py`). Markdown following the organizer section order:
+- decision status; premise check; requirements (stated vs unknown)
+- prioritised questions; recommendations; measurement concept; spectral range; risks
+- feasibility plan; assumptions; not in sources; sources
+- inline citations `[S01 p.10]`, plus a quotes appendix with ✓ (verified) / ⚠ (flagged) badges
+- a verification summary
+
+**2.7 Provenance** (`provenance.py`).
+- Each run builds an in-memory tree containing: enquiry, intake, screen, assessment (raw/repaired/final), verifier report, and a manifest (model ids, prompt sha256, knowledge sha256, code git sha, tokens, cost, timings).
+- dulwich writes it as one commit on `refs/heads/provenance` through the object API, so the working tree and index are never touched. The commit is tagged `run/<id>`.
+- The same files also go to `runs/<id>/` for local viewing (needs a `.gitignore` entry for `runs/`: see decision 3).
+
+**2.8 CLI.**
+- `uv run afs-assist assess --text "..." | --file f.txt` prints the Markdown and the output paths.
+- `uv run afs-assist run --set dev` runs all dev scenarios → `outputs/dev/<id>.{json,md}`.
+
+**2.9 Tests.**
+- Offline tests with a fake LLM client: intake span check, each verify check (passing and failing fixtures), repair-loop flow, finalize downgrade, render, provenance commit in a temp repo, scenario parser.
+- One live smoke test, skipped when no API key is set.
+
+### Acceptance checks
+- [ ] `uv run pytest`: all offline tests pass; ruff clean; `kb check` passes.
+- [ ] D01–D08 run end to end with the dev model, and each output has all sections.
+- [ ] 100% of citations shown as verified are exact or loose; failures are visible.
+- [ ] 0 unflagged invented numbers.
+- [ ] Cost per run is logged and the total stays within budget.
+- [ ] Every run has a provenance commit, and `git log provenance` shows them.
+- [ ] H01–H06 are **not** run in Phase 2.
+
+### Review
+- A reviewer agent checks the code plus D01–D08 outputs against the organizer D01/D02 worked answers and the style rules.
+- **G2 (user):** read D01, D02 and two other D outputs.
+
+### Risks
+| Risk | Mitigation |
+|---|---|
+| Model ignores the schema | Strict json_schema + require_parameters; one retry |
+| Quotes fail often | Repair loop; prompt shows page text exactly as stored |
+| Token cost | About 36k-token context per assess call; with caching it stays mid-tier cheap; spend cap |
+| Over-long answers | Length budget + style rules |
+
+### Decisions needed
+1. API key: the user puts `OPENROUTER_API_KEY=...` into `.env` (never committed or printed).
+2. Phase 2 dev model: proposed `deepseek/deepseek-v4-pro-0813` (cheap, strict JSON supported); alternatively `google/gemini-3.8-flash`. The final choice is the Phase 3 bake-off.
+3. Add `runs/` to `.gitignore` (local copies; the durable record is the `provenance` branch).

@@ -1,0 +1,116 @@
+"""Git provenance for pipeline runs (dulwich object API).
+
+Each run becomes one commit on refs/heads/provenance (parent = previous provenance
+commit) plus a tag-like ref refs/tags/run/<run_id>. Objects are written straight
+into the object store, so the working tree, the index and the current branch are
+never touched. A local copy is also written to runs/<run_id>/ (gitignored).
+"""
+
+from __future__ import annotations
+
+import json
+import time
+
+from dulwich.errors import NotGitRepository
+from dulwich.object_store import iter_tree_contents
+from dulwich.objects import Blob, Commit, Tree
+from dulwich.repo import Repo
+
+from afs_assistant import paths
+
+PROVENANCE_REF = b"refs/heads/provenance"
+AUTHOR = b"afs-assistant pipeline <pipeline@afs-assistant.local>"
+
+
+def _tree(repo: Repo, files: dict[str, bytes]) -> bytes:
+    """Build nested trees for {"dir/file": bytes}; returns the root tree id."""
+    root: dict = {}
+    for path, data in files.items():
+        node = root
+        parts = path.split("/")
+        for part in parts[:-1]:
+            node = node.setdefault(part, {})
+        node[parts[-1]] = data
+
+    def write(node: dict) -> bytes:
+        tree = Tree()
+        for name, value in sorted(node.items()):
+            if isinstance(value, dict):
+                tree.add(name.encode(), 0o040000, write(value))
+            else:
+                blob = Blob.from_string(value)
+                repo.object_store.add_object(blob)
+                tree.add(name.encode(), 0o100644, blob.id)
+        repo.object_store.add_object(tree)
+        return tree.id
+
+    return write(root)
+
+
+def code_sha(repo_path=paths.ROOT) -> str:
+    try:
+        return Repo(str(repo_path)).head().decode()
+    except (NotGitRepository, KeyError):
+        return "unknown"
+
+
+def record(run_id: str, files: dict[str, str | bytes], message: str, repo_path=paths.ROOT) -> str:
+    """Write files under runs/<run_id>/ locally and commit them on the provenance ref."""
+    encoded = {k: v.encode("utf-8") if isinstance(v, str) else v for k, v in files.items()}
+    local = paths.ROOT / "runs" / run_id if repo_path == paths.ROOT else repo_path / "runs" / run_id
+    for name, data in encoded.items():
+        target = local / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+
+    repo = Repo(str(repo_path))
+    try:
+        parent = repo.refs[PROVENANCE_REF]
+        parent_tree = repo[parent].tree
+        existing = {}
+        for entry in iter_tree_contents(repo.object_store, parent_tree):
+            existing[entry.path.decode()] = repo[entry.sha].data
+    except KeyError:
+        parent, existing = None, {}
+    for name, data in encoded.items():
+        existing[f"runs/{run_id}/{name}"] = data
+
+    commit = Commit()
+    commit.tree = _tree(repo, existing)
+    commit.parents = [parent] if parent else []
+    commit.author = commit.committer = AUTHOR
+    commit.author_time = commit.commit_time = int(time.time())
+    commit.author_timezone = commit.commit_timezone = 0
+    commit.encoding = b"UTF-8"
+    commit.message = message.encode("utf-8")
+    repo.object_store.add_object(commit)
+    repo.refs[PROVENANCE_REF] = commit.id
+    repo.refs[f"refs/tags/run/{run_id}".encode()] = commit.id
+    return commit.id.decode()
+
+
+def run_files(result_json: dict, markdown: str) -> dict[str, str]:
+    m = result_json["manifest"]
+    return {
+        "enquiry.txt": result_json["enquiry"] + "\n",
+        "intake.json": json.dumps(result_json["intake"], indent=1, ensure_ascii=False),
+        "screening.json": json.dumps(result_json["screening"], indent=1, ensure_ascii=False),
+        "assessment.json": json.dumps(result_json["assessment"], indent=1, ensure_ascii=False),
+        "verification.json": json.dumps(result_json["verification"], indent=1, ensure_ascii=False),
+        "manifest.json": json.dumps(m, indent=1, ensure_ascii=False),
+        "assessment.md": markdown,
+    }
+
+
+def commit_message(result_json: dict) -> str:
+    m = result_json["manifest"]
+    v = m["verification"]
+    return (f"run {m['run_id']}\n\n"
+            f"Run-Id: {m['run_id']}\n"
+            f"Models: {', '.join(m['models'])}\n"
+            f"Code-SHA: {m.get('code_sha', 'unknown')}\n"
+            f"Prompt-SHA256-Assess: {m['prompt_sha256']['assess']}\n"
+            f"Knowledge-SHA256: {m['knowledge_sha256']}\n"
+            f"Verifier: {'pass' if v['passed'] else 'fail'} ({v['hard_failures']} hard, {v['soft_failures']} soft); "
+            f"citations {v['citations_verified']}/{v['citations_total']}\n"
+            f"Cost-USD: {m['cost_usd']}\n")

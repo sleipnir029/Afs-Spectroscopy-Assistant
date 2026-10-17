@@ -1,0 +1,17 @@
+# Model roles for the pipeline (OpenRouter ids, pinned; no ~latest aliases).
+# Phase 2 dev model chosen by the user; the final model is decided in the Phase 3 bake-off.
+provider: openrouter
+base_url: https://openrouter.ai/api/v1
+temperature: 0
+# json_schema = strict structured output (preferred); json_object = fallback with pydantic validation.
+response_mode: json_schema
+roles:
+  intake: {model: deepseek/deepseek-v4-pro-0813, max_tokens: 4000}
+  assess: {model: deepseek/deepseek-v4-pro-0813, max_tokens: 16000}
+  repair: {model: deepseek/deepseek-v4-pro-0813, max_tokens: 16000}
+# Fallback prices (USD per 1M tokens) used only if OpenRouter does not return a cost.
+prices:
+  deepseek/deepseek-v4-pro-0813: {input: 0.66, output: 1.98}
+spend_cap_usd:
+  per_run: 1.00
+  per_session: 10.00
