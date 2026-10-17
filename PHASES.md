@@ -558,6 +558,22 @@ Pattern: GRADE (start high, downgrade per named weakness) and the IPCC AR5 calib
 4. **Run finding: open decision-relevant questions.** Rule 1 also fires when one of the top 3 clarification questions lists one of the option's recommendation ids (or `method_choice`) in `affects`: "open question: <short id>". A first assessment with the method choice still open is not High.
 5. Tests for 1–4; re-run D01–D08; both check scripts; then the independent output + code review (G3).
 
+### Phase 3 fixes (3.R3) — 18:05, from the G3 review (NEEDS_FIXES; Claude, D-020 mode; D-029)
+**3.R2 dev run (16:58–17:55, $0.175, code 7ebe590):** 8/8 complete, 0 hard failures, citations 227/227, 14/14 charts, 8/8 cost classes; confidence 2 High / 7 Medium / 13 Low. **G3 review: NEEDS_FIXES** (all mechanical checks pass; output quality problems below).
+
+1. **B1 collapsed intake (D05):** hard intake check: targets non-empty and fewer than half of the intake items removed; otherwise retry the intake once, then fail the case. `request_text` falls back to the enquiry when the summary is under ~90% Latin-script letters or shares fewer than 3 content words with the enquiry.
+2. **B2 near-match sample types in the screen:** a Table 1 row whose sample types do not list the state exactly but list a neighbour (soft_solid ~ solid/paste; paste ~ soft/liquid) gives `unknown` with the reason "Table 1 lists <types>; fit for <state> to be tested", not `fail`. Exact mismatches far apart (e.g. powder vs liquid) stay `fail`.
+3. **B3 `affects` vocabulary:** `affects` items are a Literal `method | technique | installation | status` or a recommendation id (M1…); schema and prompt say so; `method` affects every option.
+4. **B4 comparison ≠ fusion:** the multi-method downgrade and the "data fusion model" chart node apply only to the extended tier, an option with a `fusion_note`, or a recommendation with `combined_with`. Otherwise the sketch draws one chemometric model per spectrometer.
+5. **B5 stated requirements:** when `requirements.stated` is empty, render the intake's verified facts and targets under "Stated by the customer".
+6. **B6 extended cost:** a combined method without its own technique takes the technique from another recommendation with the same method; otherwise the cell reads "at least <class> (row n); <method> row not identified".
+7. **Confidence calibration** (G3 recommendation; GRADE-style, generic):
+   - Stacking downgrades: (a) a deciding sample slot unknown or the technique not screened; (b) precedent only or no verified supplied source; (c) a *required* parameter that is an uncited auxiliary sensor or not measurable in-line (N5 undone: optional parameters do not count); (d) fusion as in item 4.
+   - An open question that affects the method (or the option's recommendations) **caps the rating at Medium**; it does not stack.
+   - Contradicted premise / non-provisional status (old rule 4) stays a stacking downgrade.
+8. **Simplicity (cheap NON-BLOCKING items):** the Decision status in the Answer is a one-line label (its prose moves to Expert detail); the extended-option chart moves to Expert detail; "Best current option" shows the id and tier only; prompt: table cells about 6 words; no section repeats the brief answer; prompt line: never speak for AFS ("we will confirm", "our material"); a combination recommendation's headline shows "+ <method> (combination)"; repeated identical quotes are merged in Evidence; soft check: every method named in `brief_answer` appears in the best option or is marked conditional.
+9. Tests for each item (including the model's real `affects` spelling, a non-Latin summary, a mostly-removed intake, soft_solid vs a `solid` row, a non-fusion two-method option, empty stated requirements, combined-method cost). Re-run D01–D08; both check scripts; short re-review of the outputs (at least D05 and D08) → G3.
+
 ---
 
 ## Phase 4 — External evidence, option B (Sat 21:00–Sun 07:00)

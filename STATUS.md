@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 16:27 CEST (Claude, 3.R2 implementer)._
+_Last updated: 2026-10-17 18:05 CEST (Claude, 3.R2 implementer)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
