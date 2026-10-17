@@ -34,7 +34,7 @@ Phases 2–6 get their detailed plans written when the previous phase closes. Th
 
 ---
 
-## Phase 1 — Knowledge foundation (PLAN — awaiting approval)
+## Phase 1 — Knowledge foundation (APPROVED 2026-10-17 08:55 — in progress)
 
 **Goal.** A committed, checkable knowledge layer: page text, slide notes, scope tags, tables, generic rules, and a knowledge graph. Plus the deterministic tools that later phases use to check answers. **No LLM calls in this phase.**
 
@@ -48,7 +48,7 @@ Phases 2–6 get their detailed plans written when the previous phase closes. Th
 - Collapse newlines and whitespace to single spaces.
 - The verifier later uses the same function, so quotes are always checked against the exact text the model saw.
 
-**1.2 Page extraction → `knowledge/pages.jsonl`.**
+**1.2 Page extraction → `knowledge/pages.jsonl`.** Also the organizer docx §3 (good practice) and §5 (method overview + fiber table) as citable source `REF` (page = section number), approved by the user. D01–D08 and the worked answers stay out of the knowledge base (dev/eval data only).
 - Sources: S01 (19 p), S03 (17 p), S04 (6 p), S05 (2 p), S06 (link, 1 "page").
 - Fields: `doc, page, scope[], title, text, sha256, extraction`.
 
