@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="column start">
+  <form class="ask-form" method="post" action="/assess">
+    <h1 class="start-title"><label for="enquiry">What do you want to measure?</label></h1>
+    <p class="lede">Describe the material, the process and what you need to know. You get a first technical assessment in a few minutes; every claim points to the AFS page it comes from.</p>
+    <textarea id="enquiry" name="enquiry" rows="6" required maxlength="{{ MAX_CHARS }}" placeholder="e.g. what you want to follow, in which line or vessel, and what you already know about the material">{{ q }}</textarea>
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <div class="chips" aria-label="Example questions">
+      <span class="muted small">Try an example:</span>
+      {% for e in examples %}<a class="chip" href="/?q={{ e | urlencode }}" data-fill="{{ e }}">{{ e }}</a>{% endfor %}
+    </div>
+    <div class="form-row">
+      {% if busy %}
+      <p class="muted">A question is being assessed. <a href="/jobs/{{ busy.id }}">Follow it</a>.</p>
+      {% else %}
+      <button class="btn" type="submit">Get assessment</button>
+      {% endif %}
+    </div>
+  </form>
+
+  <section class="examples-list" aria-labelledby="examples-title">
+    <h2 id="examples-title" class="h2">Open a finished example</h2>
+    <ul class="link-list">
+      {% for r in saved %}<li><a href="/runs/{{ r.id }}">{{ r.title }}</a></li>{% else %}<li class="muted">No finished examples yet.</li>{% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

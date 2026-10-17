@@ -169,6 +169,14 @@ def _external_replay(args: argparse.Namespace) -> int:
     return 1 if different else 0
 
 
+def _ui(args: argparse.Namespace) -> int:
+    from afs_assistant.ui import server
+
+    print(f"AFS Spectroscopy Assistant: http://{args.host}:{args.port}/  (Ctrl+C to stop)")
+    server.serve(args.host, args.port, args.external)
+    return 0
+
+
 EXTERNAL_HELP = ("external evidence: live (search the web APIs; falls back to the curated library on a network "
                  "error or rate limit), cache (no network: answers HTTP requests from the recorded responses only; "
                  "the model calls run again, so queries that differ from the recorded run miss and fall back to "
@@ -204,6 +212,11 @@ def main(argv: list[str] | None = None) -> int:
     rp = e_sub.add_parser("replay", help="re-verify a run's external items offline against the cached text")
     rp.add_argument("run_json")
     rp.set_defaults(func=_external_replay)
+    u = sub.add_parser("ui", help="local web UI: open saved runs, assess a new enquiry")
+    u.add_argument("--host", default="127.0.0.1")
+    u.add_argument("--port", type=int, default=8765)
+    u.add_argument("--external", choices=["live", "cache", "off"], default="live", help=EXTERNAL_HELP)
+    u.set_defaults(func=_ui)
     args = parser.parse_args(argv)
     return args.func(args)
 
