@@ -17,9 +17,9 @@ Master plan: approved Plan v3 (2026-10-17). This file breaks it into phases.
 | 0 | Repo hygiene and setup | Keep organizer files out of git; uv project | G0 |
 | 1 | Knowledge foundation | Verified knowledge layer + deterministic tools, no LLM | G1 (passed) |
 | 2 | Pipeline MVP | AFS-Ashby steps 0–8 end to end on D01–D08, with deterministic checks + provenance | G2 (passed) |
-| 3 | Assessment upgrade (re-plan) | Brief answer, proposal, parameters, 2–3 solution options, Mermaid sketch, optional notes, fusion reasoning, cheap open points | G3 |
+| 3 | Assessment upgrade (re-plan) | Brief answer, proposal, parameters, 2–3 solution options, Mermaid sketch, optional notes, fusion reasoning, cheap open points | G3 (passed 19:36) |
 | 4 | External evidence (re-plan) | Curated library + live keyless scholarly search, verified and cached, replay; `--web` stretch | G4 |
-| 5 | Quality, eval and demo surface (re-plan) | Adversarial set, eval harness, quick bake-off, length, chat CLI + HTML evidence view | G5 |
+| 5 | Quality, eval and demo surface (re-plan) | Adversarial set, eval harness, quick bake-off, length, Streamlit web app (D-023) | G5 |
 | 6 | Freeze and deliverables (re-plan) | H01–H06 once (live, then frozen), README, ARCHITECTURE, slides PDF, video, fresh-clone test, submit | Submit |
 
 Phases 2–6 get their detailed plans written when the previous phase closes. The outlines are in Plan v3, §9.
@@ -585,6 +585,18 @@ The 3.R3 dev run started 18:19 was stopped at D01 so the run uses the fixed code
 7. **Calibration (N5, decided by Claude in D-020 mode; D-032):** an open top-3 question that affects the option or the method sets the **starting level to Medium** instead of High; each weakness then drops one level (floor Low). Reasons list the start reason first. Rationale: GRADE starting levels; the cap made 19/22 options Medium and hid single weaknesses.
 8. **N7:** check_cost_class checks that "at least" appears exactly when a method's row was not identified.
 9. Tests for each; then re-run D01–D08, both check scripts, short re-review of the outputs (D05, D08 at least) → G3.
+
+
+### Phase 3 close (2026-10-17 19:36)
+- **3.R4 dev run** (18:35–19:28, code 3e93009, outputs 085dcf1, $0.198): 8/8 pass, 0 hard failures, 236/236 citations verified, `check_mermaid` 14/14, `check_cost_class` 8/8; confidence 0 High / 7 Medium / 15 Low of 22 options; Answer layer 585–753 words (soft target ~600). D05 request line English, intake complete; D08 fluorescence a conditional candidate, no longer screened out.
+- **G3 re-review (reviewer agent, D-020 mode): PASS WITH NON-BLOCKING ISSUES.** pytest 372 passed, 1 skipped; ruff clean. Phase 3 **closed**.
+- **Carried to Phase 5 (5.4 length/simplicity; non-blocking):**
+  1. "Stated by the customer": drop a quote that is a case-insensitive substring of another kept quote; skip or cap the fallback when it covers most of the enquiry; add a test.
+  2. Confidence separation: one `affects: method` question makes every option start at Medium, and a suggested temperature sensor pushes all to Low (D05, D07 all Low). Consider not counting a weakness shared by every option, or showing it as a note. Log as a deviation.
+  3. A supplied precedent *against* a single method (e.g. "none of the individual techniques was sufficient") does not lower that option's rating.
+  4. Answer length: two cases over ~600 words.
+  5. Expert-layer clutter: a spectral-range line for a method not in any option; a repeated "Later hypothesis" tail after citations; "Answer Q1 to Q3 and Q4"; a sketch label "technique not specified" when the method has one.
+  6. Test gaps: open question + ≥2 weaknesses at the Low floor; an end-to-end non-empty `intake_problems`; substring duplicates.
 
 ---
 

@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 18:25 CEST (Claude, 3.R4 implementer)._
+_Last updated: 2026-10-17 19:36 CEST (Claude, Phase 3 close)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 3 (Assessment upgrade), fix round 3.R4.** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
+**Phase 3 (Assessment upgrade): CLOSED 19:36 (G3 passed). Next: Phase 4 (External evidence, option B).** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
 - **User mode (D-020, 14:24):** Claude is fully in charge; the user is woken (push notification) only for their decisions. At each phase end: write this handoff and tell the user to switch sessions ("do the next task").
 - **Phase 3 code** 3c7e881: pytest 248 passed, 1 skipped; ruff clean; kb check 9/9. Code review: APPROVE WITH FIXES (B1 duplicate ids, B2 proposal basis unverified, B3 price wording) → 3.R item 1.
 - **First Phase 3 dev run (13:51–14:59, $0.211):** 7/8 complete, 0 hard failures left, citations 241/241 verified, 12/12 Mermaid charts render, cost classes match Table 1 (D01–D04 checked; the check script crashed on the stale D05). **D05 failed** (assess reply truncated at max_tokens). D06 simple = recommended option. Body 2,472–3,137 words. outputs/dev/D05.* are still the 12:41 Phase 2 output.
@@ -17,69 +17,30 @@ _Last updated: 2026-10-17 18:25 CEST (Claude, 3.R4 implementer)._
 - **3.R3 implemented (18:13, offline):** items 1–9 done (intake check + one retry + request-line fallback; screen near-match neighbours soft_solid/paste; `affects` vocabulary normalised in finalize; fusion only for extended / fusion_note / combined_with, per-method models in the sketch; stated-requirements fallback; borrowed technique or "at least" cost; confidence: required parameters only, open question caps at Medium; simplicity items). pytest 354 passed, 1 skipped; ruff clean; kb check 9/9. graph.json unchanged (the state mapping does not feed it). Implementer choices in D-030. Offline recompute of the 3.R2 dev outputs with the new rules: 19 Medium / 3 Low of 22 (every option carries an open method question). Not yet run live; outputs/dev are still the 3.R2 run.
 - **3.R3 code review: APPROVE WITH FIXES** (B1 intake warning not visible, B2 paraphrase in the stated fallback; N1–N7) → 3.R4 (D-032). The 3.R3 dev run started 18:19 was stopped at D01; outputs/dev/D01.* in the working tree are from that stopped run (not committed).
 - **3.R4 implemented (18:25, offline):** items 1–8 done (⚠ intake-incomplete line in Verification, placeholders not counted as removed; stated fallback = verified enquiry quotes only; near match keeps the dark-sample / unknown-regime reason; `affects` accepts O ids and any method* word, an O id in a top-3 question affects that option; finalize logs only dropped affects items; merged Evidence entry keeps the precedent badge; confidence starts at Medium with an open method/option question, then one level per weakness; check_cost_class checks "at least"). pytest 372 passed, 1 skipped; ruff check clean; kb check 9/9. Implementer choices in D-033. Offline recompute of the 3.R2 dev outputs (bab11a7): 0 High / 8 Medium / 14 Low of 22 (the 3.R3 cap gave 0 / 19 / 3); every case still has an open method question in the top 3. Not yet run live.
-- **Next:** independent review of 3.R4 → re-run D01–D08 → both check scripts → short re-review (D05, D08) → G3 → close Phase 3 → handoff for Phase 4.
+- **3.R4 dev run (18:35–19:28, $0.198, outputs 085dcf1):** 8/8 pass, 0 hard failures, 236/236 citations, 14/14 charts, 8/8 cost classes; confidence 0 High / 7 Medium / 15 Low; Answer 585–753 words.
+- **G3 re-review (19:36): PASS WITH NON-BLOCKING.** Phase 3 closed. Non-blocking items carried to Phase 5.4 (PHASES.md "Phase 3 close").
+- **Next:** Phase 4 in a new session (handoff below).
 
-## Next session starts with (handoff 13:24)
-Session rule (user): ≤200k tokens per session, one phase or task per session.
+## Next session starts with (handoff 19:36)
+Session rule (user): ≤200k tokens per session, one phase per session. **User mode (D-020):** the user is exhausted; Claude does all tests, output reading and validation; reviewer agents stand in at gates; wake the user (PushNotification) only for decisions that are theirs (plan changes beyond D-020 scope, publishing, submission, git deletions). At the phase end, write the next handoff here and notify the user to switch sessions (they type `/clear`, then "do the next task").
 
-**Task: write the re-plan of Phases 3–6 for user approval** (plan only, no code). Phase 2 code is done and reviewed; G2 (the user's read of `outputs/dev/D01.md`, `D02.md`, `D07.md`, `D08.md`, D04 optional) may still be pending. Ask the user for the G2 verdict first, then close Phase 2 in PHASES.md.
-
-1. Read:
-   - `CLAUDE.md` and this file, especially "Done" from the jury input onwards, "Open decisions" and "Check results";
-   - `PHASES.md` (Phase 2 section from "Phase 2 review" to the end);
-   - `DEVIATIONS.md` D-011..D-019;
-   - `docs/research-replan.md` (online-search research, option B recommended);
-   - `docs/qa-notes-2026-10-17.md` (organizer Q&A; those items are optional fields).
-2. Requirements already decided by the user (see Done):
-   - **Jury musts:**
-     - always make a proposal (a Proposal block; the status stays honest);
-     - live online search when the supplied sources do not cover the question: keyless scholarly APIs, verify every quote verbatim, cache it (git gets metadata + quotes + sha256; full text goes to a local gitignored cache, confirm the path), external sources marked secondary;
-     - the curated library as offline fallback;
-     - web search off by default, enabled by a `--web` flag;
-     - multi-method (several methods on one process) and data-fusion analysis.
-   - **End-user musts:**
-     - 2–3 solution options (simple / recommended / extended multi-method) weighed on cost class (relative only, S01 Table 1; never currency), ease of use, maintenance and performance fit, and the optimal one recommended;
-     - a parameter layer: the chemical/physical parameters the case needs, why, quantitative or qualitative, which measurement (spectroscopy method or an auxiliary sensor; thermocouple = labelled option, "confirm with AFS"), plus optional parameters with reasons; no cap;
-     - a short brief answer up front;
-     - a code-generated Mermaid flowchart of the setup.
-   - **Optional fields** (Q&A): chemometrics note, real-time tracking note, future direction.
-   - **Contact email:** `CONTACT_EMAIL` in `.env`. No OpenAlex key.
-   - **Bake-off** = a quick check only. Length is soft (minimise later).
-3. Proposed priority order:
-   - P1: parameter layer + solution options + brief answer + proposal block (~4–6 h).
-   - P2: online search, option B (~10–14 h).
-   - P3: Mermaid sketch (~1–2 h).
-   - P4: optional fields and `--web`.
-   - Then the chat shell / evidence view, freeze, final H runs (live once, then freeze), and deliverables (README, fresh-clone test, video). Also fold in the Phase 3 open points below where cheap.
-4. Write the plan into PHASES.md (replacing the "not planned yet" Phases 3–6), with steps, acceptance checks, review and risks, and timeboxes to the deadline (Sun 23:59). Then ask for approval.
-
-Known open points for Phase 3 (from the reviews; updated 12:05):
-- **Entailment critic** for claims beyond their quotes: D01 flush-mount geometry cited to the dairy page, D03 "amide" bands, D06 "(including by water)", D02 off-domain precedents. Also a domain-error check: D07 dismisses NIR transmission in a melt.
-- **Length:** 1,700–2,100 body words vs ~450; soft, user.
-- **Premise policy:**
-  - at most 3 premises;
-  - a precedent-only verdict instead of "Supported" (REF §3: a published application is "not proof");
-  - a reverse check: `premise_not_supported` with no contradicted premise.
-- **Gate the "no MIR link length" line on relevance** (rules.yaml ~250; D-007 theme).
-- **Primary-count rule:** D01 has two primaries.
-- **Redesign the negation logic** with broader false-positive and false-negative tests ("and"/"so"/"since" clauses; "Nothing here is a guarantee").
-- **Intake noise:** "unknown" placeholders are shown as "not quoted verbatim" removals.
-- **`code_dirty`:** exclude `outputs/`.
-- **Cosmetic labels:** e.g. "Raman, raman probe".
-- **Review the S02 p.6 figure-text quotes.**
-- **Eval harness, bake-off, external reference library, adversarial set:** as planned.
-- **Jury:** may run the repo themselves or ask for a live run (both).
+**Task: implement Phase 4 — External evidence, option B** (PHASES.md "## Phase 4"; plan already approved 13:36 in the re-plan). Timebox Sat 21:00 → Sun 07:00.
+1. Read: `CLAUDE.md`; this file's "Current phase"; PHASES.md "## Phase 4" (steps 4.1–4.6, acceptance checks, G4 review, risks) and "### Phase 3 close"; DEVIATIONS.md D-020..D-033; `docs/research-replan.md` (API notes: OpenAlex keyless ~100 searches/day/IP, Semantic Scholar 429 without key).
+2. Code state: HEAD after 085dcf1 (Phase 3 closed). pytest 372 passed / 1 skipped; ruff clean; kb check 9/9. Pipeline: intake → screen → assess → verify → repair (≤2) → finalize; `quotes.py` is the verbatim matcher to reuse for external paragraphs (4.1 `SourceText` provider).
+3. Fixed decisions: full fetched text → `runs/external_cache/` (already gitignored); git gets metadata + verified quotes + sha256 only. `CONTACT_EMAIL` and `OPENROUTER_API_KEY` in `.env` (never print/commit; email only as Crossref/Unpaywall `mailto`). No OpenAlex key. `--web` is a stretch (cut list position 3). External items always marked secondary; the supplied-source assessment stays primary and unchanged.
+4. Process: short implementation plan → implementer agent(s) → offline tests (recorded HTTP fixtures, no network in pytest) → probe each API live once → re-run D01–D08 with `--external=live`, then verify `--external=cache` replay → reviewer agent (G4: injection, fetching, copyright, verification soundness, H hold-out) → close → handoff for Phase 5 → notify user to switch session.
+5. Never read `scenarios/final.jsonl` (H01–H06). Curated library entries are generic, never built from H text.
 
 ## Phase overview
 | Phase | State | Gate | Notes |
 |---|---|---|---|
 | 0 Repo hygiene and setup | Done (see D-001) | G0 retro-review pending | backup tgz, `.gitignore`, history purged, uv project + deps |
 | 1 Knowledge foundation | **Closed** | G1 passed | pytest 59/59, kb check 9/9 | G1 ~13:15 | kb check 8/8, pytest 51/51, ruff clean |
-| 2 Pipeline MVP | In progress | G2 ~20:00 | |
-| 3 Quality and evaluation | Not planned yet | G3 Sun 09:00 | |
-| 4 Chat shell and evidence view | Not planned yet | G4 Sun 14:00 | |
-| 5 Freeze | Not planned yet | G5 Sun ~16:00 | |
-| 6 Deliverables | Not planned yet | Submit by 22:30 | |
+| 2 Pipeline MVP | **Closed** 13:33 | G2 passed | |
+| 3 Assessment upgrade | **Closed** 19:36 | G3 passed | 8/8, 236/236 citations, 14/14 charts, 8/8 cost |
+| 4 External evidence (option B) | Planned (approved 13:36) | G4 Sun 07:00 | next session |
+| 5 Quality, eval and demo surface (Streamlit) | Planned (approved 13:36, 5.6 per D-023) | G5 Sun 14:00 | + Phase 3 carry-overs in 5.4 |
+| 6 Freeze and deliverables | Planned (approved 13:36) | Submit by 22:30 | user yes/no to publish + submit |
 
 ## Done
 - **Jury input (12:22, relayed by the user; paraphrase, not verbatim):**
