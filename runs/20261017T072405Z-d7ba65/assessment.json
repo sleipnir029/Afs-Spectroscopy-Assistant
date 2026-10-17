@@ -1,0 +1,401 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified for ethanol in a clear aqueous fermentation broth, but several assumptions about concentration range, matrix composition, and installation conditions remain open.",
+ "premise_checks": [],
+ "requirements_stated": [
+  "follow ethanol in a clear aqueous fermentation broth flowing through a pipe",
+  "gas chromatography results from the lab are available as reference"
+ ],
+ "key_unknowns": [
+  "ethanol concentration range",
+  "other absorbing species in the broth",
+  "temperature and pressure in the pipe",
+  "installation point and distance",
+  "required accuracy and response time",
+  "cleaning and fouling conditions",
+  "optical path length available"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the expected ethanol concentration range in the broth?",
+   "why_it_matters": "This determines whether NIR sensitivity is sufficient or whether a more sensitive method is needed. NIR may lack sensitivity for trace components in a bioprocess context.",
+   "affects": [
+    "method",
+    "technique",
+    "go_no_go_criteria"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What other absorbing species are present in the broth, and do their concentrations vary?",
+   "why_it_matters": "NIR bands are broad and overlapping; other species can interfere with ethanol quantification and require a chemometric calibration specific to the matrix.",
+   "affects": [
+    "method",
+    "calibration",
+    "feasibility"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the temperature and pressure in the pipe at the intended measurement point?",
+   "why_it_matters": "Temperature affects spectral features and probe compatibility; pressure affects probe installation and sealing.",
+   "affects": [
+    "installation",
+    "probe_selection"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What is the distance between the intended measurement point and the spectrometer location?",
+   "why_it_matters": "Fiber length limits depend on the fiber family. Long cables are stated only for low-OH silica fibers; MIR fiber link length is an open question.",
+   "affects": [
+    "method",
+    "fiber_selection",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What accuracy and response time are required for the ethanol measurement?",
+   "why_it_matters": "This determines whether a full-spectrum method or a simplified sensor approach is appropriate, and sets the go/no-go criteria.",
+   "affects": [
+    "method",
+    "go_no_go_criteria"
+   ]
+  },
+  {
+   "id": "Q6",
+   "question": "What are the cleaning and fouling conditions at the measurement point?",
+   "why_it_matters": "ATR probes sample only a surface layer a few micrometres deep, so deposits on the crystal are a risk. Transmission probes may also foul.",
+   "affects": [
+    "technique",
+    "installation",
+    "maintenance"
+   ]
+  },
+  {
+   "id": "Q7",
+   "question": "What optical path length is available in the pipe for a transmission or transflection measurement?",
+   "why_it_matters": "NIR transmission requires a controlled pathlength; too wide loses signal to absorption, too narrow samples a negligible volume.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "R1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "rationale": "NIR transmission or transflection is the preferred geometry for transparent or semi-transparent liquids. The sample is stated as clear and aqueous, and ethanol has characteristic NIR absorption bands. NIR penetrates up to several millimetres, works with glass optics and standard lamps, and suits remote fiber-probe measurement.",
+   "conditions": "Applies if the ethanol concentration is above the NIR sensitivity limit and the broth remains clear enough for transmission. Requires a controlled optical pathlength.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics, as well as standard lamps as light sources, making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups, such as -OH, -NH2=NH, -CH3, =CH2, ≥CH, etc., found in many organic and inorganic compounds.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "rationale": "Raman is well suited to aqueous media because water interferes less than in infrared methods. Ethanol has a distinct Raman spectrum. Raman can be used for quantitative analysis of mixtures.",
+   "conditions": "Applies if fluorescence background from the broth is manageable and the ethanol concentration is within the Raman detection range. Requires a Raman spectrometer and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "rationale": "MIR ATR can provide well-defined absorption bands for ethanol and is suitable for liquids in contact with the ATR crystal. It may be useful if NIR sensitivity or selectivity is insufficient.",
+   "conditions": "Applies only if the broth is compatible with ATR contact, fouling is manageable, and the MIR fiber link length is feasible. MIR requires chalcogenide or polycrystalline fibers, not silica.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R4",
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "rationale": "UV-Vis transmission is possible for clear liquids, but ethanol has no strong, specific UV-Vis absorption that would allow selective quantification in a complex fermentation broth. UV-Vis signals of mixtures overlap strongly and selectivity is low.",
+   "conditions": "Not recommended as a primary method for ethanol quantification.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, the strong overlap of spectral signals in UV spectra complicates the analysis of real samples and makes the use of chemometric algorithms a necessary component of qualitative mixture analysis methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R5",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "rationale": "Fluorescence only measures species that fluoresce or a justified fluorescent indicator. Ethanol is not a fluorescent species, and no fluorescent indicator has been identified.",
+   "conditions": "Not recommended unless a fluorescent indicator specific to ethanol is identified.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Another highly sensitive method, UV/Vis fluorimetry, is based on the secondary emission of excited molecules of certain substances, most often of biological origin. However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "For NIR transmission/transflection: a transmission or transflection probe inserted into the pipe, with a controlled optical pathlength. For Raman: a Raman probe in contact with the flowing broth. For MIR ATR: an ATR probe in contact with the broth.",
+  "location": "In the pipe, at a point where the broth is representative and well-mixed.",
+  "fiber_link": "For NIR and Raman: silica fibers are suitable. For MIR: chalcogenide or polycrystalline fibers are required; link length is an open question.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer of the sample to a detector on the opposite side.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "Chalcogenide As-S IR Fibers 6500 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift is reported in cm-1; the laser excitation wavelength must be stated separately. No specific excitation wavelength is proposed here.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal MIR range is 4000-400 cm-1 (2.5-25 µm). The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "NIR sensitivity may be insufficient if ethanol is a trace component.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Other absorbing species in the broth may interfere with ethanol quantification.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Fouling or deposits on the probe may affect the measurement, especially for ATR.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns, providing information on molecular composition and biochemical changes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The broth may not remain clear during fermentation; turbidity or bubbles could affect transmission measurements.",
+   "rule_ids": [
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman fluorescence background from the broth may swamp the ethanol signal.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "Furthermore, observing Raman bands is often complicated by light scattering from the illuminating laser, and for many organic compounds, by the superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative broth samples across the expected ethanol concentration range and fermentation stages.",
+    "purpose": "To cover the expected chemical and physical variation.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure each sample with the primary method (NIR transmission/transflection) and the comparison method (Raman) using the intended probe geometry.",
+    "purpose": "To obtain spectral data for calibration and method comparison.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference ethanol concentrations for the same samples using gas chromatography.",
+    "purpose": "To provide reference values for calibration and validation.",
+    "citations": []
+   },
+   {
+    "step": "Build chemometric calibration models for each single method (NIR and Raman) using the reference GC data.",
+    "purpose": "To establish single-method performance.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Validate the models on held-out runs or batches not used in calibration.",
+    "purpose": "To assess prediction performance on independent data.",
+    "citations": []
+   },
+   {
+    "step": "Compare the validated performance of NIR and Raman against the customer's required accuracy.",
+    "purpose": "To select the best single method.",
+    "citations": []
+   },
+   {
+    "step": "If neither single method meets the requirement, test a combination of NIR and Raman with synchronized data fusion.",
+    "purpose": "To test the hypothesis that combining methods improves accuracy.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "This often provides a synergistic effect, allowing one to solve a problem that either method alone cannot handle or only partially.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Gas chromatography results from the lab.",
+  "decision_basis": "The go/no-go decision should be based on the customer's required accuracy and response time for ethanol monitoring. The numerical criteria must come from the customer."
+ },
+ "assumptions": [
+  "The broth remains clear enough for transmission measurements during the entire fermentation.",
+  "Ethanol is present at a concentration above the NIR sensitivity limit.",
+  "The measurement point is representative and well-mixed.",
+  "The fiber link length is within the capability of the selected fiber family."
+ ],
+ "not_in_sources": [
+  "Ethanol concentration range in the customer's broth",
+  "Other absorbing species in the broth",
+  "Temperature and pressure in the pipe",
+  "Required accuracy and response time",
+  "Cleaning and fouling conditions",
+  "Optical path length available",
+  "Achievable MIR fiber link length",
+  "Specific ethanol detection limits for NIR or Raman in fermentation broth"
+ ]
+}
