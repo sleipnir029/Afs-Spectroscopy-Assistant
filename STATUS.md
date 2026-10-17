@@ -57,6 +57,13 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
   - Search mode = live search when the supplied sources do not cover the question, with the curated external library as the offline fallback; every external quote is fetched and verified verbatim.
   - Sources = free scholarly APIs (OpenAlex, Semantic Scholar, arXiv, Europe PMC, Crossref) plus general web search; external sources are always marked secondary.
   - Process = a background research agent now (notes in `docs/research-replan.md`); the full re-plan of Phases 3–6 is written in the next session for approval.
+- **Research done (865da99, `docs/research-replan.md`).** Recommendation: option B (curated library first, then keyless scholarly APIs only on an evidence gap; fetch, verify verbatim and cache every source; a separate secondary-evidence section; a required proposal block; ~14–17 h). Option C (web plugin behind `--web`) is a stretch. Notes: OpenAlex keyless = a shared ~100 searches/day per IP; Semantic Scholar returned 429 without a key.
+- **Decisions (12:31, user):**
+  - Git gets the metadata, verified quotes and sha256 of fetched sources; full fetched text stays in a local gitignored cache (confirm the exact path at planning).
+  - General web search is off by default, enabled by a flag.
+  - Add a required Proposal block and keep the honest decision status.
+  - Final H01–H06 runs: live search once, then freeze (cache and replay).
+  - Still open: optional OpenAlex key, and which contact email to use for Unpaywall/Crossref.
 - Dev model switched to `deepseek/deepseek-v4.1-flash` (10:15, user; D-011). Providers [deepinfra, atlas-cloud, coreweave] (fp8, strict JSON); max_tokens 16k/32k/32k (reasoning tokens count). Smoke test: the D08 intake runs clean on flash (DeepInfra, finish=stop, $0.0031, proposed_methods [MIR, Fluorescence]). pytest 84 passed, 1 skipped. D01–D07 outputs are still from v4-pro: re-run on flash before G2.
 - Decisions (09:29, user):
   - External reference library: **yes**. Curated, each entry with URL + verbatim quoted passage, marked secondary; to be planned in Phase 3.
