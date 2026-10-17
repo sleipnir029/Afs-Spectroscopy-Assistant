@@ -527,6 +527,11 @@ def test_transfer_risks_unknown_ids_and_forbidden_wording():
     assert kept["option_id"] is None and "not an option" in kept["notes"][0]
 
 
+def test_item_text_length_cap():
+    reasons, _ = step.check_item(item(finding="word " * 130), {"G1"}, _sources())
+    assert any(r.startswith("finding over") for r in reasons)
+
+
 # ----------------------------------------------------------------- fallback and library
 def _library_entry() -> dict:
     passage = "Process temperature should be logged next to every spectrum because bands shift with it."

@@ -7,7 +7,7 @@ the Table 1 rows (independently of afs_assistant: the name mappings below are th
 script's own copy), then compare it with the cost cell of the rendered options table
 and with `option_costs` in the run JSON. The cell must say "at least" exactly when a
 combined method's Table 1 row was not identified (3.R4 N7). Also scans the Markdown for any currency sign,
-code or word, except the "Evidence (verified quotes)" section (verbatim supplied quotes,
+code or word, except the "Evidence (verified quotes)" and secondary-evidence sections (verbatim quotes,
 e.g. a journal abbreviation). Exit 0 if all agree, 1 otherwise.
 """
 
@@ -54,7 +54,8 @@ ROW = re.compile(rf"^\| (O\d+) \| [^|]+ \| {CELL} \| {CELL} \| ({CELL}) \|")
 CURRENCY = re.compile(r"[€$£]|\b(?:eur|usd|gbp|chf)\b(?!\.\s?(?-i:[A-Z]))|\beuros?\b|\bdollars?\b", re.IGNORECASE)
 # A section from its heading (any level) to the next heading of any level.
 SOLUTION_OPTIONS = re.compile(r"^#+ Solution options\n(.*?)(?=^#|\Z)", re.MULTILINE | re.DOTALL)
-EVIDENCE = re.compile(r"^#+ Evidence \(verified quotes\)\n.*?(?=^#|\Z)", re.MULTILINE | re.DOTALL)
+EVIDENCE = re.compile(r"^#+ (?:Evidence \(verified quotes\)|Secondary evidence \(external, not AFS material\))\n"
+                      r".*?(?=^#|\Z)", re.MULTILINE | re.DOTALL)
 
 
 def _rows(table: list[dict], method: str, technique: str) -> set[int]:
