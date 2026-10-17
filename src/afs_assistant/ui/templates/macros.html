@@ -1,6 +1,6 @@
 {% macro tags(v, cids) -%}
 {%- if cids -%}
-<span class="tags">{% for cid in cids %}{% set c = v.citations[cid] %}<a class="tag tag-{{ c.kind }}" href="/runs/{{ v.key }}/cite/{{ cid }}" hx-get="/runs/{{ v.key }}/cite/{{ cid }}" hx-target="#panel-body" hx-swap="innerHTML" data-panel title="{{ 'External, not AFS material' if c.kind == 'external' else 'Supplied AFS source' }}: open the verified quote">{{ c.label }}</a>{% endfor %}</span>
+<span class="tags">{% for cid in cids %}{% set c = v.citations[cid] %}<a class="tag tag-{{ c.kind }}" data-cid="{{ cid }}" href="/runs/{{ v.key }}/cite/{{ cid }}" hx-get="/runs/{{ v.key }}/cite/{{ cid }}" hx-target="#panel-body" hx-swap="innerHTML" data-panel title="“{{ c.quote | truncate(220) }}”{{ ' (external, not AFS material)' if c.kind == 'external' else '' }} · {{ 'open the verified quote' if c.verified else 'not verified: open the quote' }}">{{ c.label }}</a>{% endfor %}</span>
 {%- endif -%}
 {%- endmacro %}
 
@@ -9,7 +9,7 @@
 {%- endmacro %}
 
 {% macro flag(text) -%}
-{%- if text %}<span class="flag" role="note"><span aria-hidden="true">⚠</span> {{ text }}</span>{% endif -%}
+{%- if text %}<span class="flag" role="note"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ text }}</span>{% endif -%}
 {%- endmacro %}
 
 {% macro meter(level) -%}
@@ -22,4 +22,11 @@
   <div class="fig-wide">{{ svgs.wide | safe }}</div>
   <div class="fig-narrow">{{ svgs.narrow | safe }}</div>
 </div>
+{%- endmacro %}
+
+{% macro question_block(text, follow_up=false) -%}
+<section class="ask-block" aria-label="Your question">
+  <span class="kicker">{{ 'Your follow-up' if follow_up else 'Your question' }}</span>
+  <p class="ask-text">{{ text }}</p>
+</section>
 {%- endmacro %}

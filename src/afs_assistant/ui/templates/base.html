@@ -9,46 +9,45 @@
 <script>
   // Theme before first paint: a saved choice wins, else the system setting (CSS handles that case).
   try { var t = localStorage.getItem("afs-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+  document.documentElement.classList.add("js");
 </script>
 <link rel="preload" href="{{ url_for('static', path='fonts/ibm-plex-sans-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{ url_for('static', path='app.css') }}">
 <script src="{{ url_for('static', path='vendor/htmx-2.0.4.min.js') }}" defer></script>
 <script src="{{ url_for('static', path='app.js') }}" defer></script>
 </head>
-<body hx-boost="false">
+<body class="{% block body_class %}{% endblock %}">
 <a class="skip" href="#main">Skip to content</a>
 <header class="mast">
-  <div class="mast-in">
-    <a class="wordmark" href="/">AFS Spectroscopy Assistant<span class="wordmark-sub">first technical assessment</span></a>
-    <nav class="mast-tools" aria-label="Tools">
-      <details class="saved">
-        <summary>Saved runs</summary>
-        <ul class="saved-list">
-          {% for r in saved %}
-          <li><a href="/runs/{{ r.id }}"><span class="mono">{{ r.stem }}</span> {{ r.title }}</a></li>
-          {% else %}
-          <li class="muted">No saved runs.</li>
-          {% endfor %}
+  <a class="wordmark" href="/">AFS Spectroscopy Assistant<span class="wordmark-sub">In-line measurement advice, every claim sourced</span></a>
+  <nav class="mast-tools" aria-label="Tools">
+    <details class="menu">
+      <summary>Examples</summary>
+      <div class="menu-list">
+        <p class="menu-head">Open a finished example</p>
+        <ul>
+          {% for r in saved %}<li><a href="/runs/{{ r.id }}">{{ r.title }}</a></li>{% else %}<li class="muted">No finished examples yet.</li>{% endfor %}
         </ul>
-      </details>
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch colour theme">
-        <span class="tt-light">Dark mode</span><span class="tt-dark">Light mode</span>
-      </button>
-    </nav>
-  </div>
+      </div>
+    </details>
+    <button type="button" class="btn-quiet theme-toggle" id="theme-toggle" aria-label="Switch colour theme">
+      <span class="tt-light">Dark</span><span class="tt-dark">Light</span>
+    </button>
+    <a class="btn btn-small" href="/">New question</a>
+  </nav>
 </header>
-<main id="main" class="page">
+<div class="frame">
+<main id="main" class="main">
 {% block main %}{% endblock %}
 </main>
 <aside class="panel" id="panel" aria-labelledby="panel-title" hidden>
   <div class="panel-head">
-    <span class="panel-kicker">Source</span>
-    <button type="button" class="panel-close" id="panel-close" aria-label="Close source panel">Close</button>
+    <span class="kicker">Source</span>
+    <button type="button" class="btn-quiet" id="panel-close" aria-label="Close source panel">Close</button>
   </div>
   <div class="panel-body" id="panel-body" tabindex="-1"></div>
 </aside>
-<footer class="foot">
-  <p>Answers cite the supplied AFS materials (S01–S05, REF) by page; external literature is marked as secondary and is not AFS material. Every quote is checked against the stored page text before it is shown.</p>
-</footer>
+</div>
+{% block composer %}{% endblock %}
 </body>
 </html>

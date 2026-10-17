@@ -1,32 +1,31 @@
 {% extends "fragment.html" if htmx else "base.html" %}
 {% block main %}
-<div class="cite">
-  {% if not htmx %}<p><a href="/runs/{{ v.key }}">Back to the assessment</a></p>{% endif %}
-  <h2 class="cite-title" id="panel-title"><span class="mono">{{ c.label }}</span>
-    {% if c.kind == 'external' %}<span class="ext-note">external, not AFS material</span>{% endif %}</h2>
+<div class="cite{{ ' column' if not htmx }}">
+  {% if not htmx %}<p><a href="/runs/{{ v.key }}">Back to the answer</a></p>{% endif %}
+  <h2 class="cite-title" id="panel-title"><span class="mono">{{ c.label }}</span></h2>
   <p class="badges">
-    {% if c.verified %}<span class="ok"><span aria-hidden="true">✓</span> verified quote</span>{% else %}<span class="flag">⚠ not verified</span>{% endif %}
-    {% if c.quote_status %}<span class="muted mono small">match: {{ c.quote_status }}</span>{% endif %}
-    {% if c.precedent %}<span class="muted small">precedent only: a reason to test, not proof</span>{% endif %}
+    {% if c.verified %}<span class="ok"><span aria-hidden="true">✓</span> Verified quote{% if c.quote_status %} · {{ c.quote_status }} match{% endif %}</span>
+    {% else %}<span class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> Not verified</span>{% endif %}
   </p>
+  <p class="muted small">{% if c.kind == 'external' %}<span class="ext-note">external, not AFS material</span>{% else %}AFS material{% if src %} · {{ src.title }}{% endif %}{% if c.precedent %} · precedent only: a reason to test, not proof{% endif %}{% endif %}</p>
   {% if c.kind == 'supplied' %}
     {% if src %}
-    <p class="muted small">{{ src.title }}{% if c.claim_kind %} · used as {{ c.claim_kind }}{% endif %}</p>
     <div class="source-text">{% if src.cut_before %}… {% endif %}{{ src.before }}<mark>{{ src.match }}</mark>{{ src.after }}{% if src.cut_after %} …{% endif %}</div>
     {% if not src.verified %}<p class="flag">The quote was not found again in the stored page text.</p>{% endif %}
-    <p class="muted small">Supplied page text as stored in the knowledge base (extracted from the organizer PDF); the highlighted passage is the cited quote.</p>
+    <p class="muted small">Every quote is checked word for word against the stored page before it is shown.</p>
     {% else %}
     <p class="flag">The cited page is not in the knowledge base.</p>
     {% endif %}
   {% else %}
     <blockquote class="quote">“{{ c.quote }}”</blockquote>
-    <dl class="kv kv-small">
+    <dl class="kv kv-small kv-stack">
       <div><dt>Finding</dt><dd>{{ c.finding }}</dd></div>
       <div><dt>How it applies</dt><dd>{{ c.how_it_applies }}</dd></div>
       <div><dt>Limits</dt><dd>{{ c.limits }}</dd></div>
       <div><dt>Title</dt><dd>{{ c.source.title }}</dd></div>
       <div><dt>Year</dt><dd>{{ c.source.year or 'n.d.' }}{% if c.source.venue %} · {{ c.source.venue }}{% endif %}</dd></div>
-      <div><dt>DOI / URL</dt><dd>{% if c.source.doi %}<a href="https://doi.org/{{ c.source.doi }}" rel="noopener noreferrer">doi:{{ c.source.doi }}</a>{% endif %}{% if c.source.url %} <a href="{{ c.source.url }}" rel="noopener noreferrer" class="break">{{ c.source.url }}</a>{% endif %}</dd></div>
+      <div><dt>DOI / URL</dt><dd>{% if c.source.doi_href %}<a href="{{ c.source.doi_href }}" rel="noopener noreferrer">doi:{{ c.source.doi }}</a>{% endif %}
+        {% if c.source.url_href %}<a href="{{ c.source.url_href }}" rel="noopener noreferrer" class="break">{{ c.source.url }}</a>{% elif c.source.url %}<span class="break">{{ c.source.url }}</span>{% endif %}</dd></div>
       <div><dt>Access, licence</dt><dd>{{ c.source.access }} · {{ c.source.licence }}</dd></div>
       <div><dt>Retrieved</dt><dd>{{ c.source.retrieved }} via {{ c.source.origin }}</dd></div>
     </dl>

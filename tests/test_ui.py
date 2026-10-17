@@ -1,8 +1,10 @@
-"""Phase 5.6''': the web UI (FastAPI + Jinja2 + htmx). Offline: saved runs and FakeClient stubs only."""
+"""Phase 5.6'''' web UI, direction A "Answer + Ask" (FastAPI + Jinja2 + htmx). Offline: saved runs and stubs."""
 
 from __future__ import annotations
 
+import copy
 import json
+import re
 import shutil
 import threading
 import time
@@ -11,15 +13,20 @@ import pytest
 from fastapi.testclient import TestClient
 from test_phase2 import ASSESSMENT, ENQUIRY, INTAKE
 
-from afs_assistant import cli, kb_check, paths, provenance
-from afs_assistant.fibers import METHOD_RANGES_UM
+from afs_assistant import cli, kb, kb_check, paths, provenance
 from afs_assistant.llm import FakeClient
+from afs_assistant.pipeline import OFF_TOPIC_EXAMPLES
 from afs_assistant.ui import diagrams, server, view
 
 SAVED = "D03"                                     # a dev run with external evidence and proposal support
+DEV = sorted(p.stem for p in (paths.OUTPUTS / "dev").glob("*.json"))
+BASE = "http://127.0.0.1:8765"
 HX = {"HX-Request": "true"}
 OFF_TOPIC_RUN = {"run_id": "adhoc-off", "enquiry": "Which pizza topping sells best on Fridays?",
-                 "intake": {"routes": ["out_of_scope"], "summary": "Asks about pizza sales."}}
+                 "intake": {"routes": ["out_of_scope"], "summary": "Asks about pizza sales."}, "assessment": None,
+                 "off_topic": {"message": "Polite redirect line.", "examples": ["Example one?", "Example two?"]}}
+INCOMPLETE_RUN = {"run_id": "adhoc-cut", "enquiry": "Follow sugar in juice.", "intake": {"routes": ["in_scope"]},
+                  "assessment": None}
 
 
 @pytest.fixture
@@ -28,6 +35,7 @@ def outputs(tmp_path):
     for suffix in (".json", ".md"):
         shutil.copy(paths.OUTPUTS / "dev" / f"{SAVED}{suffix}", tmp_path / "dev" / f"{SAVED}{suffix}")
     (tmp_path / "dev" / "X90.json").write_text(json.dumps(OFF_TOPIC_RUN), encoding="utf-8")
+    (tmp_path / "dev" / "X91.json").write_text(json.dumps(INCOMPLETE_RUN), encoding="utf-8")
     return tmp_path
 
 
@@ -38,10 +46,10 @@ def no_provenance(monkeypatch):
     monkeypatch.setattr(provenance, "code_dirty", lambda: False)
 
 
-def fake_factory(seen: list | None = None):
+def fake_factory(seen: list | None = None, cls=FakeClient):
     def make():
         # enough responses for an intake retry and two repair rounds (the stub does not fit every enquiry)
-        client = FakeClient({"intake": [INTAKE, INTAKE], "assess": [ASSESSMENT], "repair": [ASSESSMENT, ASSESSMENT]})
+        client = cls({"intake": [INTAKE, INTAKE], "assess": [ASSESSMENT], "repair": [ASSESSMENT, ASSESSMENT]})
         if seen is not None:
             seen.append(client)
         return client
@@ -50,7 +58,7 @@ def fake_factory(seen: list | None = None):
 
 def app_client(outputs, factory=None):
     app = server.create_app(outputs, client_factory=factory or fake_factory(), external="off")
-    return TestClient(app), app
+    return TestClient(app, base_url=BASE), app
 
 
 def wait_job(client, jid, timeout=20.0):
@@ -63,64 +71,93 @@ def wait_job(client, jid, timeout=20.0):
     raise AssertionError("job did not finish")
 
 
-# --------------------------------------------------------------------------------- saved runs
-def test_list_runs_and_start_page(outputs):
+def start_job(client, data, url="/assess"):
+    r = client.post(url, data=data, follow_redirects=False)
+    assert r.status_code == 303, r.text
+    return r.headers["location"].rsplit("/", 1)[1]
+
+
+# --------------------------------------------------------------------------------- start, list
+def test_start_page_and_examples(outputs):
     client, _ = app_client(outputs)
-    runs = {r["id"]: r for r in client.get("/api/runs").json()}
-    assert runs[f"dev-{SAVED}"]["title"] == "A clear whey stream before concentration"
-    assert runs[f"dev-{SAVED}"]["status"] == "Provisional feasibility assessment"
-    assert runs["dev-X90"]["status"] == "Off topic"
     html = client.get("/").text
-    assert "Paste a customer enquiry" in html and f'href="/runs/dev-{SAVED}"' in html
+    assert "What do you want to measure?" in html and "Get assessment" in html
+    assert all(e.split(",")[0] in html for e in OFF_TOPIC_EXAMPLES)
+    assert f'href="/runs/dev-{SAVED}"' in html and "A clear whey stream before concentration" in html
+    assert "dev-D03</" not in html and "deepseek" not in html          # titles only on the start page
     assert client.get("/?q=hello").text.count(">hello</textarea>") == 1
 
 
-def test_answer_page_order_and_content(outputs):
+def test_list_runs_labels(outputs):
     client, _ = app_client(outputs)
-    r = client.get(f"/runs/dev-{SAVED}")
-    assert r.status_code == 200
-    html = r.text
-    order = ["Customer enquiry", ">Status<", ">Answer<", ">Proposal<", "fig-setup", "fig-spectral",
-             "Options compared", "Open questions", "Answer and re-assess", ">Parameters<", ">Premise check<",
-             ">Risks<", ">Test plan<", ">Literature<", ">Verification<", "How this answer was made"]
+    runs = {r["id"]: r for r in client.get("/api/runs").json()}
+    assert runs[f"dev-{SAVED}"]["status"] == "Provisional feasibility assessment"
+    assert runs["dev-X90"]["status"] == "Off topic"
+    assert runs["dev-X91"]["status"] == "Incomplete run"
+
+
+# --------------------------------------------------------------------------------- answer turn
+def test_answer_turn_order_and_option_switch(outputs):
+    client, _ = app_client(outputs)
+    html = client.get(f"/runs/dev-{SAVED}").text
+    order = ["Your question", "Our recommendation", "How it would be set up", 'role="tablist"',
+             "Help us sharpen this", "What to measure and how", ">Risks<", "First feasibility test",
+             ">Literature", "How this answer was made", "Technical detail", "Copy as customer reply",
+             'name="followup"']
     positions = [html.index(s) for s in order]
     assert positions == sorted(positions)
-    assert "external, not AFS material" in html
-    assert "mermaid" not in html.lower()             # the figures are server-drawn SVG
-    assert 'class="best"' in html and "proposed" in html
-
-
-def test_api_run_view(outputs):
-    client, _ = app_client(outputs)
     v = client.get(f"/api/runs/dev-{SAVED}").json()
-    assert v["proposal"]["best"] == {"id": "O2", "tier": "Recommended"}
-    assert v["proposal"]["confidence"]["level"] == "Medium"
-    supplied = [c for c in v["citations"].values() if c["kind"] == "supplied"]
-    external = [c for c in v["citations"].values() if c["kind"] == "external"]
-    assert supplied and all(c["verified"] for c in supplied)
-    assert {c["label"] for c in external} >= {"E01 ¶12"}
-    assert [c["label"] for c in (v["citations"][x] for x in v["proposal"]["external_support"])] == ["E01 ¶12"]
-    assert [s["label"] for s in v["made"]["steps"]] == [label for _, label, _ in view.STEPS]
+    assert v["recommendation"]["headline"] == "Start with an MIR ATR probe."
+    for o in v["options"]:
+        assert f'id="opt-{o["id"]}"' in html and f'aria-controls="opt-{o["id"]}"' in html
+        assert "fig-schematic" in o["figure"]["wide"] and "fig-setup" in o["figure"]["narrow"]
+    assert re.search(r'aria-controls="opt-O2" aria-selected="true"', html)
+    assert html.count("data-hidden") == len(v["options"]) - 1
+    assert "mermaid" not in html.lower()
+
+
+@pytest.mark.parametrize("stem", DEV)
+def test_every_saved_run_renders_and_every_citation_opens(stem):
+    client, _ = app_client(paths.OUTPUTS)
+    assert client.get(f"/runs/dev-{stem}").status_code == 200
+    v = client.get(f"/api/runs/dev-{stem}").json()
+    ids = list(v["citations"])
+    assert ids, stem
+    assert [i for i in ids if i.startswith("s")] == [f"s{k}" for k in range(1, 1 + sum(i[0] == "s" for i in ids))]
+    for cid in ids:
+        r = client.get(f"/runs/dev-{stem}/cite/{cid}", headers=HX)
+        assert r.status_code == 200 and "Verified quote" in r.text, (stem, cid)
 
 
 def test_citation_panel_supplied_and_external(outputs):
     client, _ = app_client(outputs)
     v = client.get(f"/api/runs/dev-{SAVED}").json()
     sid = next(k for k, c in v["citations"].items() if c["kind"] == "supplied")
-    xid = next(k for k, c in v["citations"].items() if c["kind"] == "external")
+    eid = next(k for k, c in v["citations"].items() if c["kind"] == "external")
     frag = client.get(f"/runs/dev-{SAVED}/cite/{sid}", headers=HX).text
-    assert "<html" not in frag and "verified quote" in frag
-    assert f"<mark>{v['citations'][sid]['quote']}</mark>" in frag.replace("&#39;", "'").replace("&quot;", '"')
-    full = client.get(f"/runs/dev-{SAVED}/cite/{sid}").text
-    assert "<html" in full and "Back to the assessment" in full
-    ext = client.get(f"/runs/dev-{SAVED}/cite/{xid}", headers=HX).text
-    assert "external, not AFS material" in ext and "doi:" in ext and "licence" in ext.lower()
-    assert "<mark>" not in ext                        # stored quote only, no page text
+    assert "<html" not in frag and "<mark>" in frag
+    assert client.get(f"/runs/dev-{SAVED}/cite/{sid}").text.count("Back to the answer") == 1
+    ext = client.get(f"/runs/dev-{SAVED}/cite/{eid}", headers=HX).text
+    assert "external, not AFS material" in ext and "doi:" in ext and "<mark>" not in ext
     assert client.get(f"/runs/dev-{SAVED}/cite/s9999").status_code == 404
 
 
+def test_tag_tooltip_shows_quote_and_says_not_verified(outputs):
+    data = json.loads((outputs / "dev" / f"{SAVED}.json").read_text())
+    v = view.build(data, "", "dev-x")
+    assert all(c["verified"] for c in v["citations"].values())
+    data["verification"]["citations"] = []                        # nothing on record as verified
+    client, _ = app_client(outputs)
+    (outputs / "dev" / "X92.json").write_text(json.dumps(data), encoding="utf-8")
+    html = client.get("/runs/dev-X92").text
+    supplied = re.findall(r'<a class="tag tag-supplied"[^>]*title="([^"]*)"', html)
+    assert supplied and all(t.endswith("not verified: open the quote") for t in supplied)
+    good = client.get(f"/runs/dev-{SAVED}").text
+    assert "open the verified quote" in good and "not verified" not in good
+
+
 def test_source_context_locates_the_quote():
-    quote = METHOD_RANGES_UM["NIR"]["basis"]          # "NIR spectra (780-2500 nm)", on S01 p.10
+    quote = "NIR spectra (780-2500 nm)"
     src = view.source("S01", 10, quote)
     assert src["verified"] and src["match"] == quote and src["before"] and src["after"]
     assert view.source("S01", 999, quote) is None
@@ -129,10 +166,11 @@ def test_source_context_locates_the_quote():
 def test_downloads(outputs):
     client, _ = app_client(outputs)
     md = client.get(f"/runs/dev-{SAVED}.md")
-    js = client.get(f"/runs/dev-{SAVED}.json")
     assert md.text == (outputs / "dev" / f"{SAVED}.md").read_text(encoding="utf-8")
-    assert js.json()["run_id"] == json.loads((outputs / "dev" / f"{SAVED}.json").read_text())["run_id"]
     assert "attachment" in md.headers["content-disposition"]
+    assert client.get(f"/runs/dev-{SAVED}.json").json()["run_id"]
+    assert client.get("/runs/dev-X90.md").status_code == 404        # no Markdown: no link either
+    assert 'href="/runs/dev-X90.md"' not in client.get("/runs/dev-X90").text
 
 
 @pytest.mark.parametrize("rid", ["dev-..", "nope-D03", "dev-D03%2F..%2F..", "Dev-D03", "dev"])
@@ -142,45 +180,78 @@ def test_unknown_or_unsafe_run_ids(outputs, rid):
     assert client.get(f"/api/runs/{rid}").status_code == 404
 
 
-# --------------------------------------------------------------------------------- off topic
-def test_off_topic_display(outputs):
+# --------------------------------------------------------------------------------- off topic, incomplete
+def test_off_topic_turn_uses_the_run_wording(outputs):
     client, _ = app_client(outputs)
-    v = client.get("/api/runs/dev-X90").json()
-    assert v["off_topic"]["message"] == view.OFF_TOPIC_MESSAGE
-    assert len(v["off_topic"]["examples"]) == 3
     html = client.get("/runs/dev-X90").text
-    assert view.OFF_TOPIC_MESSAGE in html and "Options compared" not in html
-    assert html.count('href="/?q=') == 3
+    assert "Polite redirect line." in html and html.count('href="/?q=Example') == 2
+    assert "Our recommendation" not in html and 'name="followup"' not in html
 
 
-def test_off_topic_wording_from_the_pipeline_wins():
-    data = {**OFF_TOPIC_RUN, "intake": {"routes": ["in_scope"]}, "assessment": {"x": 1},
-            "off_topic": {"message": "Polite redirect.", "examples": ["One?", "Two?"]}}
-    v = view.build(data)
-    assert v["off_topic"] == {"message": "Polite redirect.", "examples": ["One?", "Two?"]}
+def test_incomplete_run_is_not_called_off_topic(outputs):
+    client, _ = app_client(outputs)
+    html = client.get("/runs/dev-X91").text
+    assert "Incomplete run" in html and "Off topic" not in html
+
+
+# --------------------------------------------------------------------------------- security
+def test_xss_in_model_text_and_urls_is_inert(outputs):
+    data = json.loads((outputs / "dev" / f"{SAVED}.json").read_text())
+    data["assessment"]["brief_answer"] = "<script>alert(1)</script> Use NIR."
+    for s in data["external"]["sources"]:
+        s["doi"], s["url"] = None, "javascript:alert(1)"
+    (outputs / "dev" / "X93.json").write_text(json.dumps(data), encoding="utf-8")
+    client, _ = app_client(outputs)
+    html = client.get("/runs/dev-X93").text
+    assert "<script>alert(1)" not in html and "&lt;script&gt;alert(1)" in html
+    assert 'href="javascript:' not in html.lower()
+    v = client.get("/api/runs/dev-X93").json()
+    eid = next(k for k, c in v["citations"].items() if c["kind"] == "external")
+    panel = client.get(f"/runs/dev-X93/cite/{eid}", headers=HX).text
+    assert 'href="javascript:' not in panel.lower() and "javascript:alert(1)" in panel     # shown as text only
+
+
+def test_foreign_host_is_refused(outputs):
+    client, _ = app_client(outputs)
+    assert client.get("/", headers={"host": "evil.example"}).status_code == 400
+    assert client.get("/", headers={"host": "localhost:8765"}).status_code == 200
+
+
+@pytest.mark.parametrize("header", [{"origin": "http://evil.example"}, {"referer": "http://evil.example/x"},
+                                    {"origin": "null"}])
+def test_cross_origin_post_is_refused(outputs, header):
+    client, app = app_client(outputs)
+    r = client.post("/assess", data={"enquiry": ENQUIRY}, headers=header, follow_redirects=False)
+    assert r.status_code == 403 and app.state.jobs.jobs == {}
+    r = client.post(f"/runs/dev-{SAVED}/clarify", data={"followup": "x"}, headers=header, follow_redirects=False)
+    assert r.status_code == 403 and app.state.jobs.jobs == {}
+
+
+def test_same_origin_post_is_accepted(outputs, no_provenance):
+    client, _ = app_client(outputs)
+    r = client.post("/assess", data={"enquiry": ENQUIRY}, headers={"origin": BASE}, follow_redirects=False)
+    assert r.status_code == 303
+    wait_job(client, r.headers["location"].rsplit("/", 1)[1])
 
 
 # --------------------------------------------------------------------------------- live path (stubbed)
 def test_assess_runs_in_background_with_progress(outputs, no_provenance):
     client, _ = app_client(outputs)
-    r = client.post("/assess", data={"enquiry": ENQUIRY}, follow_redirects=False)
-    assert r.status_code == 303 and r.headers["location"].startswith("/jobs/")
-    jid = r.headers["location"].rsplit("/", 1)[1]
+    jid = start_job(client, {"enquiry": ENQUIRY})
     snap = wait_job(client, jid)
     assert snap["state"] == "done", snap["error"]
     states = {s["key"]: s["state"] for s in snap["steps"]}
     assert states == {"intake": "done", "screen": "done", "assess": "done", "verify": "done", "external": "skipped"}
+    assert snap["understood"] == INTAKE["summary"]
     rid = snap["result"]
     assert rid.startswith("ui-adhoc-") and (outputs / "ui" / f"{rid[3:]}.json").exists()
     plain = client.get(f"/jobs/{jid}", follow_redirects=False)
     assert plain.status_code == 303 and plain.headers["location"] == f"/runs/{rid}"
-    polled = client.get(f"/jobs/{jid}", headers=HX)
-    assert polled.headers["HX-Redirect"] == f"/runs/{rid}"
+    assert client.get(f"/jobs/{jid}", headers=HX).headers["HX-Redirect"] == f"/runs/{rid}"
     assert client.get(f"/runs/{rid}").status_code == 200
-    assert any(x["id"] == rid for x in client.get("/api/runs").json())
 
 
-def test_running_page_polls_until_done(outputs, no_provenance):
+def test_running_page_polls_and_can_be_stopped(outputs, no_provenance):
     gate = threading.Event()
 
     class Slow(FakeClient):
@@ -189,26 +260,34 @@ def test_running_page_polls_until_done(outputs, no_provenance):
                 gate.wait(10)
             return super().complete_json(role, *args, **kwargs)
 
-    client, _ = app_client(outputs, lambda: Slow({"intake": [INTAKE], "assess": [ASSESSMENT]}))
-    jid = client.post("/assess", data={"enquiry": ENQUIRY}, follow_redirects=False).headers["location"].split("/")[-1]
+    client, _ = app_client(outputs, fake_factory(cls=Slow))
+    jid = start_job(client, {"enquiry": ENQUIRY})
     deadline = time.monotonic() + 5
     while client.get(f"/api/jobs/{jid}").json()["steps"][2]["state"] != "running":
         assert time.monotonic() < deadline
         time.sleep(0.02)
     page = client.get(f"/jobs/{jid}").text
-    assert 'hx-trigger="every 1s"' in page and "Reading enquiry" in page and "Searching literature" in page
+    assert 'hx-trigger="every 1s"' in page and "usually a few minutes" in page and ">Stop<" in page
+    assert ENQUIRY in page and "Follow ethanol" in page                    # question turn + what we understood
+    assert 'id="ask" type="text" disabled' in page
     assert client.post("/assess", data={"enquiry": ENQUIRY}).status_code == 409     # one run at a time
+    assert client.post(f"/jobs/{jid}/stop", follow_redirects=False).status_code == 303
     gate.set()
-    assert wait_job(client, jid)["state"] == "done"
+    snap = wait_job(client, jid)
+    assert snap["state"] == "stopped" and snap["result"] is None
+    assert client.get(f"/jobs/{jid}", headers=HX).status_code == 286
 
 
 def test_failed_run_stops_polling(outputs, no_provenance):
     client, _ = app_client(outputs, lambda: FakeClient({}))          # no queued response: intake raises
-    jid = client.post("/assess", data={"enquiry": ENQUIRY}, follow_redirects=False).headers["location"].split("/")[-1]
-    snap = wait_job(client, jid)
+    snap = wait_job(client, start_job(client, {"enquiry": ENQUIRY}))
     assert snap["state"] == "failed" and "AssertionError" in snap["error"]
-    r = client.get(f"/jobs/{jid}", headers=HX)
-    assert r.status_code == 286 and "The run failed" in r.text
+
+
+def test_unknown_job_stops_polling(outputs):
+    client, _ = app_client(outputs)
+    assert client.get("/jobs/nope", headers=HX).status_code == 286          # e.g. after a server restart
+    assert client.get("/jobs/nope").status_code == 404
 
 
 def test_empty_enquiry_is_rejected(outputs):
@@ -216,68 +295,104 @@ def test_empty_enquiry_is_rejected(outputs):
     assert client.post("/assess", data={"enquiry": "  "}).status_code == 422
 
 
-def test_clarify_appends_answers_and_compares(outputs, no_provenance):
+def test_follow_up_appends_a_turn_with_what_changed(outputs, no_provenance):
     seen: list = []
     client, _ = app_client(outputs, fake_factory(seen))
     v = client.get(f"/api/runs/dev-{SAVED}").json()
-    q1 = v["questions"][0]
-    r = client.post(f"/runs/dev-{SAVED}/clarify", data={f"answer_{q1['id']}": "Between 4 and 8 g/L."},
-                    follow_redirects=False)
-    jid = r.headers["location"].split("/")[-1]
+    q1 = v["top_questions"][0]
+    jid = start_job(client, {f"answer_{q1['id']}": "Between 4 and 8 g/L.", "followup": "The line runs at 50 C."},
+                    f"/runs/dev-{SAVED}/clarify")
     snap = wait_job(client, jid)
     assert snap["state"] == "done" and snap["parent"] == f"dev-{SAVED}"
-    intake_prompt = seen[0].seen[0]["user"]
-    assert v["enquiry"] in intake_prompt and "Answer: Between 4 and 8 g/L." in intake_prompt
-    assert q1["question"] in intake_prompt
-    target = client.get(f"/jobs/{jid}", follow_redirects=False).headers["location"]
-    assert target == f"/runs/{snap['result']}?compare=dev-{SAVED}"
-    html = client.get(target).text
-    assert "Re-assessed with the customer" in html and "Before" in html and "After" in html
+    prompt_text = seen[0].seen[0]["user"]
+    assert v["enquiry"] in prompt_text and "Answer: Between 4 and 8 g/L." in prompt_text
+    assert "Additional detail: The line runs at 50 C." in prompt_text
+    rid = snap["result"]
+    html = client.get(f"/runs/{rid}").text
+    assert "Your follow-up" in html and "The line runs at 50 C." in html and "What changed" in html
+    assert 'class="turn-folded"' in html and f'href="/runs/dev-{SAVED}"' in html       # earlier turn collapsed
+    assert all(r["id"] != rid for r in client.get("/api/runs").json())              # follow-ups not listed
+    assert (outputs / "ui" / "turns" / f"{rid[3:]}.json").exists()
 
 
-def test_clarify_without_answers_starts_nothing(outputs):
+def test_clarify_without_input_starts_nothing(outputs):
     client, app = app_client(outputs)
     r = client.post(f"/runs/dev-{SAVED}/clarify", data={}, follow_redirects=False)
-    assert r.status_code == 303 and r.headers["location"].endswith("#questions")
+    assert r.status_code == 303 and r.headers["location"].endswith("#sharpen")
     assert app.state.jobs.jobs == {}
 
 
 def test_progress_client_marks_steps():
     job = server.Job("j", "e")
-    proxy = server.ProgressClient(FakeClient({"intake": [{}], "assess": [{}], "external_queries": [{}]}), job)
+    proxy = server.ProgressClient(FakeClient({"intake": [{"summary": "s"}], "assess": [{}],
+                                              "external_queries": [{}]}), job)
     assert proxy.tracker is not None                     # the pipeline's spend tracker comes through
     proxy.complete_json("intake", "", "", "", {})
-    assert [s["state"] for s in job.snapshot()["steps"]] == ["running", "pending", "pending", "pending", "pending"]
+    assert job.understood == "s"
     proxy.complete_json("assess", "", "", "", {})
     assert [s["state"] for s in job.snapshot()["steps"]] == ["done", "done", "done", "running", "pending"]
     proxy.complete_json("external_queries", "", "", "", {})
-    job.finish("dev-x", {"intake": 1.0, "assess": 2.0, "repair": 0.5, "external": 3.0})
+    job.finish("dev-x", {"intake": 1.0, "assess": 2.0, "repair": 0.5, "external": 3.0, "screen": 0.01})
     snap = job.snapshot()
-    assert [s["seconds"] for s in snap["steps"]] == [1.0, 0.0, 2.5, 0.0, 3.0]
-    assert all(s["state"] == "done" for s in snap["steps"])
+    assert [s["time"] for s in snap["steps"]] == ["1.0 s", "<0.1 s", "2.5 s", "<0.1 s", "3.0 s"]
 
 
-# --------------------------------------------------------------------------------- figures, lint
-def test_figures_use_only_sourced_numbers(outputs):
+# --------------------------------------------------------------------------------- figures, copy, lint
+def test_every_printed_range_number_is_on_the_cited_page():
+    rows = diagrams.spectral_rows({"MIR", "NIR", "Raman", "UV-Vis", "Fluorescence"}, set(),
+                                  {f["id"] for f in kb.fibers()})
+    for r in rows:
+        numbers = re.findall(r"\d+(?:\.\d+)?", r["label"])
+        doc, page = r["source"].split(" p.")
+        text = kb.page(doc, int(page))["text"]
+        for n in numbers:
+            assert re.search(rf"(?<![\d.]){re.escape(n)}(?![\d])", text), (r["name"], n, r["source"])
+    fluo = next(r for r in rows if r["name"] == "Fluorescence")
+    assert fluo["label"] == "range not stated" and fluo["lo"] is None
+
+
+def test_spectral_figure_shows_only_fibers_for_the_proposed_method(outputs):
     v = server.Store(outputs).view(f"dev-{SAVED}")
     svg = v["figures"]["spectral"]["wide"]
-    for m, r in METHOD_RANGES_UM.items():
-        lo, hi = r["range_um"]
-        assert diagrams.range_text(lo, hi) in svg, m
-    assert "sp-proposed" in svg                                    # MIR of the proposed option highlighted
-    setup = v["figures"]["setup"]["narrow"]
-    assert "MIR, ATR probe" in setup and "dg-aux" in setup and "Auxiliary sensor" in setup
-    assert v["figures"]["params"]["wide"].count("<rect") == len(v["parameters"]) + len(
-        {p["measured_by"].split(" (")[0] for p in v["parameters"]})
+    assert "sp-proposed" in svg and "range not stated" in svg and "Fluorescence" in svg
+    assert "UV-VIS silica" not in svg and "Chalcogenide" in svg          # MIR proposed: no UV-Vis silica fiber
+    assert ">UV<" in svg and ">MIR<" in svg                               # region band
+
+
+def test_figure_text_is_at_least_12px():
+    css = (paths.ROOT / "src" / "afs_assistant" / "ui" / "static" / "app.css").read_text()
+    sizes = [float(x) for x in re.findall(r"svg\.fig [^{]*\{[^}]*font-size:\s*([\d.]+)px", css)]
+    assert sizes and min(sizes) >= 12
+    assert diagrams.SMALL >= 12 and diagrams.TEXT >= 12
+
+
+def test_customer_reply_text(outputs):
+    v = server.Store(outputs).view(f"dev-{SAVED}")
+    assert v["recommendation"]["text"] in v["reply"] and v["proposal"]["next_step"] in v["reply"]
+    assert all(q["question"] in v["reply"] for q in v["top_questions"])
+
+
+def test_no_shadows_and_no_clip_in_css():
+    css = (paths.ROOT / "src" / "afs_assistant" / "ui" / "static" / "app.css").read_text()
+    assert "box-shadow" not in css and "overflow-x: clip" not in css
 
 
 def test_ui_code_has_no_case_ids():
     ui = paths.ROOT / "src" / "afs_assistant" / "ui"
     hits = [f"{f.relative_to(ui)}:{i}"
-            for f in ui.rglob("*") if f.is_file() and f.suffix in {".py", ".html", ".css", ".js"}
-            and "vendor" not in f.parts and "__pycache__" not in f.parts
+            for f in ui.rglob("*") if f.is_file() and f.suffix in {".py", ".html", ".css", ".js", ".md"}
+            and "__pycache__" not in f.parts and not f.name.endswith(".min.js")
             for i, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1) if kb_check.CASE_ID.search(line)]
     assert hits == []
+
+
+def test_headline_wording():
+    a = copy.deepcopy(ASSESSMENT)
+    from afs_assistant.schema import Assessment
+    assessment = Assessment.model_validate(a)
+    best = next(o for o in assessment.solution_options if o.id == assessment.proposal.best_current_option)
+    text = view.headline(assessment, best)
+    assert text.endswith(".") and text.split()[0] in ("Start", "Test")
 
 
 def test_cli_has_ui_command(monkeypatch):

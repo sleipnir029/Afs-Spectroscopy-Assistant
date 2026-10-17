@@ -1,306 +1,258 @@
 {% extends "base.html" %}
-{% from "macros.html" import tags, judgement, flag, meter, figure %}
+{% from "macros.html" import tags, judgement, flag, meter, figure, question_block %}
 {% block title %}{{ v.title }} · AFS Spectroscopy Assistant{% endblock %}
+{% block body_class %}has-composer{% endblock %}
 {% block main %}
-<article class="report" aria-labelledby="report-title">
-<header class="report-head">
-  <h1 id="report-title" class="h1">{{ v.title }}</h1>
-  <p class="meta mono">
-    <span>{{ v.key }}</span>{% if v.created %}<span>{{ v.created[:16] | replace('T', ' ') }} UTC</span>{% endif %}
-    {% for m in v.models %}<span>{{ m }}</span>{% endfor %}
-  </p>
-  <p class="downloads">{% if v.has_markdown %}<a href="/runs/{{ v.key }}.md" download>Markdown</a>{% endif %}<a href="/runs/{{ v.key }}.json" download>JSON</a></p>
-</header>
-
-<section class="enquiry" aria-label="Customer enquiry">
-  {% if v.enquiry | length > 160 %}
-  <details class="enquiry-text">
-    <summary><span class="label">Customer enquiry</span><span class="clamp">{{ v.enquiry }}</span><span class="more">Show all</span></summary>
-    <p class="full">{{ v.enquiry }}</p>
+<div class="column thread">
+{% for t in turns[:-1] %}
+  {% set pv = t.v %}
+  <details class="turn-folded">
+    <summary><span class="kicker">{{ 'Follow-up' if t.is_follow_up else 'Your question' }}</span>
+      <span class="tf-q">{{ t.question | truncate(140) }}</span>
+      <span class="tf-a">{% if pv.recommendation %}{{ pv.recommendation.headline }}{% else %}{{ pv.status_label }}{% endif %}</span></summary>
+    <p class="small"><a href="/runs/{{ pv.key }}">Open this answer</a></p>
   </details>
+{% endfor %}
+
+{% set t = turns[-1] %}
+<article class="turn" aria-labelledby="rec-title">
+  {{ question_block(t.question, t.is_follow_up) }}
+
+  {% if t.changed %}
+  <section class="changed" aria-labelledby="changed-title">
+    <h2 id="changed-title" class="kicker kicker-accent">What changed</h2>
+    <dl class="changed-rows">
+      {% for row in t.changed %}
+      <div class="{{ 'is-changed' if row.changed }}"><dt>{{ row.label }}</dt>
+        <dd><span class="old">{{ row.before }}</span> <span aria-hidden="true">→</span><span class="sr-only">now</span> <span class="new">{{ row.after }}</span>{% if not row.changed %} <span class="muted small">(unchanged)</span>{% endif %}</dd></div>
+      {% endfor %}
+    </dl>
+  </section>
+  {% endif %}
+
+  {% if v.off_topic %}
+  <section class="rec" aria-labelledby="rec-title">
+    <h2 class="kicker kicker-accent">Our answer</h2>
+    <h1 id="rec-title" class="rec-head">This is not a measurement question.</h1>
+    <p class="rec-text">{{ v.off_topic.message }}</p>
+    <p class="label label-gap">Try one of these instead</p>
+    <ul class="link-list arrows">
+      {% for e in v.off_topic.examples %}<li><a href="/?q={{ e | urlencode }}">{{ e }}</a></li>{% endfor %}
+    </ul>
+  </section>
+  {% elif v.incomplete %}
+  <section class="rec" aria-labelledby="rec-title">
+    <h2 class="kicker">Incomplete run</h2>
+    <h1 id="rec-title" class="rec-head">{{ v.incomplete }}</h1>
+    <p><a href="/?q={{ v.enquiry | urlencode }}">Ask again</a></p>
+  </section>
   {% else %}
-  <div class="enquiry-text enquiry-short"><span class="label">Customer enquiry</span><span>{{ v.enquiry }}</span></div>
-  {% endif %}
-</section>
-
-{% if v.off_topic %}
-<section class="offtopic" aria-labelledby="offtopic-title">
-  <h2 id="offtopic-title" class="h2">Not a spectroscopy enquiry</h2>
-  <p class="answer-text">{{ v.off_topic.message }}</p>
-  <p class="label">Try one of these instead</p>
-  <ul class="examples">
-    {% for e in v.off_topic.examples %}<li><a href="/?q={{ e | urlencode }}">{{ e }}</a></li>{% endfor %}
-  </ul>
-</section>
-{% else %}
-
-{% if diff %}
-<section class="diff" aria-labelledby="diff-title">
-  <h2 id="diff-title" class="h2">Re-assessed with the customer’s answers</h2>
-  <div class="table-scroll">
-  <table class="grid">
-    <thead><tr><th scope="col"></th><th scope="col">Before</th><th scope="col">After</th></tr></thead>
-    <tbody>
-      <tr><th scope="row">Decision status</th><td>{{ diff.before.status }}</td><td>{{ diff.after.status }}</td></tr>
-      <tr><th scope="row">Proposed option</th><td>{{ diff.before.best or '—' }}</td><td>{{ diff.after.best or '—' }}</td></tr>
-      <tr><th scope="row">Confidence of the proposal</th><td>{{ diff.before.confidence or '—' }}</td><td>{{ diff.after.confidence or '—' }}</td></tr>
-      <tr><th scope="row">Options</th>
-        <td>{% for o in diff.before.options %}{{ o.id }} {{ o.tier }}: {{ o.confidence }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
-        <td>{% for o in diff.after.options %}{{ o.id }} {{ o.tier }}: {{ o.confidence }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td></tr>
-    </tbody>
-  </table>
-  </div>
-</section>
-{% endif %}
-
-{% set conf = v.proposal.confidence %}
-<section class="status" aria-label="Status and confidence">
-  <dl class="status-dl">
-    <div><dt>Status</dt><dd>{{ v.status.label }}{% if v.still_open %} <span class="flag">⚠ {{ v.still_open | length }} check(s) still open</span>{% endif %}</dd></div>
-    {% if conf %}<div><dt>Confidence</dt><dd>{{ meter(conf.level) }} <strong>{{ conf.level }}</strong>{% if conf.reasons %}<span class="reasons">{{ conf.reasons | join('; ') }}</span>{% endif %}</dd></div>{% endif %}
-  </dl>
-</section>
-
-<section class="answer" aria-labelledby="answer-title">
-  <h2 id="answer-title" class="label">Answer</h2>
-  <p class="answer-text">{{ v.brief_answer.text }}</p>
-  {{ flag(v.brief_answer.flag) }}
-</section>
-
-<section class="proposal" aria-labelledby="proposal-title">
-  <h2 id="proposal-title" class="label">Proposal</h2>
-  {% set p = v.proposal %}
-  <dl class="kv">
-    <div><dt>Option</dt><dd>{% if p.best %}<strong>{{ p.best.id }}</strong> · {{ p.best.tier }}{% else %}—{% endif %} {{ flag(p.flags.best) }}</dd></div>
-    <div><dt>Method</dt><dd>{% for m in p.methods %}{{ m.label }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }} (combination){% endif %}{% if not loop.last %}; {% endif %}{% else %}—{% endfor %}</dd></div>
-    <div><dt>Basis</dt><dd>{{ p.basis_label | capitalize }}{% if p.external_support %}, with secondary external support {{ tags(v, p.external_support) }} <span class="ext-note">external, not AFS material</span>{% endif %}</dd></div>
-    <div><dt>What would change it</dt><dd>{{ p.what_would_change_it }} {{ flag(p.flags.change) }}</dd></div>
-    <div><dt>Next step</dt><dd>{{ p.next_step }} {{ flag(p.flags.next) }}</dd></div>
-  </dl>
-</section>
-
-<section class="figures" aria-label="Figures">
-  {% if v.figures.setup %}
-  <figure class="figure">
-    {{ figure(v.figures.setup, 'fw-setup') }}
-    <figcaption><span class="fig-no">Fig. 1</span> Setup sketch of the proposed option {{ v.proposal.best.id }}, drawn by code from the option: a schematic, not a configuration. Dashed: auxiliary sensors, availability to be confirmed with AFS.</figcaption>
-  </figure>
-  {% endif %}
-  <figure class="figure">
-    {{ figure(v.figures.spectral, 'fw-spectral') }}
-    <figcaption><span class="fig-no">Fig. 2</span> Nominal method ranges with their source pages{% if v.figures.proposed_methods %}; {{ v.figures.proposed_methods | join(', ') }} (proposed) in blue{% endif %}{% if v.figures.other_methods %}, {{ v.figures.other_methods | join(', ') }} (other options) outlined{% endif %}. A nominal range is not the usable range of a configuration.</figcaption>
-  </figure>
-</section>
-
-{% if v.options %}
-<section class="options" aria-labelledby="options-title">
-  <h2 id="options-title" class="h2">Options compared</h2>
-  <div class="table-scroll" tabindex="0" role="region" aria-labelledby="options-title">
-  <table class="grid compare">
-    <thead>
-      <tr><th scope="col" class="rowhead"><span class="sr-only">Property</span></th>
-        {% for o in v.options %}<th scope="col" class="{{ 'best' if o.is_best }}">{{ o.id }} · {{ o.tier_label }}{% if o.is_best %} <span class="best-mark">▸ proposed</span>{% endif %}</th>{% endfor %}</tr>
-    </thead>
-    <tbody>
-      <tr><th scope="row">Methods</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{% for m in o.methods %}<span class="mono">{{ m.id }}</span> {{ m.label }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }}{% endif %}{% if not loop.last %}<br>{% endif %}{% endfor %} {{ flag(o.flag) }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Confidence</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{{ meter(o.confidence.level) }} <strong>{{ o.confidence.level }}</strong>{% if o.confidence.reasons %}<span class="reasons">{{ o.confidence.reasons | join('; ') }}</span>{% endif %}</td>{% endfor %}</tr>
-      <tr><th scope="row">Cost class <span class="th-note">{{ v.cost_citation }}</span></th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{{ o.cost.label }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Ease of use</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{{ o.ease }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Maintenance</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{{ o.maintenance }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Performance fit</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{{ o.performance_fit }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Parameters covered</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }} mono">{{ o.parameters | join(' ') }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Cost drivers</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{{ o.cost_drivers }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Sources</th>{% for o in v.options %}<td class="{{ 'best' if o.is_best }}">{{ tags(v, o.cites) }}{{ judgement(o.cites) }}</td>{% endfor %}</tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="note">{{ v.confidence_note }}</p>
-  <p class="note">{{ v.cost_note }}</p>
-  {% for o in v.options if o.fusion_note %}<p class="note"><strong>{{ o.id }} combining methods:</strong> {{ o.fusion_note }}</p>{% endfor %}
-</section>
-{% endif %}
-
-{% if v.questions %}
-<section class="questions" id="questions" aria-labelledby="questions-title">
-  <h2 id="questions-title" class="h2">Open questions</h2>
-  <form method="post" action="/runs/{{ v.key }}/clarify" class="clarify">
-    <ol class="q-list">
-      {% for q in v.questions[:v.top_questions] %}
-      <li>
-        <label for="answer_{{ q.id }}"><span class="q">{{ q.question }}</span> {{ flag(q.flag) }}</label>
-        <span class="why">Why it matters: {{ q.why }}</span>
-        <textarea id="answer_{{ q.id }}" name="answer_{{ q.id }}" rows="2" placeholder="The customer’s answer, if known"></textarea>
-      </li>
-      {% endfor %}
-    </ol>
-    <div class="form-row">
-      <button class="btn" type="submit">Answer and re-assess</button>
-      <span class="muted small">The answers are added to the enquiry as customer facts and the case is assessed again; the old and new status are shown side by side.</span>
+  {% set rec = v.recommendation %}
+  <section class="rec" aria-labelledby="rec-title">
+    <h2 class="kicker kicker-accent">Our recommendation</h2>
+    <h1 id="rec-title" class="rec-head">{{ rec.headline }}</h1>
+    <p class="rec-text">{{ rec.text }} {{ flag(rec.flag) }}</p>
+    <div class="rec-meta">
+      {% if rec.confidence %}
+      <span class="conf">{{ meter(rec.confidence.level) }} <strong>{{ rec.confidence.level }} confidence</strong>{% if rec.confidence.plain %}<span class="muted"> — {{ rec.confidence.plain | join('; ') }}</span>{% endif %}</span>
+      {% endif %}
+      {{ tags(v, rec.cites) }}{% if rec.external_support %} {{ tags(v, rec.external_support) }} <span class="ext-note">external, not AFS material</span>{% endif %}
     </div>
-  </form>
-</section>
-{% endif %}
+    <p class="status-line small"><span class="muted">Status:</span> {{ v.status.label }}{% if v.still_open %} <span class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ v.still_open | length }} check(s) still open</span>{% endif %}
+      · <span class="muted">Next step:</span> {{ v.proposal.next_step }} {{ flag(v.proposal.flags.next) }}</p>
+  </section>
 
-<section class="detail" aria-labelledby="detail-title">
-  <h2 id="detail-title" class="h2">Expert detail</h2>
-
-  <details class="sec" id="sec-parameters">
-    <summary><span class="sec-title">Parameters</span><span class="sec-count mono">{{ v.parameters | length }}</span></summary>
-    <div class="sec-body">
-      {% if v.figures.params.wide %}
-      <figure class="figure figure-full">
-        {{ figure(v.figures.params, 'fw-params') }}
-        <figcaption><span class="fig-no">Fig. 3</span> Each parameter and how it is measured; dashed: not by spectroscopy.</figcaption>
+  {% if v.options %}
+  <section class="setup" aria-labelledby="setup-title" data-options>
+    <div class="sec-head">
+      <h2 id="setup-title" class="h2">How it would be set up</h2>
+      <span class="muted small hint">Switch the option to redraw the setup</span>
+    </div>
+    <div class="seg" role="tablist" aria-label="Solution option">
+      {% for o in v.options %}
+      <button type="button" role="tab" id="tab-{{ o.id }}" aria-controls="opt-{{ o.id }}" aria-selected="{{ 'true' if o.is_best else 'false' }}" tabindex="{{ '0' if o.is_best else '-1' }}">
+        <span class="seg-t">{{ o.tab }}{% if o.is_best %}<span class="sr-only"> (proposed)</span>{% endif %}</span>
+        <span class="seg-s">{{ o.tab_sub }}</span>
+      </button>
+      {% endfor %}
+    </div>
+    {% for o in v.options %}
+    <div class="opt" role="tabpanel" id="opt-{{ o.id }}" aria-labelledby="tab-{{ o.id }}"{% if not o.is_best %} data-hidden{% endif %}>
+      <p class="opt-title"><strong>{{ o.id }} · {{ o.tier_label }}</strong>{% if o.is_best %} <span class="best-mark">proposed</span>{% endif %}
+        — {% for m in o.methods %}{{ m.label }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %} {{ flag(o.flag) }}</p>
+      <figure class="fig-setup-wrap">
+        {{ figure(o.figure, 'fw-setup') }}
+        <figcaption>Drawn by code from option {{ o.id }}: a schematic, not a configuration. Dashed: auxiliary sensor, availability to be confirmed with AFS.</figcaption>
       </figure>
-      {% endif %}
-      <div class="table-scroll">
-      <table class="grid">
-        <thead><tr><th scope="col">ID</th><th scope="col">Parameter</th><th scope="col">Need</th><th scope="col">Measured by</th><th scope="col">Why</th><th scope="col">Sources</th></tr></thead>
-        <tbody>
-        {% for p in v.parameters %}
-          <tr><td class="mono">{{ p.id }}</td><td>{{ p.name }} <span class="muted small">{{ p.kind }}</span></td><td>{{ p.necessity }}</td><td>{{ p.measured_by }}</td><td>{{ p.why }} {{ flag(p.flag) }}</td><td>{{ tags(v, p.cites) }}{{ judgement(p.cites) }}</td></tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      </div>
-      <div class="two">
-        <div><h3 class="h3">Stated by the customer</h3><ul class="plain">{% for s in v.requirements.stated %}<li>{{ s }}</li>{% endfor %}</ul></div>
-        <div><h3 class="h3">Key unknowns</h3><ul class="plain">{% for s in v.requirements.unknowns %}<li>{{ s }}</li>{% endfor %}</ul></div>
-      </div>
-    </div>
-  </details>
-
-  <details class="sec" id="sec-premises">
-    <summary><span class="sec-title">Premise check</span><span class="sec-count mono">{{ v.premises | length }}</span></summary>
-    <div class="sec-body">
-      {% if v.status.reason %}<p><strong>{{ v.status.label }}.</strong> {{ v.status.reason }} {{ flag(v.status.flag) }}</p>{% endif %}
-      <dl class="entries">
-      {% for p in v.premises %}
-        <div><dt><span class="verdict verdict-{{ p.verdict }}">{{ p.verdict_label }}</span></dt>
-        <dd><strong>{{ p.premise }}.</strong> {{ p.explanation }} {{ tags(v, p.cites) }} {{ flag(p.flag) }}</dd></div>
-      {% else %}<p class="muted">No customer premise to check.</p>{% endfor %}
+      <dl class="specs">
+        <div data-parts="probe spec"><dt>Cost class</dt><dd>{{ o.cost.label or '—' }} <span class="muted small mono d-block">{{ v.cost_citation }}</span></dd></div>
+        <div data-parts="probe"><dt>Ease of use</dt><dd>{{ o.ease }}</dd></div>
+        <div data-parts="probe fiber"><dt>Upkeep</dt><dd>{{ o.maintenance }}</dd></div>
+        <div data-parts="model"><dt>Confidence</dt><dd>{{ meter(o.confidence.level) }} {{ o.confidence.level }}{% if o.confidence.plain %}<span class="muted small d-block">{{ o.confidence.plain | join('; ') }}</span>{% endif %}</dd></div>
       </dl>
+      <p class="opt-fit"><span class="muted">Why this option:</span> {{ o.performance_fit }} {{ tags(v, o.cites) }}{{ judgement(o.cites) }}</p>
     </div>
-  </details>
+    {% endfor %}
+  </section>
+  {% endif %}
 
-  <details class="sec" id="sec-method">
-    <summary><span class="sec-title">Methods and measurement concept</span><span class="sec-count mono">{{ v.recommendations | length }}</span></summary>
-    <div class="sec-body">
-      <dl class="entries">
-      {% for m in v.recommendations %}
-        <div><dt><span class="mono">{{ m.id }}</span> {{ m.role_label }}</dt>
-        <dd><strong>{{ m.method }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }} (combination){% endif %}.</strong> {{ m.rationale }}{% if m.conditions %} <em>Conditions:</em> {{ m.conditions }}{% endif %} {{ tags(v, m.cites) }}{{ judgement(m.cites) }}{% if m.combined_with %} <span class="muted">Later hypothesis, after single-method tests.</span>{% endif %} {{ flag(m.flag) }}</dd></div>
+  {% if v.top_questions %}
+  <section class="sharpen" id="sharpen" aria-labelledby="sharpen-title">
+    <h2 id="sharpen-title" class="h2">Help us sharpen this</h2>
+    <p class="muted">{{ v.top_questions | length }} answer{{ 's' if v.top_questions | length > 1 }} would change the advice. Fill in what you know.</p>
+    <form method="post" action="/runs/{{ v.key }}/clarify" class="sharpen-form">
+      {% for q in v.top_questions %}
+      <div class="q">
+        <label for="answer_{{ q.id }}"><strong>{{ loop.index }}.</strong> {{ q.question }} {{ flag(q.flag) }}</label>
+        <span class="why">Why it matters: {{ q.why }}</span>
+        <input type="text" id="answer_{{ q.id }}" name="answer_{{ q.id }}" placeholder="The customer’s answer, if known" autocomplete="off">
+      </div>
       {% endfor %}
-      </dl>
-      <h3 class="h3">Measurement concept</h3>
-      <dl class="kv">
-        <div><dt>Probe and geometry</dt><dd>{{ v.measurement.probe }}</dd></div>
-        <div><dt>Location</dt><dd>{{ v.measurement.location }}</dd></div>
-        <div><dt>Fiber link</dt><dd>{{ v.measurement.fiber_link }} {{ tags(v, v.measurement.cites) }} {{ flag(v.measurement.flag) }}</dd></div>
-      </dl>
-      {% if v.spectral %}
-      <h3 class="h3">Spectral range</h3>
-      <dl class="kv">{% for s in v.spectral %}<div><dt>{{ s.method }}</dt><dd>{{ s.statement }} {{ tags(v, s.cites) }} {{ flag(s.flag) }}</dd></div>{% endfor %}</dl>
-      {% endif %}
-      {% if v.not_covered %}<h3 class="h3">Not covered by the supplied sources</h3><ul class="plain">{% for s in v.not_covered %}<li>{{ s }}</li>{% endfor %}</ul>{% endif %}
-      {% if v.assumptions %}<h3 class="h3">Assumptions</h3><ul class="plain">{% for s in v.assumptions %}<li>{{ s }}</li>{% endfor %}</ul>{% endif %}
-      {% if v.notes %}<h3 class="h3">Further notes</h3><dl class="kv">{% for n in v.notes %}<div><dt>{{ n.label }}</dt><dd>{{ n.text }}</dd></div>{% endfor %}</dl>{% endif %}
-      {% if v.questions | length > v.top_questions %}
-      <h3 class="h3">All clarification questions</h3>
-      <ol class="plain-ol">{% for q in v.questions %}<li>{{ q.question }} <span class="muted">Why it matters: {{ q.why }} (affects: {{ q.affects | join(', ') }})</span></li>{% endfor %}</ol>
-      {% endif %}
-    </div>
-  </details>
+      <div class="form-row">
+        <button class="btn" type="submit">Update the recommendation</button>
+        <span class="muted small">Takes a few minutes; the new answer appears below with what changed.</span>
+      </div>
+    </form>
+  </section>
+  {% endif %}
 
-  <details class="sec" id="sec-risks">
-    <summary><span class="sec-title">Risks</span><span class="sec-count mono">{{ v.risks | length }}</span></summary>
-    <div class="sec-body">
-      <ul class="plain">
-      {% for k in v.risks %}<li>{{ k.text }}{% if k.rules %} <span class="muted small mono">{{ k.rules | join(' ') }}</span>{% endif %} {{ tags(v, k.cites) }} {{ flag(k.flag) }}</li>{% endfor %}
-      </ul>
-    </div>
-  </details>
+  <section class="more" aria-label="More detail">
+    <details class="row" id="row-params">
+      <summary><span class="row-t">What to measure and how</span><span class="row-n mono">{{ v.parameters | length }} parameters</span></summary>
+      <div class="row-body">
+        {% if v.figures.params.wide %}<figure class="fig-full">{{ figure(v.figures.params, 'fw-params') }}<figcaption>Each parameter and how it is measured; dashed: not by spectroscopy.</figcaption></figure>{% endif %}
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Parameters">
+        <table class="grid">
+          <thead><tr><th scope="col">Parameter</th><th scope="col">Need</th><th scope="col">Measured by</th><th scope="col">Why</th><th scope="col">Sources</th></tr></thead>
+          <tbody>{% for p in v.parameters %}<tr><td><span class="mono">{{ p.id }}</span> {{ p.name }}</td><td>{{ p.necessity }}</td><td>{{ p.measured_by }}</td><td>{{ p.why }} {{ flag(p.flag) }}</td><td>{{ tags(v, p.cites) }}{{ judgement(p.cites) }}</td></tr>{% endfor %}</tbody>
+        </table>
+        </div>
+        <div class="two">
+          <div><h3 class="h3">Stated by the customer</h3><ul class="plain">{% for s in v.requirements.stated %}<li>{{ s }}</li>{% endfor %}</ul></div>
+          <div><h3 class="h3">Still unknown</h3><ul class="plain">{% for s in v.requirements.unknowns %}<li>{{ s }}</li>{% endfor %}</ul></div>
+        </div>
+      </div>
+    </details>
 
-  <details class="sec" id="sec-plan">
-    <summary><span class="sec-title">Test plan</span><span class="sec-count mono">{{ v.plan.steps | length }}</span></summary>
-    <div class="sec-body">
-      <ol class="plan">
-      {% for s in v.plan.steps %}<li><strong>{{ s.step }}</strong> {{ s.purpose }} {{ tags(v, s.cites) }} {{ flag(s.flag) }}</li>{% endfor %}
-      </ol>
-      <dl class="kv">
-        <div><dt>Reference measurements</dt><dd>{{ v.plan.reference }}</dd></div>
-        <div><dt>Decision basis</dt><dd>{{ v.plan.decision_basis }}</dd></div>
-      </dl>
-    </div>
-  </details>
+    <details class="row" id="row-risks">
+      <summary><span class="row-t">Risks</span><span class="row-n mono">{{ v.risks | length }}</span></summary>
+      <div class="row-body"><ul class="plain">{% for k in v.risks %}<li>{{ k.text }} {{ tags(v, k.cites) }} {{ flag(k.flag) }}</li>{% endfor %}</ul></div>
+    </details>
 
-  <details class="sec sec-ext" id="sec-literature">
-    <summary><span class="sec-title">Literature</span><span class="ext-note">external, not AFS material</span>{% if v.external %}<span class="sec-count mono">{{ v.citations.values() | selectattr('kind', 'equalto', 'external') | list | length }}</span>{% endif %}</summary>
-    <div class="sec-body">
-      {% if v.external %}
-      <p class="note">Found by a literature search for gaps the supplied AFS sources leave open. Not AFS material and not proof for this case; every quote was verified verbatim against the fetched text.</p>
-      {% if v.external.fallback %}<p class="flag">Live search unavailable ({{ v.external.fallback }}); curated library only.</p>{% endif %}
-      {% if v.external.error %}<p class="flag">External step incomplete: {{ v.external.error }}.</p>{% endif %}
-      {% for g in v.external.gaps %}
-      <div class="gap">
-        <h3 class="h3"><span class="mono">{{ g.id }}</span> {{ g.kind }}</h3>
-        <p>{{ g.text }}</p>
-        {% if g.cites %}
-        <ul class="ext-items">
+    <details class="row" id="row-plan">
+      <summary><span class="row-t">First feasibility test</span><span class="row-n mono">{{ v.plan.steps | length }} steps</span></summary>
+      <div class="row-body">
+        <ol class="plain-ol">{% for s in v.plan.steps %}<li><strong>{{ s.step }}</strong> {{ s.purpose }} {{ tags(v, s.cites) }} {{ flag(s.flag) }}</li>{% endfor %}</ol>
+        <dl class="kv"><div><dt>Reference measurements</dt><dd>{{ v.plan.reference }}</dd></div><div><dt>Decision basis</dt><dd>{{ v.plan.decision_basis }}</dd></div></dl>
+      </div>
+    </details>
+
+    <details class="row" id="row-literature">
+      <summary><span class="row-t">Literature <span class="ext-note">external, not AFS material</span></span><span class="row-n mono">{% if v.external %}{{ v.external.count }} quote{{ 's' if v.external.count != 1 }}{% else %}none{% endif %}</span></summary>
+      <div class="row-body">
+        {% if v.external %}
+        <p class="note">Found by a literature search for gaps the supplied AFS sources leave open. Not AFS material and not proof for this case; every quote was verified word for word against the fetched text.</p>
+        {% if v.external.fallback %}<p class="flag">Live search unavailable ({{ v.external.fallback }}); curated library only.</p>{% endif %}
+        {% if v.external.error %}<p class="flag">External step incomplete: {{ v.external.error }}.</p>{% endif %}
+        {% for g in v.external.gaps %}
+        <div class="gap">
+          <h3 class="h3"><span class="mono">{{ g.id }}</span> {{ g.kind }}</h3>
+          <p>{{ g.text }}</p>
           {% for cid in g.cites %}{% set c = v.citations[cid] %}
-          <li>
+          <div class="ext-item">
             <p>{{ tags(v, [cid]) }} {{ c.finding }}</p>
             <blockquote class="quote">“{{ c.quote }}”</blockquote>
             <dl class="kv kv-small">
               <div><dt>How it applies</dt><dd>{{ c.how_it_applies }}</dd></div>
               <div><dt>Limits</dt><dd>{{ c.limits }}</dd></div>
               <div><dt>Source</dt><dd>{{ c.source.title }} ({{ c.source.year or 'n.d.' }}){% if c.source.venue %}, {{ c.source.venue }}{% endif %}.
-                {% if c.source.doi %}<a href="https://doi.org/{{ c.source.doi }}" rel="noopener noreferrer">doi:{{ c.source.doi }}</a>{% elif c.source.url %}<a href="{{ c.source.url }}" rel="noopener noreferrer">{{ c.source.url }}</a>{% endif %}
+                {% if c.source.doi_href %}<a href="{{ c.source.doi_href }}" rel="noopener noreferrer">doi:{{ c.source.doi }}</a>{% elif c.source.url_href %}<a href="{{ c.source.url_href }}" rel="noopener noreferrer" class="break">{{ c.source.url }}</a>{% elif c.source.url %}<span class="break">{{ c.source.url }}</span>{% endif %}
                 <span class="muted small">· {{ c.source.access }} · licence {{ c.source.licence }} · retrieved {{ c.source.retrieved }} · via {{ c.source.origin }}</span></dd></div>
             </dl>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}<p class="muted">No usable external source found.</p>{% endif %}
+          </div>
+          {% else %}<p class="muted">No usable external source found.</p>{% endfor %}
+        </div>
+        {% endfor %}
+        {% else %}<p class="muted">No literature search for this run.</p>{% endif %}
       </div>
-      {% endfor %}
-      {% else %}
-      <p class="muted">No external search for this run.</p>
-      {% endif %}
-    </div>
-  </details>
+    </details>
 
-  <details class="sec" id="sec-verification">
-    <summary><span class="sec-title">Verification</span><span class="sec-count mono">{{ v.verification.summary.citations_verified }}/{{ v.verification.summary.citations_total }}</span></summary>
-    <div class="sec-body">
-      {% set s = v.verification.summary %}
-      <dl class="kv">
-        <div><dt>Quotes verified</dt><dd>{{ s.citations_verified }} of {{ s.citations_total }}, exact or whitespace/hyphen-tolerant match on the cited page, scope checked</dd></div>
-        <div><dt>Hard check failures</dt><dd>{{ s.hard_failures }} before deterministic corrections; {{ v.verification.still_open | length }} still open</dd></div>
-        <div><dt>Soft warnings</dt><dd>{{ s.soft_failures }}</dd></div>
-        <div><dt>Repair rounds</dt><dd>{{ v.verification.repair_rounds }}</dd></div>
-      </dl>
-      {% if v.verification.removed_citations %}<h3 class="h3">Citations removed after failing verification</h3><ul class="plain">{% for x in v.verification.removed_citations %}<li><span class="mono">{{ x.location }}</span> {{ x.label }} “{{ x.quote[:120] }}”</li>{% endfor %}</ul>{% endif %}
-      {% if v.verification.changes %}<h3 class="h3">Corrected after verification</h3><ul class="plain">{% for x in v.verification.changes %}<li><span class="mono">{{ x.location }}</span> {{ x.reason }}</li>{% endfor %}</ul>{% endif %}
-      {% if v.verification.still_open %}<h3 class="h3">Still open</h3><ul class="plain">{% for c in v.verification.still_open %}<li class="flag">{{ c.name }} at {{ c.location }}: {{ c.message }}</li>{% endfor %}</ul>{% endif %}
-      {% if v.verification.external_lines %}<h3 class="h3">External evidence</h3><ul class="plain">{% for line in v.verification.external_lines %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
-    </div>
-  </details>
-</section>
+    <details class="row" id="row-made">
+      <summary><span class="row-t">How this answer was made</span><span class="row-n mono">{{ v.made.verified }} quotes verified</span></summary>
+      <div class="row-body">
+        <ol class="stepper stepper-done">
+          {% for st in v.made.steps %}
+          <li class="st st-{{ 'done' if st.seconds is not none else 'skipped' }}"><span class="st-mark" aria-hidden="true"></span>
+            <span class="st-label">{{ st.label }} <span class="muted small">{{ st.note }}</span></span><span class="st-time mono">{{ st.time }}</span></li>
+          {% endfor %}
+        </ol>
+        <p class="note mono">{% if v.made.wall %}{{ v.made.wall }} in total · {% endif %}{{ v.made.calls }} model call(s){% if v.made.models %} · {{ v.made.models | join(', ') }}{% endif %}</p>
+        {% set s = v.verification.summary %}
+        <dl class="kv">
+          <div><dt>Quotes verified</dt><dd>{{ s.citations_verified }} of {{ s.citations_total }}, exact or whitespace/hyphen-tolerant match on the cited page, scope checked</dd></div>
+          <div><dt>Check failures</dt><dd>{{ s.hard_failures }} before deterministic corrections; {{ v.verification.still_open | length }} still open; {{ s.soft_failures }} soft warning(s); {{ v.verification.repair_rounds }} repair round(s)</dd></div>
+        </dl>
+        {% if v.verification.removed_citations %}<h3 class="h3">Citations removed after failing verification</h3><ul class="plain">{% for x in v.verification.removed_citations %}<li><span class="mono">{{ x.location }}</span> {{ x.label }} “{{ x.quote | truncate(120) }}”</li>{% endfor %}</ul>{% endif %}
+        {% if v.verification.changes %}<h3 class="h3">Corrected after verification</h3><ul class="plain">{% for x in v.verification.changes %}<li><span class="mono">{{ x.location }}</span> {{ x.reason }}</li>{% endfor %}</ul>{% endif %}
+        {% if v.verification.still_open %}<h3 class="h3">Still open</h3><ul class="plain">{% for c in v.verification.still_open %}<li class="flag">{{ c.name }} at {{ c.location }}: {{ c.message }}</li>{% endfor %}</ul>{% endif %}
+        {% if v.verification.external_lines %}<h3 class="h3">Literature step</h3><ul class="plain">{% for line in v.verification.external_lines %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </details>
 
-<section class="made" aria-labelledby="made-title">
-  <h2 id="made-title" class="h2">How this answer was made</h2>
-  <ol class="made-steps">
-    {% for st in v.made.steps %}
-    <li class="{{ 'off' if st.seconds is none }}">
-      <span class="made-label">{{ st.label }}</span>
-      <span class="made-time mono">{% if st.seconds is not none %}{{ '%.1f' | format(st.seconds) }} s{% else %}—{% endif %}</span>
-      <span class="made-note">{{ st.note }}</span>
-    </li>
-    {% endfor %}
-  </ol>
-  <p class="note mono">{% if v.made.wall %}{{ '%.0f' | format(v.made.wall) }} s in total · {% endif %}{{ v.made.calls }} model call(s){% if v.made.models %} · {{ v.made.models | join(', ') }}{% endif %} · run {{ v.run_id }}</p>
-</section>
-{% endif %}
+    <details class="row" id="row-technical">
+      <summary><span class="row-t">Technical detail</span><span class="row-n mono">ranges, premises, methods</span></summary>
+      <div class="row-body">
+        <figure class="fig-full">{{ figure(v.figures.spectral, 'fw-spectral') }}
+          <figcaption>Method ranges as the supplied pages state them{% if v.figures.proposed_methods %}; {{ v.figures.proposed_methods | join(', ') }} (proposed) filled{% endif %}{% if v.figures.other_methods %}, {{ v.figures.other_methods | join(', ') }} (other options) outlined{% endif %}. A range the sources do not state gets no number. A nominal range is not the usable range of a configuration.</figcaption></figure>
+        <h3 class="h3">Proposal</h3>
+        <dl class="kv">
+          <div><dt>Option</dt><dd>{% if v.proposal.best %}{{ v.proposal.best.id }} · {{ v.proposal.best.tier }}{% else %}—{% endif %} {{ flag(v.proposal.flags.best) }}</dd></div>
+          <div><dt>Basis</dt><dd>{{ v.proposal.basis }}</dd></div>
+          <div><dt>What would change it</dt><dd>{{ v.proposal.what_would_change_it }} {{ flag(v.proposal.flags.change) }}</dd></div>
+        </dl>
+        <h3 class="h3">Premise check</h3>
+        {% if v.status.reason %}<p><strong>{{ v.status.label }}.</strong> {{ v.status.reason }} {{ flag(v.status.flag) }}</p>{% endif %}
+        <dl class="kv">{% for p in v.premises %}<div><dt>{{ p.verdict_label }}</dt><dd><strong>{{ p.premise }}.</strong> {{ p.explanation }} {{ tags(v, p.cites) }} {{ flag(p.flag) }}</dd></div>{% else %}<div><dt>—</dt><dd class="muted">No customer premise to check.</dd></div>{% endfor %}</dl>
+        <h3 class="h3">Methods</h3>
+        <dl class="kv">{% for m in v.recommendations %}<div><dt><span class="mono">{{ m.id }}</span> {{ m.role_label }}</dt><dd><strong>{{ m.method }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }} (combination){% endif %}.</strong> {{ m.rationale }}{% if m.conditions %} <em>Conditions:</em> {{ m.conditions }}{% endif %} {{ tags(v, m.cites) }}{{ judgement(m.cites) }} {{ flag(m.flag) }}</dd></div>{% endfor %}</dl>
+        <h3 class="h3">Measurement concept</h3>
+        <dl class="kv">
+          <div><dt>Probe and geometry</dt><dd>{{ v.measurement.probe }}</dd></div>
+          <div><dt>Location</dt><dd>{{ v.measurement.location }}</dd></div>
+          <div><dt>Fiber link</dt><dd>{{ v.measurement.fiber_link }} {{ tags(v, v.measurement.cites) }} {{ flag(v.measurement.flag) }}</dd></div>
+          {% for s in v.spectral %}<div><dt>{{ s.method }} range</dt><dd>{{ s.statement }} {{ tags(v, s.cites) }} {{ flag(s.flag) }}</dd></div>{% endfor %}
+        </dl>
+        {% for o in v.options if o.fusion_note %}<p><strong>{{ o.id }} combining methods:</strong> {{ o.fusion_note }}</p>{% endfor %}
+        {% if v.not_covered %}<h3 class="h3">Not covered by the supplied sources</h3><ul class="plain">{% for s in v.not_covered %}<li>{{ s }}</li>{% endfor %}</ul>{% endif %}
+        {% if v.assumptions %}<h3 class="h3">Assumptions</h3><ul class="plain">{% for s in v.assumptions %}<li>{{ s }}</li>{% endfor %}</ul>{% endif %}
+        {% if v.notes %}<h3 class="h3">Further notes</h3><dl class="kv">{% for n in v.notes %}<div><dt>{{ n.label }}</dt><dd>{{ n.text }}</dd></div>{% endfor %}</dl>{% endif %}
+        {% if v.questions | length > v.top_questions | length %}<h3 class="h3">All clarification questions</h3><ol class="plain-ol">{% for q in v.questions %}<li>{{ q.question }} <span class="muted">Why it matters: {{ q.why }}</span></li>{% endfor %}</ol>{% endif %}
+        <p class="note">{{ v.confidence_note }}</p>
+        <p class="note">{{ v.cost_note }}</p>
+      </div>
+    </details>
+  </section>
+  {% endif %}
+
+  <section class="handoff" aria-label="Hand-off">
+    {% if v.reply %}<button type="button" class="btn-quiet" data-copy="reply-{{ v.key }}">Copy as customer reply</button>
+    <textarea id="reply-{{ v.key }}" class="sr-only" tabindex="-1" aria-hidden="true" readonly>{{ v.reply }}</textarea>{% endif %}
+    <button type="button" class="btn-quiet" data-print>Print / PDF</button>
+    {% if v.has_markdown %}<a class="btn-quiet" href="/runs/{{ v.key }}.md" download>Markdown</a>{% endif %}
+    <a class="btn-quiet" href="/runs/{{ v.key }}.json" download>JSON</a>
+    <span class="copied small muted" role="status" aria-live="polite"></span>
+  </section>
 </article>
+</div>
+{% endblock %}
+{% block composer %}
+{% if not v.off_topic and not v.incomplete %}
+<div class="composer">
+  <form class="composer-in" method="post" action="/runs/{{ v.key }}/clarify">
+    <label for="ask" class="sr-only">Add a detail or ask a follow-up</label>
+    <input id="ask" name="followup" type="text" autocomplete="off" placeholder="Add a detail or ask a follow-up, e.g. the line runs at 60 °C"{% if busy %} disabled{% endif %}>
+    <button class="btn" type="submit"{% if busy %} disabled{% endif %}>Send</button>
+  </form>
+</div>
+{% endif %}
 {% endblock %}

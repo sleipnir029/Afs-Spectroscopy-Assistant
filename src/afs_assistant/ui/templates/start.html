@@ -1,41 +1,29 @@
 {% extends "base.html" %}
 {% block main %}
-<section class="start" aria-labelledby="start-title">
-  <h1 id="start-title" class="start-title">Paste a customer enquiry</h1>
-  <p class="lede">The assistant reads the enquiry, screens the in-line methods, writes a first technical assessment and checks every quote against the supplied AFS sources. A run takes a few minutes; saved runs below open instantly.</p>
-  <form class="enquiry-form" method="post" action="/assess">
-    <label class="sr-only" for="enquiry">Customer enquiry</label>
-    <textarea id="enquiry" name="enquiry" rows="8" required placeholder="What does the customer want to measure, in which process, and what do they already know?">{{ q }}</textarea>
+<div class="column start">
+  <form class="ask-form" method="post" action="/assess">
+    <h1 class="start-title"><label for="enquiry">What do you want to measure?</label></h1>
+    <p class="lede">Describe the material, the process and what you need to know. You get a first technical assessment in a few minutes; every claim points to the AFS page it comes from.</p>
+    <textarea id="enquiry" name="enquiry" rows="6" required placeholder="e.g. what you want to follow, in which line or vessel, and what you already know about the material">{{ q }}</textarea>
     {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <div class="chips" aria-label="Example questions">
+      <span class="muted small">Try an example:</span>
+      {% for e in examples %}<a class="chip" href="/?q={{ e | urlencode }}" data-fill="{{ e }}">{{ e }}</a>{% endfor %}
+    </div>
     <div class="form-row">
       {% if busy %}
-      <p class="muted">A run is in progress. <a href="/jobs/{{ busy.id }}">Follow it</a>.</p>
+      <p class="muted">A question is being assessed. <a href="/jobs/{{ busy.id }}">Follow it</a>.</p>
       {% else %}
-      <button class="btn" type="submit">Assess</button>
-      <span class="muted small">Calls the language model and the literature search; the result is saved with its provenance.</span>
+      <button class="btn" type="submit">Get assessment</button>
       {% endif %}
     </div>
   </form>
-</section>
 
-<section class="runs" aria-labelledby="runs-title">
-  <h2 id="runs-title" class="h2">Saved runs</h2>
-  {% if saved %}
-  <table class="runs-table">
-    <thead><tr><th scope="col">Run</th><th scope="col">Title</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
-    <tbody>
-    {% for r in saved %}
-      <tr>
-        <td class="mono">{{ r.id }}</td>
-        <td><a href="/runs/{{ r.id }}">{{ r.title }}</a></td>
-        <td>{{ r.status }}</td>
-        <td class="mono nowrap">{{ r.date }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p class="muted">No saved runs yet.</p>
-  {% endif %}
-</section>
+  <section class="examples-list" aria-labelledby="examples-title">
+    <h2 id="examples-title" class="h2">Open a finished example</h2>
+    <ul class="link-list">
+      {% for r in saved %}<li><a href="/runs/{{ r.id }}">{{ r.title }}</a></li>{% else %}<li class="muted">No finished examples yet.</li>{% endfor %}
+    </ul>
+  </section>
+</div>
 {% endblock %}

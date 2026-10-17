@@ -1,9 +1,20 @@
 {% extends "base.html" %}
+{% from "macros.html" import question_block %}
 {% block title %}Assessing… · AFS Spectroscopy Assistant{% endblock %}
+{% block body_class %}has-composer{% endblock %}
 {% block main %}
-<section class="job" aria-labelledby="job-title">
-  <h1 id="job-title" class="h1">{{ 'Re-assessing with the customer’s answers' if job.parent else 'Assessing the enquiry' }}</h1>
-  <p class="lede">Each step ticks off when it finishes. The model steps take minutes; this page updates by itself.</p>
+<div class="column thread">
+  {% if job.parent %}<p class="muted small"><a href="/runs/{{ job.parent }}">Back to the previous answer</a></p>{% endif %}
+  {{ question_block(job.question, job.parent) }}
   {% include "job_steps.html" %}
-</section>
+</div>
+{% endblock %}
+{% block composer %}
+<div class="composer">
+  <form class="composer-in" aria-label="Follow-up">
+    <label for="ask" class="sr-only">Add a detail or ask a follow-up</label>
+    <input id="ask" type="text" disabled placeholder="Available once the first answer is ready">
+    <button class="btn" type="button" disabled>Send</button>
+  </form>
+</div>
 {% endblock %}
