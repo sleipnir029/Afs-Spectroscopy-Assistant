@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 10:13 CEST (Claude)._
+_Last updated: 2026-10-17 10:24 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2: Pipeline MVP.** 2.R fixes done (commit 6ca7bba); D01–D08 re-run launched. Remaining: check re-run, independent review, G2.
+**Phase 2: Pipeline MVP.** Review done (APPROVE WITH FIXES, see PHASES.md). 2.R2 approved 10:24; an implementer agent is running items 1–7. A D01–D08 flash baseline run (pre-2.R2 code) was launched at 10:17. Next: check 2.R2 → re-run D01–D08 on flash → short re-review → G2.
 
 ## Next session starts with (handoff 09:55)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
