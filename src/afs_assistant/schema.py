@@ -101,7 +101,8 @@ class Citation(BaseModel):
 
 class PremiseCheck(BaseModel):
     premise: str
-    verdict: Literal["supported", "contradicted", "not_covered"]
+    verdict: Literal["supported", "contradicted", "not_covered", "precedent_only"] = Field(
+        description="precedent_only: a source shows a similar published application; a reason to test, not proof.")
     explanation: str
     citations: list[Citation]
 
@@ -156,6 +157,45 @@ class FeasibilityPlan(BaseModel):
     decision_basis: str = Field(description="Go/no-go basis; numerical criteria come from the customer, never invented.")
 
 
+class MeasuredBy(BaseModel):
+    type: Literal["spectroscopy", "auxiliary_sensor", "reference_lab", "not_measurable_inline"]
+    method: Method | None = Field(description="The spectroscopy method if type is spectroscopy; else null.")
+    sensor: str | None = Field(description="Free text naming the auxiliary sensor or reference lab method; else null.")
+    alternative: str | None = Field(description="If not_measurable_inline: how it could be measured instead; else null.")
+
+
+class Parameter(BaseModel):
+    id: str = Field(description="P1, P2, ...")
+    name: str
+    kind: Literal["quantitative", "qualitative"]
+    necessity: Literal["required", "optional"]
+    why: str
+    measured_by: MeasuredBy
+    citations: list[Citation]
+
+
+class SolutionOption(BaseModel):
+    id: str = Field(description="O1, O2, ...")
+    tier: Literal["simple", "recommended", "extended"]
+    recommendation_ids: list[str] = Field(description="Recommendation ids (M1, ...) this option uses.")
+    parameter_ids: list[str] = Field(description="Parameter ids (P1, ...) this option covers.")
+    ease_of_use: str
+    maintenance: str
+    performance_fit: str
+    cost_drivers: str = Field(description="What drives the cost, in words; never a price or currency.")
+    fusion_note: str | None = Field(description="Required for the extended tier: fusion level, same sampling spot, "
+                                                "synchronisation, per-block calibration, must beat the best single "
+                                                "method. Else null.")
+    citations: list[Citation]
+
+
+class Proposal(BaseModel):
+    best_current_option: str = Field(description="The option id (O1, ...) proposed now.")
+    basis: Literal["supplied", "engineering_judgement"]
+    what_would_change_it: str
+    next_step: str
+
+
 class Assessment(BaseModel):
     decision_status: Literal["provisional_assessment", "insufficient_information", "premise_not_supported",
                              "outside_supported_scope"]
@@ -171,3 +211,10 @@ class Assessment(BaseModel):
     feasibility_plan: FeasibilityPlan
     assumptions: list[str]
     not_in_sources: list[str] = Field(description="Points the supplied sources do not cover (state them, do not fill them).")
+    parameters: list[Parameter]
+    solution_options: list[SolutionOption]
+    chemometrics_note: str | None
+    realtime_tracking_note: str | None
+    future_direction: str | None
+    proposal: Proposal
+    brief_answer: str = Field(description="2-4 sentences in plain words.")

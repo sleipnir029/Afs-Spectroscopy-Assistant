@@ -16,6 +16,7 @@ from rapidfuzz import fuzz
 from afs_assistant import kb, quotes, scope
 from afs_assistant.normalize import normalize
 from afs_assistant.numbers import unsupported_numbers
+from afs_assistant.options import option_methods
 from afs_assistant.schema import Assessment, Citation, Intake
 from afs_assistant.screen import Candidate
 
@@ -24,6 +25,11 @@ MAX_RECOMMENDATIONS = 5
 MAX_WORDS = 1800
 RECOMMENDED_ROLES = ("primary", "comparison", "conditional")
 MIN_STEP_WORDS = 3
+MAX_BRIEF_WORDS = 80
+MAX_PREMISES = 3
+MIN_OPTIONS, MAX_OPTIONS = 2, 3
+# Values a model writes instead of leaving an intake item out; not client facts.
+PLACEHOLDERS = {"", "unknown", "n/a", "na", "none", "not stated", "not given", "not specified", "null", "-"}
 _BARE_NUMBER = re.compile(r"^\s*\d+[.)]?\s*$")
 # A forbidden phrase preceded (within a few words, same clause) by one of these is a cautious negation,
 # not a claim. The clause ends at ; , : a dash, a line break, a sentence end, "but", "however" or
@@ -115,12 +121,31 @@ def _items_with_citations(a: Assessment) -> list[tuple[str, str, list[Citation]]
         items.append((f"risks[{i}]", r.risk, r.citations))
     for i, s in enumerate(a.feasibility_plan.steps):
         items.append((f"feasibility_plan.steps[{i}]", f"{s.step} {s.purpose}", s.citations))
+    for i, p in enumerate(a.parameters):
+        mb = p.measured_by
+        items.append((f"parameters[{i}]", " ".join(x for x in (p.name, p.why, mb.sensor, mb.alternative) if x),
+                      p.citations))
+    for i, o in enumerate(a.solution_options):
+        items.append((f"solution_options[{i}]",
+                      " ".join(x for x in (o.ease_of_use, o.maintenance, o.performance_fit, o.cost_drivers,
+                                           o.fusion_note) if x), o.citations))
     return items
+
+
+def _new_uncited_texts(a: Assessment) -> list[tuple[str, str]]:
+    """Phase 3 text fields without citations: (location, text); null notes are skipped."""
+    texts = [("brief_answer", a.brief_answer),
+             ("proposal.what_would_change_it", a.proposal.what_would_change_it),
+             ("proposal.next_step", a.proposal.next_step)]
+    texts += [(name, getattr(a, name)) for name in ("chemometrics_note", "realtime_tracking_note", "future_direction")
+              if getattr(a, name)]
+    return texts
 
 
 def _all_text(a: Assessment) -> str:
     parts = [a.status_reason, *a.requirements_stated, *a.key_unknowns, *a.assumptions, *a.not_in_sources,
              a.feasibility_plan.reference_measurements, a.feasibility_plan.decision_basis]
+    parts += [text for _, text in _new_uncited_texts(a)]
     parts += [f"{q.question} {q.why_it_matters}" for q in a.clarification_questions]
     parts += [text for _, text, _ in _items_with_citations(a)]
     return "\n".join(parts)
@@ -185,6 +210,7 @@ def check_numbers(a: Assessment, enquiry: str, verified: dict[str, list[str]], r
     loose_texts += [(f"requirements_stated[{i}]", t) for i, t in enumerate(a.requirements_stated)]
     loose_texts += [(f"key_unknowns[{i}]", t) for i, t in enumerate(a.key_unknowns)]
     loose_texts += [(f"not_in_sources[{i}]", t) for i, t in enumerate(a.not_in_sources)]
+    loose_texts += _new_uncited_texts(a)
     for loc, text in loose_texts:
         missing = unsupported_numbers(text, [enquiry])
         report.add("numbers_uncited_text", not missing, "hard", loc,
@@ -215,6 +241,9 @@ def sanitize_intake(intake: Intake, enquiry: str) -> tuple[Intake, list[dict]]:
         for i, item in enumerate(data[key]):
             if ok(item["enquiry_quote"]):
                 kept.append(item)
+            elif is_placeholder(item["enquiry_quote"]):
+                removed.append({"location": f"intake.{key}[{i}]", "item": item, "placeholder": True,
+                                "reason": "placeholder quote (no information given); dropped"})
             else:
                 removed.append({"location": f"intake.{key}[{i}]", "item": item,
                                 "reason": "enquiry_quote not found verbatim in the enquiry"})
@@ -231,6 +260,11 @@ def sanitize_intake(intake: Intake, enquiry: str) -> tuple[Intake, list[dict]]:
                         "reason": "proposed fiber without a verbatim enquiry quote; ignored"})
         data["proposed_fiber"] = {"family": "none", "for_method": "none", "enquiry_quote": None}
     return Intake.model_validate(data), removed
+
+
+def is_placeholder(span: str | None) -> bool:
+    """A quote such as "unknown" or "n/a" that stands for missing information."""
+    return span is None or re.sub(r"[^a-z/ -]", "", normalize(span).strip().lower()).strip() in PLACEHOLDERS
 
 
 def check_against_screen(a: Assessment, candidates: list[Candidate], slots: dict, report: Report) -> None:
@@ -276,6 +310,89 @@ def check_status(a: Assessment, report: Report) -> None:
                "provisional_assessment needs at least one method worth testing")
 
 
+def check_premise_basis(a: Assessment, report: Report) -> None:
+    """Reverse check: premise_not_supported needs a premise the sources contradict."""
+    contradicted = any(p.verdict == "contradicted" for p in a.premise_checks)
+    report.add("status_needs_contradiction", contradicted or a.decision_status != "premise_not_supported", "hard",
+               "decision_status", "premise_not_supported needs at least one premise check with verdict contradicted; "
+               "otherwise use another status and keep the premise as not_covered or precedent_only")
+
+
+def check_options(a: Assessment, candidates: list[Candidate], report: Report) -> None:
+    """Brief answer, proposal, solution options, parameters and the single primary (Phase 3)."""
+    report.add("brief_answer_present", bool(a.brief_answer.strip()), "hard", "brief_answer",
+               "brief_answer is empty: give 2-4 plain sentences")
+    p = a.proposal
+    empty = [n for n in ("best_current_option", "what_would_change_it", "next_step") if not getattr(p, n).strip()]
+    report.add("proposal_present", not empty, "hard", "proposal", f"proposal fields empty: {empty}")
+    ids = [o.id for o in a.solution_options]
+    report.add("proposal_option_exists", p.best_current_option in ids, "hard", "proposal.best_current_option",
+               f"best_current_option {p.best_current_option!r} is not an option id {ids}")
+
+    n = len(a.solution_options)
+    report.add("option_count", MIN_OPTIONS <= n <= MAX_OPTIONS, "hard", "solution_options",
+               f"{n} options; give {MIN_OPTIONS}-{MAX_OPTIONS} (simple / recommended / extended)")
+    tiers = [o.tier for o in a.solution_options]
+    report.add("option_tiers_distinct", len(tiers) == len(set(tiers)), "hard", "solution_options",
+               f"tiers repeat: {tiers}; each option has its own tier")
+    report.add("option_recommended_tier", tiers.count("recommended") == 1, "hard", "solution_options",
+               f"{tiers.count('recommended')} options with tier recommended; exactly one is needed")
+
+    recs = {r.id: r for r in a.recommendations}
+    status = {(c.method, c.technique): c.status for c in candidates}
+    method_status: dict[str, set[str]] = {}
+    for c in candidates:
+        method_status.setdefault(c.method, set()).add(c.status)
+    for i, o in enumerate(a.solution_options):
+        loc = f"solution_options[{i}]"
+        report.add("option_has_methods", bool(o.recommendation_ids), "hard", loc,
+                   f"option {o.id} references no recommendation")
+        bad = [x for x in o.recommendation_ids if x not in recs or recs[x].role == "not_recommended"]
+        report.add("option_recommendation_refs", not bad, "hard", loc,
+                   f"option {o.id} references {bad}: not an existing recommendation, or not_recommended")
+        failed = [f"{recs[x].method} {recs[x].technique}" for x in o.recommendation_ids
+                  if x in recs and status.get((recs[x].method, recs[x].technique)) == "fail"]
+        failed += [f"{m} (combined)" for x in o.recommendation_ids if x in recs for m in recs[x].combined_with
+                   if method_status.get(m) == {"fail"}]
+        report.add("option_screen", not failed, "hard", loc, f"option {o.id} uses candidates that failed: {failed}")
+        if o.tier == "extended":
+            report.add("extended_fusion_note", bool(o.fusion_note and o.fusion_note.strip()), "hard", loc,
+                       f"extended option {o.id} needs a fusion_note (fusion level, same sampling spot, "
+                       f"synchronisation, per-block calibration, must beat the best single method)")
+            methods = option_methods(o, recs)
+            report.add("extended_multi_method", len(methods) >= 2, "soft", loc,
+                       f"extended option {o.id} uses {methods}; the extended tier combines two or more methods")
+
+    in_options = {m for o in a.solution_options for m in option_methods(o, recs)}
+    for i, prm in enumerate(a.parameters):
+        mb = prm.measured_by
+        if mb.type != "spectroscopy":
+            continue
+        report.add("parameter_method_in_option", mb.method is not None and mb.method in in_options, "hard",
+                   f"parameters[{i}]", f"parameter {prm.id} is measured by spectroscopy method {mb.method}, "
+                   f"which no solution option uses {sorted(in_options)}")
+
+    primaries = [r.id for r in a.recommendations if r.role == "primary"]
+    report.add("single_primary", len(primaries) == 1, "hard", "recommendations",
+               f"{len(primaries)} primary recommendations {primaries}; exactly one is needed "
+               f"(others are comparison or conditional)")
+
+
+# Hard checks that are re-run on the finalized assessment; their open state comes from that re-run.
+RECHECK_NAMES = frozenset({"brief_answer_present", "proposal_present", "proposal_option_exists", "option_count",
+                           "option_tiers_distinct", "option_recommended_tier", "option_has_methods",
+                           "option_recommendation_refs", "option_screen", "extended_fusion_note",
+                           "parameter_method_in_option", "single_primary", "status_needs_contradiction"})
+
+
+def recheck(a: Assessment, candidates: list[Candidate]) -> Report:
+    """Checks re-run on the finalized assessment: what finalize may break or leave open."""
+    report = Report()
+    check_options(a, candidates, report)
+    check_premise_basis(a, report)
+    return report
+
+
 def forbidden_hits(text: str) -> list[str]:
     """Forbidden phrases that are asserted, i.e. not preceded by a nearby negation."""
     hits = []
@@ -312,11 +429,24 @@ def check_style(a: Assessment, report: Report) -> None:
                    "a question should say what decision it affects")
     words = len(text.split())
     report.add("length_budget", words <= MAX_WORDS, "soft", "assessment", f"{words} words (budget {MAX_WORDS})")
+    brief = len(a.brief_answer.split())
+    report.add("brief_answer_length", brief <= MAX_BRIEF_WORDS, "soft", "brief_answer",
+               f"{brief} words (max {MAX_BRIEF_WORDS})")
+    report.add("premise_count", len(a.premise_checks) <= MAX_PREMISES, "soft", "premise_checks",
+               f"{len(a.premise_checks)} premises (max {MAX_PREMISES}); keep the central ones")
 
 
 def recommendation_key(method: str, technique: str, combined_with: list[str]) -> tuple[str, str, tuple[str, ...]]:
-    """Identity of a recommendation: a combination is its own entry beside the single method."""
-    return method, technique, tuple(sorted(combined_with))
+    """Identity of a recommendation: a combination is its own entry beside the single method.
+
+    combined_with is normalised: duplicates and the entry's own method do not count.
+    """
+    return method, technique, tuple(sorted(set(combined_with) - {method}))
+
+
+def normalized_combined_with(method: str, combined_with: list[str]) -> list[str]:
+    """combined_with without duplicates and without the entry's own method, order kept."""
+    return [m for m in dict.fromkeys(combined_with) if m != method]
 
 
 def check_sections(a: Assessment, report: Report) -> None:
@@ -340,11 +470,14 @@ def verify(enquiry: str, intake: Intake, a: Assessment, candidates: list[Candida
     """`intake` must already be sanitized; `intake_removed` records what sanitizing dropped."""
     report = Report()
     for r in intake_removed or []:
-        report.add("intake_sanitized", False, "soft", r["location"], r["reason"])
+        if not r.get("placeholder"):
+            report.add("intake_sanitized", False, "soft", r["location"], r["reason"])
     verified = check_citations(a, report)
     check_numbers(a, enquiry, verified, report)
     check_against_screen(a, candidates, slots, report)
     check_status(a, report)
+    check_premise_basis(a, report)
     check_style(a, report)
     check_sections(a, report)
+    check_options(a, candidates, report)
     return report

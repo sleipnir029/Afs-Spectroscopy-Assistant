@@ -71,7 +71,8 @@ def test_render_strips_a_leading_step_number():
     result, _ = run_with(assess=a, repairs=[a, a])          # "1.5 mm" is not in the enquiry: flagged, still shown
     md = render.to_markdown(result)
     assert "1. **Collect samples from the line.**" in md and "1. **1." not in md
-    assert "2. **Measure GC references on them.**" in md and "2) " not in md
+    plan = md.split("## First feasibility experiment", 1)[1].split("## ", 1)[0]
+    assert "2. **Measure GC references on them.**" in plan and "2) " not in plan
     assert "3. **1.5 mm probe gap" in md
 
 

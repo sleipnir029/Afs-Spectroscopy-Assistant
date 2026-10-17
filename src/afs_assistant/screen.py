@@ -139,6 +139,7 @@ SLOT_VALUES = {
     "fluorophore": {"yes", "no"},
     "aqueous": {"yes", "no"},
     "heterogeneous": {"yes", "no"},
+    "remote_distance": {"yes", "no"},     # a distance or remote analyzer is stated or asked about
 }
 FIBER_FAMILIES = {"silica", "chalcogenide", "polycrystalline", "hollow_waveguide", "fluoride"}
 
@@ -183,7 +184,7 @@ def screen(slots: dict) -> list[Candidate]:
     """Evaluate every in-line candidate against the known slots.
 
     slots keys (all optional): physical_state, optical_regime, fluorophore, aqueous,
-    heterogeneous (values in SLOT_VALUES or "unknown"), and proposed_fiber
+    heterogeneous, remote_distance (values in SLOT_VALUES or "unknown"), and proposed_fiber
     {family, for_method} for an existing or proposed fiber link. Missing keys = unknown.
     """
     validate_slots(slots)

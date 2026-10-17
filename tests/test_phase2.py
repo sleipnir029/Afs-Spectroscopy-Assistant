@@ -91,6 +91,35 @@ ASSESSMENT = {
                          "decision_basis": "Error and bias against criteria agreed with the customer."},
     "assumptions": [],
     "not_in_sources": ["Ethanol detection limits for this broth"],
+    "parameters": [
+        {"id": "P1", "name": "Ethanol concentration", "kind": "quantitative", "necessity": "required",
+         "why": "The quantity the customer wants to follow.",
+         "measured_by": {"type": "spectroscopy", "method": "Raman", "sensor": None, "alternative": None},
+         "citations": []},
+        {"id": "P2", "name": "Broth temperature", "kind": "quantitative", "necessity": "optional",
+         "why": "Temperature changes the spectra and may need compensation.",
+         "measured_by": {"type": "auxiliary_sensor", "method": None, "sensor": "temperature sensor in the line",
+                         "alternative": None},
+         "citations": []},
+    ],
+    "solution_options": [
+        {"id": "O1", "tier": "simple", "recommendation_ids": ["M2"], "parameter_ids": ["P1"],
+         "ease_of_use": "One transmission probe in the line", "maintenance": "Window cleaning",
+         "performance_fit": "Depends on the ethanol range", "cost_drivers": "One spectrometer and one probe",
+         "fusion_note": None, "citations": []},
+        {"id": "O2", "tier": "recommended", "recommendation_ids": ["M1"], "parameter_ids": ["P1", "P2"],
+         "ease_of_use": "One immersion probe in the line", "maintenance": "Probe window cleaning",
+         "performance_fit": "Water interferes little", "cost_drivers": "Laser source and spectrometer",
+         "fusion_note": None, "citations": [cit("S01", 16, RAMAN_QUOTE)]},
+    ],
+    "chemometrics_note": None,
+    "realtime_tracking_note": None,
+    "future_direction": None,
+    "proposal": {"best_current_option": "O2", "basis": "supplied",
+                 "what_would_change_it": "A low ethanol range or a strong fluorescence background of the broth.",
+                 "next_step": "Measure representative broth samples with GC references."},
+    "brief_answer": ("Test a Raman probe in the line first, with NIR transmission as a comparison. "
+                     "The ethanol range and the fluorescence of the broth are still open."),
 }
 
 
@@ -302,6 +331,6 @@ def test_combination_is_rendered_as_hypothesis():
     combo["recommendations"][0]["combined_with"] = ["NIR"]
     result, _ = run_with(assess=combo)
     md = render.to_markdown(result)
-    assert "Primary candidate: Raman, raman probe.**" in md and "Raman + NIR" not in md
+    assert "Primary candidate: Raman probe.**" in md and "Raman + NIR" not in md
     assert "Later hypothesis, after single-method tests: combine with NIR." in md
     assert any(c.name == "primary_single_method" for c in result.report.soft_failures)

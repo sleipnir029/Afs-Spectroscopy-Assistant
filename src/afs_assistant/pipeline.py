@@ -25,6 +25,8 @@ from afs_assistant.screen import UNKNOWN, Candidate, screen
 from afs_assistant.verify import (
     Report,
     check_status,
+    normalized_combined_with,
+    recheck,
     recommendation_key,
     sanitize_intake,
     verify,
@@ -34,6 +36,9 @@ MAX_REPAIR_ROUNDS = 2
 # Highest role first: a duplicate method+technique (+combination) keeps the entry with the best role.
 ROLE_RANK = {"primary": 0, "comparison": 1, "conditional": 2, "not_recommended": 3}
 PROMPTS = paths.ROOT / "prompts"
+SKILLS = paths.ROOT / "skills"
+# Skills loaded into the assess context (progressive guidance, our words with source page refs).
+ASSESS_SKILLS = ("multi-method-fusion",)
 
 
 def sha(text: str) -> str:
@@ -43,6 +48,17 @@ def sha(text: str) -> str:
 @cache
 def prompt(name: str) -> str:
     return (PROMPTS / f"{name}.md").read_text(encoding="utf-8")
+
+
+@cache
+def skill(name: str) -> str:
+    return (SKILLS / f"{name}.md").read_text(encoding="utf-8")
+
+
+def assess_system() -> str:
+    """Assess prompt + skills + the knowledge block (stable prefix, cacheable)."""
+    skills = "\n\n".join(f"# SKILL: {name}\n{skill(name)}" for name in ASSESS_SKILLS)
+    return prompt("assess") + "\n\n" + skills + "\n\n" + knowledge_block()
 
 
 @lru_cache(maxsize=1)
@@ -70,6 +86,9 @@ def slots_from_intake(intake: Intake) -> dict:
     f = intake.proposed_fiber
     if f.family != "none" and f.for_method != "none":
         slots["proposed_fiber"] = {"family": f.family, "for_method": f.for_method}
+    # A distance or remote analyzer stated or asked about makes link-length limits relevant (R-FIB-2).
+    if any(p.aspect == "distance_or_remote_analyzer" for p in intake.process):
+        slots["remote_distance"] = "yes"
     return slots
 
 
@@ -101,6 +120,7 @@ class RunResult:
     flagged: dict[str, str] = field(default_factory=dict)    # item path -> why it is shown with a warning
     timings: dict[str, float] = field(default_factory=dict)  # seconds per stage, plus wall
     named_methods: dict[str, str] = field(default_factory=dict)  # method -> enquiry span naming it
+    recheck: list = field(default_factory=list)  # option/proposal/premise checks failing on the final assessment
 
 
 def _assess_user(enquiry: str, intake: Intake, candidates: list[Candidate]) -> str:
@@ -160,7 +180,7 @@ def finalize(a: Assessment, report: Report,
                 kept.append(cit)
         container["citations"] = kept
 
-    for key in ("premise_checks", "recommendations", "spectral_ranges", "risks"):
+    for key in ("premise_checks", "recommendations", "spectral_ranges", "risks", "parameters", "solution_options"):
         for i, item in enumerate(data[key]):
             strip(item, f"{key}[{i}]")
     strip(data["measurement_concept"], "measurement_concept")
@@ -169,6 +189,14 @@ def finalize(a: Assessment, report: Report,
     for c in report.hard_failures:
         if c.name in ("numbers_claim_local", "numbers_uncited_text"):
             flagged[c.location] = "contains a figure not found in its sources or the enquiry"
+
+    for i, r in enumerate(data["recommendations"]):
+        clean = normalized_combined_with(r["method"], r["combined_with"])
+        if clean != r["combined_with"]:
+            removed.append({"location": f"recommendations[{i}].combined_with", "item": list(r["combined_with"]),
+                            "reason": f"combined_with normalised to {clean} (duplicates and the entry's own method "
+                                      f"removed)"})
+            r["combined_with"] = clean
 
     status = {(c.method, c.technique): c.status for c in candidates}
     for i, r in enumerate(data["recommendations"]):
@@ -205,11 +233,18 @@ def finalize(a: Assessment, report: Report,
         else:
             renumbered[path] = why
     flagged = renumbered
+    # Option references follow the dedupe: a dropped duplicate's id maps to the kept entry's id.
+    id_map = {recs[i]["id"]: recs[best[recommendation_key(recs[i]["method"], recs[i]["technique"],
+                                                          recs[i]["combined_with"])]]["id"]
+              for i in range(len(recs))}
+    for i in keep:                      # a kept entry always keeps its own id (also with duplicate ids)
+        id_map[recs[i]["id"]] = recs[i]["id"]
     data["recommendations"] = [recs[i] for i in keep]
+    _finalize_options(data, id_map, removed, flagged)
 
     demoted_contradiction = False
     for i, p in enumerate(data["premise_checks"]):
-        if p["verdict"] in ("supported", "contradicted") and not p["citations"]:
+        if p["verdict"] in ("supported", "contradicted", "precedent_only") and not p["citations"]:
             change = {"location": f"premise_checks[{i}]", "item": dict(p),
                       "reason": f"verdict {p['verdict']} without a verified citation; changed to not_covered"}
             if p["verdict"] == "contradicted":
@@ -237,6 +272,55 @@ def finalize(a: Assessment, report: Report,
     return Assessment.model_validate(data), removed, flagged
 
 
+def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], flagged: dict[str, str]) -> None:
+    """Keep option references consistent with the finalized recommendations.
+
+    A reference to a deduplicated entry is remapped to the kept entry; a reference to an
+    unknown or not_recommended entry is dropped; an option left without references is
+    dropped. Fewer than two options, or no recommended tier, stays a visible check failure
+    (re-checked on the result). Flags on options are renumbered.
+    """
+    roles = {r["id"]: r["role"] for r in data["recommendations"]}
+    kept_options, new_index = [], {}
+    for i, o in enumerate(data["solution_options"]):
+        refs = []
+        for ref in o["recommendation_ids"]:
+            target = id_map.get(ref, ref)
+            if roles.get(target, "not_recommended") == "not_recommended":
+                why = "not an existing recommendation" if target not in roles else "recommendation is not_recommended"
+                removed.append({"location": f"solution_options[{i}].recommendation_ids", "item": ref,
+                                "reason": f"reference {ref} dropped ({why})", "corrects": "option_recommendation_refs"})
+                continue
+            if target != ref:
+                removed.append({"location": f"solution_options[{i}].recommendation_ids", "item": ref,
+                                "reason": f"reference {ref} pointed to a removed duplicate; now {target}"})
+            if target not in refs:
+                refs.append(target)
+        if not refs:
+            removed.append({"location": f"solution_options[{i}]", "item": dict(o),
+                            "reason": f"option {o['id']} has no valid recommendation left; dropped",
+                            "corrects": "option_has_methods"})
+            continue
+        if refs != o["recommendation_ids"]:
+            flagged[f"solution_options[{i}]"] = "methods changed by verification"
+        o["recommendation_ids"] = refs
+        new_index[i] = len(kept_options)
+        kept_options.append(o)
+    renumbered = {}
+    for path, why in flagged.items():
+        if path.startswith("solution_options["):
+            old = int(path[len("solution_options["):path.index("]")])
+            if old in new_index:
+                renumbered[f"solution_options[{new_index[old]}]{path[path.index(']') + 1:]}"] = why
+        else:
+            renumbered[path] = why
+    flagged.clear()
+    flagged.update(renumbered)
+    data["solution_options"] = kept_options
+    if data["proposal"]["best_current_option"] not in {o["id"] for o in kept_options}:
+        flagged["proposal"] = "the proposed option was removed by verification"
+
+
 def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
     run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:6]
     tracker = getattr(client, "tracker", None)
@@ -260,7 +344,7 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
     candidates = screen(slots)
     lap("screen")
 
-    system = prompt("assess") + "\n\n" + knowledge_block()
+    system = assess_system()
     base_user = _assess_user(enquiry, intake, candidates)
     res = client.complete_json("assess", system, base_user, "assessment", Assessment.model_json_schema())
     raw = Assessment.model_validate(res.data)
@@ -287,6 +371,7 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
             best, best_report, best_round = current, report, round_no
 
     final, removed, flagged = finalize(best, best_report, candidates)
+    still_failing = recheck(final, candidates).hard_failures
     lap("finalize")
     timings["wall"] = round(time.monotonic() - wall, 3)
     calls = tracker.calls[first_call:] if tracker is not None else []
@@ -295,6 +380,7 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "models": sorted({c["model"] for c in calls}),
         "prompt_sha256": {n: sha(prompt(n)) for n in ("intake", "assess", "repair")},
+        "skills_sha256": {n: sha(skill(n)) for n in ASSESS_SKILLS},
         "knowledge_sha256": sha(knowledge_block()),
         "pages_sha256": sha(paths.PAGES_FILE.read_text(encoding="utf-8")),
         "rules_sha256": sha(paths.RULES_FILE.read_text(encoding="utf-8")),
@@ -309,4 +395,4 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
         "verification": best_report.summary(),
     }
     return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
-                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry))
+                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing)

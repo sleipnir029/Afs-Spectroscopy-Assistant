@@ -55,8 +55,12 @@ def code_sha(repo_path=paths.ROOT) -> str:
         return "unknown"
 
 
+# Run results are written while a set runs; they are data, not code.
+DIRTY_IGNORED = (b"outputs/",)
+
+
 def code_dirty(repo_path=paths.ROOT) -> bool | None:
-    """True if tracked files differ from HEAD (staged or unstaged); None if not a repository.
+    """True if tracked files outside outputs/ differ from HEAD (staged or unstaged); None if not a repository.
 
     Read-only: untracked files are ignored and the index is not refreshed on disk.
     """
@@ -64,7 +68,13 @@ def code_dirty(repo_path=paths.ROOT) -> bool | None:
         st = porcelain.status(str(repo_path), untracked_files="no", optional_locks=False)
     except NotGitRepository:
         return None
-    return bool(any(st.staged.values()) or st.unstaged)
+
+    def counts(path) -> bool:
+        raw = path if isinstance(path, bytes) else str(path).encode()
+        return not raw.startswith(DIRTY_IGNORED)
+
+    staged = [x for paths_ in st.staged.values() for x in paths_]
+    return any(counts(x) for x in staged + list(st.unstaged))
 
 
 def record(run_id: str, files: dict[str, str | bytes], message: str, repo_path=paths.ROOT) -> str:

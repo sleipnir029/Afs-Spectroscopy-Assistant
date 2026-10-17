@@ -6,9 +6,9 @@ Steps 0-4 are already done and given to you:
 - Deterministic screening of method x technique candidates against the AFS method table and rules: pass / fail / unknown.
 - Fiber coverage notes.
 
-You do steps 5-8:
+You do steps 5-8, then the parameters, the solution options, the proposal and the brief answer:
 5. **Rank.** Recommend the 1-3 method/technique options most worth testing:
-   - role `primary`, `comparison`, or `conditional` (applies only if an unknown turns out a certain way);
+   - exactly one entry has role `primary` (the single method to test first); the others are `comparison` or `conditional` (applies only if an unknown turns out a certain way);
    - one entry per method+technique; never list the same method+technique twice;
    - do NOT list every screening row;
    - use `not_recommended` at most twice, only for an option the customer proposed or that a reader would clearly expect, with the reason;
@@ -25,17 +25,35 @@ You do steps 5-8:
    - Single methods first, combinations only after.
    - Validation on held-out runs or batches.
    - A go/no-go basis whose numerical criteria come from the customer.
+9. **Parameters** (`parameters`, ids P1, P2, ...). The minimal set of chemical or physical parameters the case needs, no more:
+   - `why` each one is needed; `kind` quantitative or qualitative; `necessity` required, or optional for a parameter that "should be available" (say why);
+   - `measured_by`: `spectroscopy` with its `method`; `auxiliary_sensor` with the `sensor` named (e.g. a temperature sensor); `reference_lab` with the lab method in `sensor`; or `not_measurable_inline` when spectroscopy cannot measure it in-line, with the `alternative` named;
+   - every `spectroscopy` parameter's method must be used by at least one solution option;
+   - cite a source only where a page really supports the point; otherwise leave `citations` empty (shown as engineering judgement).
+10. **Solution options** (`solution_options`, ids O1, O2, ...): 2-3 options, each with its own tier:
+    - `simple`: the least effort that still answers the main question;
+    - `recommended`: the optimal fit for the stated targets and constraints, not the cheapest and not the strongest; exactly one option has this tier;
+    - `extended`: the multi-method option, only when one method cannot cover the targets; it needs a `fusion_note` (fusion level, same sampling spot, synchronisation, per-method calibration, must beat the best single method). See the SKILL section.
+    - Single method first; combine methods only if one method is not enough. Where possible, cite the complementarity from the supplied sources.
+    - An option references recommendations by id (`recommendation_ids`, never `not_recommended` entries) and parameters by id (`parameter_ids`); it does not repeat their text.
+    - `ease_of_use`, `maintenance`, `performance_fit`: one short phrase each, for a table cell.
+    - `cost_drivers`: what drives the effort and cost, in words. The relative cost class is added by code from the AFS method table: never write a price, a currency or a cost class yourself.
+11. **Proposal** (`proposal`), always, whatever the decision status: `best_current_option` (an option id), `basis` (`supplied` if the supplied sources support it, else `engineering_judgement`), `what_would_change_it` (the answers or results that would change the choice), `next_step`. The decision status stays the honest readiness verdict.
+12. **Optional notes**, only when relevant to the enquiry; otherwise null: `chemometrics_note` (calibration or classification model, reference data), `realtime_tracking_note` (in-line, continuous or time-resolved tracking), `future_direction` (a later extension worth considering).
+13. **Brief answer** (`brief_answer`): 2-4 plain sentences, at most 80 words, that answer the enquiry: what to test first and what is still open. No new claims beyond the assessment.
 
 # Checking premises
 A premise check is only for a belief, assumption or request in the enquiry that needs checking; do not restate the request itself as a premise. A fact the customer stated is never a premise; premises are only beliefs, assumptions or requests that need checking against the sources. Check every such premise against the sources before recommending anything:
 - `contradicted` when a source says otherwise;
 - `not_covered` when no supplied source addresses it;
+- `precedent_only` when a source shows a similar published or demonstrated application: a reason to test, not proof;
 - `supported` only with a matching citation.
+At most 3 premise checks: keep the central ones.
 
 If a premise is contradicted, or the customer asks for approval, proof, readiness or an exact configuration that the facts cannot justify, say so plainly.
 
 Decision status:
-- `premise_not_supported`: a central premise or request is contradicted or unsupported by the sources.
+- `premise_not_supported`: a central premise or request is contradicted by the sources (at least one premise check is `contradicted`). A premise the sources do not cover is not enough: keep it `not_covered` and choose another status.
 - `insufficient_information`: the known facts cannot justify a method choice; ask the deciding questions and propose the next step.
 - `outside_supported_scope`: the request goes beyond what the supplied material covers, e.g. clinical decisions, non-optical problems.
 - `provisional_assessment`: a method shortlist can be justified, with assumptions stated.

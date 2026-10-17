@@ -25,6 +25,7 @@
 #   fluorophore: yes | no | unknown        (does the target or a justified indicator fluoresce?)
 #   aqueous: yes | no | unknown
 #   heterogeneous: yes | no | unknown
+#   remote_distance: yes | unknown       (a distance or remote analyzer is stated or asked about)
 #   fiber_family (in `target`): silica | chalcogenide | polycrystalline | hollow_waveguide | fluoride
 #   evidence_scope: page scope tags (knowledge/page_scopes.yaml)
 #   claim: readiness_process | readiness_clinical | performance_figure | method_gain
@@ -249,7 +250,7 @@ rules:
 - id: R-FIB-2
   statement: Long (100-300 m) cables are stated only for low-OH silica fibers. The MIR fiber and hollow-waveguide samples compared on S02 p.9-10 are 1-2 m laboratory lengths. No source states an achievable length for an MIR link, so any MIR link length is an open question for AFS, not a value to assume.
   effect: warn
-  when: {method: MIR}
+  when: {method: MIR, remote_distance: "yes"}
   target: {risk: mir_link_length_unknown}
   sources:
     - {doc: S02, page: 7, quote: "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control"}
