@@ -93,6 +93,19 @@ def test_combination_beside_its_single_method_is_not_a_duplicate():
     assert next(c for c in report.checks if c.name == "recommendations_unique").passed
 
 
+def test_combination_order_does_not_matter_for_uniqueness_or_dedupe():
+    a = _combo_assessment().model_dump()
+    a["recommendations"][0]["combined_with"] = ["MIR", "Raman"]
+    a["recommendations"][1]["combined_with"] = ["Raman", "MIR"]
+    a = Assessment.model_validate(a)
+    report = Report()
+    check_style(a, report)
+    assert not next(c for c in report.checks if c.name == "recommendations_unique").passed
+    final, removed, _ = pipeline.finalize(a, Report(), [])
+    assert [r.id for r in final.recommendations] == ["M1"]
+    assert any("duplicate" in x.get("reason", "") for x in removed)
+
+
 def test_finalize_keeps_a_combination_beside_its_single_method():
     final, removed, _ = pipeline.finalize(_combo_assessment(), Report(), [])
     assert [(r.id, r.combined_with) for r in final.recommendations] == [("M1", []), ("M2", ["Raman"])]
@@ -143,6 +156,8 @@ def test_dash_after_no_or_closing_clause_is_still_flagged(text):
     ("The resin is non-fluorescent and nonfluorescent.", {}),
     ("Autofluorescence is a background.", {"Fluorescence": "Autofluorescence"}),
     ("Fluorine and fluoride content.", {}),
+    ("A trifluoromethyl group and tetrafluoromethane.", {}),
+    ("A fluorometric assay.", {"Fluorescence": "fluorometric"}),
 ])
 def test_fluorescence_method_words(text, expected):
     assert named_methods(text) == expected
