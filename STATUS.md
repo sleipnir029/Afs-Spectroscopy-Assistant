@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 11:15 CEST (Claude)._
+_Last updated: 2026-10-17 11:21 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2: Pipeline MVP.** Review: APPROVE WITH FIXES. 2.R2 approved and implemented (5479553..4455326). Re-review: APPROVE WITH FIXES; BF1/BF2/N-a fixed in 9a7e465 (Claude, not yet reviewed). The D01–D08 run on 2.R2 code started 10:41. Next: check that run → short independent review (outputs + 9a7e465) → G2. N-b fixed in 10ff73a (10:50, D-014, user: "choose whatever makes it better"). Caveat: the running set loaded the 9a7e465 code at 10:42, so it does not include N-b, and the code_sha of its later scenarios may name a newer commit than the code it ran.
+**Phase 2: Pipeline MVP.** 2.R2 done and re-reviewed (BF1/BF2/N-a fixed in 9a7e465; N-b in 10ff73a, D-014). 2.R3 approved and implemented in 315a90a (D-015): named methods detected in code; physical_state definitions in the intake prompt. pytest 147 passed, 1 skipped. The D01–D08 run on 2.R3 code started 11:21. Next: check that run → independent review of the outputs plus 9a7e465, 10ff73a and 315a90a (written by Claude, not yet reviewed) → G2 (user reads D01, D02 + 2 others) → close Phase 2 → Phase 3 plan in a new session.
 
 ## Next session starts with (handoff 09:55)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
