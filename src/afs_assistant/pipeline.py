@@ -128,7 +128,7 @@ def finalize(a: Assessment, report: Report,
     1. Remove citations that failed verification.
     2. A recommended entry whose candidate failed screening becomes not_recommended.
     3. Same method+technique listed twice: keep the highest role, drop the others.
-    4. A `supported` premise with no citation left becomes `not_covered`.
+    4. A `supported` or `contradicted` premise with no citation left becomes `not_covered`.
     5. Status inconsistent with premises -> premise_not_supported; with recommendations
        -> insufficient_information (re-checked on the result of steps 1-4).
     Locations in the change log use the numbering of `a`. Returns the assessment, the
@@ -166,7 +166,9 @@ def finalize(a: Assessment, report: Report,
         if r["role"] != "not_recommended" and status.get((r["method"], r["technique"])) == "fail":
             removed.append({"location": f"recommendations[{i}]", "item": dict(r),
                             "reason": f"{r['method']} {r['technique']} failed screening; "
-                                      f"role {r['role']} changed to not_recommended"})
+                                      f"role {r['role']} changed to not_recommended",
+                            "corrects": "respects_screen"})
+            flagged[f"recommendations[{i}]"] = "failed screening; changed to not recommended by verification"
             r["role"] = "not_recommended"
 
     # Dedupe method+technique (stable: on equal role the earlier entry wins), then renumber flags.
@@ -182,7 +184,8 @@ def finalize(a: Assessment, report: Report,
             winner = best[(r["method"], r["technique"])]
             removed.append({"location": f"recommendations[{i}]", "item": r,
                             "reason": f"duplicate method+technique; kept recommendations[{winner}] "
-                                      f"(role {recs[winner]['role']})"})
+                                      f"(role {recs[winner]['role']})",
+                            "corrects": "recommendations_unique"})
     new_index = {old: new for new, old in enumerate(keep)}
     renumbered = {}
     for path, why in flagged.items():
@@ -196,9 +199,12 @@ def finalize(a: Assessment, report: Report,
     data["recommendations"] = [recs[i] for i in keep]
 
     for i, p in enumerate(data["premise_checks"]):
-        if p["verdict"] == "supported" and not p["citations"]:
-            removed.append({"location": f"premise_checks[{i}]", "item": dict(p),
-                            "reason": "verdict supported without a verified citation; changed to not_covered"})
+        if p["verdict"] in ("supported", "contradicted") and not p["citations"]:
+            change = {"location": f"premise_checks[{i}]", "item": dict(p),
+                      "reason": f"verdict {p['verdict']} without a verified citation; changed to not_covered"}
+            if p["verdict"] == "contradicted":
+                change["corrects"] = "status_vs_premises"
+            removed.append(change)
             p["verdict"] = "not_covered"
 
     interim = Report()
@@ -208,8 +214,9 @@ def finalize(a: Assessment, report: Report,
                              ("status_vs_recommendations", "insufficient_information")):
         if name in failed and data["decision_status"] == "provisional_assessment":
             removed.append({"location": "decision_status", "item": data["decision_status"],
-                            "reason": f"{name} failed; status changed to {new_status}"})
+                            "reason": f"{name} failed; status changed to {new_status}", "corrects": name})
             data["decision_status"] = new_status
+            flagged["status_reason"] = "status changed by verification; this reason text is the model's original"
     return Assessment.model_validate(data), removed, flagged
 
 

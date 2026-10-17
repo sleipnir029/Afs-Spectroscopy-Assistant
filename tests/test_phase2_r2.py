@@ -211,6 +211,45 @@ def test_finalize_supported_premise_without_citation_becomes_not_covered():
     assert any(x["location"] == "premise_checks[0]" and "not_covered" in x["reason"] for x in result.removed)
 
 
+def test_finalize_unverified_contradiction_becomes_not_covered_and_keeps_status():
+    a = copy.deepcopy(ASSESSMENT)
+    a["premise_checks"] = [{"premise": "Fluorescence can measure ethanol directly", "verdict": "contradicted",
+                            "explanation": "Fluorescence needs a fluorescent species.",
+                            "citations": [cit("S01", 16, BAD_QUOTE)]}]
+    result, _ = run_with(assess=a, repairs=[a, a])
+    assert result.assessment.premise_checks[0].verdict == "not_covered"
+    assert result.assessment.decision_status == ASSESSMENT["decision_status"] == "provisional_assessment"
+    assert not any(x["location"] == "decision_status" for x in result.removed)
+
+
+def test_status_change_flags_the_reason_and_hides_the_corrected_failure():
+    a = copy.deepcopy(ASSESSMENT)
+    a["premise_checks"] = [{"premise": "Fluorescence can measure ethanol directly", "verdict": "contradicted",
+                            "explanation": "Fluorescence needs a fluorescent species.",
+                            "citations": [cit("S01", 5, "However, most chemicals do not exhibit this property.")]}]
+    result, _ = run_with(assess=a, repairs=[a, a])
+    assert "status_reason" in result.flagged
+    md = render.to_markdown(result)
+    status_line = next(line for line in md.splitlines() if line.startswith("**Decision status:**"))
+    assert "⚠ *(status changed by verification" in status_line
+    assert "⚠ status_vs_premises" not in md and "still open: 0" in md
+
+
+def test_screen_forced_not_recommended_is_flagged_and_not_listed_as_open():
+    intake = copy.deepcopy(INTAKE)
+    intake["sample"]["fluorophore"] = slot("no", "stated", "ethanol")
+    a = copy.deepcopy(ASSESSMENT)
+    a["recommendations"] = [{"id": "M1", "method": "Fluorescence", "technique": "fluorescence_probe",
+                             "role": "primary", "combined_with": [], "rationale": "Very sensitive.",
+                             "conditions": "none", "citations": []}]
+    result, _ = run_with(intake=intake, assess=a, repairs=[a, a])
+    assert "recommendations[0]" in result.flagged
+    md = render.to_markdown(result)
+    m1 = next(line for line in md.splitlines() if line.startswith("- **M1"))
+    assert "⚠ *(failed screening" in m1
+    assert "⚠ respects_screen" not in md and "⚠ status_vs_recommendations" not in md
+
+
 def test_items_that_lost_a_citation_or_failed_a_number_check_are_flagged_inline():
     a = bad_quotes(1)
     a["recommendations"][1]["rationale"] = "NIR reaches 0.05% accuracy."

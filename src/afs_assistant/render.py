@@ -113,13 +113,17 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     out.append("")
 
     s = r.report.summary()
+    removed_citations = [x for x in r.removed if "citation" in x]
+    changes = [x for x in r.removed if "citation" not in x]
+    # Failures that finalize removed (citations) or corrected deterministically are not open any more.
+    corrected = {x["corrects"] for x in changes if "corrects" in x}
+    still_open = [c for c in r.report.hard_failures
+                  if c.name not in ("quote_verified", "citation_scope") and c.name not in corrected]
     out += ["## Verification", "",
             (f"- Citations verified: {s['citations_verified']} of {s['citations_total']} "
              f"(exact or whitespace/hyphen-tolerant match on the cited page, scope checked)."),
-            (f"- Remaining hard check failures: {s['hard_failures']}; soft warnings: {s['soft_failures']}; "
-             f"repair rounds: {len(r.repairs)}.")]
-    removed_citations = [x for x in r.removed if "citation" in x]
-    changes = [x for x in r.removed if "citation" not in x]
+            (f"- Hard check failures before deterministic corrections: {s['hard_failures']}; still open: "
+             f"{len(still_open)}; soft warnings: {s['soft_failures']}; repair rounds: {len(r.repairs)}.")]
     if removed_citations:
         out.append(f"- Removed {len(removed_citations)} citation(s) that failed verification:")
         out += [(f"  - ⚠ {x['location']}: {x['citation']['doc']} p.{x['citation']['page']} "
@@ -127,9 +131,8 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     if changes:
         out.append(f"- Corrected deterministically after verification ({len(changes)}):")
         out += [f"  - ⚠ {x['location']}: {x['reason']}" for x in changes]
-    for c in r.report.hard_failures:
-        if c.name not in ("quote_verified", "citation_scope"):
-            out.append(f"- ⚠ {c.name} at {c.location}: {c.message}")
+    for c in still_open:
+        out.append(f"- ⚠ {c.name} at {c.location}: {c.message}")
     if r.intake_removed:
         out.append(f"- Removed {len(r.intake_removed)} intake item(s) not quoted verbatim from the enquiry:")
         out += [f"  - {x['location']}: {x['reason']}" for x in r.intake_removed]
