@@ -337,3 +337,66 @@ Problems:
    - `finish=length` counts as an invalid reply (retry).
 5. **CLI:** `run --set` continues after a failed scenario, records the error, and exits non-zero at the end.
 6. **Tests** for 2–5. Then re-run D01–D08 (about $0.6) → reviewer → G2.
+
+### Phase 2 review (2026-10-17 10:20, reviewer agent): APPROVE WITH FIXES
+- Verifier sound: 152/152 citations shown as verified are exact on their page (independent check). 20 sampled for meaning: ~4 claims go beyond the quote (Phase 3 critic).
+- Acceptance: pytest/ruff/kb check PASS; D01–D08 end to end FAIL (D08); verified citations PASS; invented numbers PASS on outputs (code gap N6); cost logging FAIL (B3); provenance PASS with gaps (B4, N8); H not run PASS.
+- Blocking:
+  - B1: empty or whitespace `enquiry_quote` passes the verbatim check.
+  - B2: finalize only strips citations. No dedupe, no status downgrade, and "Supported" premises are left with no source.
+  - B3: discarded (truncated/invalid) replies are not costed; the cap is checked per call, not per attempt.
+  - B4: the manifest lacks per-call records (provider, latency), timings, the raw and per-round assessments, and the removed intake items.
+  - B5: the headline primary recommendation is a multi-method fusion (5/7 outputs).
+  - B6: intake prompt examples may be tailored to held-out wording; line 13 quotes a dev enquiry verbatim.
+- Non-blocking:
+  - N1: rule paraphrases get quoted as REF (4 of D04's 6 failures).
+  - N2: repair feedback is thin.
+  - N3: the repair loop keeps the last round, not the best.
+  - N4: slot keywords match inside other words.
+  - N5: the negation window crosses clauses.
+  - N6: some fields are not number-checked.
+  - N7: precedent-only citations are not marked.
+  - N8: run_id = scenario id, so tags are overwritten.
+  - N9: no dirty-tree flag.
+  - N10: double period.
+  - N11: length 2000–2700 words vs ~450, from padding.
+  - N12: claims beyond quotes (Phase 3).
+  - N13: `scenarios/final.jsonl` committed (user decision).
+- Test gaps: retry/costing, provider order, set-run continuation, scenario parser, finalize, empty quotes, negation bypass, rule-as-quote.
+
+### Phase 2 fixes (2.R2) — PROPOSED, awaiting approval
+Also covers the D08 diagnosis: a repetition loop in the bare enum array `Intake.proposed_methods` (see STATUS 10:13), and the model switch D-011.
+1. **Intake schema and prompt** (D08, B6):
+   - `proposed_methods` becomes a fixed object with one field per method; each value is a verbatim enquiry quote or null. It is bounded (cannot loop) and quote-checked by the sanitizer. Pipeline and assess context are adapted.
+   - The prompt lists only process aspects the enquiry states; missing ones go to `unknowns`, never `enquiry_quote: "unknown"`.
+   - The examples are rewritten from REF §3 wording plus neutral invented examples; no enquiry text (B6). Logged as D-012 citing D-007.
+2. **verify.py:**
+   - B1: a quote needs ≥4 normalized chars and a word character.
+   - N4: word-boundary slot keywords.
+   - N5: the negation window stops at `; . ,` and "but".
+   - N6: number-check requirements, unknowns and not_in_sources.
+   - N1: a citation quote that matches a rule statement fails with a hint giving the rule's source quote.
+3. **pipeline.py:**
+   - N1: the context lists each rule's verbatim source quotes; statements are marked as paraphrase, never to be quoted.
+   - B2: deterministic finalize steps, each logged in `removed`:
+     - dedupe method+technique, keeping the highest role;
+     - force `not_recommended` on a screen fail;
+     - downgrade the status on a status-vs-premises or status-vs-recommendations failure;
+     - a `supported` premise with no citation left becomes `not_covered`;
+     - an inline ⚠ on items that lost a citation or failed a number check.
+   - N2: repair feedback includes the matched span for fuzzy quotes.
+   - N3: keep the round with the fewest hard failures.
+4. **llm.py** (B3): cost discarded attempts (role `<role>:discarded`); `tracker.check()` per attempt.
+5. **Provenance and output:**
+   - B4: `calls`, `assessment_raw`, per-round repairs, `intake_removed` items and timings go into the JSON and the provenance tree.
+   - N8: run_id = `<id>-<utc>`.
+   - N9: `code_dirty` flag.
+6. **render.py and prompts/assess.md:**
+   - B5: `combined_with` is empty for primary (prompt + soft check); combinations are rendered as a later hypothesis.
+   - N7: "✓ (precedent only)" badge.
+   - N10: fix the double period.
+   - N11: caps of ≤6 unknowns, ≤4 risks and ≤5 plan steps; premises only for beliefs or requests that need checking; no boilerplate `not_in_sources`.
+7. **Tests** for every item above plus the review's test gaps: retry and costing, set-run continuation, scenario parser.
+8. **Re-run D01–D08 on v4.1-flash** (about $0.15) → short re-review → G2.
+
+Deferred to Phase 3: entailment critic (N12), length scoring, eval harness, bake-off, external reference library.
