@@ -1,0 +1,500 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Raman, mid-IR ATR and UV-Vis ATR are each plausible single-method candidates for a dissolution medium, so a conditional shortlist is defensible. However, the two actives, the medium and the required performance are unknown, and no supplied source covers in-line probes in a dissolution vessel, so the shortlist stays conditional on the answers to the questions below.",
+ "premise_checks": [
+  {
+   "premise": "In-line fiber probes in the vessels can follow how much of each of the two active ingredients has dissolved over time.",
+   "verdict": "precedent_only",
+   "explanation": "A source shows in-line fiber-probe determination of active-ingredient concentration in pharmaceutical manufacturing, which is a reason to test the same approach here, but it is not a dissolution vessel and not a two-active tablet.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 14,
+     "quote": "The primary objective is to determine \"blend potency\" - the precise concentration and uniformity of the Active Pharmaceutical Ingredient (API) - directly within the production line, specifically in the feed frame of a rotary tablet press.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Both active ingredients can be measured simultaneously in the dissolution medium.",
+   "verdict": "precedent_only",
+   "explanation": "A source shows Raman detecting several dissolved species in one aqueous reactor measurement, which supports the idea, but it is a bioprocess precedent and not proof for a two-active dissolution medium.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "In-line fiber probes can be installed in the dissolution vessels without disrupting the quality-control dissolution test.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses probe installation in a dissolution apparatus or the effect of a probe on the official test.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Identity and concentration range of the two active ingredients.",
+  "Dissolution medium composition (buffer, pH, surfactants) and its optical clarity during the run.",
+  "Whether both actives absorb in the UV-Vis region and whether any component fluoresces.",
+  "Required accuracy, precision, detection limit and sampling interval.",
+  "Vessel geometry and whether a probe can be fitted without changing the official test.",
+  "Excipient load, undissolved particles and probe fouling/cleaning."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the two active ingredients, and at what concentrations do they appear in the dissolution medium?",
+   "why_it_matters": "Their structure and concentration decide which method can see them and at what sensitivity.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the dissolution medium (buffer, pH, surfactants), and is it clear or turbid during the run?",
+   "why_it_matters": "It sets the spectral background and whether a transmission path or a short ATR path is usable.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Do both actives absorb in the UV-Vis region, and does any component of the formulation fluoresce?",
+   "why_it_matters": "It decides whether the UV-Vis entry (M3) applies and whether fluorescence background will limit Raman.",
+   "affects": [
+    "M3"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What accuracy, precision, sampling interval and detection limit must the in-line measurement meet, and are there regulatory requirements for the dissolution test?",
+   "why_it_matters": "These are the go/no-go criteria and they can rule a method in or out.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Can a probe be placed in each vessel without changing the official dissolution test, and how will probes be cleaned between runs?",
+   "why_it_matters": "Installation, cleaning and fouling decide whether in-line measurement is compatible with the quality-control test.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman tolerates an aqueous medium better than infrared methods and its response is linear over a wide concentration range, so a time-resolved profile of a dissolved active is a reasonable hypothesis to test. It also gives a molecular fingerprint that can support quantification of more than one dissolved species.",
+   "conditions": "Applies if both actives give distinguishable Raman bands above the fluorescence background of the medium and excipients.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "dependence on concentration is linear over a wide range of intensities.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Mid-IR gives well-defined absorption bands and high selectivity, which helps to separate two structurally similar actives, and an ATR probe keeps the probed layer thin enough for an aqueous medium. Mid-IR and Raman spectra are complementary, so this is the natural cross-check on the primary method.",
+   "conditions": "Applies if the medium and actives tolerate contact with the ATR crystal and undissolved excipient particles do not foul it.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "UV-Vis is very sensitive where the actives absorb, and a short ATR path can measure media that a transmission cell finds too optically dense. It applies only if both actives have usable UV-Vis absorbance; their bands may overlap, so quantification would rest on chemometrics.",
+   "conditions": "Applies only if both actives absorb in the UV-Vis region and the medium is optically dense or scattering enough to favour ATR over a transmission path.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "the strong overlap of spectral signals in UV spectra complicates the analysis of real samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Single immersion probe per vessel; ATR contact geometry for MIR and UV-Vis, a Raman immersion probe for the Raman route. No geometry is fixed until the medium's optical state is known.",
+  "location": "In each dissolution vessel, at the same sampling position for every method and for the reference sample.",
+  "fiber_link": "Fiber family and usable length follow from the method chosen and the probe configuration; no link length is assumed here.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 10,
+    "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman shift is reported in cm-1 and the laser excitation wavelength is stated separately; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1; usable coverage is set by the fiber and ATR crystal selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "UV-Vis",
+   "statement": "Nominal UV-Vis range depends on the target absorbance and the setup; the usable range is set by the instrument, fiber and probe selected.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "One method may not separate the two actives if their spectra overlap strongly, which is why the combined option is kept as a later hypothesis.",
+   "rule_ids": [
+    "R-CMB-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "compare with the best single method.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The Raman signal may be weak or swamped by fluorescence from the medium, actives or excipients at the concentrations used.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "An ATR probe samples only a thin surface layer and can foul with undissolved excipient particles, biasing readings during the run.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The calibration is specific to the sample matrix, so a change of medium, surfactant or excipient lot can invalidate it.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Assemble representative samples across the expected chemical and physical variation: dissolution medium spiked with each active over the expected concentration range, plus timed samples from real dissolution runs, including the early turbid phase if undissolved excipients are present.",
+    "purpose": "Representative samples and process states.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure every sample with the single methods first - Raman and MIR ATR, and UV-Vis ATR if both actives absorb - before any combination is tried.",
+    "purpose": "Single methods before any combination.",
+    "citations": []
+   },
+   {
+    "step": "Take independent reference values with the existing HPLC method on split samples at the same time points.",
+    "purpose": "Independent reference measurement.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "independent reference measurements",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Compare each single method with the HPLC reference and fix numerical go/no-go criteria with the customer; only if no single method resolves both actives, test a combined Raman + MIR ATR probe at the same spot and on a common time step against the best single method.",
+    "purpose": "Comparison and go/no-go basis.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Validate the chosen model on held-out runs or batches that were not used for calibration.",
+    "purpose": "Validation on held-out runs.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "HPLC reference on split samples at the same time points",
+  "decision_basis": "Provisional shortlist; final method depends on answers to the clarification questions."
+ },
+ "assumptions": [
+  "The dissolution medium is water-based, as is typical for dissolution testing; this is not yet stated by the customer.",
+  "The two actives are present in the medium at concentrations above the detection capability of at least one of the shortlisted methods; not yet known.",
+  "A probe can be placed in each vessel without altering the official dissolution test; not yet confirmed."
+ ],
+ "not_in_sources": [
+  "In-line fiber-probe measurement inside a dissolution test vessel: no supplied source covers this application.",
+  "Regulatory acceptance of an in-line fiber measurement for quality-control dissolution testing: not covered.",
+  "Fitting a probe to a dissolution apparatus and its effect on the official test: not covered."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Dissolved concentration of active ingredient 1",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is one of the two quantities the dissolution profile must report over time.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Dissolved concentration of active ingredient 2",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the second quantity the profile must report, and both actives must be separated in the same measurement.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Temperature of the dissolution medium",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Dissolution rate and the vibrational spectra both depend on temperature, so it is needed to compare runs and interpret the spectra.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Turbidity (optical density) of the dissolution medium",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It decides whether a transmission path or a short ATR path is usable, and it changes during the run as excipients dissolve, so it should be available from the apparatus or from a separate turbidity reading.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "turbidity sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "One contact probe, simple sampling",
+   "maintenance": "Crystal cleaning and fouling checks",
+   "performance_fit": "Single probe with sharp, selective mid-IR bands",
+   "cost_drivers": "Mid-IR spectrometer, ATR probe, mid-IR fiber, calibration",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Single immersion probe, no reagents",
+   "maintenance": "Laser, probe and calibration checks",
+   "performance_fit": "Best fit for an aqueous medium and two actives",
+   "cost_drivers": "Raman spectrometer, laser, fiber probe, calibration",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Two instruments, one combined probe",
+   "maintenance": "Two calibrations and two diagnostics",
+   "performance_fit": "Adds mid-IR selectivity if one method fails",
+   "cost_drivers": "Two spectrometers, combined probe, data fusion, two calibrations",
+   "fusion_note": "Low-level fusion of the two spectral blocks, with one calibration per method as the baseline. Both probes must look at the same small volume and the two data streams must be aligned to a common time step. The fused model must beat the best single method on held-out runs, otherwise the extra instrument is not kept.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Quantifying either active from these methods needs a chemometric calibration built on reference values from the customer's own medium, because the model is specific to the sample matrix and must be re-validated when the medium or excipient lot changes.",
+ "realtime_tracking_note": "The probes are meant to give a continuous, time-resolved profile of both actives during each run, which is the reason for replacing fixed-time manual sampling.",
+ "future_direction": "If a full-spectrum method proves workable, a reduced-channel sensor for routine control could be a later development step.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "Answers on the actives and the medium, and the trial results, would change the choice: a weak or fluorescent Raman response and a clear, low-absorbance medium would favour MIR ATR or UV-Vis, while overlap that no single method resolves would move the case to the combined Raman + MIR ATR option.",
+  "next_step": "Run the single-method trial on representative dissolution samples against the existing HPLC reference before any probe is installed in a vessel."
+ },
+ "brief_answer": "A feasibility verdict is not possible from the available information alone; it needs a trial on your samples. Test single-method fiber probes first - Raman, mid-IR ATR, and UV-Vis ATR if both actives absorb - against your HPLC reference. Still open: whether one method can resolve both actives, and whether a probe can be fitted without changing the test."
+}
