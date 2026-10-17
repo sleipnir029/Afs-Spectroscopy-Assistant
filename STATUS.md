@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 13:02 CEST (Claude)._
+_Last updated: 2026-10-17 13:24 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -12,12 +12,40 @@ _Last updated: 2026-10-17 13:02 CEST (Claude)._
 - **Run:** done (11:53, see Check results); the D01–D08 run on 75a4469 had started 11:29; the run on 315a90a was stopped at D03.
 - **Next:** G2: the user reads D01, D02, D07, D08 (D04 optional) in `outputs/dev/*.md`. Then close Phase 2 and write the re-plan of Phases 3–6 in a new session (inputs: `docs/research-replan.md`, `docs/qa-notes-2026-10-17.md`, the decisions under Done).
 
-## Next session starts with (handoff 09:55)
+## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
-1. Read `CLAUDE.md`, this file, `PHASES.md` (Phase 2 section incl. "first live run findings" and 2.R) and `DEVIATIONS.md` (D-009, D-010).
-2. Check the D01–D08 re-run in `outputs/dev/*.json|md`. Summary numbers are below under "Check results"; `git log provenance` lists the runs.
-3. Launch an independent reviewer agent on Phase 2: code (`src/afs_assistant/{llm,pipeline,verify,render,provenance,schema,scenarios,cli}.py`, `prompts/`) plus outputs D01/D02 vs `scenarios/dev_reference.jsonl` (organizer worked answers) and the REF §3 style rules. Fix blocking findings (plan → approve → fix).
-4. G2: the user reads D01, D02 + 2 others. Then close Phase 2 and write the Phase 3 plan (critic, external reference library, adversarial set, eval harness, bake-off, baseline table) for approval, in a new session.
+
+**Task: write the re-plan of Phases 3–6 for user approval** (plan only, no code). Phase 2 code is done and reviewed; G2 (the user's read of `outputs/dev/D01.md`, `D02.md`, `D07.md`, `D08.md`, D04 optional) may still be pending. Ask the user for the G2 verdict first, then close Phase 2 in PHASES.md.
+
+1. Read:
+   - `CLAUDE.md` and this file, especially "Done" from the jury input onwards, "Open decisions" and "Check results";
+   - `PHASES.md` (Phase 2 section from "Phase 2 review" to the end);
+   - `DEVIATIONS.md` D-011..D-019;
+   - `docs/research-replan.md` (online-search research, option B recommended);
+   - `docs/qa-notes-2026-10-17.md` (organizer Q&A; those items are optional fields).
+2. Requirements already decided by the user (see Done):
+   - **Jury musts:**
+     - always make a proposal (a Proposal block; the status stays honest);
+     - live online search when the supplied sources do not cover the question: keyless scholarly APIs, verify every quote verbatim, cache it (git gets metadata + quotes + sha256; full text goes to a local gitignored cache, confirm the path), external sources marked secondary;
+     - the curated library as offline fallback;
+     - web search off by default, enabled by a `--web` flag;
+     - multi-method (several methods on one process) and data-fusion analysis.
+   - **End-user musts:**
+     - 2–3 solution options (simple / recommended / extended multi-method) weighed on cost class (relative only, S01 Table 1; never currency), ease of use, maintenance and performance fit, and the optimal one recommended;
+     - a parameter layer: the chemical/physical parameters the case needs, why, quantitative or qualitative, which measurement (spectroscopy method or an auxiliary sensor; thermocouple = labelled option, "confirm with AFS"), plus optional parameters with reasons; no cap;
+     - a short brief answer up front;
+     - a code-generated Mermaid flowchart of the setup.
+   - **Optional fields** (Q&A): chemometrics note, real-time tracking note, future direction.
+   - **Contact email:** `CONTACT_EMAIL` in `.env`. No OpenAlex key.
+   - **Bake-off** = a quick check only. Length is soft (minimise later).
+3. Proposed priority order:
+   - P1: parameter layer + solution options + brief answer + proposal block (~4–6 h).
+   - P2: online search, option B (~10–14 h).
+   - P3: Mermaid sketch (~1–2 h).
+   - P4: optional fields and `--web`.
+   - Then the chat shell / evidence view, freeze, final H runs (live once, then freeze), and deliverables (README, fresh-clone test, video). Also fold in the Phase 3 open points below where cheap.
+4. Write the plan into PHASES.md (replacing the "not planned yet" Phases 3–6), with steps, acceptance checks, review and risks, and timeboxes to the deadline (Sun 23:59). Then ask for approval.
+
 Known open points for Phase 3 (from the reviews; updated 12:05):
 - **Entailment critic** for claims beyond their quotes: D01 flush-mount geometry cited to the dairy page, D03 "amide" bands, D06 "(including by water)", D02 off-domain precedents. Also a domain-error check: D07 dismisses NIR transmission in a melt.
 - **Length:** 1,700–2,100 body words vs ~450; soft, user.
