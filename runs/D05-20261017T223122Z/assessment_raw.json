@@ -1,0 +1,507 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A shortlist of methods can be justified from the supplied sources, but the two targets are undefined and the broth's optical regime is unknown, so the shortlist and the option tiers rest on stated assumptions. The shortlist is conditional on the answers to the questions below.",
+ "premise_checks": [
+  {
+   "premise": "An optical measurement can help follow yeast fermentation growth and notice changes earlier.",
+   "verdict": "precedent_only",
+   "explanation": "The source shows fiber-probe optical methods used for bioprocess growth and metabolite tracking, which is a reason to test, not proof for this broth.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Both a biomass signal and a metabolic signal are relevant and can be distinguished as separate targets.",
+   "verdict": "precedent_only",
+   "explanation": "The source pairs a growth-tracking method with a metabolite-fingerprint method in the same reactor, which supports treating them as two targets but does not define them for this customer.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "An in-line optical measurement can still be taken from the broth as it becomes more optically dense.",
+   "verdict": "supported",
+   "explanation": "Supported for a short-path ATR geometry; it does not hold for a transmission geometry through a thick, opaque medium.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "In-line optical measurement during yeast fermentation (customer fact).",
+  "Follow growth and notice changes earlier (customer fact).",
+  "A biomass signal and a metabolic signal are mentioned but not defined as separate targets (customer fact).",
+  "The broth becomes more optically dense as the run develops (customer fact).",
+  "An initial feasibility study with useful reference measurements is wanted (customer request)."
+ ],
+ "key_unknowns": [
+  "Target species and concentration ranges for the biomass signal and for the metabolic signal.",
+  "How optically dense the broth becomes over the run, and whether it stays flowable and pumpable.",
+  "Whether the broth contains fluorescent species, bubbles, particulates or antifoam.",
+  "Which independent reference methods are available, and the required accuracy, detection limit and response time.",
+  "Probe installation point and the temperature, pressure, cleaning and sterilisation conditions there.",
+  "Fermentation stage, batch duration and the time resolution needed to 'notice changes earlier'."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which quantity should represent the biomass signal (for example cell density or dry cell weight) and which species the metabolic signal (for example glucose, ethanol, acetate or glycerol), and over what concentration ranges?",
+   "why_it_matters": "This decides which method and which calibration target the feasibility study has to cover.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "How optically dense does the broth become over the run, and does it stay flowable and pumpable?",
+   "why_it_matters": "It decides between ATR, transmission and reflection geometries, and whether a short ATR path is needed.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Where can a probe be installed (vessel port, bypass loop or flow cell) and what are the temperature, pressure, cleaning and sterilisation conditions there?",
+   "why_it_matters": "It decides the probe type, its materials and the fiber routing to the spectrometer.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Which reference measurements can run alongside the trial (for example dry cell weight or cell counts, HPLC, GC or enzymatic assays), and what accuracy, detection limit and time resolution would count as success?",
+   "why_it_matters": "Without an independent reference and agreed numbers there is no basis for calibration or for a go/no-go decision.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Does the broth contain fluorescent species, bubbles, particulates or antifoam that could disturb a Raman measurement?",
+   "why_it_matters": "A strong fluorescence background or heavy scattering would make the Raman route unworkable as proposed.",
+   "affects": [
+    "M2"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "A UV-Vis ATR probe gives a real-time, low-cost signal that tracks growth, and the short ATR path lets it work as the broth becomes more optically dense. It is the lowest-risk single method to test first.",
+   "conditions": "The broth must make tight contact with the ATR crystal and must not leave deposits on it.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman gives a molecular fingerprint that can be calibrated for specific metabolites, and water interferes less than in infrared methods. It is the single method that adds the metabolic information UV-Vis cannot give.",
+   "conditions": "The broth must be checked on real samples for fluorescence background and particulates before a calibration is attempted.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [
+    "Raman",
+    "Raman"
+   ],
+   "rationale": "If the single-method tests leave one of the two targets uncovered, the UV-Vis and Raman blocks can be fused. Any gain from the combination is a hypothesis to test against the best single method.",
+   "conditions": "Applies only if neither single method covers both targets and both probes can look at the same small broth volume.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "NIR transmission is the method a reader would expect first, but the customer states the broth becomes more optically dense, and transmission loses the signal when the medium is too thick or opaque. A fit for this broth is not confirmed.",
+   "conditions": "Only worth revisiting if the broth stays transparent and a controlled pathlength can be maintained.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "In-line fiber probe in the broth: ATR probe tip in contact with the liquid for the UV-Vis route, and a Raman fiber probe in contact with the liquid for the metabolite route; the spectrometers stay remote from the vessel and are linked by fibers.",
+  "location": "One measuring point in the vessel or in a bypass loop, chosen so that both probes, if combined, look at the same small broth volume.",
+  "fiber_link": "Fiber family and achievable link length depend on the method and probe selected; no length is stated in the sources for this case and must be confirmed for the chosen configuration.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "UV-Vis",
+   "statement": "UV-Vis covers the ultraviolet and visible range; the source quotes high sensitivity especially in the UV region (190-360 nm). The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as a Raman shift in cm-1, with the laser excitation wavelength stated separately; the cited process example uses 785 nm excitation. The usable shift range depends on the laser, spectrometer and probe selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The two targets are undefined, so the choice between UV-Vis ATR and Raman may change once the species and their concentration ranges are named.",
+   "rule_ids": [
+    "R-UV-2",
+    "R-RAM-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "If the broth becomes too optically dense for the geometry chosen, or deposits build up on the crystal, the ATR signal can degrade over a run.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-GEN-5"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Fluorescence background or strong scattering from the broth can swamp the weak Raman signal, so excitation wavelength and probe must be checked on real samples.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The calibration is specific to the broth matrix, so a change of medium, feed or strain can invalidate it, and no in-line performance figure for this broth appears in the supplied pages.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "physical variation; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative broth samples or process states across at least three independent runs (early, mid and late fermentation), spanning the expected optical-density range and any medium or feed changes.",
+    "purpose": "Cover the chemical and physical variation the model must later survive.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure each sample with the single methods first - UV-Vis ATR, then Raman - at the same temperature and probe position, recording raw spectra together with the sample's reference value.",
+    "purpose": "Establish each single method before any combination is tested.",
+    "citations": []
+   },
+   {
+    "step": "Have the customer's laboratory provide independent reference values: dry cell weight or cell counts for biomass, and HPLC, GC or enzymatic assays for the metabolite(s).",
+    "purpose": "An independent reference is what makes a calibration and a go/no-go decision possible.",
+    "citations": []
+   },
+   {
+    "step": "Build one calibration model per method and compare them on held-out runs or batches; only then build the fused UV-Vis + Raman model and check whether it beats the best single method.",
+    "purpose": "A combination is only justified if it adds performance over the best single method.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Set the go/no-go criteria as numbers supplied by the customer (allowed prediction error, detection limit, time resolution) before the trial starts.",
+    "purpose": "The trial needs a decision rule agreed in advance, not one chosen after the results.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent laboratory values for biomass (dry cell weight or cell counts) and for the named metabolite(s), measured on the same samples that are measured optically.",
+  "decision_basis": "Numerical criteria from the customer: allowed prediction error on the biomass signal and on the metabolic signal, detection limit, and time resolution."
+ },
+ "assumptions": [
+  "The fermentation broth is an aqueous liquid that can make contact with a probe tip.",
+  "The broth remains flowable and can be sampled or bypassed during the run.",
+  "The customer's laboratory can supply independent reference values for both targets.",
+  "The two mentioned signals are process quantities that can be calibrated against those references."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Biomass concentration, as the turbidity-correlated signal",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the stated growth target, and the UV-Vis signal is a turbidity proxy that correlates with cell density rather than a direct cell count.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Metabolite concentration (for example glucose, ethanol, acetate or glycerol)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the stated metabolic signal and the basis for noticing changes earlier.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Independent reference values for biomass and metabolites",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The in-line signals are proxies, so calibration and the go/no-go decision need an independent laboratory value.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "dry cell weight or cell counts; HPLC, GC or enzymatic assay for the metabolite(s)",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Broth temperature at the measuring point",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It should be available because temperature varies over a fermentation run and affects the spectra, so it should be logged with each measurement.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P3"
+   ],
+   "ease_of_use": "one probe, robust signal",
+   "maintenance": "ATR tip cleaning, periodic checks",
+   "performance_fit": "answers the growth question at low effort",
+   "cost_drivers": "one UV-Vis spectrometer, ATR probe and fiber link",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "standard probe, sensitive to background",
+   "maintenance": "laser and probe checks, recalibration",
+   "performance_fit": "molecular specificity for metabolites in aqueous broth",
+   "cost_drivers": "Raman spectrometer, laser and fiber probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "two instruments, more setup work",
+   "maintenance": "two calibrations, two instrument checks",
+   "performance_fit": "covers growth and metabolite targets together",
+   "cost_drivers": "two spectrometers, combined probe, data fusion effort",
+   "fusion_note": "Fusion level: low-level fusion of the UV-Vis and Raman blocks, normalised so that neither block dominates the model, with one calibration kept per method. Both probes must look at the same small broth volume at the same time, and the two data streams must be brought to a common time step. The fused model must beat the best single method on held-out runs, otherwise the second instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Furthermore, methods containing a larger number of variables have a greater impact on the model.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Both targets need a calibration or classification model built against the independent reference values, and the models are specific to the broth matrix, so they must be re-validated on held-out runs and after any medium, feed or strain change.",
+ "realtime_tracking_note": "The purpose is in-line, continuous tracking of the growth and metabolite trends over a run, so acquisition rate and the time step needed to notice a change should be agreed before the trial.",
+ "future_direction": "If a fluorescent species is later confirmed in the broth, the published NIR with fluorescence combination for yeast fermentation described on S01 p.7 is a further option worth testing as a later extension.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "Defined targets and ranges, or a broth that turns out to be strongly fluorescent or too opaque for the chosen geometry, would move the choice between O1, O2 and O3. The reference methods and the go/no-go numbers the customer can provide would change it as well.",
+  "next_step": "Agree the reference methods and the go/no-go numbers, then measure broth samples across the run with UV-Vis ATR and Raman before any fused model is built."
+ },
+ "brief_answer": "Test the single methods first: UV-Vis ATR for the growth trend and Raman for the metabolic signal. Raman is the stronger single-method fit for noticing changes earlier; the UV-Vis + Raman combination is a later hypothesis, only if one method cannot cover both targets. The targets, the broth's optical density range and the reference methods are still open."
+}
