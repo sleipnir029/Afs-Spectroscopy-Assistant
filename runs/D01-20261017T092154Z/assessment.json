@@ -1,0 +1,431 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Screening passes NIR diffuse reflection and Raman for an opaque powder. Both are named in the sources as the widely implemented pharma in-line techniques, and a feed-frame example with a NIR reflection probe and a Raman probe exists. A shortlist can therefore be justified, but it rests on assumptions about the customer's API, excipients and feed-frame conditions that are not yet known, so the assessment stays provisional.",
+ "premise_checks": [
+  {
+   "premise": "A fiber based measurement in the feed frame could follow API concentration changes.",
+   "verdict": "supported",
+   "explanation": "The sources describe probes inserted into a tablet-press feed frame and name NIR and Raman as the widely implemented pharma techniques. This is a precedent (a reason to test), not proof that it works for this customer's blend.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "the probes are inserted directly into the process environment, such as the feed frame of a rotary tablet press.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "and widely implemented spectral techniques are Near-Infrared (NIR) and Raman spectroscopy.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Laboratory checks are a suitable reference for whether the blend is on target.",
+   "verdict": "not_covered",
+   "explanation": "The sources only state that a feasibility plan needs independent reference measurements; they do not assess the customer's laboratory method, its accuracy or its timing.",
+   "citations": []
+  },
+  {
+   "premise": "A first pilot comparing reasonable measurement options is sufficient before committing to production equipment.",
+   "verdict": "supported",
+   "explanation": "The supplied material describes a staged path in which multi-method laboratory trials come first and a solution is chosen afterwards. It does not claim a pilot removes all later risk.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 20,
+     "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Tablets are made from a powder blend of an active pharmaceutical ingredient (API) and excipients.",
+  "Laboratory checks confirm the blend is on target but arrive after the material has passed the press.",
+  "Goal: assess whether a fiber based measurement in the feed frame can follow API concentration changes.",
+  "The first pilot should compare reasonable measurement options before production equipment is committed."
+ ],
+ "key_unknowns": [
+  "API identity, its concentration range, and the required accuracy and response time.",
+  "Whether the API or any excipient fluoresces (this decides how viable Raman and any fluorescence option are).",
+  "Feed-frame environment (temperature, humidity, dust, vibration) and where / at what working distance a probe could be mounted.",
+  "Blend physical properties in the feed frame: particle size, density, flow behaviour and segregation risk.",
+  "Reference laboratory method, its accuracy and its timing relative to the process.",
+  "Whether the target is an absolute API concentration or a relative change / trend."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the API, over what concentration range must it be followed, and what accuracy and response time must the in-line result meet?",
+   "why_it_matters": "Decides whether NIR sensitivity is adequate at the low end and whether a single method can meet the target.",
+   "affects": [
+    "method",
+    "technique",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Do the API or the excipients fluoresce?",
+   "why_it_matters": "Fluorescence background can limit Raman, and it also decides whether a fluorescence option is worth testing.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Where and how could a probe be mounted in the feed frame — is it open or enclosed, and what are the temperature, humidity, dust and vibration conditions and the possible working distance?",
+   "why_it_matters": "Determines probe geometry, interface to the powder, and whether the fiber link and probe can be installed at all.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What are the particle size, density and flow behaviour of the blend in the feed frame, and is segregation expected?",
+   "why_it_matters": "Physical variation can mimic a composition change and must be covered by the calibration.",
+   "affects": [
+    "technique",
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What is the reference laboratory method, and what are its accuracy and timing?",
+   "why_it_matters": "The reference values set the standard the in-line measurement is judged against.",
+   "affects": [
+    "status",
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "R1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "The sample is an opaque powder, so a backscatter geometry is the natural fit. NIR is named as a widely implemented pharma technique, it penetrates dense solids, and a NIR reflection probe is the one shown in the feed-frame example. Quantitative use needs a chemometric calibration because NIR bands overlap.",
+   "conditions": "Applies if a diffuse-reflection probe can be brought to the flowing powder and the API is present above the detection level of the chosen instrument.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "NIR spectrometer and light source coupled with a NIR reflection probe",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman is the other widely implemented pharma technique and gives complementary molecular-backbone information to NIR. It is a single-method comparison against R1. Raman signals are weak and can be swamped by fluorescence, so this must be checked on real blend samples.",
+   "conditions": "Applies if the blend does not show a dominant fluorescence background; the excitation wavelength is a separate choice from the Raman shift.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R3",
+   "method": "NIR",
+   "technique": "diffuse_reflection_remote",
+   "role": "comparison",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "The NIR + Raman combination is a hypothesis to test after the single-method runs, not a demonstrated gain. It should be compared against the better single method, with the sampling location and timing of the two methods aligned. A combined (multispectral) probe is the way to keep both methods on the same small area; on the NIR side this entry is the diffuse-reflection route, including measurement at a distance from the powder.",
+   "conditions": "Only after the single-method NIR and Raman tests, and only if they do not meet the target.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "compare with the best single method.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "id": "R4",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "A reader may expect MIR-ATR for pharma, but ATR needs tight contact and suits liquids, pastes and soft solids. A dry powder blend in a feed frame does not provide that contact, so ATR is not a suitable first option here. This is the screening outcome, not a judgement on MIR in other duties.",
+   "conditions": "Not recommended for a dry powder feed frame.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Diffuse-reflection (backscatter) NIR probe inserted into the feed frame so the powder flows past the probe tip; Raman measured at the same or a nearby port with a contact probe. Keep both methods on the same small area if a combined test is added.",
+  "location": "Feed frame of the rotary tablet press, at the point where the blend passes the probe tip.",
+  "fiber_link": "Fiber probes let the sensitive spectrometers be placed away from the press (vibration, dust).",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "the probes are inserted directly into the process environment, such as the feed frame of a rotary tablet press.",
+    "claim_kind": "application_precedent"
+   },
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S01",
+    "page": 5,
+    "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected (Vis-NIR silica fibers do not cover the full nominal range).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as a Raman shift in cm-1 on the horizontal axis; the laser excitation wavelength is stated separately. The example feed-frame probe used 785 nm excitation. The usable shift range depends on the instrument, probe and excitation chosen.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Calibration is specific to the blend matrix.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "NIR may not have enough sensitivity for a low-level API.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "risk": "Physical variation (particle size, surface, segregation, feed-frame turbulence) can mimic a composition change.",
+   "rule_ids": [
+    "R-GEO-6",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman's weak signal can be overwhelmed by fluorescence from the blend.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "1",
+    "purpose": "Prepare representative samples.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "2",
+    "purpose": "Measure each sample by NIR diffuse reflection and by Raman with fiber probes, and record independent reference values with the customer's laboratory method.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 20,
+      "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "3",
+    "purpose": "Build a chemometric calibration per method and inspect NIR sensitivity at the low end of the API range.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "4",
+    "purpose": "Compare the NIR + Raman combination against the better single method on the same samples.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   },
+   {
+    "step": "5",
+    "purpose": "Validate the chosen model on held-out runs or batches and set the go / no-go on the accuracy and response time the customer supplies.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "The customer's laboratory method is the independent reference for the pilot; its accuracy and timing still need to be stated (see Q5).",
+  "decision_basis": "Go / no-go thresholds (accuracy, response time) must come from the customer; they are not in the sources."
+ },
+ "assumptions": [
+  "The blend stays an opaque, flowing powder at the measurement point.",
+  "A probe can be brought into contact or near-contact with the powder in the feed frame.",
+  "The API concentration varies over a range wide enough for NIR diffuse reflection to see, pending Q1.",
+  "The reference laboratory method can supply time-stamped values for the pilot samples."
+ ],
+ "not_in_sources": [
+  "The customer's specific API, excipient identities, concentration range, required accuracy and response time are not in the supplied material.",
+  "Feed-frame temperature, humidity, dust and vibration conditions and the mounting point are not in the supplied material.",
+  "No source states an achievable fiber-link length or probe rating for this installation."
+ ]
+}
