@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 11:54 CEST (Claude)._
+_Last updated: 2026-10-17 12:05 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -17,7 +17,22 @@ Session rule (user): ≤200k tokens per session, one phase or task per session.
 2. Check the D01–D08 re-run in `outputs/dev/*.json|md`. Summary numbers are below under "Check results"; `git log provenance` lists the runs.
 3. Launch an independent reviewer agent on Phase 2: code (`src/afs_assistant/{llm,pipeline,verify,render,provenance,schema,scenarios,cli}.py`, `prompts/`) plus outputs D01/D02 vs `scenarios/dev_reference.jsonl` (organizer worked answers) and the REF §3 style rules. Fix blocking findings (plan → approve → fix).
 4. G2: the user reads D01, D02 + 2 others. Then close Phase 2 and write the Phase 3 plan (critic, external reference library, adversarial set, eval harness, bake-off, baseline table) for approval, in a new session.
-Known open points for Phase 3: claims that go beyond their valid quotes (needs critic/entailment); output length; external references (approved in principle); jury may run the repo themselves or ask for a live run (both).
+Known open points for Phase 3 (from the reviews; updated 12:05):
+- **Entailment critic** for claims beyond their quotes: D01 flush-mount geometry cited to the dairy page, D03 "amide" bands, D06 "(including by water)", D02 off-domain precedents. Also a domain-error check: D07 dismisses NIR transmission in a melt.
+- **Length:** 1,700–2,100 body words vs ~450; soft, user.
+- **Premise policy:**
+  - at most 3 premises;
+  - a precedent-only verdict instead of "Supported" (REF §3: a published application is "not proof");
+  - a reverse check: `premise_not_supported` with no contradicted premise.
+- **Gate the "no MIR link length" line on relevance** (rules.yaml ~250; D-007 theme).
+- **Primary-count rule:** D01 has two primaries.
+- **Redesign the negation logic** with broader false-positive and false-negative tests ("and"/"so"/"since" clauses; "Nothing here is a guarantee").
+- **Intake noise:** "unknown" placeholders are shown as "not quoted verbatim" removals.
+- **`code_dirty`:** exclude `outputs/`.
+- **Cosmetic labels:** e.g. "Raman, raman probe".
+- **Review the S02 p.6 figure-text quotes.**
+- **Eval harness, bake-off, external reference library, adversarial set:** as planned.
+- **Jury:** may run the repo themselves or ask for a live run (both).
 
 ## Phase overview
 | Phase | State | Gate | Notes |
