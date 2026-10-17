@@ -4,6 +4,7 @@ _Last updated: 2026-10-18 00:07 CEST (Claude, Phase 5 session 2)._
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
+- **Eval merged (00:41):** fixes 32b0dac + confirm review APPROVE WITH FIXES → Claude fixes b15b4c7 (no vacuous must_not on a wrong off-topic redirect, malformed spec rows, OSError, A03/A06 patterns); D-046. master: pytest 622 passed, 2 skipped; ruff clean. **00:42 live runs started:** dev then adversarial, `--workers 4 --external live` (logs run_dev.log / run_adv.log in the session scratchpad).
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
