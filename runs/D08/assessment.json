@@ -1,0 +1,365 @@
+{
+ "decision_status": "insufficient_information",
+ "status_reason": "The central request compares MIR ATR and fluorescence. Deterministic screening fails MIR ATR because the sample state/optical regime is unknown and ATR requires tight contact. Fluorescence screening is unknown because no fluorescent species has been identified. The deciding questions are asked, and a conditional shortlist with explicit assumptions is given.",
+ "premise_checks": [
+  {
+   "premise": "A spectral measurement interface is being evaluated.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses this specific activity; it is a statement about the customer's work.",
+   "citations": []
+  },
+  {
+   "premise": "Chicken muscle, fat and liver are suitable model biological tissues.",
+   "verdict": "supported",
+   "explanation": "Supported as an application precedent from a research study, not as proof for the customer's specific setup.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "Commercially produced poultry combines the availability of fresh samples and the variability of tissue types, making it an attractive model system for evaluating spectroscopic methods and equipment.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "MIR ATR and fluorescence information can be meaningfully compared.",
+   "verdict": "supported",
+   "explanation": "Supported as an application precedent; the screening still fails MIR ATR for the customer's current unknowns.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "The PCA model built on the concatenated IR and fluorescence data revealed three distinct groups of samples corresponding to tissue types",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Material heterogeneity and possible different sampling locations are the reason to compare MIR ATR and fluorescence.",
+   "verdict": "supported",
+   "explanation": "",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample. This is difficult to achieve by using two probes alternately for measurements.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "A laboratory classification study is the right framing.",
+   "verdict": "supported",
+   "explanation": "Supported as an application precedent.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "the unsupervised clustering into three classes corresponding to the chicken tissue types.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "A first comparison experiment can provide a clear statement of what its results would demonstrate.",
+   "verdict": "supported",
+   "explanation": "",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Target analyte(s) or spectral features for the classification study.",
+  "Number and identity of tissue classes and reference method.",
+  "Sample preparation, thickness, hydration, temperature, and storage.",
+  "Optical behavior of chicken muscle, fat, and liver in MIR and fluorescence.",
+  "MIR ATR measurement parameters and contact quality.",
+  "Fluorescence measurement parameters and whether fluorescent species are present.",
+  "Whether MIR ATR and fluorescence measurements are sequential or simultaneous and how same-location sampling is ensured.",
+  "Performance metrics, sample size, validation, and acceptance criteria for the classification study.",
+  "Details of the spectral measurement interface."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Do the chicken muscle, fat and liver samples provide tight, reproducible contact with an ATR crystal (soft solid, no air gaps)?",
+   "why_it_matters": "This determines whether the MIR ATR screening fail can be re-evaluated. ATR requires tight contact and suits liquids, pastes and soft solids.",
+   "affects": [
+    "method",
+    "technique",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Do the tissues contain fluorescent species (e.g., FAD, porphyrins) that emit under the planned excitation, or can a justified fluorescent indicator be used?",
+   "why_it_matters": "This determines whether fluorescence is viable. Fluorescence only measures species that fluoresce or a justified indicator.",
+   "affects": [
+    "method",
+    "technique",
+    "status"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the target classification (e.g., tissue type) and what independent reference method will define the labels?",
+   "why_it_matters": "This defines the labels, the validation approach, and whether the study can be evaluated.",
+   "affects": [
+    "method",
+    "installation",
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Will measurements be simultaneous (same location) or sequential? If sequential, how will same-location sampling be ensured?",
+   "why_it_matters": "For heterogeneous samples, different methods must sample the same small area. Sequential probes cannot guarantee this, while a combined probe can.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What are the numerical acceptance criteria for the classification study (e.g., sensitivity, specificity, accuracy) that will define go/no-go?",
+   "why_it_matters": "The go/no-go basis must come from the customer. Without numerical criteria, the experiment can report performance but cannot make a go/no-go decision.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "R1",
+   "method": "NIR",
+   "technique": "diffuse_reflection_remote",
+   "role": "primary",
+   "combined_with": [
+    "Fluorescence"
+   ],
+   "rationale": "Passes deterministic screening. NIR diffuse reflection is suitable for scattering solid samples and has been used for tissue analysis. It is proposed as a replacement for the failed MIR ATR candidate. The combination with fluorescence is a hypothesis to test against NIR alone.",
+   "conditions": "Suitable if the samples are optically scattering and the target classification is based on chemical/morphological differences detectable in NIR.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics, as well as standard lamps as light sources, making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S03",
+     "page": 2,
+     "quote": "Diffuse reflectance near-infrared (NIR) spectroscopy is one of the most promising methods for optical tissue analysis.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R2",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Screening is unknown because no fluorescent species has been identified. Chicken tissues have shown fluorescence from FAD and porphyrins in a research study. Conditional on confirmation that the samples contain a fluorescent species or a justified indicator is used.",
+   "conditions": "Applies only if the samples contain a fluorescent species (e.g., FAD, porphyrins) or a justified fluorescent indicator can be used. Deciding question asked.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The most selective peak at 613 nm, which can be assigned to porphyrins, has sufficient specificity to distinguish the liver from other measured samples.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property. Therefore, fluorimetry is primarily used in medicine, biology, and biotechnology.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "High sensitivity, low selectivity; not a direct measurement of every analyte.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR diffuse reflection probe for remote measurement. For fluorescence, a fluorescence fiber probe. For same-location comparison, consider a combined probe if sequential measurements cannot guarantee identical sampling.",
+  "location": "Laboratory bench measurement on excised chicken tissue samples.",
+  "fiber_link": "NIR: silica fibers are compatible (VIS-NIR silica fibers, cited to 2400 nm). Fluorescence: UV-VIS silica fibers (cited to 1200 nm). MIR ATR would require CIR or PIR fibers but is not recommended at this stage.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "Standard UV-VIS Silica Fibers Al/Cu-coated UV-VIS Silica Fibers 1200 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups, such as -OH, -NH2=NH, -CH3, =CH2, ≥CH, etc., found in many organic and inorganic compounds.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Fluorescence",
+   "statement": "Fluorescence range depends on the fluorescent species and the excitation/emission wavelengths. The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Another highly sensitive method, UV/Vis fluorimetry, is based on the secondary emission of excited molecules of certain substances, most often of biological origin.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal MIR range is 4000-400 cm-1 (2.5-25 µm). Not recommended at this stage due to screening fail.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The recommendation of NIR as primary rests on the assumption that the chicken tissues are optically scattering and that the target differences are detectable in NIR. This may not hold if the tissues are too opaque or the target features are weak.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-NIR-4"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Fluorescence is only viable if the tissues contain a fluorescent species; if not, the conditional recommendation fails.",
+   "rule_ids": [
+    "R-FLU-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "The screening fail for MIR ATR could change to unknown or pass if tight, reproducible contact is confirmed; the current recommendation is therefore provisional on that point.",
+   "rule_ids": [
+    "R-MIR-2"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Sample heterogeneity and preparation may cause high variance; multiple locations per sample are needed.",
+   "rule_ids": [
+    "R-GEN-5"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "The reference classification labels and acceptance criteria are not defined by the customer, so the go/no-go basis is incomplete.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "The NIR + fluorescence combination is a hypothesis; it may not outperform the best single method.",
+   "rule_ids": [
+    "R-CMB-1"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Select representative samples across tissue types and expected variation.",
+    "purpose": "Capture chemical and physical variation.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Acquire independent reference labels for each sample.",
+    "purpose": "Define the ground truth for classification.",
+    "citations": []
+   },
+   {
+    "step": "Acquire NIR diffuse reflection spectra and fluorescence spectra separately, with multiple locations per sample to capture heterogeneity.",
+    "purpose": "Single methods first.",
+    "citations": []
+   },
+   {
+    "step": "For sequential measurements, ensure same-location sampling using a marked grid; for simultaneous measurements, use a combined probe if available.",
+    "purpose": "Align sampling location for comparison.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample. This is difficult to achieve by using two probes alternately for measurements.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Analyze each single method first; then test data fusion of NIR and fluorescence as a hypothesis against the best single method.",
+    "purpose": "Combinations only after single methods.",
+    "citations": []
+   },
+   {
+    "step": "Validate on held-out samples or batches and apply the customer-defined go/no-go criteria.",
+    "purpose": "Independent validation.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent reference labels from the known tissue type (muscle, fat, liver), ideally confirmed by a qualified person or histological examination if available. The reference method must be defined by the customer.",
+  "decision_basis": "Numerical criteria must come from the customer. Define thresholds for classification accuracy, sensitivity and specificity before the experiment. If no criteria are provided, the experiment can report performance but cannot make a go/no-go decision."
+ },
+ "assumptions": [
+  "The chicken tissues are soft solids that can be presented to probes without special preparation beyond cutting.",
+  "NIR diffuse reflection can penetrate sufficiently to detect tissue-type differences.",
+  "Fluorescence, if present, is detectable with a fiber probe.",
+  "The customer can provide independent reference labels for tissue type."
+ ],
+ "not_in_sources": [
+  "No source states the specific spectral range, resolution, or acquisition parameters for a NIR or fluorescence instrument suitable for chicken tissue classification.",
+  "No source states the exact excitation/emission wavelengths for fluorescence of chicken tissues.",
+  "No source states the achievable fiber length for MIR or NIR probes in this application.",
+  "No source provides numerical acceptance criteria or classification performance figures for chicken tissue classification.",
+  "No source specifies the reference method for labeling chicken tissue types.",
+  "No source addresses the specific sample preparation, thickness, hydration, or temperature for chicken tissues in this context.",
+  "No source provides product codes, prices, or component ratings."
+ ]
+}
