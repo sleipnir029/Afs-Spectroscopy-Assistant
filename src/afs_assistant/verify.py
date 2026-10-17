@@ -604,6 +604,8 @@ def verify(enquiry: str, intake: Intake, a: Assessment, candidates: list[Candida
     for r in intake_removed or []:
         if not r.get("placeholder"):
             report.add("intake_sanitized", False, "soft", r["location"], r["reason"])
+    for problem in intake_problems(intake, intake_removed or []):
+        report.add("intake_complete", False, "soft", "intake", problem)
     verified = check_citations(a, report)
     check_numbers(a, enquiry, verified, report)
     check_against_screen(a, candidates, slots, report)

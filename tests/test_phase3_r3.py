@@ -66,9 +66,12 @@ def test_collapsed_intake_is_retried_once_and_the_retry_is_used():
     assert result.intake.targets and result.intake_removed == []
 
 
-def test_intake_that_collapses_twice_fails_the_case():
-    with pytest.raises(RuntimeError, match="intake failed after 2 attempts"):
-        pipeline.run(ENQUIRY, _client([_collapsed_intake(), _collapsed_intake()]), run_id="t")
+def test_intake_that_collapses_twice_continues_with_a_visible_warning():
+    result = pipeline.run(ENQUIRY, _client([_collapsed_intake(), _collapsed_intake()]), run_id="t")
+    assert result.manifest["intake_attempts"] == 2
+    assert any("no target" in p for p in result.manifest["intake_problems"])
+    soft = [c for c in result.report.checks if c.name == "intake_complete" and not c.passed]
+    assert soft and all(c.severity == "soft" for c in soft)
 
 
 def test_clean_intake_is_not_retried():

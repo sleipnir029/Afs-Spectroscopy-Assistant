@@ -373,15 +373,19 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
         timings[stage] = round(timings.get(stage, 0.0) + now - clock, 3)
         clock = now
 
+    # A collapsed intake is retried once; if it still has problems, the attempt with the fewest is kept and
+    # the case goes on (a vague enquiry still gets questions and a proposal; verify reports `intake_complete`).
+    best_intake = None
     for attempt in range(1, MAX_INTAKE_ATTEMPTS + 1):
         intake_res = client.complete_json("intake", prompt("intake"), "# CUSTOMER ENQUIRY\n" + enquiry,
                                           "intake", Intake.model_json_schema())
         intake, intake_removed = sanitize_intake(Intake.model_validate(intake_res.data), enquiry)
         problems = intake_problems(intake, intake_removed)
+        if best_intake is None or len(problems) < len(best_intake[2]):
+            best_intake = (intake, intake_removed, problems)
         if not problems:
             break
-    else:
-        raise RuntimeError(f"intake failed after {MAX_INTAKE_ATTEMPTS} attempts: {'; '.join(problems)}")
+    intake, intake_removed, problems = best_intake
     lap("intake")
     slots = slots_from_intake(intake)
     candidates = screen(slots)
@@ -433,6 +437,7 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
                    "cached": sum(c["cached_tokens"] for c in calls)},
         "calls": len(calls),
         "intake_attempts": attempt,
+        "intake_problems": problems,
         "repair_rounds": len(repairs),
         "kept_round": best_round,
         "timings_s": timings,
