@@ -1,5 +1,5 @@
 {
- "run_id": "D04-20261017T085117Z",
+ "run_id": "D04-20261017T094013Z",
  "enquiry": "We run a cell culture process in an aqueous medium. Glucose and lactate are measured from samples, and the delay makes it difficult to see changes promptly. We are exploring an in situ spectroscopy pilot that can be checked against those existing laboratory measurements. The medium and cell population change during the run; we have not yet selected a probe or a calibration strategy.",
  "intake": {
   "routes": [
@@ -7,11 +7,15 @@
    "needs_clarification",
    "premise_to_check"
   ],
-  "summary": "Customer runs a cell culture process in aqueous medium and currently measures glucose and lactate from samples, causing delay. They are exploring an in situ spectroscopy pilot to be checked against existing laboratory measurements. The medium and cell population change during the run, and no probe or calibration strategy has been selected.",
+  "summary": "Customer runs an aqueous cell culture process, currently measures glucose and lactate from samples, and is exploring an in situ spectroscopy pilot to reduce delay. The medium and cell population change during the run; no probe or calibration strategy has been selected.",
   "facts_stated": [
    {
-    "text": "We run a cell culture process in an aqueous medium.",
-    "enquiry_quote": "We run a cell culture process in an aqueous medium."
+    "text": "Cell culture process is run.",
+    "enquiry_quote": "We run a cell culture process"
+   },
+   {
+    "text": "The process is in an aqueous medium.",
+    "enquiry_quote": "aqueous medium"
    },
    {
     "text": "Glucose and lactate are measured from samples.",
@@ -22,12 +26,12 @@
     "enquiry_quote": "the delay makes it difficult to see changes promptly"
    },
    {
-    "text": "They are exploring an in situ spectroscopy pilot.",
-    "enquiry_quote": "We are exploring an in situ spectroscopy pilot"
+    "text": "An in situ spectroscopy pilot is being explored.",
+    "enquiry_quote": "in situ spectroscopy pilot"
    },
    {
     "text": "The pilot can be checked against existing laboratory measurements.",
-    "enquiry_quote": "checked against those existing laboratory measurements"
+    "enquiry_quote": "can be checked against those existing laboratory measurements"
    },
    {
     "text": "The medium and cell population change during the run.",
@@ -41,12 +45,12 @@
   "targets": [
    {
     "variable": "glucose",
-    "purpose": "process monitoring",
+    "purpose": "to see changes promptly in the cell culture process",
     "enquiry_quote": "Glucose"
    },
    {
     "variable": "lactate",
-    "purpose": "process monitoring",
+    "purpose": "to see changes promptly in the cell culture process",
     "enquiry_quote": "lactate"
    }
   ],
@@ -67,9 +71,9 @@
     "enquiry_quote": "aqueous medium"
    },
    "heterogeneous": {
-    "value": "yes",
-    "basis": "inferred_from_stated",
-    "enquiry_quote": "cell population change during the run"
+    "value": "unknown",
+    "basis": "unknown",
+    "enquiry_quote": null
    },
    "fluorophore": {
     "value": "unknown",
@@ -79,76 +83,70 @@
   },
   "process": [
    {
-    "aspect": "existing_equipment",
-    "value": "laboratory sample measurements",
-    "enquiry_quote": "Glucose and lactate are measured from samples"
+    "aspect": "response_time",
+    "value": "prompt changes needed",
+    "enquiry_quote": "difficult to see changes promptly"
    },
    {
     "aspect": "existing_equipment",
-    "value": "in situ spectroscopy pilot proposed",
-    "enquiry_quote": "We are exploring an in situ spectroscopy pilot"
+    "value": "offline sample measurements",
+    "enquiry_quote": "measured from samples"
    },
    {
     "aspect": "existing_equipment",
-    "value": "no probe or calibration strategy selected",
-    "enquiry_quote": "we have not yet selected a probe or a calibration strategy"
+    "value": "laboratory measurements",
+    "enquiry_quote": "existing laboratory measurements"
    },
    {
-    "aspect": "reference_method",
-    "value": "existing laboratory measurements",
-    "enquiry_quote": "checked against those existing laboratory measurements"
+    "aspect": "existing_equipment",
+    "value": "pilot",
+    "enquiry_quote": "in situ spectroscopy pilot"
    }
   ],
   "customer_premises": [
    {
-    "claim": "The existing laboratory measurements can serve as a reference for the in situ spectroscopy pilot.",
-    "enquiry_quote": "checked against those existing laboratory measurements"
+    "claim": "The in situ spectroscopy pilot is appropriate for this cell culture process.",
+    "enquiry_quote": "in situ spectroscopy pilot"
    },
    {
-    "claim": "The in situ spectroscopy pilot can be checked against those existing laboratory measurements.",
+    "claim": "The in situ pilot can be checked against existing laboratory measurements.",
     "enquiry_quote": "can be checked against those existing laboratory measurements"
    },
    {
-    "claim": "The existing laboratory measurements are adequate to detect the changes promptly.",
+    "claim": "The delay makes it difficult to see changes promptly.",
     "enquiry_quote": "the delay makes it difficult to see changes promptly"
+   },
+   {
+    "claim": "The medium and cell population change during the run.",
+    "enquiry_quote": "The medium and cell population change during the run"
    }
   ],
-  "proposed_methods": {
-   "NIR": null,
-   "MIR": null,
-   "Raman": null,
-   "Fluorescence": null,
-   "UV_Vis": null
-  },
   "proposed_fiber": {
    "family": "none",
    "for_method": "none",
    "enquiry_quote": null
   },
   "unknowns": [
-   "concentration ranges for glucose and lactate",
-   "required accuracy and precision",
-   "required response time / update rate",
-   "temperature and pressure of the process",
-   "installation point and distance from spectrometer",
-   "cleaning, fouling, and sterilisation requirements",
-   "optical behaviour of the medium (turbidity, scattering, absorption) and how it changes with cell population",
-   "interferences from medium components and cells",
-   "calibration strategy and frequency",
-   "probe selection",
-   "details of the reference laboratory measurements",
-   "whether the in situ measurement must be sterile/aseptic",
-   "flow rate, mixing, and bubble effects",
-   "cell population range and viability",
-   "pH, dissolved oxygen, and other process variables",
-   "validation criteria"
+   "Target concentration ranges for glucose and lactate",
+   "Required accuracy and precision",
+   "Required response time",
+   "Matrix composition and interferences",
+   "Optical properties of the medium and cell suspension",
+   "Temperature and pressure",
+   "Installation point and distance",
+   "Cleaning and fouling behavior",
+   "Reference method details",
+   "Calibration strategy",
+   "Probe type",
+   "Effect of changing cell population and medium composition"
   ]
  },
+ "named_methods": {},
  "slots": {
   "physical_state": "liquid",
   "optical_regime": "unknown",
   "aqueous": "yes",
-  "heterogeneous": "yes",
+  "heterogeneous": "unknown",
   "fluorophore": "unknown"
  },
  "screening": [
@@ -160,9 +158,7 @@
    "warnings": [
     "R-MIR-3",
     "R-FIB-2",
-    "R-CMB-2",
-    "R-GEN-3",
-    "R-GEN-5"
+    "R-GEN-3"
    ],
    "notes": []
   },
@@ -181,10 +177,8 @@
     "R-NIR-2",
     "R-NIR-4",
     "R-CAL-1",
-    "R-CMB-2",
     "R-GEN-3",
-    "R-GEN-4",
-    "R-GEN-5"
+    "R-GEN-4"
    ],
    "notes": []
   },
@@ -204,9 +198,7 @@
     "R-NIR-2",
     "R-NIR-4",
     "R-CAL-1",
-    "R-CMB-2",
-    "R-GEN-3",
-    "R-GEN-5"
+    "R-GEN-3"
    ],
    "notes": []
   },
@@ -226,9 +218,7 @@
     "R-NIR-2",
     "R-NIR-4",
     "R-CAL-1",
-    "R-CMB-2",
-    "R-GEN-3",
-    "R-GEN-5"
+    "R-GEN-3"
    ],
    "notes": []
   },
@@ -239,9 +229,7 @@
    "reasons": [],
    "warnings": [
     "R-RAM-1",
-    "R-CAL-1",
-    "R-CMB-2",
-    "R-GEN-5"
+    "R-CAL-1"
    ],
    "notes": []
   },
@@ -253,9 +241,7 @@
    "warnings": [
     "R-MIR-3",
     "R-UV-1",
-    "R-UV-2",
-    "R-CMB-2",
-    "R-GEN-5"
+    "R-UV-2"
    ],
    "notes": []
   },
@@ -273,9 +259,7 @@
    "warnings": [
     "R-GEO-6",
     "R-UV-1",
-    "R-UV-2",
-    "R-CMB-2",
-    "R-GEN-5"
+    "R-UV-2"
    ],
    "notes": []
   },
@@ -292,9 +276,7 @@
    ],
    "warnings": [
     "R-UV-1",
-    "R-UV-2",
-    "R-CMB-2",
-    "R-GEN-5"
+    "R-UV-2"
    ],
    "notes": []
   },
@@ -311,9 +293,7 @@
    ],
    "warnings": [
     "R-UV-1",
-    "R-UV-2",
-    "R-CMB-2",
-    "R-GEN-5"
+    "R-UV-2"
    ],
    "notes": []
   },
@@ -329,64 +309,68 @@
     }
    ],
    "warnings": [
-    "R-FLU-2",
-    "R-CMB-2",
-    "R-GEN-5"
+    "R-FLU-2"
    ],
    "notes": []
   }
  ],
  "assessment": {
   "decision_status": "provisional_assessment",
-  "status_reason": "A shortlist of single methods can be justified for laboratory testing (Raman and MIR-ATR pass the screening; NIR is conditional on the medium's optical density). No probe, geometry, fiber link, accuracy or calibration strategy can be fixed from the stated facts. The published examples cited below are reasons to test, not evidence that any method works for this process.",
+  "status_reason": "A shortlist of single methods worth testing can be justified from the sources: Raman and mid-IR ATR pass the screening for an in-line aqueous application, and NIR transmission is conditional on the broth's optical density. The concentration ranges, required accuracy and required response time are not known, so this is a provisional assessment with stated assumptions, not a selection of a probe or a calibration strategy. Any combination is only a later hypothesis to test against the best single method.",
   "premise_checks": [
    {
-    "premise": "The existing laboratory measurements can serve as a reference for the in situ spectroscopy pilot.",
-    "verdict": "supported",
-    "explanation": "A feasibility plan is expected to include independent reference measurements. Whether these particular measurements are accurate, traceable and frequent enough to be that reference is not addressed by the sources.",
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 3,
-      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "premise": "The in situ spectroscopy pilot can be checked against those existing laboratory measurements.",
-    "verdict": "supported",
-    "explanation": "Same check as above: the sources expect a defined reference measurement and a defined comparison in a feasibility plan; they do not confirm that the customer's current method meets that requirement.",
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 3,
-      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "premise": "The existing laboratory measurements are adequate to detect the changes promptly.",
+    "premise": "An in situ spectroscopy pilot is appropriate for this cell culture process.",
     "verdict": "not_covered",
-    "explanation": "No supplied source addresses the accuracy, precision or timeliness of the customer's laboratory measurements. The enquiry itself says the delay makes it difficult to see changes promptly, so this premise is the opposite of what the customer stated. This is a question to put back to the customer, not an assumption to carry forward.",
+    "explanation": "The supplied sources describe fiber-probe in-line/on-line analysis in reactors in general, but none of them addresses this customer's process, medium or analytes, so appropriateness for this process is not established by the sources.",
+    "citations": []
+   },
+   {
+    "premise": "The in situ pilot can be checked against the existing laboratory measurements.",
+    "verdict": "supported",
+    "explanation": "Independent reference measurements are part of the feasibility comparison described in the guidance. Whether the existing laboratory method is accurate, traceable and time-aligned enough to serve as the reference is not established by the sources and must be confirmed by the customer.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The delay of sampling makes it difficult to see changes promptly.",
+    "verdict": "supported",
+    "explanation": "The source states that in-process analysis removes sampling and its delays, which is the rationale the customer gives.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 3,
+      "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The medium and cell population change during the run.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source addresses this customer's process. The consequence is covered in general terms: a calibration is specific to the matrix, so a model built on one process state has to be checked and usually rebuilt or extended on the new material.",
     "citations": []
    }
   ],
   "requirements_stated": [],
   "key_unknowns": [
-   "Glucose and lactate concentration ranges over a run, and the required accuracy, precision and time to result",
-   "Optical density / turbidity of the medium and how strongly it changes with the cell population",
-   "Installation point (reactor, loop, pipe), temperature and pressure there, cleaning/sterilisation the probe must survive, and distance from the spectrometer",
-   "Fluorescence background of the medium and cells (decisive for Raman)",
-   "Which exact laboratory method provides the current glucose/lactate values, at what accuracy and frequency",
-   "Achievable length of a mid-IR fiber link for an in-situ installation (no source states one)"
+   "Typical and extreme concentrations of glucose and lactate in the broth, and the accuracy and precision needed for a result to be actionable.",
+   "Required response time / update interval for the in-situ measurement.",
+   "Optical density (turbidity) of the medium at the start and end of the run - this decides whether transmission geometry is possible at all.",
+   "Fluorescence background of the medium and cells (it can swamp the Raman signal).",
+   "Installation conditions: available port, temperature, pressure, cleaning/sterilization (CIP/SIP), and the distance from the vessel to the spectrometer.",
+   "The existing laboratory reference method for glucose and lactate: identity, uncertainty, sampling delay, and whether reference samples can be time-stamped to the in-situ reading."
   ],
   "clarification_questions": [
    {
     "id": "Q1",
-    "question": "What are the glucose and lactate concentration ranges during a run, and what accuracy, precision and time-to-result do you need? These numbers decide whether NIR or Raman can reach the analytes and they become the go/no-go criteria.",
-    "why_it_matters": "Method, technique and the whole go/no-go basis depend on this. No source supplies detection limits or accuracy for these analytes.",
+    "question": "What are the typical and extreme glucose and lactate concentrations in the broth, what accuracy and precision do you need, and what response time (update interval) would let you act on the result?",
+    "why_it_matters": "These numbers are the basis for the go/no-go criteria and decide whether a method with lower sensitivity for trace levels can be used at all.",
     "affects": [
      "method",
      "technique",
@@ -395,56 +379,52 @@
    },
    {
     "id": "Q2",
-    "question": "How does the medium's optical density / turbidity behave over the run (for example clear at start, turbid at the end), and how much of the change is caused by the cell population?",
-    "why_it_matters": "This decides NIR transmission/transflection versus diffuse reflection versus ATR, and whether a UV-ATR type short-path probe is needed instead of transmission.",
+    "question": "How turbid is the broth at the start and at the end of the run (optical density), and does it stay transparent or semi-transparent?",
+    "why_it_matters": "Transmission geometry only works while light can pass through the sample; turbidity decides between transmission, ATR and reflection geometry, and therefore the technique.",
     "affects": [
      "technique",
-     "probe"
+     "installation",
+     "status"
     ]
    },
    {
     "id": "Q3",
-    "question": "Where would the probe be installed (reactor, recirculation loop, pipe), what are the temperature and pressure there, what cleaning/sterilisation must it survive, and how far is the spectrometer from the process point?",
-    "why_it_matters": "ATR needs tight contact with the sample; installation, fouling and cleaning constraints can rule an immersion crystal in or out, and the distance sets the fiber link, for which no mid-IR length is stated in the supplied material.",
+    "question": "Does the medium or the cell population show a strong fluorescence background, and can we measure a representative sample to check it?",
+    "why_it_matters": "A strong fluorescence background can mask the weak Raman signal, which would change the method ranking.",
+    "affects": [
+     "method",
+     "technique"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What are the installation conditions - available port, temperature, pressure, cleaning/sterilization (CIP/SIP) - and how far is the spectrometer from the vessel?",
+    "why_it_matters": "These decide probe type, fiber family and whether a long fiber link is required; the achievable link length for a mid-IR connection is not stated in the sources.",
     "affects": [
      "installation",
      "technique"
     ]
    },
    {
-    "id": "Q4",
-    "question": "Which laboratory method produces your current glucose and lactate values, how often are samples taken, and what is its accuracy?",
-    "why_it_matters": "The reference measurement has to be good enough to act as the reference; the enquiry gives no detail on it.",
+    "id": "Q5",
+    "question": "Which laboratory method gives your glucose and lactate values today, with what uncertainty and sampling delay, and can reference samples be time-stamped to the in-situ reading?",
+    "why_it_matters": "The pilot can only be judged against a reference that is accurate and time-aligned; this decides the comparison design.",
     "affects": [
      "status",
-     "validation"
-    ]
-   },
-   {
-    "id": "Q5",
-    "question": "Do the medium components or the cells fluoresce strongly (media, NADH-type cofactors, other fluorophores)?",
-    "why_it_matters": "Raman bands can be hidden by luminescence; this has to be checked on the real medium before Raman is relied on.",
-    "affects": [
-     "method"
+     "calibration"
     ]
    }
   ],
   "recommendations": [
    {
-    "id": "R1",
+    "id": "REC1",
     "method": "Raman",
     "technique": "raman_probe",
     "role": "primary",
     "combined_with": [],
-    "rationale": "Passes the screening. Raman is the single method the supplied sources name for the customer's analytes in a reactor: it is described as giving a molecular fingerprint for direct detection of specific metabolites such as glucose and lactate, and as well suited to aqueous media because water absorbs less than in infrared methods. This is the best-supported single method to test first.",
-    "conditions": "Depends on the real fluorescence background and on the analyte levels; Raman signals are weak. The laser excitation wavelength is a separate choice and is not fixed by the supplied material.",
+    "rationale": "Raman passes the screening for an in-line aqueous application and is the single method whose physics fits an aqueous broth best: it is stated to be well suited to aqueous environments because water absorbs much less than in infrared methods. In the bioprocess section of the same source, Raman is described as usable in the reactor for direct detection of metabolites such as glucose, acetate or lactate, and Raman spectra are stated to support chemometric calibration or classification models. That is a reason to test Raman here, not proof that it will work for this customer's medium, cell line or concentration range.",
+    "conditions": "Only after the fluorescence background of the medium and cells has been checked on real samples, because a fluorescence background can be much stronger than the weak Raman signal. The laser excitation wavelength must be chosen and reported separately from the Raman shift axis. Screening status: pass.",
     "citations": [
-     {
-      "doc": "S01",
-      "page": 16,
-      "quote": "direct detection of specific metabolites like glucose, acetate, or lactate.",
-      "claim_kind": "application_precedent"
-     },
      {
       "doc": "S01",
       "page": 16,
@@ -453,8 +433,14 @@
      },
      {
       "doc": "S01",
-      "page": 11,
-      "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+      "page": 16,
+      "quote": "direct detection of specific metabolites like glucose, acetate, or lactate.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 12,
+      "quote": "Raman spectra (as well as IR absorption spectra) can be used to construct chemometric models-calibration or classification ones.",
       "claim_kind": "general"
      },
      {
@@ -466,20 +452,14 @@
     ]
    },
    {
-    "id": "R2",
+    "id": "REC2",
     "method": "MIR",
     "technique": "ATR",
-    "role": "primary",
+    "role": "comparison",
     "combined_with": [],
-    "rationale": "Passes the screening. Strong mid-IR absorption makes transmission impractical for a liquid layer, and ATR is the stated route for that; mid-IR is described as highly informative, ATR probes are described for liquids and for in-line, in-process biotechnological environments, and in-line MIR-ATR is shown in a process example. These are reasons to test, not evidence for this medium.",
-    "conditions": "Requires tight contact with the sample and reads only a very thin surface layer, so fouling and surface representativeness are open risks. The usable range is set by the fiber and the ATR crystal, not by the method range.",
+    "rationale": "Mid-IR ATR passes the screening and is the second single method worth testing against Raman on the same samples. Mid-IR is described as one of the most informative methods of chemical analysis, and ATR fiber probes are described as enabling the analysis of liquids and solid elastic samples, with probe-based analysis in use for in-line, in-process environments. ATR gives an evanescent-wave measurement with a very short effective path, which matters in a water-dominated medium. The comparison tells us which single method carries usable glucose and lactate information in this matrix before any combination is considered.",
+    "conditions": "ATR requires tight contact and suits liquids and soft solids; it samples only a surface layer of a few micrometres, so deposits, fouling and cell adhesion at the crystal are risks, as is sample representativeness in a changing broth. Screening status: pass.",
     "citations": [
-     {
-      "doc": "S01",
-      "page": 5,
-      "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
-      "claim_kind": "general"
-     },
      {
       "doc": "S01",
       "page": 9,
@@ -499,10 +479,183 @@
       "claim_kind": "general"
      },
      {
-      "doc": "S02",
-      "page": 14,
-      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "REC3",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "NIR transmission is conditional: it applies only if the broth stays transparent or semi-transparent throughout the run (Q2). In the dairy example, transmission is the preferred geometry for transparent or semi-transparent liquids, and in the bioprocess section NIR is described as effective for major components such as glucose in the millimolar range. That makes it worth testing as a third single method if - and only if - the optical density allows it. It is not recommended as a first choice for a broth that is or becomes turbid.",
+    "conditions": "Applies only if the broth is and remains transparent or semi-transparent (deciding question Q2: optical density at the start and end of the run). The optical pathlength must be controlled; if it is too wide the signal is lost to absorption, if too narrow the sampled volume is negligible. NIR may lack sensitivity below the trace level stated in the source, so the required glucose and lactate ranges decide its usefulness. Screening status: unknown (Table 1 sample-type fit not confirmed for this sample).",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+      "claim_kind": "performance_figure"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "In-situ probe in contact with the broth. For Raman: a contact Raman probe with the excitation wavelength stated separately. For mid-IR: an ATR probe immersed in the liquid. For NIR (conditional): a transmission/transflection probe with a controlled optical pathlength, used only while the broth stays transparent or semi-transparent.",
+   "location": "In the bioreactor or process line at a point representative of the broth. Medium and cell population change during the run, so the sampling point and the analysed volume matter; ATR analyses only a surface layer of a few micrometres, so contact, deposits and representativeness are risks.",
+   "fiber_link": "Fiber link to the spectrometer placed away from the vessel. Silica fibers carry the UV-Vis-NIR range; mid-IR needs chalcogenide (CIR) or polycrystalline (PIR) fibers. The usable fiber length is configuration-dependent; no source states an achievable length for a mid-IR link.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "Raman",
+    "statement": "Raman is reported as Raman shift on a wavenumber (cm-1) axis; the laser excitation wavelength is stated separately. In the shown example, 785 nm excitation is used with a contact Raman probe.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 15,
+      "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
       "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "method": "MIR",
+    "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 um). The usable range depends on the fiber, crystal and probe actually selected; it is limited by contact and fouling at the ATR crystal.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "The Raman signal can be swamped by fluorescence from the medium or the cells.",
+    "rule_ids": [
+     "R-RAM-1"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Calibration is matrix-specific. As the medium and the cell population change during the run, a model built on one process state has to be checked and usually rebuilt or extended on the new material; a single calibration for the whole run is an assumption, not a given.",
+    "rule_ids": [
+     "R-CAL-1"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Geometry risk: if the broth is or becomes turbid, NIR transmission loses its signal, and mid-IR ATR only probes a surface layer a few micrometres deep where deposits or fouling change the measurement.",
+    "rule_ids": [
+     "R-GEN-4",
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+      "claim_kind": "general"
      },
      {
       "doc": "S01",
@@ -519,245 +672,29 @@
     ]
    },
    {
-    "id": "R3",
-    "method": "NIR",
-    "technique": "diffuse_reflection",
-    "role": "conditional",
-    "combined_with": [],
-    "rationale": "Screening is 'unknown' because the medium's optical regime is not known, so this entry applies only if the medium is opaque/scattering enough that transmission is not usable. NIR is described as the most common online fiber-probe method and as effective for major components like glucose in the millimolar range, but it may lack sensitivity below 0.1 percent. If the medium is transparent and low-OD, the transmission/transflection geometry would be the one to test instead.",
-    "conditions": "Decided by Q2. Requires controlled optical pathlength if transmission is used, and scatter correction if reflection is used. NIR calibrations are matrix-specific.",
+    "risk": "Performance figures are unconfirmed: no source states an achievable cable length for a mid-IR link, and no source gives accuracy, detection limits or response time for glucose and lactate in this medium. For trace levels, NIR sensitivity is a stated limitation.",
+    "rule_ids": [
+     "R-FIB-2",
+     "R-NIR-4"
+    ],
     "citations": [
      {
-      "doc": "S01",
+      "doc": "S02",
+      "page": 7,
+      "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
       "page": 10,
-      "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+      "quote": "1 Meter PolyMicro hollow fiber 1mm ID",
       "claim_kind": "general"
      },
      {
       "doc": "S01",
       "page": 16,
-      "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 17,
-      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 18,
-      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 18,
-      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "id": "R4",
-    "method": "Fluorescence",
-    "technique": "fluorescence_probe",
-    "role": "not_recommended",
-    "combined_with": [],
-    "rationale": "Fluorescence is a key online method in biotechnology, so a reader would expect it to be considered. It is not recommended for the stated targets: it reports species that fluoresce, most chemicals do not, and no fluorescent species or justified indicator for glucose or lactate has been identified. It is high-sensitivity but low-selectivity and not a direct measurement of every analyte.",
-    "conditions": "Could only become relevant if a defined fluorescent species or a justified indicator for this process is named.",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 5,
-      "quote": "However, most chemicals do not exhibit this property.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 12,
-      "quote": "Recently, it has become a key method for online analysis of biotechnological processes.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "High sensitivity, low selectivity; not a direct measurement of every analyte.",
-      "claim_kind": "general"
-     }
-    ]
-   }
-  ],
-  "measurement_concept": {
-   "probe_and_geometry": "Immersion or flow-through probe at the process point, without sampling: MIR-ATR crystal in contact with the liquid; Raman probe (contact or through a window); NIR reflection for scattering media or transmission/transflection for clear media. Which of these is installed depends on Q2 and Q3.",
-   "location": "Directly in the process flow or reactor rather than by sampling.",
-   "fiber_link": "NIR and Raman can use silica fibers (the visible-to-near-IR silica fiber family is shown in the fiber-range figure on S02 p.6); metal-coated silica avoids polymer-jacket fluorescence, which matters for Raman. MIR cannot use silica and needs chalcogenide (CIR) or polycrystalline (PIR) fibers; hollow waveguides couple poorly to FTIR spectrometers. The achievable length of a mid-IR link is not stated in the supplied material and is an open question for AFS.",
-   "citations": [
-    {
-     "doc": "S01",
-     "page": 3,
-     "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 6,
-     "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 6,
-     "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 7,
-     "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 10,
-     "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers",
-     "claim_kind": "general"
-    }
-   ]
-  },
-  "spectral_ranges": [
-   {
-    "method": "NIR",
-    "statement": "Nominal method range 780-2500 nm. The usable range depends on the spectrometer, fiber and probe actually selected.",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 10,
-      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 3,
-      "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "method": "MIR",
-    "statement": "Nominal method range 4000-400 cm-1 (2.5-25 µm). In a fiber-probe setup the usable range is set by the fiber and the ATR crystal, not by the method range.",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 9,
-      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "method": "Raman",
-    "statement": "Raman is reported on the Raman shift axis in cm-1; the laser excitation wavelength is a separate choice and is not fixed by the supplied material (785 nm appears only in a pharmaceutical example).",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 11,
-      "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 15,
-      "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
-      "claim_kind": "application_precedent"
-     }
-    ]
-   }
-  ],
-  "risks": [
-   {
-    "risk": "The Raman signal may be swamped by fluorescence from the medium or cells; this can only be judged on the real medium.",
-    "rule_ids": [
-     "R-RAM-1"
-    ],
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 11,
-      "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "risk": "The medium and cell population change during the run, so a calibration built on one process state may not hold across the run or across batches; NIR and Raman calibrations are matrix-specific.",
-    "rule_ids": [
-     "R-CAL-1"
-    ],
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "physical variation; calibration specific to the matrix.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "risk": "If the optical density rises strongly during the run, a transmission geometry can saturate and stop measuring; the geometry choice then changes. The pathlength in transmission must be controlled.",
-    "rule_ids": [
-     "R-GEO-2",
-     "R-GEN-3",
-     "R-GEN-4"
-    ],
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 16,
-      "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 18,
-      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "risk": "Installation and contact: an ATR probe needs tight contact and reads only a surface layer, so fouling, cleaning/sterilisation and sample representativeness are open; the achievable length of a mid-IR fiber link for this installation is not stated anywhere in the supplied material.",
-    "rule_ids": [
-     "R-MIR-2",
-     "R-MIR-3",
-     "R-FIB-2"
-    ],
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "Liquids, pastes and soft solids in contact with the ATR crystal.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 13,
-      "quote": "typically at a depth of few microns",
-      "claim_kind": "general"
+      "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+      "claim_kind": "performance_figure"
      }
     ]
    }
@@ -765,8 +702,8 @@
   "feasibility_plan": {
    "steps": [
     {
-     "step": "Build a representative sample set from real process states: early, mid and late in the run, covering the observed glucose and lactate range, the cell-density/viability range and any medium changes. Include at least two independent runs or batches so that one can be held out.",
-     "purpose": "Representative coverage before any method is chosen.",
+     "step": "1. Representative samples across the run",
+     "purpose": "Cover the expected chemical and physical variation: broth samples (or process states) from low to high cell density and across the expected glucose and lactate range, with spiked levels where useful.",
      "citations": [
       {
        "doc": "REF",
@@ -777,8 +714,8 @@
      ]
     },
     {
-     "step": "Measure every sample in the laboratory with each single candidate method first (Raman probe; MIR-ATR; NIR in the geometry that matches the sample's optical density), plus spiked samples to cover the required concentration range, and keep the existing laboratory values alongside as the reference.",
-     "purpose": "Single methods first; no combination before this.",
+     "step": "2. Single-method laboratory comparison first",
+     "purpose": "Measure the same samples with the single candidates - Raman probe and mid-IR ATR, and NIR transmission only if the broth stays transparent - and record which method gives usable signal for glucose and for lactate. No combination in this step.",
      "citations": [
       {
        "doc": "S01",
@@ -789,26 +726,20 @@
      ]
     },
     {
-     "step": "Compare the single methods against the reference and against each other. Only then test a combination (for example NIR + Raman, or MIR-ATR + Raman) as a hypothesis to be measured against the best single method, with sampling location and timing aligned.",
-     "purpose": "Keep any combination claim as a hypothesis.",
+     "step": "3. Independent reference measurements",
+     "purpose": "Measure glucose and lactate with the existing laboratory method on the same samples, plus a cell-density/viability reference for the biomass, time-stamped so in-situ and reference values can be paired.",
      "citations": [
       {
        "doc": "REF",
-       "page": 5,
-       "quote": "compare with the best single method.",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
        "claim_kind": "general"
-      },
-      {
-       "doc": "REF",
-       "page": 5,
-       "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
-       "claim_kind": "method_gain"
       }
      ]
     },
     {
-     "step": "Validate the models on held-out runs or batches, not only on further samples from the same run, and check whether the medium and cell changes during a run break the calibration.",
-     "purpose": "Independent validation on limited data.",
+     "step": "4. Calibration and validation on held-out runs",
+     "purpose": "Build chemometric models per analyte on part of the data and validate them on held-out runs or batches, not on the runs used for calibration, given that the matrix changes during the run.",
      "citations": [
       {
        "doc": "S03",
@@ -819,8 +750,8 @@
      ]
     },
     {
-     "step": "Fix the go/no-go basis before starting. The numerical criteria (accuracy, precision, time to result, allowed drift over a run) must come from the customer; they are not in the supplied material, so until they are given the pilot has no defined decision basis.",
-     "purpose": "Go/no-go criteria come from the customer.",
+     "step": "5. Go/no-go",
+     "purpose": "Fix the numerical go/no-go criteria with the customer before the trial (accuracy, precision and response time for glucose and lactate). Go if the in-situ prediction meets them on the held-out runs; otherwise fall back to the next single method before considering any combination. A combination is only a later hypothesis to test against the best single method.",
      "citations": [
       {
        "doc": "REF",
@@ -831,70 +762,76 @@
      ]
     }
    ],
-   "reference_measurements": "The existing laboratory glucose and lactate values, provided their accuracy and sampling frequency are adequate (Q4).",
-   "decision_basis": "Not defined yet: no detection limit, accuracy, precision or response time for glucose or lactate appears in the supplied sources or in the enquiry. These numbers must be set by the customer before the experiment can pass or fail."
+   "reference_measurements": "Existing laboratory glucose and lactate values on the same samples, plus cell density / viability, time-stamped to the in-situ readings.",
+   "decision_basis": "Customer-defined numerical criteria for accuracy, precision and response time per analyte, checked on held-out runs."
   },
   "assumptions": [
-   "The customer's existing laboratory measurements are accurate and frequent enough to act as the reference; this is assumed, not confirmed.",
-   "The process allows a probe to be brought into contact with, or immersed in, the medium (contact, sterilisation and cleaning constraints are unknown).",
-   "Glucose and lactate sit in a concentration range where at least one of the shortlisted methods has a chance; no source states a detection limit for either analyte in this medium."
+   "The broth behaves as a liquid that can be brought into contact with a probe (stated as an aqueous medium).",
+   "The existing laboratory glucose/lactate method is accurate and time-aligned enough to act as the reference; this is not established by the sources.",
+   "Whether one single method can cover both analytes is an outcome of the trial, not an assumption; a combination is only considered after the single-method comparison."
   ],
   "not_in_sources": [
-   "Detection limits, accuracy, precision or response time for glucose or lactate in a cell-culture medium: no supplied source states these for any configuration.",
-   "An achievable length for a mid-IR fiber link in an in-situ installation: no supplied source states one; the mid-IR fiber and hollow-waveguide examples shown are laboratory lengths only."
+   "Achievable accuracy, detection limits and response time for glucose and lactate in cell-culture medium: no supplied source states these figures.",
+   "Probe compatibility with the customer's cleaning and sterilization regime (CIP/SIP): not covered by the supplied sources."
   ]
  },
  "assessment_raw": {
   "decision_status": "provisional_assessment",
-  "status_reason": "A shortlist of single methods can be justified for laboratory testing (Raman and MIR-ATR pass the screening; NIR is conditional on the medium's optical density). No probe, geometry, fiber link, accuracy or calibration strategy can be fixed from the stated facts. The published examples cited below are reasons to test, not evidence that any method works for this process.",
+  "status_reason": "A shortlist of single methods worth testing can be justified from the sources: Raman and mid-IR ATR pass the screening for an in-line aqueous application, and NIR transmission is conditional on the broth's optical density. The concentration ranges, required accuracy and required response time are not known, so this is a provisional assessment with stated assumptions, not a selection of a probe or a calibration strategy.",
   "premise_checks": [
    {
-    "premise": "The existing laboratory measurements can serve as a reference for the in situ spectroscopy pilot.",
-    "verdict": "supported",
-    "explanation": "A feasibility plan is expected to include independent reference measurements. Whether these particular measurements are accurate, traceable and frequent enough to be that reference is not addressed by the sources.",
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 3,
-      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "premise": "The in situ spectroscopy pilot can be checked against those existing laboratory measurements.",
-    "verdict": "supported",
-    "explanation": "Same check as above: the sources expect a defined reference measurement and a defined comparison in a feasibility plan; they do not confirm that the customer's current method meets that requirement.",
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 3,
-      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "premise": "The existing laboratory measurements are adequate to detect the changes promptly.",
+    "premise": "An in situ spectroscopy pilot is appropriate for this cell culture process.",
     "verdict": "not_covered",
-    "explanation": "No supplied source addresses the accuracy, precision or timeliness of the customer's laboratory measurements. The enquiry itself says the delay makes it difficult to see changes promptly, so this premise is the opposite of what the customer stated. This is a question to put back to the customer, not an assumption to carry forward.",
+    "explanation": "The supplied sources describe fiber-probe in-line/on-line analysis in reactors in general, but none of them addresses this customer's process, medium or analytes, so appropriateness for this process is not established by the sources.",
+    "citations": []
+   },
+   {
+    "premise": "The in situ pilot can be checked against the existing laboratory measurements.",
+    "verdict": "supported",
+    "explanation": "Independent reference measurements are part of the feasibility comparison described in the guidance. Whether the existing laboratory method is accurate, traceable and time-aligned enough to serve as the reference is not established by the sources and must be confirmed by the customer.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The delay of sampling makes it difficult to see changes promptly.",
+    "verdict": "supported",
+    "explanation": "The source states that in-process analysis removes sampling and its delays, which is the rationale the customer gives.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 3,
+      "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The medium and cell population change during the run.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source addresses this customer's process. The consequence is covered in general terms: a calibration is specific to the matrix, so a model built on one process state has to be checked and usually rebuilt or extended on the new material.",
     "citations": []
    }
   ],
   "requirements_stated": [],
   "key_unknowns": [
-   "Glucose and lactate concentration ranges over a run, and the required accuracy, precision and time to result",
-   "Optical density / turbidity of the medium and how strongly it changes with the cell population",
-   "Installation point (reactor, loop, pipe), temperature and pressure there, cleaning/sterilisation the probe must survive, and distance from the spectrometer",
-   "Fluorescence background of the medium and cells (decisive for Raman)",
-   "Which exact laboratory method provides the current glucose/lactate values, at what accuracy and frequency",
-   "Achievable length of a mid-IR fiber link for an in-situ installation (no source states one)"
+   "Typical and extreme concentrations of glucose and lactate in the broth, and the accuracy and precision needed for a result to be actionable.",
+   "Required response time / update interval for the in-situ measurement.",
+   "Optical density (turbidity) of the medium at the start and end of the run - this decides whether transmission geometry is possible at all.",
+   "Fluorescence background of the medium and cells (it can swamp the Raman signal).",
+   "Installation conditions: available port, temperature, pressure, cleaning/sterilization (CIP/SIP), and the distance from the vessel to the spectrometer.",
+   "The existing laboratory reference method for glucose and lactate: identity, uncertainty, sampling delay, and whether reference samples can be time-stamped to the in-situ reading."
   ],
   "clarification_questions": [
    {
     "id": "Q1",
-    "question": "What are the glucose and lactate concentration ranges during a run, and what accuracy, precision and time-to-result do you need? These numbers decide whether NIR or Raman can reach the analytes and they become the go/no-go criteria.",
-    "why_it_matters": "Method, technique and the whole go/no-go basis depend on this. No source supplies detection limits or accuracy for these analytes.",
+    "question": "What are the typical and extreme glucose and lactate concentrations in the broth, what accuracy and precision do you need, and what response time (update interval) would let you act on the result?",
+    "why_it_matters": "These numbers are the basis for the go/no-go criteria and decide whether a method with lower sensitivity for trace levels can be used at all.",
     "affects": [
      "method",
      "technique",
@@ -903,68 +840,143 @@
    },
    {
     "id": "Q2",
-    "question": "How does the medium's optical density / turbidity behave over the run (for example clear at start, turbid at the end), and how much of the change is caused by the cell population?",
-    "why_it_matters": "This decides NIR transmission/transflection versus diffuse reflection versus ATR, and whether a UV-ATR type short-path probe is needed instead of transmission.",
+    "question": "How turbid is the broth at the start and at the end of the run (optical density), and does it stay transparent or semi-transparent?",
+    "why_it_matters": "Transmission geometry only works while light can pass through the sample; turbidity decides between transmission, ATR and reflection geometry, and therefore the technique.",
     "affects": [
      "technique",
-     "probe"
+     "installation",
+     "status"
     ]
    },
    {
     "id": "Q3",
-    "question": "Where would the probe be installed (reactor, recirculation loop, pipe), what are the temperature and pressure there, what cleaning/sterilisation must it survive, and how far is the spectrometer from the process point?",
-    "why_it_matters": "ATR needs tight contact with the sample; installation, fouling and cleaning constraints can rule an immersion crystal in or out, and the distance sets the fiber link, for which no mid-IR length is stated in the supplied material.",
+    "question": "Does the medium or the cell population show a strong fluorescence background, and can we measure a representative sample to check it?",
+    "why_it_matters": "A strong fluorescence background can mask the weak Raman signal, which would change the method ranking.",
+    "affects": [
+     "method",
+     "technique"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What are the installation conditions - available port, temperature, pressure, cleaning/sterilization (CIP/SIP) - and how far is the spectrometer from the vessel?",
+    "why_it_matters": "These decide probe type, fiber family and whether a long fiber link is required; the achievable link length for a mid-IR connection is not stated in the sources.",
     "affects": [
      "installation",
      "technique"
     ]
    },
    {
-    "id": "Q4",
-    "question": "Which laboratory method produces your current glucose and lactate values, how often are samples taken, and what is its accuracy?",
-    "why_it_matters": "The reference measurement has to be good enough to act as the reference; the enquiry gives no detail on it.",
+    "id": "Q5",
+    "question": "Which laboratory method gives your glucose and lactate values today, with what uncertainty and sampling delay, and can reference samples be time-stamped to the in-situ reading?",
+    "why_it_matters": "The pilot can only be judged against a reference that is accurate and time-aligned; this decides the comparison design.",
     "affects": [
      "status",
-     "validation"
-    ]
-   },
-   {
-    "id": "Q5",
-    "question": "Do the medium components or the cells fluoresce strongly (media, NADH-type cofactors, other fluorophores)?",
-    "why_it_matters": "Raman bands can be hidden by luminescence; this has to be checked on the real medium before Raman is relied on.",
-    "affects": [
-     "method"
+     "calibration"
     ]
    }
   ],
-  "recommendations": [
+  "recommendations": [],
+  "measurement_concept": {
+   "probe_and_geometry": "In-situ probe in contact with the broth. For Raman: a contact Raman probe with the excitation wavelength stated separately. For mid-IR: an ATR probe immersed in the liquid. For NIR (conditional): a transmission/transflection probe with a controlled optical pathlength, used only while the broth stays transparent or semi-transparent.",
+   "location": "In the bioreactor or process line at a point representative of the broth. Medium and cell population change during the run, so the sampling point and the analysed volume matter; ATR analyses only a surface layer of a few micrometres, so contact, deposits and representativeness are risks.",
+   "fiber_link": "Fiber link to the spectrometer placed away from the vessel. Silica fibers carry the UV-Vis-NIR range; mid-IR needs chalcogenide (CIR) or polycrystalline (PIR) fibers. The usable fiber length is configuration-dependent; no source states an achievable length for a mid-IR link.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
    {
-    "id": "R1",
     "method": "Raman",
-    "technique": "raman_probe",
-    "role": "primary",
-    "combined_with": [],
-    "rationale": "Passes the screening. Raman is the single method the supplied sources name for the customer's analytes in a reactor: it is described as giving a molecular fingerprint for direct detection of specific metabolites such as glucose and lactate, and as well suited to aqueous media because water absorbs less than in infrared methods. This is the best-supported single method to test first.",
-    "conditions": "Depends on the real fluorescence background and on the analyte levels; Raman signals are weak. The laser excitation wavelength is a separate choice and is not fixed by the supplied material.",
+    "statement": "Raman is reported as Raman shift on a wavenumber (cm-1) axis; the laser excitation wavelength is stated separately. In the shown examples, 785 nm excitation is used in a contact Raman probe, and 680 nm / 785 nm in a combi probe.",
     "citations": [
      {
       "doc": "S01",
-      "page": 16,
-      "quote": "direct detection of specific metabolites like glucose, acetate, or lactate.",
-      "claim_kind": "application_precedent"
-     },
-     {
-      "doc": "S01",
-      "page": 16,
-      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
       "page": 11,
-      "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+      "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
       "claim_kind": "general"
      },
+     {
+      "doc": "S01",
+      "page": 15,
+      "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "method": "MIR",
+    "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 um). The usable range depends on the fiber, crystal and probe actually selected; it is limited by contact and fouling at the ATR crystal.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "The Raman signal can be swamped by fluorescence from the medium or the cells.",
+    "rule_ids": [
+     "R-RAM-1"
+    ],
+    "citations": [
      {
       "doc": "S01",
       "page": 11,
@@ -974,43 +986,31 @@
     ]
    },
    {
-    "id": "R2",
-    "method": "MIR",
-    "technique": "ATR",
-    "role": "primary",
-    "combined_with": [],
-    "rationale": "Passes the screening. Strong mid-IR absorption makes transmission impractical for a liquid layer, and ATR is the stated route for that; mid-IR is described as highly informative, ATR probes are described for liquids and for in-line, in-process biotechnological environments, and in-line MIR-ATR is shown in a process example. These are reasons to test, not evidence for this medium.",
-    "conditions": "Requires tight contact with the sample and reads only a very thin surface layer, so fouling and surface representativeness are open risks. The usable range is set by the fiber and the ATR crystal, not by the method range.",
+    "risk": "Calibration is matrix-specific. As the medium and the cell population change during the run, a model built on one process state has to be checked and usually rebuilt or extended on the new material; a single calibration for the whole run is an assumption, not a given.",
+    "rule_ids": [
+     "R-CAL-1"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Geometry risk: if the broth is or becomes turbid, NIR transmission loses its signal, and mid-IR ATR only probes a surface layer a few micrometres deep where deposits or fouling change the measurement.",
+    "rule_ids": [
+     "R-GEN-4",
+     "R-MIR-3"
+    ],
     "citations": [
      {
       "doc": "S01",
-      "page": 5,
-      "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
       "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 9,
-      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 10,
-      "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 10,
-      "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S02",
-      "page": 14,
-      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
-      "claim_kind": "application_precedent"
      },
      {
       "doc": "S01",
@@ -1027,245 +1027,29 @@
     ]
    },
    {
-    "id": "R3",
-    "method": "NIR",
-    "technique": "diffuse_reflection",
-    "role": "conditional",
-    "combined_with": [],
-    "rationale": "Screening is 'unknown' because the medium's optical regime is not known, so this entry applies only if the medium is opaque/scattering enough that transmission is not usable. NIR is described as the most common online fiber-probe method and as effective for major components like glucose in the millimolar range, but it may lack sensitivity below 0.1 percent. If the medium is transparent and low-OD, the transmission/transflection geometry would be the one to test instead.",
-    "conditions": "Decided by Q2. Requires controlled optical pathlength if transmission is used, and scatter correction if reflection is used. NIR calibrations are matrix-specific.",
+    "risk": "Performance figures are unconfirmed: no source states an achievable cable length for a mid-IR link, and no source gives accuracy, detection limits or response time for glucose and lactate in this medium. For trace levels, NIR sensitivity is a stated limitation.",
+    "rule_ids": [
+     "R-FIB-2",
+     "R-NIR-4"
+    ],
     "citations": [
      {
-      "doc": "S01",
+      "doc": "S02",
+      "page": 7,
+      "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
       "page": 10,
-      "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+      "quote": "1 Meter PolyMicro hollow fiber 1mm ID",
       "claim_kind": "general"
      },
      {
       "doc": "S01",
       "page": 16,
-      "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 17,
-      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 18,
-      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 18,
-      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "id": "R4",
-    "method": "Fluorescence",
-    "technique": "fluorescence_probe",
-    "role": "not_recommended",
-    "combined_with": [],
-    "rationale": "Fluorescence is a key online method in biotechnology, so a reader would expect it to be considered. It is not recommended for the stated targets: it reports species that fluoresce, most chemicals do not, and no fluorescent species or justified indicator for glucose or lactate has been identified. It is high-sensitivity but low-selectivity and not a direct measurement of every analyte.",
-    "conditions": "Could only become relevant if a defined fluorescent species or a justified indicator for this process is named.",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 5,
-      "quote": "However, most chemicals do not exhibit this property.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 12,
-      "quote": "Recently, it has become a key method for online analysis of biotechnological processes.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "High sensitivity, low selectivity; not a direct measurement of every analyte.",
-      "claim_kind": "general"
-     }
-    ]
-   }
-  ],
-  "measurement_concept": {
-   "probe_and_geometry": "Immersion or flow-through probe at the process point, without sampling: MIR-ATR crystal in contact with the liquid; Raman probe (contact or through a window); NIR reflection for scattering media or transmission/transflection for clear media. Which of these is installed depends on Q2 and Q3.",
-   "location": "Directly in the process flow or reactor rather than by sampling.",
-   "fiber_link": "NIR and Raman can use silica fibers (vis-NIR silica is shown to about 2400 nm); metal-coated silica avoids polymer-jacket fluorescence, which matters for Raman. MIR cannot use silica and needs chalcogenide (CIR) or polycrystalline (PIR) fibers; hollow waveguides couple poorly to FTIR spectrometers. The achievable length of a mid-IR link is not stated in the supplied material and is an open question for AFS.",
-   "citations": [
-    {
-     "doc": "S01",
-     "page": 3,
-     "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 6,
-     "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 6,
-     "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 7,
-     "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
-     "claim_kind": "general"
-    },
-    {
-     "doc": "S02",
-     "page": 10,
-     "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers",
-     "claim_kind": "general"
-    }
-   ]
-  },
-  "spectral_ranges": [
-   {
-    "method": "NIR",
-    "statement": "Nominal method range 780-2500 nm. The usable range depends on the spectrometer, fiber and probe actually selected; the vis-NIR silica fibers shown transmit from 350 nm to 2400 nm.",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 10,
-      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 3,
-      "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "method": "MIR",
-    "statement": "Nominal method range 4000-400 cm-1 (2.5-25 µm). In a fiber-probe setup the usable range is set by the fiber and the ATR crystal, not by the method range.",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 9,
-      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "method": "Raman",
-    "statement": "Raman is reported on the Raman shift axis in cm-1; the laser excitation wavelength is a separate choice and is not fixed by the supplied material (785 nm appears only in a pharmaceutical example).",
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 11,
-      "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 15,
-      "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
-      "claim_kind": "application_precedent"
-     }
-    ]
-   }
-  ],
-  "risks": [
-   {
-    "risk": "The Raman signal may be swamped by fluorescence from the medium or cells; this can only be judged on the real medium.",
-    "rule_ids": [
-     "R-RAM-1"
-    ],
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 11,
-      "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "risk": "The medium and cell population change during the run, so a calibration built on one process state may not hold across the run or across batches; NIR and Raman calibrations are matrix-specific.",
-    "rule_ids": [
-     "R-CAL-1"
-    ],
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "physical variation; calibration specific to the matrix.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "risk": "If the optical density rises strongly during the run, a transmission geometry can saturate and stop measuring; the geometry choice then changes. The pathlength in transmission must be controlled.",
-    "rule_ids": [
-     "R-GEO-2",
-     "R-GEN-3",
-     "R-GEN-4"
-    ],
-    "citations": [
-     {
-      "doc": "S01",
-      "page": 16,
-      "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 18,
-      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
-      "claim_kind": "general"
-     }
-    ]
-   },
-   {
-    "risk": "Installation and contact: an ATR probe needs tight contact and reads only a surface layer, so fouling, cleaning/sterilisation and sample representativeness are open; the achievable length of a mid-IR fiber link for this installation is not stated anywhere in the supplied material.",
-    "rule_ids": [
-     "R-MIR-2",
-     "R-MIR-3",
-     "R-FIB-2"
-    ],
-    "citations": [
-     {
-      "doc": "REF",
-      "page": 5,
-      "quote": "Liquids, pastes and soft solids in contact with the ATR crystal.",
-      "claim_kind": "general"
-     },
-     {
-      "doc": "S01",
-      "page": 13,
-      "quote": "typically at a depth of few microns",
-      "claim_kind": "general"
+      "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+      "claim_kind": "performance_figure"
      }
     ]
    }
@@ -1273,8 +1057,8 @@
   "feasibility_plan": {
    "steps": [
     {
-     "step": "Build a representative sample set from real process states: early, mid and late in the run, covering the observed glucose and lactate range, the cell-density/viability range and any medium changes. Include at least two independent runs or batches so that one can be held out.",
-     "purpose": "Representative coverage before any method is chosen.",
+     "step": "1. Representative samples across the run",
+     "purpose": "Cover the expected chemical and physical variation: broth samples (or process states) from low to high cell density and across the expected glucose and lactate range, with spiked levels where useful.",
      "citations": [
       {
        "doc": "REF",
@@ -1285,8 +1069,8 @@
      ]
     },
     {
-     "step": "Measure every sample in the laboratory with each single candidate method first (Raman probe; MIR-ATR; NIR in the geometry that matches the sample's optical density), plus spiked samples to cover the required concentration range, and keep the existing laboratory values alongside as the reference.",
-     "purpose": "Single methods first; no combination before this.",
+     "step": "2. Single-method laboratory comparison first",
+     "purpose": "Measure the same samples with the single candidates - Raman probe and mid-IR ATR, and NIR transmission only if the broth stays transparent - and record which method gives usable signal for glucose and for lactate. No combination in this step.",
      "citations": [
       {
        "doc": "S01",
@@ -1297,26 +1081,20 @@
      ]
     },
     {
-     "step": "Compare the single methods against the reference and against each other. Only then test a combination (for example NIR + Raman, or MIR-ATR + Raman) as a hypothesis to be measured against the best single method, with sampling location and timing aligned.",
-     "purpose": "Keep any combination claim as a hypothesis.",
+     "step": "3. Independent reference measurements",
+     "purpose": "Measure glucose and lactate with the existing laboratory method on the same samples, plus a cell-density/viability reference for the biomass, time-stamped so in-situ and reference values can be paired.",
      "citations": [
       {
        "doc": "REF",
-       "page": 5,
-       "quote": "compare with the best single method.",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
        "claim_kind": "general"
-      },
-      {
-       "doc": "REF",
-       "page": 5,
-       "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
-       "claim_kind": "method_gain"
       }
      ]
     },
     {
-     "step": "Validate the models on held-out runs or batches, not only on further samples from the same run, and check whether the medium and cell changes during a run break the calibration.",
-     "purpose": "Independent validation on limited data.",
+     "step": "4. Calibration and validation on held-out runs",
+     "purpose": "Build chemometric models per analyte on part of the data and validate them on held-out runs or batches, not on the runs used for calibration, given that the matrix changes during the run.",
      "citations": [
       {
        "doc": "S03",
@@ -1327,8 +1105,8 @@
      ]
     },
     {
-     "step": "Fix the go/no-go basis before starting. The numerical criteria (accuracy, precision, time to result, allowed drift over a run) must come from the customer; they are not in the supplied material, so until they are given the pilot has no defined decision basis.",
-     "purpose": "Go/no-go criteria come from the customer.",
+     "step": "5. Go/no-go",
+     "purpose": "Fix the numerical go/no-go criteria with the customer before the trial (accuracy, precision and response time for glucose and lactate). Go if the in-situ prediction meets them on the held-out runs; otherwise fall back to the next single method before considering any combination. A combination is only a later hypothesis to test against the best single method.",
      "citations": [
       {
        "doc": "REF",
@@ -1339,42 +1117,63 @@
      ]
     }
    ],
-   "reference_measurements": "The existing laboratory glucose and lactate values, provided their accuracy and sampling frequency are adequate (Q4).",
-   "decision_basis": "Not defined yet: no detection limit, accuracy, precision or response time for glucose or lactate appears in the supplied sources or in the enquiry. These numbers must be set by the customer before the experiment can pass or fail."
+   "reference_measurements": "Existing laboratory glucose and lactate values on the same samples, plus cell density / viability, time-stamped to the in-situ readings.",
+   "decision_basis": "Customer-defined numerical criteria for accuracy, precision and response time per analyte, checked on held-out runs."
   },
   "assumptions": [
-   "The customer's existing laboratory measurements are accurate and frequent enough to act as the reference; this is assumed, not confirmed.",
-   "The process allows a probe to be brought into contact with, or immersed in, the medium (contact, sterilisation and cleaning constraints are unknown).",
-   "Glucose and lactate sit in a concentration range where at least one of the shortlisted methods has a chance; no source states a detection limit for either analyte in this medium."
+   "The broth behaves as a liquid that can be brought into contact with a probe (stated as an aqueous medium).",
+   "The existing laboratory glucose/lactate method is accurate and time-aligned enough to act as the reference; this is not established by the sources.",
+   "Whether one single method can cover both analytes is an outcome of the trial, not an assumption; a combination is only considered after the single-method comparison."
   ],
   "not_in_sources": [
-   "Detection limits, accuracy, precision or response time for glucose or lactate in a cell-culture medium: no supplied source states these for any configuration.",
-   "An achievable length for a mid-IR fiber link in an in-situ installation: no supplied source states one; the mid-IR fiber and hollow-waveguide examples shown are laboratory lengths of roughly 1-2 m."
+   "Achievable accuracy, detection limits and response time for glucose and lactate in cell-culture medium: no supplied source states these figures.",
+   "Probe compatibility with the customer's cleaning and sterilization regime (CIP/SIP): not covered by the supplied sources."
   ]
  },
  "verification": {
   "summary": {
    "passed": true,
    "hard_failures": 0,
-   "soft_failures": 1,
-   "checks": 148,
-   "citations_total": 45,
-   "citations_verified": 45
+   "soft_failures": 7,
+   "checks": 139,
+   "citations_total": 38,
+   "citations_verified": 38
   },
   "checks": [
    {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "premise_checks[0].citations[0]",
-    "message": "ok"
+    "name": "intake_sanitized",
+    "passed": false,
+    "severity": "soft",
+    "location": "intake.process[3]",
+    "message": "enquiry_quote not found verbatim in the enquiry"
    },
    {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "premise_checks[0].citations[0]",
-    "message": "ok"
+    "name": "intake_sanitized",
+    "passed": false,
+    "severity": "soft",
+    "location": "intake.process[4]",
+    "message": "enquiry_quote not found verbatim in the enquiry"
+   },
+   {
+    "name": "intake_sanitized",
+    "passed": false,
+    "severity": "soft",
+    "location": "intake.process[5]",
+    "message": "enquiry_quote not found verbatim in the enquiry"
+   },
+   {
+    "name": "intake_sanitized",
+    "passed": false,
+    "severity": "soft",
+    "location": "intake.process[6]",
+    "message": "enquiry_quote not found verbatim in the enquiry"
+   },
+   {
+    "name": "intake_sanitized",
+    "passed": false,
+    "severity": "soft",
+    "location": "intake.process[8]",
+    "message": "enquiry_quote not found verbatim in the enquiry"
    },
    {
     "name": "quote_verified",
@@ -1388,6 +1187,20 @@
     "passed": true,
     "severity": "hard",
     "location": "premise_checks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[2].citations[0]",
     "message": "ok"
    },
    {
@@ -1520,34 +1333,6 @@
     "name": "quote_verified",
     "passed": true,
     "severity": "hard",
-    "location": "recommendations[1].citations[5]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[1].citations[5]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[1].citations[6]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[1].citations[6]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
     "location": "recommendations[2].citations[0]",
     "message": "ok"
    },
@@ -1584,392 +1369,329 @@
     "passed": true,
     "severity": "hard",
     "location": "recommendations[2].citations[2]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[2].citations[3]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[2].citations[3]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[2].citations[4]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[2].citations[4]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3].citations[2]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3].citations[2]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[2]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[2]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[3]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[3]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[4]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "measurement_concept.citations[4]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[0].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[0].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[0].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[0].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[1].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[1].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[1].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[1].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[2].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[2].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[2].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "spectral_ranges[2].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[0].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[0].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[1].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[1].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[1].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[1].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[2].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[2].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[2].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[2].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[3].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[3].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[3].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "risks[3].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[0].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[0].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[1].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[1].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[2].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[2].citations[0]",
-    "message": "ok"
-   },
-   {
-    "name": "quote_verified",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[2].citations[1]",
-    "message": "ok"
-   },
-   {
-    "name": "citation_scope",
-    "passed": true,
-    "severity": "hard",
-    "location": "feasibility_plan.steps[2].citations[1]",
     "message": "ok"
    },
    {
     "name": "citation_precedent_only",
     "passed": false,
     "severity": "soft",
-    "location": "feasibility_plan.steps[2].citations[1]",
-    "message": "a gain from combining methods is a hypothesis to test (R-CMB-1); REF §5 is precedent"
+    "location": "recommendations[2].citations[2]",
+    "message": "S01 p.16 is ['literature_map', 'method']: its figures come from a specific study, example or literature and do not transfer to a new setup (R-EVI-2)"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[3]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[3]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[4]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[4]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[1].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[1].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_precedent_only",
+    "passed": false,
+    "severity": "soft",
+    "location": "risks[3].citations[2]",
+    "message": "S01 p.16 is ['literature_map', 'method']: its figures come from a specific study, example or literature and do not transfer to a new setup (R-EVI-2)"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[2].citations[0]",
+    "message": "ok"
    },
    {
     "name": "quote_verified",
@@ -2024,6 +1746,13 @@
     "name": "numbers_claim_local",
     "passed": true,
     "severity": "hard",
+    "location": "premise_checks[3]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
     "location": "recommendations[0]",
     "message": "ok"
    },
@@ -2039,13 +1768,6 @@
     "passed": true,
     "severity": "hard",
     "location": "recommendations[2]",
-    "message": "ok"
-   },
-   {
-    "name": "numbers_claim_local",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3]",
     "message": "ok"
    },
    {
@@ -2294,13 +2016,6 @@
     "message": "ok"
    },
    {
-    "name": "respects_screen",
-    "passed": true,
-    "severity": "hard",
-    "location": "recommendations[3]",
-    "message": "ok"
-   },
-   {
     "name": "unknown_slot_addressed",
     "passed": true,
     "severity": "hard",
@@ -2401,19 +2116,6 @@
   ],
   "citations": [
    {
-    "location": "premise_checks[0].citations[0]",
-    "doc": "REF",
-    "page": 3,
-    "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 1086,
-    "end": 1224,
-    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
     "location": "premise_checks[1].citations[0]",
     "doc": "REF",
     "page": 3,
@@ -2427,20 +2129,20 @@
     "verified": true
    },
    {
-    "location": "recommendations[0].citations[0]",
+    "location": "premise_checks[2].citations[0]",
     "doc": "S01",
-    "page": 16,
-    "quote": "direct detection of specific metabolites like glucose, acetate, or lactate.",
-    "claim_kind": "application_precedent",
+    "page": 3,
+    "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+    "claim_kind": "general",
     "quote_status": "exact",
-    "start": 994,
-    "end": 1069,
-    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
+    "start": 1439,
+    "end": 1594,
+    "page_sha256": "a980a97f8a2ce55479112927f2de453e5e749ea50ddd522db256bdcb8bf8ac83",
     "scope_status": "ok",
     "verified": true
    },
    {
-    "location": "recommendations[0].citations[1]",
+    "location": "recommendations[0].citations[0]",
     "doc": "S01",
     "page": 16,
     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
@@ -2453,15 +2155,28 @@
     "verified": true
    },
    {
+    "location": "recommendations[0].citations[1]",
+    "doc": "S01",
+    "page": 16,
+    "quote": "direct detection of specific metabolites like glucose, acetate, or lactate.",
+    "claim_kind": "application_precedent",
+    "quote_status": "exact",
+    "start": 994,
+    "end": 1069,
+    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
     "location": "recommendations[0].citations[2]",
     "doc": "S01",
-    "page": 11,
-    "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+    "page": 12,
+    "quote": "Raman spectra (as well as IR absorption spectra) can be used to construct chemometric models-calibration or classification ones.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 1644,
-    "end": 1722,
-    "page_sha256": "4ef500a05d295627124acf6c9d0c6bd385fe40f97c3899f2c1ddfc63d3f62586",
+    "start": 86,
+    "end": 214,
+    "page_sha256": "fcadf3ac4a65c7fe91e1ebcb2cbfdbc234d4e55993fa1d53b07dfc406c47fb1a",
     "scope_status": "ok",
     "verified": true
    },
@@ -2481,19 +2196,6 @@
    {
     "location": "recommendations[1].citations[0]",
     "doc": "S01",
-    "page": 5,
-    "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 377,
-    "end": 596,
-    "page_sha256": "f19cb24b052f3eca4ccf3623cb0374f87aaa2b844bd8b4e8ccfcb4b5f2134164",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "recommendations[1].citations[1]",
-    "doc": "S01",
     "page": 9,
     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
     "claim_kind": "general",
@@ -2505,7 +2207,7 @@
     "verified": true
    },
    {
-    "location": "recommendations[1].citations[2]",
+    "location": "recommendations[1].citations[1]",
     "doc": "S01",
     "page": 10,
     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
@@ -2518,7 +2220,7 @@
     "verified": true
    },
    {
-    "location": "recommendations[1].citations[3]",
+    "location": "recommendations[1].citations[2]",
     "doc": "S01",
     "page": 10,
     "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
@@ -2531,20 +2233,7 @@
     "verified": true
    },
    {
-    "location": "recommendations[1].citations[4]",
-    "doc": "S02",
-    "page": 14,
-    "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
-    "claim_kind": "application_precedent",
-    "quote_status": "exact",
-    "start": 194,
-    "end": 264,
-    "page_sha256": "b565f259a286a0fc5377bf4861037a0b6f6113c776e1b111c783c118aa3c68c8",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "recommendations[1].citations[5]",
+    "location": "recommendations[1].citations[3]",
     "doc": "S01",
     "page": 13,
     "quote": "typically at a depth of few microns",
@@ -2557,7 +2246,7 @@
     "verified": true
    },
    {
-    "location": "recommendations[1].citations[6]",
+    "location": "recommendations[1].citations[4]",
     "doc": "REF",
     "page": 5,
     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
@@ -2572,45 +2261,6 @@
    {
     "location": "recommendations[2].citations[0]",
     "doc": "S01",
-    "page": 10,
-    "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 817,
-    "end": 933,
-    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "recommendations[2].citations[1]",
-    "doc": "S01",
-    "page": 16,
-    "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 1453,
-    "end": 1635,
-    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "recommendations[2].citations[2]",
-    "doc": "S01",
-    "page": 17,
-    "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 801,
-    "end": 935,
-    "page_sha256": "20f97379258f2f179dbe7d60d88c370841ef2da99a5957c21ddecb48ec9b415c",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "recommendations[2].citations[3]",
-    "doc": "S01",
     "page": 18,
     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
     "claim_kind": "general",
@@ -2622,85 +2272,72 @@
     "verified": true
    },
    {
-    "location": "recommendations[2].citations[4]",
+    "location": "recommendations[2].citations[1]",
     "doc": "S01",
     "page": 18,
-    "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+    "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 1178,
-    "end": 1275,
+    "start": 350,
+    "end": 539,
     "page_sha256": "d013a962553dd90e6f50b2b9ed34ec71fbf5d15af42254159041abee362c3820",
     "scope_status": "ok",
     "verified": true
    },
    {
-    "location": "recommendations[3].citations[0]",
+    "location": "recommendations[2].citations[2]",
     "doc": "S01",
-    "page": 5,
-    "quote": "However, most chemicals do not exhibit this property.",
-    "claim_kind": "general",
+    "page": 16,
+    "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+    "claim_kind": "performance_figure",
     "quote_status": "exact",
-    "start": 1549,
-    "end": 1602,
-    "page_sha256": "f19cb24b052f3eca4ccf3623cb0374f87aaa2b844bd8b4e8ccfcb4b5f2134164",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "recommendations[3].citations[1]",
-    "doc": "S01",
-    "page": 12,
-    "quote": "Recently, it has become a key method for online analysis of biotechnological processes.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 712,
-    "end": 799,
-    "page_sha256": "fcadf3ac4a65c7fe91e1ebcb2cbfdbc234d4e55993fa1d53b07dfc406c47fb1a",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "recommendations[3].citations[2]",
-    "doc": "REF",
-    "page": 5,
-    "quote": "High sensitivity, low selectivity; not a direct measurement of every analyte.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 1186,
-    "end": 1263,
-    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
-    "scope_status": "ok",
+    "start": 1453,
+    "end": 1635,
+    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
+    "scope_status": "precedent_only",
     "verified": true
    },
    {
     "location": "measurement_concept.citations[0]",
     "doc": "S01",
-    "page": 3,
-    "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+    "page": 10,
+    "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 1439,
-    "end": 1594,
-    "page_sha256": "a980a97f8a2ce55479112927f2de453e5e749ea50ddd522db256bdcb8bf8ac83",
+    "start": 352,
+    "end": 497,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
     "scope_status": "ok",
     "verified": true
    },
    {
     "location": "measurement_concept.citations[1]",
-    "doc": "S02",
-    "page": 6,
-    "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
+    "doc": "S01",
+    "page": 15,
+    "quote": "located safely away from the vibration and dust of the manufacturing floor.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 301,
-    "end": 344,
-    "page_sha256": "096b6fccd7fcb45c2adf3f4e168c3bc7178b025f9c6f03ebe2b31c3b106f335e",
+    "start": 1133,
+    "end": 1208,
+    "page_sha256": "9500187087475704ccf186de7360ce4c8d1a09e4292689e19841371495d13073",
     "scope_status": "ok",
     "verified": true
    },
    {
     "location": "measurement_concept.citations[2]",
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 218,
+    "end": 298,
+    "page_sha256": "096b6fccd7fcb45c2adf3f4e168c3bc7178b025f9c6f03ebe2b31c3b106f335e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "measurement_concept.citations[3]",
     "doc": "S02",
     "page": 6,
     "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
@@ -2713,54 +2350,41 @@
     "verified": true
    },
    {
-    "location": "measurement_concept.citations[3]",
-    "doc": "S02",
-    "page": 7,
-    "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 273,
-    "end": 341,
-    "page_sha256": "5bcb8eccf2992f050dd552e3ec2264c3dc68b9803234657d7f39defbab34d95b",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
     "location": "measurement_concept.citations[4]",
-    "doc": "S02",
-    "page": 10,
-    "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers",
+    "doc": "REF",
+    "page": 5,
+    "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 241,
-    "end": 328,
-    "page_sha256": "0482e69ec8452fc3250c21f5f182b73fd95754929e72d2b3af9665859c1a880d",
+    "start": 63,
+    "end": 230,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
     "scope_status": "ok",
     "verified": true
    },
    {
     "location": "spectral_ranges[0].citations[0]",
     "doc": "S01",
-    "page": 10,
-    "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+    "page": 11,
+    "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 934,
-    "end": 1068,
-    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "start": 755,
+    "end": 834,
+    "page_sha256": "4ef500a05d295627124acf6c9d0c6bd385fe40f97c3899f2c1ddfc63d3f62586",
     "scope_status": "ok",
     "verified": true
    },
    {
     "location": "spectral_ranges[0].citations[1]",
-    "doc": "REF",
-    "page": 3,
-    "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
-    "claim_kind": "general",
+    "doc": "S01",
+    "page": 15,
+    "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+    "claim_kind": "application_precedent",
     "quote_status": "exact",
-    "start": 885,
-    "end": 966,
-    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
+    "start": 500,
+    "end": 599,
+    "page_sha256": "9500187087475704ccf186de7360ce4c8d1a09e4292689e19841371495d13073",
     "scope_status": "ok",
     "verified": true
    },
@@ -2781,11 +2405,11 @@
     "location": "spectral_ranges[1].citations[1]",
     "doc": "REF",
     "page": 5,
-    "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+    "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 63,
-    "end": 230,
+    "start": 721,
+    "end": 796,
     "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
     "scope_status": "ok",
     "verified": true
@@ -2793,26 +2417,26 @@
    {
     "location": "spectral_ranges[2].citations[0]",
     "doc": "S01",
-    "page": 11,
-    "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+    "page": 10,
+    "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 755,
-    "end": 834,
-    "page_sha256": "4ef500a05d295627124acf6c9d0c6bd385fe40f97c3899f2c1ddfc63d3f62586",
+    "start": 934,
+    "end": 1037,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
     "scope_status": "ok",
     "verified": true
    },
    {
     "location": "spectral_ranges[2].citations[1]",
-    "doc": "S01",
-    "page": 15,
-    "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
-    "claim_kind": "application_precedent",
+    "doc": "REF",
+    "page": 3,
+    "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+    "claim_kind": "general",
     "quote_status": "exact",
-    "start": 500,
-    "end": 599,
-    "page_sha256": "9500187087475704ccf186de7360ce4c8d1a09e4292689e19841371495d13073",
+    "start": 885,
+    "end": 966,
+    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
     "scope_status": "ok",
     "verified": true
    },
@@ -2833,23 +2457,10 @@
     "location": "risks[1].citations[0]",
     "doc": "REF",
     "page": 5,
-    "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+    "quote": "calibration specific to the matrix.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 976,
-    "end": 1049,
-    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "risks[1].citations[1]",
-    "doc": "REF",
-    "page": 5,
-    "quote": "physical variation; calibration specific to the matrix.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 489,
+    "start": 509,
     "end": 544,
     "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
     "scope_status": "ok",
@@ -2858,44 +2469,18 @@
    {
     "location": "risks[2].citations[0]",
     "doc": "S01",
-    "page": 16,
-    "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 2568,
-    "end": 2663,
-    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "risks[2].citations[1]",
-    "doc": "S01",
     "page": 18,
-    "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+    "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 350,
-    "end": 539,
+    "start": 1178,
+    "end": 1275,
     "page_sha256": "d013a962553dd90e6f50b2b9ed34ec71fbf5d15af42254159041abee362c3820",
     "scope_status": "ok",
     "verified": true
    },
    {
-    "location": "risks[3].citations[0]",
-    "doc": "REF",
-    "page": 5,
-    "quote": "Liquids, pastes and soft solids in contact with the ATR crystal.",
-    "claim_kind": "general",
-    "quote_status": "exact",
-    "start": 601,
-    "end": 665,
-    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
-    "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "risks[3].citations[1]",
+    "location": "risks[2].citations[1]",
     "doc": "S01",
     "page": 13,
     "quote": "typically at a depth of few microns",
@@ -2905,6 +2490,58 @@
     "end": 1836,
     "page_sha256": "57094f0a1392532096ecee5a930a42b2cbf34c3120f4c10099689ccce440e5d7",
     "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[2].citations[2]",
+    "doc": "REF",
+    "page": 5,
+    "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 721,
+    "end": 796,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[3].citations[0]",
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 342,
+    "end": 460,
+    "page_sha256": "5bcb8eccf2992f050dd552e3ec2264c3dc68b9803234657d7f39defbab34d95b",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[3].citations[1]",
+    "doc": "S02",
+    "page": 10,
+    "quote": "1 Meter PolyMicro hollow fiber 1mm ID",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 719,
+    "end": 756,
+    "page_sha256": "0482e69ec8452fc3250c21f5f182b73fd95754929e72d2b3af9665859c1a880d",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[3].citations[2]",
+    "doc": "S01",
+    "page": 16,
+    "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+    "claim_kind": "performance_figure",
+    "quote_status": "exact",
+    "start": 1566,
+    "end": 1635,
+    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
+    "scope_status": "precedent_only",
     "verified": true
    },
    {
@@ -2936,27 +2573,14 @@
    {
     "location": "feasibility_plan.steps[2].citations[0]",
     "doc": "REF",
-    "page": 5,
-    "quote": "compare with the best single method.",
+    "page": 3,
+    "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
     "claim_kind": "general",
     "quote_status": "exact",
-    "start": 1612,
-    "end": 1648,
-    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "start": 1086,
+    "end": 1224,
+    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
     "scope_status": "ok",
-    "verified": true
-   },
-   {
-    "location": "feasibility_plan.steps[2].citations[1]",
-    "doc": "REF",
-    "page": 5,
-    "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
-    "claim_kind": "method_gain",
-    "quote_status": "exact",
-    "start": 1651,
-    "end": 1728,
-    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
-    "scope_status": "precedent_only",
     "verified": true
    },
    {
@@ -2987,66 +2611,119 @@
    }
   ]
  },
+ "still_open": [],
  "removed_citations": [],
  "finalize_changes": [],
  "flagged": {},
- "intake_removed": [],
+ "intake_removed": [
+  {
+   "location": "intake.process[3]",
+   "item": {
+    "aspect": "pressure",
+    "value": "unknown",
+    "enquiry_quote": "unknown"
+   },
+   "reason": "enquiry_quote not found verbatim in the enquiry"
+  },
+  {
+   "location": "intake.process[4]",
+   "item": {
+    "aspect": "temperature",
+    "value": "unknown",
+    "enquiry_quote": "unknown"
+   },
+   "reason": "enquiry_quote not found verbatim in the enquiry"
+  },
+  {
+   "location": "intake.process[5]",
+   "item": {
+    "aspect": "cleaning_or_fouling",
+    "value": "unknown",
+    "enquiry_quote": "unknown"
+   },
+   "reason": "enquiry_quote not found verbatim in the enquiry"
+  },
+  {
+   "location": "intake.process[6]",
+   "item": {
+    "aspect": "distance_or_remote_analyzer",
+    "value": "unknown",
+    "enquiry_quote": "unknown"
+   },
+   "reason": "enquiry_quote not found verbatim in the enquiry"
+  },
+  {
+   "location": "intake.process[8]",
+   "item": {
+    "aspect": "existing_equipment",
+    "value": "unknown",
+    "enquiry_quote": "unknown"
+   },
+   "reason": "enquiry_quote not found verbatim in the enquiry"
+  }
+ ],
  "repairs": [
   {
    "round": 1,
-   "hard_failures_before": 3,
+   "hard_failures_before": 2,
    "hard_failures_after": 0,
    "assessment": {
     "decision_status": "provisional_assessment",
-    "status_reason": "A shortlist of single methods can be justified for laboratory testing (Raman and MIR-ATR pass the screening; NIR is conditional on the medium's optical density). No probe, geometry, fiber link, accuracy or calibration strategy can be fixed from the stated facts. The published examples cited below are reasons to test, not evidence that any method works for this process.",
+    "status_reason": "A shortlist of single methods worth testing can be justified from the sources: Raman and mid-IR ATR pass the screening for an in-line aqueous application, and NIR transmission is conditional on the broth's optical density. The concentration ranges, required accuracy and required response time are not known, so this is a provisional assessment with stated assumptions, not a selection of a probe or a calibration strategy. Any combination is only a later hypothesis to test against the best single method.",
     "premise_checks": [
      {
-      "premise": "The existing laboratory measurements can serve as a reference for the in situ spectroscopy pilot.",
-      "verdict": "supported",
-      "explanation": "A feasibility plan is expected to include independent reference measurements. Whether these particular measurements are accurate, traceable and frequent enough to be that reference is not addressed by the sources.",
-      "citations": [
-       {
-        "doc": "REF",
-        "page": 3,
-        "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "premise": "The in situ spectroscopy pilot can be checked against those existing laboratory measurements.",
-      "verdict": "supported",
-      "explanation": "Same check as above: the sources expect a defined reference measurement and a defined comparison in a feasibility plan; they do not confirm that the customer's current method meets that requirement.",
-      "citations": [
-       {
-        "doc": "REF",
-        "page": 3,
-        "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "premise": "The existing laboratory measurements are adequate to detect the changes promptly.",
+      "premise": "An in situ spectroscopy pilot is appropriate for this cell culture process.",
       "verdict": "not_covered",
-      "explanation": "No supplied source addresses the accuracy, precision or timeliness of the customer's laboratory measurements. The enquiry itself says the delay makes it difficult to see changes promptly, so this premise is the opposite of what the customer stated. This is a question to put back to the customer, not an assumption to carry forward.",
+      "explanation": "The supplied sources describe fiber-probe in-line/on-line analysis in reactors in general, but none of them addresses this customer's process, medium or analytes, so appropriateness for this process is not established by the sources.",
+      "citations": []
+     },
+     {
+      "premise": "The in situ pilot can be checked against the existing laboratory measurements.",
+      "verdict": "supported",
+      "explanation": "Independent reference measurements are part of the feasibility comparison described in the guidance. Whether the existing laboratory method is accurate, traceable and time-aligned enough to serve as the reference is not established by the sources and must be confirmed by the customer.",
+      "citations": [
+       {
+        "doc": "REF",
+        "page": 3,
+        "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "premise": "The delay of sampling makes it difficult to see changes promptly.",
+      "verdict": "supported",
+      "explanation": "The source states that in-process analysis removes sampling and its delays, which is the rationale the customer gives.",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 3,
+        "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "premise": "The medium and cell population change during the run.",
+      "verdict": "not_covered",
+      "explanation": "No supplied source addresses this customer's process. The consequence is covered in general terms: a calibration is specific to the matrix, so a model built on one process state has to be checked and usually rebuilt or extended on the new material.",
       "citations": []
      }
     ],
     "requirements_stated": [],
     "key_unknowns": [
-     "Glucose and lactate concentration ranges over a run, and the required accuracy, precision and time to result",
-     "Optical density / turbidity of the medium and how strongly it changes with the cell population",
-     "Installation point (reactor, loop, pipe), temperature and pressure there, cleaning/sterilisation the probe must survive, and distance from the spectrometer",
-     "Fluorescence background of the medium and cells (decisive for Raman)",
-     "Which exact laboratory method provides the current glucose/lactate values, at what accuracy and frequency",
-     "Achievable length of a mid-IR fiber link for an in-situ installation (no source states one)"
+     "Typical and extreme concentrations of glucose and lactate in the broth, and the accuracy and precision needed for a result to be actionable.",
+     "Required response time / update interval for the in-situ measurement.",
+     "Optical density (turbidity) of the medium at the start and end of the run - this decides whether transmission geometry is possible at all.",
+     "Fluorescence background of the medium and cells (it can swamp the Raman signal).",
+     "Installation conditions: available port, temperature, pressure, cleaning/sterilization (CIP/SIP), and the distance from the vessel to the spectrometer.",
+     "The existing laboratory reference method for glucose and lactate: identity, uncertainty, sampling delay, and whether reference samples can be time-stamped to the in-situ reading."
     ],
     "clarification_questions": [
      {
       "id": "Q1",
-      "question": "What are the glucose and lactate concentration ranges during a run, and what accuracy, precision and time-to-result do you need? These numbers decide whether NIR or Raman can reach the analytes and they become the go/no-go criteria.",
-      "why_it_matters": "Method, technique and the whole go/no-go basis depend on this. No source supplies detection limits or accuracy for these analytes.",
+      "question": "What are the typical and extreme glucose and lactate concentrations in the broth, what accuracy and precision do you need, and what response time (update interval) would let you act on the result?",
+      "why_it_matters": "These numbers are the basis for the go/no-go criteria and decide whether a method with lower sensitivity for trace levels can be used at all.",
       "affects": [
        "method",
        "technique",
@@ -3055,56 +2732,52 @@
      },
      {
       "id": "Q2",
-      "question": "How does the medium's optical density / turbidity behave over the run (for example clear at start, turbid at the end), and how much of the change is caused by the cell population?",
-      "why_it_matters": "This decides NIR transmission/transflection versus diffuse reflection versus ATR, and whether a UV-ATR type short-path probe is needed instead of transmission.",
+      "question": "How turbid is the broth at the start and at the end of the run (optical density), and does it stay transparent or semi-transparent?",
+      "why_it_matters": "Transmission geometry only works while light can pass through the sample; turbidity decides between transmission, ATR and reflection geometry, and therefore the technique.",
       "affects": [
        "technique",
-       "probe"
+       "installation",
+       "status"
       ]
      },
      {
       "id": "Q3",
-      "question": "Where would the probe be installed (reactor, recirculation loop, pipe), what are the temperature and pressure there, what cleaning/sterilisation must it survive, and how far is the spectrometer from the process point?",
-      "why_it_matters": "ATR needs tight contact with the sample; installation, fouling and cleaning constraints can rule an immersion crystal in or out, and the distance sets the fiber link, for which no mid-IR length is stated in the supplied material.",
+      "question": "Does the medium or the cell population show a strong fluorescence background, and can we measure a representative sample to check it?",
+      "why_it_matters": "A strong fluorescence background can mask the weak Raman signal, which would change the method ranking.",
+      "affects": [
+       "method",
+       "technique"
+      ]
+     },
+     {
+      "id": "Q4",
+      "question": "What are the installation conditions - available port, temperature, pressure, cleaning/sterilization (CIP/SIP) - and how far is the spectrometer from the vessel?",
+      "why_it_matters": "These decide probe type, fiber family and whether a long fiber link is required; the achievable link length for a mid-IR connection is not stated in the sources.",
       "affects": [
        "installation",
        "technique"
       ]
      },
      {
-      "id": "Q4",
-      "question": "Which laboratory method produces your current glucose and lactate values, how often are samples taken, and what is its accuracy?",
-      "why_it_matters": "The reference measurement has to be good enough to act as the reference; the enquiry gives no detail on it.",
+      "id": "Q5",
+      "question": "Which laboratory method gives your glucose and lactate values today, with what uncertainty and sampling delay, and can reference samples be time-stamped to the in-situ reading?",
+      "why_it_matters": "The pilot can only be judged against a reference that is accurate and time-aligned; this decides the comparison design.",
       "affects": [
        "status",
-       "validation"
-      ]
-     },
-     {
-      "id": "Q5",
-      "question": "Do the medium components or the cells fluoresce strongly (media, NADH-type cofactors, other fluorophores)?",
-      "why_it_matters": "Raman bands can be hidden by luminescence; this has to be checked on the real medium before Raman is relied on.",
-      "affects": [
-       "method"
+       "calibration"
       ]
      }
     ],
     "recommendations": [
      {
-      "id": "R1",
+      "id": "REC1",
       "method": "Raman",
       "technique": "raman_probe",
       "role": "primary",
       "combined_with": [],
-      "rationale": "Passes the screening. Raman is the single method the supplied sources name for the customer's analytes in a reactor: it is described as giving a molecular fingerprint for direct detection of specific metabolites such as glucose and lactate, and as well suited to aqueous media because water absorbs less than in infrared methods. This is the best-supported single method to test first.",
-      "conditions": "Depends on the real fluorescence background and on the analyte levels; Raman signals are weak. The laser excitation wavelength is a separate choice and is not fixed by the supplied material.",
+      "rationale": "Raman passes the screening for an in-line aqueous application and is the single method whose physics fits an aqueous broth best: it is stated to be well suited to aqueous environments because water absorbs much less than in infrared methods. In the bioprocess section of the same source, Raman is described as usable in the reactor for direct detection of metabolites such as glucose, acetate or lactate, and Raman spectra are stated to support chemometric calibration or classification models. That is a reason to test Raman here, not proof that it will work for this customer's medium, cell line or concentration range.",
+      "conditions": "Only after the fluorescence background of the medium and cells has been checked on real samples, because a fluorescence background can be much stronger than the weak Raman signal. The laser excitation wavelength must be chosen and reported separately from the Raman shift axis. Screening status: pass.",
       "citations": [
-       {
-        "doc": "S01",
-        "page": 16,
-        "quote": "direct detection of specific metabolites like glucose, acetate, or lactate.",
-        "claim_kind": "application_precedent"
-       },
        {
         "doc": "S01",
         "page": 16,
@@ -3113,8 +2786,14 @@
        },
        {
         "doc": "S01",
-        "page": 11,
-        "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+        "page": 16,
+        "quote": "direct detection of specific metabolites like glucose, acetate, or lactate.",
+        "claim_kind": "application_precedent"
+       },
+       {
+        "doc": "S01",
+        "page": 12,
+        "quote": "Raman spectra (as well as IR absorption spectra) can be used to construct chemometric models-calibration or classification ones.",
         "claim_kind": "general"
        },
        {
@@ -3126,20 +2805,14 @@
       ]
      },
      {
-      "id": "R2",
+      "id": "REC2",
       "method": "MIR",
       "technique": "ATR",
-      "role": "primary",
+      "role": "comparison",
       "combined_with": [],
-      "rationale": "Passes the screening. Strong mid-IR absorption makes transmission impractical for a liquid layer, and ATR is the stated route for that; mid-IR is described as highly informative, ATR probes are described for liquids and for in-line, in-process biotechnological environments, and in-line MIR-ATR is shown in a process example. These are reasons to test, not evidence for this medium.",
-      "conditions": "Requires tight contact with the sample and reads only a very thin surface layer, so fouling and surface representativeness are open risks. The usable range is set by the fiber and the ATR crystal, not by the method range.",
+      "rationale": "Mid-IR ATR passes the screening and is the second single method worth testing against Raman on the same samples. Mid-IR is described as one of the most informative methods of chemical analysis, and ATR fiber probes are described as enabling the analysis of liquids and solid elastic samples, with probe-based analysis in use for in-line, in-process environments. ATR gives an evanescent-wave measurement with a very short effective path, which matters in a water-dominated medium. The comparison tells us which single method carries usable glucose and lactate information in this matrix before any combination is considered.",
+      "conditions": "ATR requires tight contact and suits liquids and soft solids; it samples only a surface layer of a few micrometres, so deposits, fouling and cell adhesion at the crystal are risks, as is sample representativeness in a changing broth. Screening status: pass.",
       "citations": [
-       {
-        "doc": "S01",
-        "page": 5,
-        "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
-        "claim_kind": "general"
-       },
        {
         "doc": "S01",
         "page": 9,
@@ -3159,10 +2832,183 @@
         "claim_kind": "general"
        },
        {
-        "doc": "S02",
-        "page": 14,
-        "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+        "doc": "S01",
+        "page": 13,
+        "quote": "typically at a depth of few microns",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "REF",
+        "page": 5,
+        "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "id": "REC3",
+      "method": "NIR",
+      "technique": "transmission_transflection",
+      "role": "conditional",
+      "combined_with": [],
+      "rationale": "NIR transmission is conditional: it applies only if the broth stays transparent or semi-transparent throughout the run (Q2). In the dairy example, transmission is the preferred geometry for transparent or semi-transparent liquids, and in the bioprocess section NIR is described as effective for major components such as glucose in the millimolar range. That makes it worth testing as a third single method if - and only if - the optical density allows it. It is not recommended as a first choice for a broth that is or becomes turbid.",
+      "conditions": "Applies only if the broth is and remains transparent or semi-transparent (deciding question Q2: optical density at the start and end of the run). The optical pathlength must be controlled; if it is too wide the signal is lost to absorption, if too narrow the sampled volume is negligible. NIR may lack sensitivity below the trace level stated in the source, so the required glucose and lactate ranges decide its usefulness. Screening status: unknown (Table 1 sample-type fit not confirmed for this sample).",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 18,
+        "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 18,
+        "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 16,
+        "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+        "claim_kind": "performance_figure"
+       }
+      ]
+     }
+    ],
+    "measurement_concept": {
+     "probe_and_geometry": "In-situ probe in contact with the broth. For Raman: a contact Raman probe with the excitation wavelength stated separately. For mid-IR: an ATR probe immersed in the liquid. For NIR (conditional): a transmission/transflection probe with a controlled optical pathlength, used only while the broth stays transparent or semi-transparent.",
+     "location": "In the bioreactor or process line at a point representative of the broth. Medium and cell population change during the run, so the sampling point and the analysed volume matter; ATR analyses only a surface layer of a few micrometres, so contact, deposits and representativeness are risks.",
+     "fiber_link": "Fiber link to the spectrometer placed away from the vessel. Silica fibers carry the UV-Vis-NIR range; mid-IR needs chalcogenide (CIR) or polycrystalline (PIR) fibers. The usable fiber length is configuration-dependent; no source states an achievable length for a mid-IR link.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 10,
+       "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S01",
+       "page": 15,
+       "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S02",
+       "page": 6,
+       "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S02",
+       "page": 6,
+       "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "REF",
+       "page": 5,
+       "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    "spectral_ranges": [
+     {
+      "method": "Raman",
+      "statement": "Raman is reported as Raman shift on a wavenumber (cm-1) axis; the laser excitation wavelength is stated separately. In the shown example, 785 nm excitation is used with a contact Raman probe.",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 11,
+        "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 15,
+        "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
         "claim_kind": "application_precedent"
+       }
+      ]
+     },
+     {
+      "method": "MIR",
+      "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 um). The usable range depends on the fiber, crystal and probe actually selected; it is limited by contact and fouling at the ATR crystal.",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 9,
+        "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "REF",
+        "page": 5,
+        "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "method": "NIR",
+      "statement": "Nominal NIR range 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 10,
+        "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "REF",
+        "page": 3,
+        "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+        "claim_kind": "general"
+       }
+      ]
+     }
+    ],
+    "risks": [
+     {
+      "risk": "The Raman signal can be swamped by fluorescence from the medium or the cells.",
+      "rule_ids": [
+       "R-RAM-1"
+      ],
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 11,
+        "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "risk": "Calibration is matrix-specific. As the medium and the cell population change during the run, a model built on one process state has to be checked and usually rebuilt or extended on the new material; a single calibration for the whole run is an assumption, not a given.",
+      "rule_ids": [
+       "R-CAL-1"
+      ],
+      "citations": [
+       {
+        "doc": "REF",
+        "page": 5,
+        "quote": "calibration specific to the matrix.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "risk": "Geometry risk: if the broth is or becomes turbid, NIR transmission loses its signal, and mid-IR ATR only probes a surface layer a few micrometres deep where deposits or fouling change the measurement.",
+      "rule_ids": [
+       "R-GEN-4",
+       "R-MIR-3"
+      ],
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 18,
+        "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+        "claim_kind": "general"
        },
        {
         "doc": "S01",
@@ -3179,245 +3025,29 @@
       ]
      },
      {
-      "id": "R3",
-      "method": "NIR",
-      "technique": "diffuse_reflection",
-      "role": "conditional",
-      "combined_with": [],
-      "rationale": "Screening is 'unknown' because the medium's optical regime is not known, so this entry applies only if the medium is opaque/scattering enough that transmission is not usable. NIR is described as the most common online fiber-probe method and as effective for major components like glucose in the millimolar range, but it may lack sensitivity below 0.1 percent. If the medium is transparent and low-OD, the transmission/transflection geometry would be the one to test instead.",
-      "conditions": "Decided by Q2. Requires controlled optical pathlength if transmission is used, and scatter correction if reflection is used. NIR calibrations are matrix-specific.",
+      "risk": "Performance figures are unconfirmed: no source states an achievable cable length for a mid-IR link, and no source gives accuracy, detection limits or response time for glucose and lactate in this medium. For trace levels, NIR sensitivity is a stated limitation.",
+      "rule_ids": [
+       "R-FIB-2",
+       "R-NIR-4"
+      ],
       "citations": [
        {
-        "doc": "S01",
+        "doc": "S02",
+        "page": 7,
+        "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S02",
         "page": 10,
-        "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+        "quote": "1 Meter PolyMicro hollow fiber 1mm ID",
         "claim_kind": "general"
        },
        {
         "doc": "S01",
         "page": 16,
-        "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "S01",
-        "page": 17,
-        "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "S01",
-        "page": 18,
-        "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "S01",
-        "page": 18,
-        "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "id": "R4",
-      "method": "Fluorescence",
-      "technique": "fluorescence_probe",
-      "role": "not_recommended",
-      "combined_with": [],
-      "rationale": "Fluorescence is a key online method in biotechnology, so a reader would expect it to be considered. It is not recommended for the stated targets: it reports species that fluoresce, most chemicals do not, and no fluorescent species or justified indicator for glucose or lactate has been identified. It is high-sensitivity but low-selectivity and not a direct measurement of every analyte.",
-      "conditions": "Could only become relevant if a defined fluorescent species or a justified indicator for this process is named.",
-      "citations": [
-       {
-        "doc": "S01",
-        "page": 5,
-        "quote": "However, most chemicals do not exhibit this property.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "S01",
-        "page": 12,
-        "quote": "Recently, it has become a key method for online analysis of biotechnological processes.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "REF",
-        "page": 5,
-        "quote": "High sensitivity, low selectivity; not a direct measurement of every analyte.",
-        "claim_kind": "general"
-       }
-      ]
-     }
-    ],
-    "measurement_concept": {
-     "probe_and_geometry": "Immersion or flow-through probe at the process point, without sampling: MIR-ATR crystal in contact with the liquid; Raman probe (contact or through a window); NIR reflection for scattering media or transmission/transflection for clear media. Which of these is installed depends on Q2 and Q3.",
-     "location": "Directly in the process flow or reactor rather than by sampling.",
-     "fiber_link": "NIR and Raman can use silica fibers (the visible-to-near-IR silica fiber family is shown in the fiber-range figure on S02 p.6); metal-coated silica avoids polymer-jacket fluorescence, which matters for Raman. MIR cannot use silica and needs chalcogenide (CIR) or polycrystalline (PIR) fibers; hollow waveguides couple poorly to FTIR spectrometers. The achievable length of a mid-IR link is not stated in the supplied material and is an open question for AFS.",
-     "citations": [
-      {
-       "doc": "S01",
-       "page": 3,
-       "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
-       "claim_kind": "general"
-      },
-      {
-       "doc": "S02",
-       "page": 6,
-       "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
-       "claim_kind": "general"
-      },
-      {
-       "doc": "S02",
-       "page": 6,
-       "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
-       "claim_kind": "general"
-      },
-      {
-       "doc": "S02",
-       "page": 7,
-       "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
-       "claim_kind": "general"
-      },
-      {
-       "doc": "S02",
-       "page": 10,
-       "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers",
-       "claim_kind": "general"
-      }
-     ]
-    },
-    "spectral_ranges": [
-     {
-      "method": "NIR",
-      "statement": "Nominal method range 780-2500 nm. The usable range depends on the spectrometer, fiber and probe actually selected.",
-      "citations": [
-       {
-        "doc": "S01",
-        "page": 10,
-        "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "REF",
-        "page": 3,
-        "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "method": "MIR",
-      "statement": "Nominal method range 4000-400 cm-1 (2.5-25 µm). In a fiber-probe setup the usable range is set by the fiber and the ATR crystal, not by the method range.",
-      "citations": [
-       {
-        "doc": "S01",
-        "page": 9,
-        "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "REF",
-        "page": 5,
-        "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "method": "Raman",
-      "statement": "Raman is reported on the Raman shift axis in cm-1; the laser excitation wavelength is a separate choice and is not fixed by the supplied material (785 nm appears only in a pharmaceutical example).",
-      "citations": [
-       {
-        "doc": "S01",
-        "page": 11,
-        "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "S01",
-        "page": 15,
-        "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
-        "claim_kind": "application_precedent"
-       }
-      ]
-     }
-    ],
-    "risks": [
-     {
-      "risk": "The Raman signal may be swamped by fluorescence from the medium or cells; this can only be judged on the real medium.",
-      "rule_ids": [
-       "R-RAM-1"
-      ],
-      "citations": [
-       {
-        "doc": "S01",
-        "page": 11,
-        "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "risk": "The medium and cell population change during the run, so a calibration built on one process state may not hold across the run or across batches; NIR and Raman calibrations are matrix-specific.",
-      "rule_ids": [
-       "R-CAL-1"
-      ],
-      "citations": [
-       {
-        "doc": "REF",
-        "page": 5,
-        "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "REF",
-        "page": 5,
-        "quote": "physical variation; calibration specific to the matrix.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "risk": "If the optical density rises strongly during the run, a transmission geometry can saturate and stop measuring; the geometry choice then changes. The pathlength in transmission must be controlled.",
-      "rule_ids": [
-       "R-GEO-2",
-       "R-GEN-3",
-       "R-GEN-4"
-      ],
-      "citations": [
-       {
-        "doc": "S01",
-        "page": 16,
-        "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "S01",
-        "page": 18,
-        "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
-        "claim_kind": "general"
-       }
-      ]
-     },
-     {
-      "risk": "Installation and contact: an ATR probe needs tight contact and reads only a surface layer, so fouling, cleaning/sterilisation and sample representativeness are open; the achievable length of a mid-IR fiber link for this installation is not stated anywhere in the supplied material.",
-      "rule_ids": [
-       "R-MIR-2",
-       "R-MIR-3",
-       "R-FIB-2"
-      ],
-      "citations": [
-       {
-        "doc": "REF",
-        "page": 5,
-        "quote": "Liquids, pastes and soft solids in contact with the ATR crystal.",
-        "claim_kind": "general"
-       },
-       {
-        "doc": "S01",
-        "page": 13,
-        "quote": "typically at a depth of few microns",
-        "claim_kind": "general"
+        "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+        "claim_kind": "performance_figure"
        }
       ]
      }
@@ -3425,8 +3055,8 @@
     "feasibility_plan": {
      "steps": [
       {
-       "step": "Build a representative sample set from real process states: early, mid and late in the run, covering the observed glucose and lactate range, the cell-density/viability range and any medium changes. Include at least two independent runs or batches so that one can be held out.",
-       "purpose": "Representative coverage before any method is chosen.",
+       "step": "1. Representative samples across the run",
+       "purpose": "Cover the expected chemical and physical variation: broth samples (or process states) from low to high cell density and across the expected glucose and lactate range, with spiked levels where useful.",
        "citations": [
         {
          "doc": "REF",
@@ -3437,8 +3067,8 @@
        ]
       },
       {
-       "step": "Measure every sample in the laboratory with each single candidate method first (Raman probe; MIR-ATR; NIR in the geometry that matches the sample's optical density), plus spiked samples to cover the required concentration range, and keep the existing laboratory values alongside as the reference.",
-       "purpose": "Single methods first; no combination before this.",
+       "step": "2. Single-method laboratory comparison first",
+       "purpose": "Measure the same samples with the single candidates - Raman probe and mid-IR ATR, and NIR transmission only if the broth stays transparent - and record which method gives usable signal for glucose and for lactate. No combination in this step.",
        "citations": [
         {
          "doc": "S01",
@@ -3449,26 +3079,20 @@
        ]
       },
       {
-       "step": "Compare the single methods against the reference and against each other. Only then test a combination (for example NIR + Raman, or MIR-ATR + Raman) as a hypothesis to be measured against the best single method, with sampling location and timing aligned.",
-       "purpose": "Keep any combination claim as a hypothesis.",
+       "step": "3. Independent reference measurements",
+       "purpose": "Measure glucose and lactate with the existing laboratory method on the same samples, plus a cell-density/viability reference for the biomass, time-stamped so in-situ and reference values can be paired.",
        "citations": [
         {
          "doc": "REF",
-         "page": 5,
-         "quote": "compare with the best single method.",
+         "page": 3,
+         "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
          "claim_kind": "general"
-        },
-        {
-         "doc": "REF",
-         "page": 5,
-         "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
-         "claim_kind": "method_gain"
         }
        ]
       },
       {
-       "step": "Validate the models on held-out runs or batches, not only on further samples from the same run, and check whether the medium and cell changes during a run break the calibration.",
-       "purpose": "Independent validation on limited data.",
+       "step": "4. Calibration and validation on held-out runs",
+       "purpose": "Build chemometric models per analyte on part of the data and validate them on held-out runs or batches, not on the runs used for calibration, given that the matrix changes during the run.",
        "citations": [
         {
          "doc": "S03",
@@ -3479,8 +3103,8 @@
        ]
       },
       {
-       "step": "Fix the go/no-go basis before starting. The numerical criteria (accuracy, precision, time to result, allowed drift over a run) must come from the customer; they are not in the supplied material, so until they are given the pilot has no defined decision basis.",
-       "purpose": "Go/no-go criteria come from the customer.",
+       "step": "5. Go/no-go",
+       "purpose": "Fix the numerical go/no-go criteria with the customer before the trial (accuracy, precision and response time for glucose and lactate). Go if the in-situ prediction meets them on the held-out runs; otherwise fall back to the next single method before considering any combination. A combination is only a later hypothesis to test against the best single method.",
        "citations": [
         {
          "doc": "REF",
@@ -3491,17 +3115,17 @@
        ]
       }
      ],
-     "reference_measurements": "The existing laboratory glucose and lactate values, provided their accuracy and sampling frequency are adequate (Q4).",
-     "decision_basis": "Not defined yet: no detection limit, accuracy, precision or response time for glucose or lactate appears in the supplied sources or in the enquiry. These numbers must be set by the customer before the experiment can pass or fail."
+     "reference_measurements": "Existing laboratory glucose and lactate values on the same samples, plus cell density / viability, time-stamped to the in-situ readings.",
+     "decision_basis": "Customer-defined numerical criteria for accuracy, precision and response time per analyte, checked on held-out runs."
     },
     "assumptions": [
-     "The customer's existing laboratory measurements are accurate and frequent enough to act as the reference; this is assumed, not confirmed.",
-     "The process allows a probe to be brought into contact with, or immersed in, the medium (contact, sterilisation and cleaning constraints are unknown).",
-     "Glucose and lactate sit in a concentration range where at least one of the shortlisted methods has a chance; no source states a detection limit for either analyte in this medium."
+     "The broth behaves as a liquid that can be brought into contact with a probe (stated as an aqueous medium).",
+     "The existing laboratory glucose/lactate method is accurate and time-aligned enough to act as the reference; this is not established by the sources.",
+     "Whether one single method can cover both analytes is an outcome of the trial, not an assumption; a combination is only considered after the single-method comparison."
     ],
     "not_in_sources": [
-     "Detection limits, accuracy, precision or response time for glucose or lactate in a cell-culture medium: no supplied source states these for any configuration.",
-     "An achievable length for a mid-IR fiber link in an in-situ installation: no supplied source states one; the mid-IR fiber and hollow-waveguide examples shown are laboratory lengths only."
+     "Achievable accuracy, detection limits and response time for glucose and lactate in cell-culture medium: no supplied source states these figures.",
+     "Probe compatibility with the customer's cleaning and sterilization regime (CIP/SIP): not covered by the supplied sources."
     ]
    }
   }
@@ -3511,94 +3135,84 @@
    "role": "intake",
    "model": "deepseek/deepseek-v4.1-flash",
    "provider": "DeepInfra",
-   "prompt_tokens": 866,
-   "completion_tokens": 12663,
+   "prompt_tokens": 934,
+   "completion_tokens": 10653,
    "cached_tokens": 768,
-   "cost_usd": 0.005335,
-   "latency_s": 49.18
-  },
-  {
-   "role": "assess:discarded",
-   "model": "deepseek/deepseek-v4.1-flash",
-   "provider": "DeepInfra",
-   "prompt_tokens": 40414,
-   "completion_tokens": 32000,
-   "cached_tokens": 38528,
-   "cost_usd": 0.013866,
-   "latency_s": 141.08
+   "cost_usd": 0.004501,
+   "latency_s": 40.3
   },
   {
    "role": "assess",
    "model": "deepseek/deepseek-v4.1-flash",
    "provider": "DeepInfra",
-   "prompt_tokens": 40414,
-   "completion_tokens": 29302,
-   "cached_tokens": 40320,
-   "cost_usd": 0.012489,
-   "latency_s": 125.84
+   "prompt_tokens": 40209,
+   "completion_tokens": 24648,
+   "cached_tokens": 38656,
+   "cost_usd": 0.010732,
+   "latency_s": 107.58
   },
   {
    "role": "repair",
    "model": "deepseek/deepseek-v4.1-flash",
    "provider": "DeepInfra",
-   "prompt_tokens": 46424,
-   "completion_tokens": 7198,
+   "prompt_tokens": 44451,
+   "completion_tokens": 9274,
    "cached_tokens": 38784,
-   "cost_usd": 0.004256,
-   "latency_s": 27.36
+   "cost_usd": 0.004851,
+   "latency_s": 37.92
   }
  ],
  "timings_s": {
-  "intake": 49.242,
-  "screen": 0.005,
-  "assess": 267.054,
-  "verify": 0.376,
-  "repair": 27.487,
-  "finalize": 0.026,
-  "wall": 344.189
+  "intake": 40.311,
+  "screen": 0.001,
+  "assess": 107.594,
+  "verify": 0.034,
+  "repair": 37.93,
+  "finalize": 0.002,
+  "wall": 185.872
  },
  "manifest": {
-  "run_id": "D04-20261017T085117Z",
-  "created_utc": "2026-10-17T08:57:02+00:00",
+  "run_id": "D04-20261017T094013Z",
+  "created_utc": "2026-10-17T09:43:19+00:00",
   "models": [
    "deepseek/deepseek-v4.1-flash"
   ],
   "prompt_sha256": {
-   "intake": "d411dd3d6f645407752c90e29cd59252cf3fbe31c04584ef4e7bdf6b2b3ca362",
+   "intake": "7a229b33f29387042f8b012ff3a40cf5cfce51dc29b5e1100f799d704bb93e13",
    "assess": "5a4c1bef447b8a08f53c71ddf83218a403c504f4df7d571c2a39495cb218989c",
    "repair": "5c821ce6bcf3216ab46ec9da2823c6a0eb658ea0b9dd9c1be39f480c18d93bc8"
   },
   "knowledge_sha256": "3b01a9bbcb3917da416ae6a6beaadef709720a6c881178b513534addc64c2167",
   "pages_sha256": "7e23c2aea24f77b42dfa91e0b41851f6670044636e9eea42db5144600a04fbcb",
   "rules_sha256": "c50712e80e6a9fa8d24992806f7ae0b4471186aa88769970b5d22cdf80ef61d8",
-  "cost_usd": 0.035946,
+  "cost_usd": 0.020084,
   "tokens": {
-   "prompt": 128118,
-   "completion": 81163,
-   "cached": 118400
+   "prompt": 85594,
+   "completion": 44575,
+   "cached": 78208
   },
-  "calls": 4,
+  "calls": 3,
   "repair_rounds": 1,
   "kept_round": 1,
   "timings_s": {
-   "intake": 49.242,
-   "screen": 0.005,
-   "assess": 267.054,
-   "verify": 0.376,
-   "repair": 27.487,
-   "finalize": 0.026,
-   "wall": 344.189
+   "intake": 40.311,
+   "screen": 0.001,
+   "assess": 107.594,
+   "verify": 0.034,
+   "repair": 37.93,
+   "finalize": 0.002,
+   "wall": 185.872
   },
   "verification": {
    "passed": true,
    "hard_failures": 0,
-   "soft_failures": 1,
-   "checks": 148,
-   "citations_total": 45,
-   "citations_verified": 45
+   "soft_failures": 7,
+   "checks": 139,
+   "citations_total": 38,
+   "citations_verified": 38
   },
-  "code_sha": "70e4140ea94b3ae74c96d9eee85674b29510dbf3",
+  "code_sha": "24d487f8c1136ad5e8b42749fa9009ec0575fb60",
   "code_dirty": true,
-  "provenance_commit": "5977976ab77cee6ef68d04eb8264915fa5986fb3"
+  "provenance_commit": "7aa0c593a463d4ae45e64e1a385f86f806f3a78e"
  }
 }
