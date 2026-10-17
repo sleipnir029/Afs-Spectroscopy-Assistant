@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 23:55 CEST (Claude, Phase 5)._
+_Last updated: 2026-10-18 00:04 CEST (Claude, Phase 5 handoff)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -10,7 +10,7 @@ _Last updated: 2026-10-17 23:55 CEST (Claude, Phase 5)._
 - **Web UI v1 (branch worktree-agent-a207b0059aa193d71, aa66396; not merged):** built per 5.6'''; review NEEDS_FIXES: B1 Fig. 2 prints a fluorescence range (190–740 nm) that S01 p.12 does not state (borrowed from UV-Vis) — truthfulness; B2 phone Saved-runs menu clipped; B3 figure text too small (container query, ≥12 px); B4 POST /assess and /clarify accept cross-origin requests and foreign Host (add Origin/Host middleware). Non-blocking: simplify Fig. 2, shadows, ⚠ emoji variant, http-only links, "Off topic" label for incomplete runs, unused 2.8 MB mermaid file (removal needs the user's OK). **User (23:08): the page reads like a report, unclear where to ask; asked for UI/UX research and examples before deciding.** Research agent started (docs/ui-research.md); then 2–3 mockups for the user to choose; the review fixes go into the chosen design.
 - **UI research + direction (23:21, D-043):** docs/ui-research.md (12 patterns, sources); three mockups on a private canvas (claude.ai/artifact/J3ziNHcrv1nURmoZjqZDXk); **user chose A "Answer + Ask"** (plan PHASES.md 5.6⁗). The UI agent reworks its worktree branch (worktree-agent-a207b0059aa193d71) to A + the v1 review fixes; then reviewer agent, screenshots to the user, merge. Open user decision: remove the unused 2.8 MB mermaid file from the UI branch (recommend yes).
 - **5.0b merged (23:48):** query privacy guard (names incl. sentence-initial/signatures, e-mail/URL domains, product codes; chemical formulas allowed; 0/41 dev queries dropped; known limit: an all-lowercase name cannot be caught), digit-hyphen and digit-space loose rules (880 output quotes and 77 kb quotes unchanged), per-API search failure, abstract relevance (D-045; 11/12 dev abstracts dropped). Reviewer APPROVE WITH FIXES → F1/F2 applied. pytest 509 passed, 2 skipped.
-- **UI direction A built** (branch worktree-agent-a207b0059aa193d71, 8154aa5; mermaid file removed per D-044). Review NEEDS_FIXES: B1 Origin port not compared (localhost:3000 could POST), B2 setup-diagram labels truncated with "…" in all 8 dev runs, B3 option ids (O1–O3) in the main view; + polish N1–N6, N8, N9 → implementer fixing (running). Then one confirm review, merge, show the user screenshots.
+- **UI direction A merged (after c0b4c8a + slash-wrap fix; confirm review APPROVE WITH FIXES).** Earlier review NEEDS_FIXES: B1 Origin port not compared (localhost:3000 could POST), B2 setup-diagram labels truncated with "…" in all 8 dev runs, B3 option ids (O1–O3) in the main view; + polish N1–N6, N8, N9 → fixed.
 - **5.1/5.2 done, NOT reviewed, NOT merged:** branch worktree-agent-a5dda1b856731189d, ecbb021: scenarios/adversarial.jsonl (A01–A12 with must/must_not), `afs-assist eval` (src/afs_assistant/evaluate.py, 19 items → six criteria), outputs/eval/summary.md/json; dev: 7/8 pass all applicable items, D03 fails proposal_rules (the known D-041 support line); adversarial not run. pytest 527 passed on the branch. Note: the sandbox blocks shell commands containing the word "eval" (use a wrapper).
 - **User rule (23:55): one agent at a time** (implementer → reviewer), Claude orchestrates; new work in a new session (memory: feedback_one_agent_at_a_time).
 - **Phase 5 must-dos before the freeze:** G4 N2 query-privacy code guard; re-run D03 (D-041); dev re-run with `--workers 4` on the new intake prompt.
@@ -41,15 +41,18 @@ _Last updated: 2026-10-17 23:55 CEST (Claude, Phase 5)._
 - **G3 re-review (19:36): PASS WITH NON-BLOCKING.** Phase 3 closed. Non-blocking items carried to Phase 5.4 (PHASES.md "Phase 3 close").
 - **Next:** Phase 4 in a new session (handoff below).
 
-## Next session starts with (handoff 19:36)
-Session rule (user): ≤200k tokens per session, one phase per session. **User mode (D-020):** the user is exhausted; Claude does all tests, output reading and validation; reviewer agents stand in at gates; wake the user (PushNotification) only for decisions that are theirs (plan changes beyond D-020 scope, publishing, submission, git deletions). At the phase end, write the next handoff here and notify the user to switch sessions (they type `/clear`, then "do the next task").
+## Next session starts with (handoff 2026-10-18 00:04)
+Rules (user): ≤200k tokens per session; one piece of work per session; **ONE agent at a time** (implementer → reviewer), Claude orchestrates and does small exact fixes itself; low API use; wake the user only for their decisions. At the end: write the next handoff here and tell the user to start a new session ("do the next task").
 
-**Task: implement Phase 4 — External evidence, option B** (PHASES.md "## Phase 4"; plan already approved 13:36 in the re-plan). Timebox Sat 21:00 → Sun 07:00.
-1. Read: `CLAUDE.md`; this file's "Current phase"; PHASES.md "## Phase 4" (steps 4.1–4.6, acceptance checks, G4 review, risks) and "### Phase 3 close"; DEVIATIONS.md D-020..D-033; `docs/research-replan.md` (API notes: OpenAlex keyless ~100 searches/day/IP, Semantic Scholar 429 without key).
-2. Code state: HEAD after 085dcf1 (Phase 3 closed). pytest 372 passed / 1 skipped; ruff clean; kb check 9/9. Pipeline: intake → screen → assess → verify → repair (≤2) → finalize; `quotes.py` is the verbatim matcher to reuse for external paragraphs (4.1 `SourceText` provider).
-3. Fixed decisions: full fetched text → `runs/external_cache/` (already gitignored); git gets metadata + verified quotes + sha256 only. `CONTACT_EMAIL` and `OPENROUTER_API_KEY` in `.env` (never print/commit; email only as Crossref/Unpaywall `mailto`). No OpenAlex key. `--web` is a stretch (cut list position 3). External items always marked secondary; the supplied-source assessment stays primary and unchanged.
-4. Process: short implementation plan → implementer agent(s) → offline tests (recorded HTTP fixtures, no network in pytest) → probe each API live once → re-run D01–D08 with `--external=live`, then verify `--external=cache` replay → reviewer agent (G4: injection, fetching, copyright, verification soundness, H hold-out) → close → handoff for Phase 5 → notify user to switch session.
-5. Never read `scenarios/final.jsonl` (H01–H06). Curated library entries are generic, never built from H text.
+**State:** master after the UI merge. pytest 574 passed / 2 skipped; ruff clean; kb check 10/10. Phase 4 closed. Phase 5 in progress: merged = 5.0/5.0.R (off-topic short-circuit, parallel runs `--workers`, wall-clock LLM deadline, Ctrl-C), 5.0b (query privacy guard, digit rules, per-API failure, abstract relevance), 5.6⁗ web UI direction A (`uv run afs-assist ui`, screenshots in docs/ui/).
+
+**Task for the next session (in order):**
+1. Review + merge branch `worktree-agent-a5dda1b856731189d` (ecbb021: scenarios/adversarial.jsonl A01–A12, `afs-assist eval`, outputs/eval/). One reviewer agent (strictness of the 19 checklist items, must/must_not predicates generic, no H content). The sandbox blocks shell commands containing the word "eval": use a tiny wrapper script.
+2. Live runs (low API, ~$0.5 total): `afs-assist run --set dev --workers 4 --external live` (re-runs D03 with the D-041 fix and the new intake prompt) and `--set adversarial --workers 4 --external live`; `external replay` on all; run the eval harness; commit outputs + summary.
+3. Fix what the eval shows (generic only; log deviations). Phase 3 carry-overs still open (PHASES "### Phase 3 close": stated-quote substrings, confidence separation, precedent against a single method, answer length, expert clutter, test gaps).
+4. UI leftovers (non-blocking): follow-up screenshot caption (stub replays the same assessment); answer pieces revealed during the run (N7); outputs/ui/ live runs are untracked (decide: commit or treat as throwaway).
+5. Then G5 (one reviewer), Phase 5 close, handoff to Phase 6 (freeze, H01–H06 once, README/ARCHITECTURE/slides/video, fresh-clone test; user yes/no to publish and submit). Deadline Sun 18 Oct 23:59; target submit 22:30.
+Never read scenarios/final.jsonl before Phase 6.
 
 ## Phase overview
 | Phase | State | Gate | Notes |
@@ -59,7 +62,7 @@ Session rule (user): ≤200k tokens per session, one phase per session. **User m
 | 2 Pipeline MVP | **Closed** 13:33 | G2 passed | |
 | 3 Assessment upgrade | **Closed** 19:36 | G3 passed | 8/8, 236/236 citations, 14/14 charts, 8/8 cost |
 | 4 External evidence (option B) | **Closed** 22:46 | G4 passed | 8/8, 227/227, replay 8/8, 23 external items |
-| 5 Quality, eval and demo surface (Streamlit) | Planned (approved 13:36, 5.6 per D-023) | G5 Sun 14:00 | + Phase 3 carry-overs in 5.4 |
+| 5 Quality, eval and demo surface | **In progress** (UI direction A, D-043) | G5 Sun 14:00 | 5.0, 5.0b, 5.6⁗ merged; 5.1/5.2 branch to review |
 | 6 Freeze and deliverables | Planned (approved 13:36) | Submit by 22:30 | user yes/no to publish + submit |
 
 ## Done
