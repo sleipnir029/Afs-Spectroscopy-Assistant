@@ -1,9 +1,12 @@
 """Verify that a quoted passage appears on the cited source page.
 
 Match levels, strongest first:
-  exact  normalised quote is a substring of the normalised page text
-  loose  equal after also ignoring case, hyphens and whitespace
-  fuzzy  rapidfuzz partial-ratio alignment >= FUZZY_MIN (typos, small OCR-like drift)
+  exact         normalised quote is a substring of the normalised page text
+  loose         equal after also ignoring case, hyphens and whitespace
+  fuzzy_review  close (rapidfuzz partial ratio >= FUZZY_MIN) with the same numbers and
+                negation/comparison words; NOT verified, needs repair or human review
+Only exact and loose count as verified (`ok`). A near match that changes a number or a
+negation ("do not exhibit" -> "do exhibit", "below 0.1" -> "above 0.1") is `not_found`.
 Offsets refer to the stored page text, which is the text the model is shown.
 """
 
@@ -19,6 +22,9 @@ from afs_assistant.normalize import normalize
 
 FUZZY_MIN = 90.0
 MIN_QUOTE_CHARS = 12
+_NUM = re.compile(r"\d+(?:[.,]\d+)?")
+_GUARD_WORDS = {"not", "no", "never", "cannot", "without", "only", "below", "above", "less", "more",
+                "under", "over", "except", "neither", "nor", "none"}
 
 
 @dataclass
@@ -26,7 +32,7 @@ class QuoteCheck:
     doc: str
     page: int
     quote: str
-    status: str            # exact | loose | fuzzy | not_found | bad_page | too_short
+    status: str            # exact | loose | fuzzy_review | not_found | bad_page | too_short
     start: int | None = None
     end: int | None = None
     score: float | None = None
@@ -34,7 +40,7 @@ class QuoteCheck:
 
     @property
     def ok(self) -> bool:
-        return self.status in ("exact", "loose", "fuzzy")
+        return self.status in ("exact", "loose")
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -72,8 +78,28 @@ def verify(doc: str, page: int, quote: str) -> QuoteCheck:
         return QuoteCheck(doc, page, quote, "loose", index[pos], index[pos + len(loose_q) - 1] + 1, 100.0, sha)
 
     alignment = fuzz.partial_ratio_alignment(q, text)
-    if alignment is not None and alignment.score >= FUZZY_MIN:
-        return QuoteCheck(doc, page, quote, "fuzzy", alignment.dest_start, alignment.dest_end,
-                          round(alignment.score, 1), sha)
     score = round(alignment.score, 1) if alignment is not None else None
+    if alignment is not None and alignment.score >= FUZZY_MIN:
+        start, end = _widen_to_words(text, alignment.dest_start, alignment.dest_end)
+        if _same_meaning_markers(q, text[start:end]):
+            return QuoteCheck(doc, page, quote, "fuzzy_review", start, end, score, sha)
     return QuoteCheck(doc, page, quote, "not_found", score=score, page_sha256=sha)
+
+
+def _widen_to_words(text: str, start: int, end: int) -> tuple[int, int]:
+    while start > 0 and not text[start - 1].isspace():
+        start -= 1
+    while end < len(text) and not text[end].isspace():
+        end += 1
+    return start, end
+
+
+def _markers(s: str) -> tuple[list[str], set[str]]:
+    numbers = sorted(n.replace(",", ".") for n in _NUM.findall(s))
+    words = {w for w in re.findall(r"[a-z]+", s.lower()) if w in _GUARD_WORDS}
+    return numbers, words
+
+
+def _same_meaning_markers(quote: str, span: str) -> bool:
+    """A near match must keep every number and negation/comparison word unchanged."""
+    return _markers(quote) == _markers(span)

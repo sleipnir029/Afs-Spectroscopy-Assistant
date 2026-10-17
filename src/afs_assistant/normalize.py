@@ -18,7 +18,10 @@ _TRANSLATE = str.maketrans({
     "‐": "-", "‑": "-", "‒": "-", "–": "-", "—": "-", "−": "-",
     "‘": "'", "’": "'", "“": '"', "”": '"',
     " ": " ", " ": " ", " ": " ",
+    "\ue0c8": "=",  # private-use glyph S04 uses for the double bond in "C=O"
 })
+# Other private-use glyphs carry no reliable meaning; drop them.
+_PRIVATE_USE = re.compile("[\ue000-\uf8ff]")
 
 
 def normalize(text: str) -> str:
@@ -29,6 +32,7 @@ def normalize(text: str) -> str:
     so dropping it would corrupt compounds. `loose()` handles the difference.
     """
     text = unicodedata.normalize("NFKC", text).translate(_TRANSLATE)
+    text = _PRIVATE_USE.sub("", text)
     text = _HYPHEN_BREAK.sub(r"\1-\2", text)
     return _WHITESPACE.sub(" ", text).strip()
 

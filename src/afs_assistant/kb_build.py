@@ -76,17 +76,35 @@ def extract_s06() -> list[dict]:
 
 
 _SLIDE_HEADING = re.compile(r"^## Slide (\d+)\b.*$", re.MULTILINE)
+_IMAGE_TEXT_HEADER = re.compile(r"^Image text \(transcribed[^)]*\):.*$", re.MULTILINE)
 
 
-def parse_s02_notes(markdown: str) -> list[dict]:
-    """Split our S02 transcription notes into one page record per slide."""
+def parse_s02_notes(markdown: str) -> dict[int, dict]:
+    """Per slide: verbatim image-text lines (`> `) and our notes (everything else)."""
     matches = list(_SLIDE_HEADING.finditer(markdown))
-    pages = []
+    slides = {}
     for i, m in enumerate(matches):
         end = matches[i + 1].start() if i + 1 < len(matches) else len(markdown)
         body = markdown[m.end():end]
-        pages.append({"doc": "S02", "page": int(m.group(1)), "text": normalize(body),
-                      "extraction": "manual-transcription"})
+        image_lines = [line[2:].strip() for line in body.splitlines() if line.startswith("> ")]
+        notes = "\n".join(line for line in _IMAGE_TEXT_HEADER.sub("", body).splitlines()
+                          if not line.startswith("> "))
+        slides[int(m.group(1))] = {"image_text": image_lines, "notes": normalize(notes)}
+    return slides
+
+
+def extract_s02_pages() -> list[dict]:
+    """S02 text = PDF text layer + hand-transcribed image text; our descriptions go to `notes`."""
+    pdf = pymupdf.open(paths.MATERIALS / paths.SOURCE_PDFS["S02"])
+    slides = parse_s02_notes(paths.S02_NOTES.read_text(encoding="utf-8")) if paths.S02_NOTES.exists() else {}
+    pages = []
+    for i, page in enumerate(pdf, start=1):
+        layer = normalize(page.get_text())
+        transcribed = slides.get(i, {}).get("image_text", [])
+        parts = [layer] + [normalize(line) for line in transcribed]
+        pages.append({"doc": "S02", "page": i, "text": " | ".join(p for p in parts if p),
+                      "notes": slides.get(i, {}).get("notes", ""),
+                      "extraction": f"pymupdf-{pymupdf.VersionBind} text layer + manual transcription of image text"})
     return pages
 
 
@@ -105,8 +123,7 @@ def build_pages() -> list[dict]:
     pages = []
     for doc_id in ("S01", "S03", "S04", "S05"):
         pages += extract_pdf_pages(doc_id)
-    if paths.S02_NOTES.exists():
-        pages += parse_s02_notes(paths.S02_NOTES.read_text(encoding="utf-8"))
+    pages += extract_s02_pages()
     pages += extract_s06()
     pages += extract_ref_sections()
 
@@ -121,6 +138,7 @@ def build_pages() -> list[dict]:
             "title": meta.get("title", ""),
             "scope": meta.get("scope", []),
             "text": p["text"], "sha256": sha256(p["text"]),
+            "notes": p.get("notes", ""),
             "extraction": p["extraction"],
         })
     return records

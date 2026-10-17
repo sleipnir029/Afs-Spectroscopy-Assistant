@@ -135,3 +135,31 @@ Phases 2–6 get their detailed plans written when the previous phase closes. Th
 
 ### Out of scope
 LLM calls, pipeline, prompts, UI, provenance, external references (decided after Q&A).
+
+### Phase 1 review fixes (1.R) — APPROVED 2026-10-17 11:00 (all R1–R8); B8 decision: keep `pages.jsonl` committed (user)
+The reviewer verdict was APPROVE WITH FIXES (B1–B8 blocking). Fixes, in order:
+- **R1 `quotes.py`:** a fuzzy match becomes status `fuzzy_review` (`ok=False`). On top of that, fuzzy is rejected if the numbers or negation words (not, no, never, cannot, without, only, below, above, less, more) differ between the quote and the matched span. Only `exact` and `loose` count as verified. Tests: "above 0.1 percent", "below 1 percent", "do exhibit" must all fail.
+- **R2 S02 provenance:** `pages.jsonl` S02 `text` = verbatim slide text only. Our figure descriptions and uncertain readings move to a `notes` field the verifier never searches. Slide-6 values are recorded as verbatim label sequences, tagged `figure_reading`. R-FIB-1, R-FIB-2 and `fibers.json` are re-quoted against verbatim text. New `kb check`: S02 verbatim text is compared against the PDF text layer where one exists. Test: our own description text must NOT verify.
+- **R3 factual fixes:** R-FIB-2 rewritten. The MIR samples on S02 p.9–10 are 1–2 m lab lengths, the long cables are silica only, and no source gives an MIR link length. Add the slide-10 FX80 legend and slide-16 "excitation". Move the slide-13 "laboratory spectra" inference to uncertain readings. Fix the `page_scopes` S02 p.9 note.
+- **R4 `numbers.py`:** match on (value, unit dimension); a unitless number only matches a unitless number; a range is supported only as the same range; `float` canonicalisation, `percent`→`%`, thousands separators, signs, `10x`. Mask page ranges, Phase/Stage/Path/Option/Step n, and list markers. A test for each reviewer probe.
+- **R5 `screen.py`:**
+  - Warn rules apply only when their `target` technique / fiber family matches.
+  - `transmission_transflection` + opaque → `unknown` (R-GEO-2 vs R-GEO-5), not `fail`.
+  - Slot values validated against the vocabulary (unknown value → error).
+  - The fiber slot becomes `proposed_fiber: {family, for_method}` (applies only to that method).
+  - Fiber-specific coverage messages.
+  - Add regime `opaque_absorbing` (dark, non-scattering) → reflection `unknown`.
+- **R6 `scope.py`:** forbidden tags, derived from R-EVI-1 in `rules.yaml` (single source of truth); any forbidden tag on the page fails. Readiness claims never "pass"; best case `precedent_only` (R-EVI-2). Tests updated (S01 p.14/15 and S02 p.14 → precedent_only).
+- **R7 rule fixes (non-blocking list):**
+  - R-GEO-7 `when` method UV-Vis
+  - R-MIR-1 wording (transflexion probes exist)
+  - quotes added for R-MIR-2/3/4, R-NIR-1, R-CMB-1, R-EVI-3 (full sentence), R-EVI-4
+  - R-CAL-1 limited to NIR/Raman with "re-validated" wording
+  - R-GEO-1/5 say "dairy example"
+  - **5 new generic rules:** IR water absorption limits aqueous path; nominal range ≠ instrument/fiber range (all methods); independent reference measurements on representative samples; NIR transmission path 1–10 mm controlled; inhomogeneity/turbulence affect technique choice.
+- **R8 small fixes:**
+  - `normalize` maps private-use glyphs
+  - `units` rejects 0 / negative values
+  - `.gitignore` comment `make kb` → `uv run afs-assist kb build` (comment only)
+  - S02 header line about the text layer corrected
+- **Acceptance:** `kb check` all PASS (incl. new S02 text-layer check); `pytest` all PASS with the new tests; reviewer re-checks B1–B7 (focused re-review); then G1.

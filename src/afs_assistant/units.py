@@ -18,18 +18,23 @@ def canonical_unit(unit: str) -> str:
     return _ALIASES[key]
 
 
+def _check_positive(value: float) -> None:
+    if value <= 0:
+        raise ValueError(f"spectral position must be positive, got {value}")
+
+
 def to_um(value: float, unit: str) -> float:
+    _check_positive(value)
     u = canonical_unit(unit)
     if u == "um":
         return float(value)
     if u == "nm":
         return float(value) / 1000.0
-    if value == 0:
-        raise ValueError("wavenumber 0 has no wavelength")
     return 10_000.0 / float(value)
 
 
 def from_um(value_um: float, unit: str) -> float:
+    _check_positive(value_um)
     u = canonical_unit(unit)
     if u == "um":
         return value_um

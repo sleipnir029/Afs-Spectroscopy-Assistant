@@ -20,11 +20,12 @@
 #   method: NIR | MIR | Raman | Fluorescence | UV-Vis
 #   technique: transmission | transflection | diffuse_reflection | ATR | raman_probe | fluorescence_probe
 #   physical_state: liquid | paste | soft_solid | powder | solid
-#   optical_regime: clear | turbid | opaque          (optical behaviour of the sample)
+#   optical_regime: clear | turbid | opaque | opaque_absorbing   (opaque = scattering; opaque_absorbing = dark, little scattering)
+#   proposed_fiber: {family, for_method?}   (existing or proposed fiber link; screening slot, not used in `when`)
 #   fluorophore: yes | no | unknown        (does the target or a justified indicator fluoresce?)
 #   aqueous: yes | no | unknown
 #   heterogeneous: yes | no | unknown
-#   fiber_family: silica | chalcogenide | polycrystalline | hollow_waveguide | fluoride
+#   fiber_family (in `target`): silica | chalcogenide | polycrystalline | hollow_waveguide | fluoride
 #   evidence_scope: page scope tags (knowledge/page_scopes.yaml)
 #   claim: readiness_process | readiness_clinical | performance_figure | method_gain
 
@@ -32,7 +33,7 @@ rules:
 
 # ---------------------------------------------------------------- geometry / optical regime
 - id: R-GEO-1
-  statement: NIR transmission (or transflection) is the preferred geometry for transparent or semi-transparent liquids.
+  statement: NIR transmission (or transflection) is the preferred geometry for transparent or semi-transparent liquids (source example - dairy streams such as skim milk, whey, permeate).
   effect: guidance
   when: {method: NIR, optical_regime: [clear, turbid]}
   target: {technique: [transmission, transflection]}
@@ -42,7 +43,7 @@ rules:
 - id: R-GEO-2
   statement: Transmission fails when the sample is too thick, opaque or fat-rich because light cannot penetrate it.
   effect: exclude
-  when: {optical_regime: opaque}
+  when: {optical_regime: [opaque, opaque_absorbing]}
   target: {technique: transmission}
   sources:
     - {doc: S01, page: 18, quote: "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample."}
@@ -64,7 +65,7 @@ rules:
     - {doc: S01, page: 18, quote: "reflection can work well in highly scattering environments but can be less representative for clear liquids."}
 
 - id: R-GEO-5
-  statement: A transflection probe may serve both low- and high-scattering states, but only "in some cases"; it is a hypothesis to test.
+  statement: In the dairy example, a transflection probe can "in some cases" serve both low-fat and high-fat products; for other low/high-scattering streams this is a hypothesis to test.
   effect: guidance
   when: {method: NIR, optical_regime: [clear, turbid, opaque]}
   target: {technique: transflection}
@@ -80,9 +81,9 @@ rules:
     - {doc: S01, page: 17, quote: "the method is sensitive to the surface characteristics and fat globule size."}
 
 - id: R-GEO-7
-  statement: In high optical density media a transmission signal saturates; an ATR probe with its very short path can measure black or highly scattering fluids.
+  statement: In UV-Vis, a transmission signal saturates in high optical density media; a UV-ATR probe with its very short path can measure black or highly scattering fluids.
   effect: guidance
-  when: {optical_regime: [opaque, turbid]}
+  when: {method: UV-Vis, optical_regime: [opaque, opaque_absorbing, turbid]}
   target: {technique: ATR}
   sources:
     - {doc: S01, page: 16, quote: "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample."}
@@ -90,12 +91,13 @@ rules:
 
 # ---------------------------------------------------------------- MIR / ATR
 - id: R-MIR-1
-  statement: MIR absorption is strong, so MIR needs very thin samples or ATR; in-line MIR is normally an ATR measurement.
+  statement: MIR absorption is strong, so MIR needs very thin samples or ATR; ATR is the usual in-line route, and MIR transflexion fiber probes also exist.
   effect: guidance
   when: {method: MIR}
   target: {technique: ATR}
   sources:
     - {doc: S01, page: 5, quote: "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)"}
+    - {doc: S01, page: 11, quote: "Fig.2.2 Mid-IR Transflexion fiber probe"}
 
 - id: R-MIR-2
   statement: ATR requires tight contact; it suits liquids, pastes and soft solids.
@@ -105,6 +107,7 @@ rules:
   sources:
     - {doc: S04, page: 4, quote: "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head."}
     - {doc: S01, page: 10, quote: "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples"}
+    - {doc: REF, page: 5, quote: "Liquids, pastes and soft solids in contact with the ATR crystal."}
 
 - id: R-MIR-3
   statement: ATR samples only a surface layer a few micrometres deep, so deposits on the crystal and surface representativeness are risks.
@@ -113,6 +116,7 @@ rules:
   target: {risk: fouling_surface_layer}
   sources:
     - {doc: S01, page: 13, quote: "typically at a depth of few microns"}
+    - {doc: REF, page: 5, quote: "Usable range limited by fiber and crystal; contact, fouling, compatibility."}
 
 - id: R-MIR-4
   statement: The MIR range is 4000-400 cm-1 (2.5-25 µm); MIR spectra have well-defined bands and high selectivity.
@@ -121,6 +125,7 @@ rules:
   target: {range: "4000-400 cm-1"}
   sources:
     - {doc: S01, page: 9, quote: "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis."}
+    - {doc: S01, page: 5, quote: "Mid-IR band spectra contain well-defined peaks (absorption bands), while NIR, UV, and fluorescence spectra contain broad, highly overlapping signals"}
 
 # ---------------------------------------------------------------- NIR
 - id: R-NIR-1
@@ -130,6 +135,7 @@ rules:
   target: {property: penetration_remote}
   sources:
     - {doc: S01, page: 5, quote: "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics"}
+    - {doc: S01, page: 5, quote: "making it ideal for online applications, including remote measurements via fiber optic probes."}
 
 - id: R-NIR-2
   statement: NIR bands are broad and overlapping; quantitative use needs a chemometric calibration.
@@ -235,18 +241,21 @@ rules:
   target: {fiber_family: [silica]}
   check: fiber_coverage
   sources:
-    - {doc: S02, page: 6, quote: "\"Standard VIS-NIR Silica Fibers\" / \"Al/Cu-coated VIS-NIR Silica Fibers\": \"350 nm\" to \"2400 nm\""}
-    - {doc: S02, page: 6, quote: "\"Chalcogenide As-S IR Fibers\": \"1100 nm\" to \"6500 nm\""}
-    - {doc: S02, page: 6, quote: "\"Polycrystalline Infrared Fibers\": \"3000 nm\" to \"17 µm\""}
+    - {doc: S02, page: 6, kind: figure_reading, quote: "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm"}
+    - {doc: S02, page: 6, kind: figure_reading, quote: "1100 nm Chalcogenide As-S IR Fibers 6500 nm"}
+    - {doc: S02, page: 6, kind: figure_reading, quote: "3000 nm Polycrystalline Infrared Fibers 17 µm"}
+    - {doc: S01, page: 9, quote: "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1)"}
 
 - id: R-FIB-2
-  statement: Long (100-300 m) remote links are stated for low-OH silica Vis-NIR cables only; the MIR fiber cables shown in the sources are 2 m. No source gives a usable length for long MIR links, so any MIR link length is an open question.
+  statement: Long (100-300 m) cables are stated only for low-OH silica fibers. The MIR fiber and hollow-waveguide samples compared on S02 p.9-10 are 1-2 m laboratory lengths. No source states an achievable length for an MIR link, so any MIR link length is an open question for AFS, not a value to assume.
   effect: warn
   when: {method: MIR}
   target: {risk: mir_link_length_unknown}
   sources:
     - {doc: S02, page: 7, quote: "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control"}
-    - {doc: S02, page: 9, quote: "legend \"HWG-750-2m\", \"PIR 600/700 -2m\""}
+    - {doc: S02, page: 9, quote: "HWG-750-2m PIR 600/700 -2m"}
+    - {doc: S02, page: 10, kind: figure_reading, quote: "1 Meter PolyMicro hollow fiber 1mm ID"}
+    - {doc: S02, page: 10, kind: figure_reading, quote: "1.25 Meter Silver Halide - straight run"}
 
 - id: R-FIB-3
   statement: Hollow waveguides couple poorly to FTIR spectrometers; PIR fibers couple much better.
@@ -274,12 +283,13 @@ rules:
 
 # ---------------------------------------------------------------- calibration / combinations
 - id: R-CAL-1
-  statement: Calibrations are specific to the matrix; a change of sample matrix or composition needs a new or extended calibration, which must be tested.
+  statement: NIR and Raman calibrations are specific to the matrix; after a change of sample matrix or composition the calibration must be re-validated (and usually rebuilt or extended) on the new material.
   effect: warn
-  when: {}
+  when: {method: [NIR, Raman]}
   target: {risk: matrix_specific_calibration}
   sources:
-    - {doc: REF, page: 5, quote: "calibration specific to the matrix."}
+    - {doc: REF, page: 5, quote: "Weak signal, fluorescence background; calibration specific to the matrix."}
+    - {doc: REF, page: 5, quote: "physical variation; calibration specific to the matrix."}
 
 - id: R-CMB-1
   statement: Combining methods can help for complex samples, but a gain is a hypothesis; compare with the best single method and align sampling location and timing.
@@ -287,6 +297,7 @@ rules:
   when: {}
   target: {claim: method_gain}
   sources:
+    - {doc: REF, page: 5, quote: "compare with the best single method."}
     - {doc: REF, page: 5, quote: "Sampling location and timing must be aligned; a gain is a hypothesis to test."}
 
 - id: R-CMB-2
@@ -323,12 +334,12 @@ rules:
     - {doc: REF, page: 3, quote: "a published application is a reason to test a method, not proof that it will work for a new customer."}
 
 - id: R-EVI-3
-  statement: Spectra of frozen/thawed (ex vivo) samples can differ from in vivo measurements; ex vivo results do not transfer to in vivo use without new evidence.
+  statement: Spectra of frozen/thawed (ex vivo) samples can differ from in vivo measurements. The source notes model transfer was shown in other work (Raman), but there is no in vivo evidence for the sensor studied; ex vivo results do not establish in vivo use.
   effect: scope_limit
   when: {claim: readiness_clinical}
   target: {evidence_role: ex_vivo_limit}
   sources:
-    - {doc: S03, page: 3, quote: "the spectra of frozen/thawed biopsies can differ from real-life in vivo measurements"}
+    - {doc: S03, page: 3, quote: "Although the spectra of frozen/thawed biopsies can differ from real-life in vivo measurements, the possibility to transfer the diagnostic model was shown in a previous work on Raman spectroscopy of cancer [28]."}
 
 - id: R-EVI-4
   statement: The bioprocess variable map (Fig. 7) lists literature-reported accessible variables, not demonstrated AFS capability.
@@ -337,6 +348,50 @@ rules:
   target: {evidence_role: literature_only}
   sources:
     - {doc: S01, page: 17, quote: "Fig. 7. Spectral range for bioprocess monitoring with accessible variables."}
+    - {doc: S01, page: 17, quote: "Biechele, P., et al. (2015). Sensor systems for bioprocess monitoring."}
+
+# ---------------------------------------------------------------- added after Phase 1 review
+- id: R-GEN-1
+  statement: A nominal method range is not the range of a specific instrument, fiber or probe; state only the usable range of the selected configuration.
+  effect: guidance
+  when: {}
+  target: {range: nominal_vs_usable}
+  sources:
+    - {doc: REF, page: 3, quote: "A nominal method range is not the range of a specific instrument, fiber or probe."}
+    - {doc: REF, page: 5, quote: "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample."}
+
+- id: R-GEN-2
+  statement: A feasibility plan needs representative samples or process states, independent reference measurements, a defined comparison and a go/no-go basis.
+  effect: guidance
+  when: {}
+  target: {plan: feasibility_elements}
+  sources:
+    - {doc: REF, page: 3, quote: "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision."}
+
+- id: R-GEN-3
+  statement: Water absorbs much more strongly in infrared methods than in Raman; for aqueous samples IR measurements need very short paths (ATR), while Raman tolerates water.
+  effect: warn
+  when: {aqueous: "yes", method: [MIR, NIR]}
+  target: {risk: water_absorption}
+  sources:
+    - {doc: S01, page: 16, quote: "low absorbance for water molecules compared to infrared methods."}
+    - {doc: S01, page: 5, quote: "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples"}
+
+- id: R-GEN-4
+  statement: In NIR transmission the optical pathlength must be controlled (usually 1-10 mm in the dairy example); too wide loses signal to absorption, too narrow samples a negligible volume.
+  effect: warn
+  when: {method: NIR, technique: transmission}
+  target: {risk: pathlength_control}
+  sources:
+    - {doc: S01, page: 18, quote: "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume."}
+
+- id: R-GEN-5
+  statement: Sample inhomogeneity and process turbulence must be considered when choosing the measurement technique and sampling location.
+  effect: warn
+  when: {heterogeneous: "yes"}
+  target: {risk: inhomogeneity}
+  sources:
+    - {doc: S01, page: 7, quote: "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique."}
 
 # ---------------------------------------------------------------- procedure
 - id: R-PRO-1

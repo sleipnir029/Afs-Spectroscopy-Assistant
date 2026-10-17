@@ -54,7 +54,8 @@ STATE_SAMPLE_TYPES = {
 REGIME_SAMPLE_TYPES = {
     "clear": set(),
     "turbid": {"colloidal", "scattering media"},
-    "opaque": {"scattering media"},
+    "opaque": {"scattering media"},          # opaque because it scatters (e.g. milk concentrate)
+    "opaque_absorbing": set(),               # dark, absorbing, little scattering (e.g. dark oils)
 }
 
 # Technique ids that a rule's `technique: transmission` / `transflection` refers to.
@@ -78,6 +79,7 @@ class Candidate:
     status: str = "pass"                      # pass | fail | unknown
     reasons: list[dict] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)
 
     def downgrade(self, status: str, rule: str, message: str) -> None:
         order = {"pass": 0, "unknown": 1, "fail": 2}
@@ -130,27 +132,75 @@ def _when_state(when: dict, cand: Candidate, slots: dict) -> str:
     return state
 
 
+# Allowed slot values; anything else is a caller error, not "unknown".
+SLOT_VALUES = {
+    "physical_state": {"liquid", "paste", "soft_solid", "powder", "solid"},
+    "optical_regime": {"clear", "turbid", "opaque", "opaque_absorbing"},
+    "fluorophore": {"yes", "no"},
+    "aqueous": {"yes", "no"},
+    "heterogeneous": {"yes", "no"},
+}
+FIBER_FAMILIES = {"silica", "chalcogenide", "polycrystalline", "hollow_waveguide", "fluoride"}
+
+
+def validate_slots(slots: dict) -> None:
+    for key, value in slots.items():
+        if key == "proposed_fiber":
+            if not isinstance(value, dict) or value.get("family") not in FIBER_FAMILIES:
+                raise ValueError(f"proposed_fiber must be {{family: one of {sorted(FIBER_FAMILIES)}, for_method?}}")
+            if value.get("for_method") not in (None, *METHOD_RANGES_UM):
+                raise ValueError(f"unknown method in proposed_fiber: {value.get('for_method')!r}")
+            continue
+        if key not in SLOT_VALUES:
+            raise ValueError(f"unknown slot {key!r}")
+        if value != UNKNOWN and value not in SLOT_VALUES[key]:
+            raise ValueError(f"{key}={value!r}; allowed: {sorted(SLOT_VALUES[key])} or 'unknown'")
+
+
+def _fiber_for(cand: Candidate, slots: dict) -> str | None:
+    fiber = slots.get("proposed_fiber")
+    if not fiber or fiber.get("for_method") not in (None, cand.method):
+        return None
+    return fiber["family"]
+
+
+def _target_applies(target: dict, cand: Candidate, fiber_family: str | None) -> bool:
+    """A warn rule only applies to candidates its target names (technique / fiber family)."""
+    if "technique" in target and not _technique_in(target["technique"], cand.technique):
+        return False
+    if "fiber_family" in target:
+        families = target["fiber_family"] if isinstance(target["fiber_family"], list) else [target["fiber_family"]]
+        if fiber_family not in families:
+            return False
+    return True
+
+
 def screen(slots: dict) -> list[Candidate]:
     """Evaluate every in-line candidate against the known slots.
 
     slots keys (all optional): physical_state, optical_regime, fluorophore, aqueous,
-    heterogeneous, fiber_family. Missing keys count as unknown.
+    heterogeneous (values in SLOT_VALUES or "unknown"), and proposed_fiber
+    {family, for_method?} for an existing or proposed fiber link. Missing keys = unknown.
     """
+    validate_slots(slots)
     result = []
     state = slots.get("physical_state", UNKNOWN)
     regime = slots.get("optical_regime", UNKNOWN)
     known_types = STATE_SAMPLE_TYPES.get(state, set()) | REGIME_SAMPLE_TYPES.get(regime, set())
     for cand in candidates():
+        fiber_family = _fiber_for(cand, slots)
         # S01 Table 1 sample-type fit: pass on any overlap; otherwise unknown if a slot is missing.
         if known_types & cand.sample_types:
             pass
+        elif regime == "opaque_absorbing" and cand.technique.startswith("diffuse_reflection"):
+            cand.downgrade("unknown", "S01 Table 1 (p.6)",
+                           "dark, absorbing (non-scattering) sample: diffuse reflection signal must be tested")
         elif UNKNOWN in (state, regime):
             cand.downgrade("unknown", "S01 Table 1 (p.6)",
                            "sample state or optical regime unknown: Table 1 sample-type fit not confirmed")
         else:
             cand.downgrade("fail", "S01 Table 1 (p.6)",
-                           f"Table 1 lists {sorted(cand.sample_types)} for this technique; "
-                           f"sample is {state}, {regime}")
+                           f"Table 1 lists {sorted(cand.sample_types)} for this technique; sample is {state}, {regime}")
 
         for rule in kb.rules():
             effect, target = rule["effect"], rule.get("target", {})
@@ -158,28 +208,42 @@ def screen(slots: dict) -> list[Candidate]:
             if match == "no":
                 continue
             if effect == "exclude" and "technique" in target and _technique_in(target["technique"], cand.technique):
-                cand.downgrade("fail" if match == "yes" else "unknown", rule["id"], rule["statement"])
+                if cand.technique in TECHNIQUE_FAMILY["transflection"]:
+                    # Combined transmission/transflection probe: transmission is excluded, but
+                    # transflection works "in some cases" (R-GEO-5), so this stays open.
+                    cand.downgrade("unknown", rule["id"],
+                                   rule["statement"] + " Transflection may still work in some cases (R-GEO-5): test it.")
+                else:
+                    cand.downgrade("fail" if match == "yes" else "unknown", rule["id"], rule["statement"])
             elif effect == "require" and "fluorophore" in target:
                 value = slots.get("fluorophore", UNKNOWN)
+                wanted = target["fluorophore"] if isinstance(target["fluorophore"], list) else [target["fluorophore"]]
                 if value == UNKNOWN:
                     cand.downgrade("unknown", rule["id"], "no fluorescent species or indicator identified yet")
-                elif value not in (target["fluorophore"] if isinstance(target["fluorophore"], list) else [target["fluorophore"]]):
+                elif value not in wanted:
                     cand.downgrade("fail", rule["id"], rule["statement"])
             elif effect == "require" and "physical_state" in target:
                 if state == UNKNOWN:
                     cand.downgrade("unknown", rule["id"], "physical state unknown: " + rule["statement"])
                 elif state not in target["physical_state"]:
                     cand.downgrade("fail", rule["id"], rule["statement"])
-            elif effect == "warn" and match == "yes":
+            elif (effect == "warn" and match == "yes" and rule.get("when")
+                  and _target_applies(target, cand, fiber_family)):
+                # Rules with an empty `when` are assessment-level guidance, not candidate warnings.
                 cand.warnings.append(rule["id"])
 
-        fiber_family = slots.get("fiber_family", UNKNOWN)
-        if fiber_family != UNKNOWN:
+        if fiber_family is not None:
             lo, hi = METHOD_RANGES_UM[cand.method]["range_um"]
             fams = [c for c in coverage(lo, hi) if c.family == fiber_family]
             if fams and all(c.status == "none" for c in fams):
-                cand.downgrade("fail", "R-FIB-1", f"{fiber_family} fibers do not transmit the {cand.method} range")
-            elif fams and all(c.status == "partial" for c in fams):
-                cand.warnings.append("R-FIB-1")
+                windows = ", ".join(f"{c.window_um[0]}-{c.window_um[1]} um" for c in fams)
+                cand.downgrade("fail", "R-FIB-1",
+                               f"{fiber_family} fibers ({windows}) do not transmit the {cand.method} range "
+                               f"({lo}-{hi} um)")
+            elif fams and not any(c.status == "full" for c in fams):
+                best = max(fams, key=lambda c: (c.overlap_um[1] - c.overlap_um[0]) if c.overlap_um else 0)
+                cand.notes.append(f"{best.name} covers {best.window_um[0]}-{best.window_um[1]} um: only part of the "
+                                  f"nominal {cand.method} range ({lo}-{hi} um); usable range about "
+                                  f"{best.overlap_um[0]}-{best.overlap_um[1]} um (S02 p.6 figure reading)")
         result.append(cand)
     return result
