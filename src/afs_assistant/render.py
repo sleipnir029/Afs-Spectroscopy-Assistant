@@ -4,7 +4,8 @@ Two layers (D-022): a short Answer part (request, brief answer, proposal, option
 setup sketch, top questions) and an Expert detail part with everything else.
 Code-derived parts (never model text): the cost class per option (S01 Table 1), the
 confidence rating per option, the auxiliary-sensor label, the not-measurable-in-line
-wording and the Mermaid setup sketch.
+wording and the Mermaid setup sketch. Secondary external evidence (Phase 4), when the step
+ran, has its own section and is never mixed with the supplied-source evidence.
 """
 
 from __future__ import annotations
@@ -53,6 +54,10 @@ NOTE_LABEL = {"chemometrics_note": "Chemometrics", "realtime_tracking_note": "Re
 _MERMAID_ESCAPES = [("#", "#35;"), ('"', "#quot;"), ("[", "#91;"), ("]", "#93;"), ("|", "#124;"),
                     ("<", "#lt;"), (">", "#gt;"), ("{", "#123;"), ("}", "#125;"), ("`", "#96;")]
 MERMAID_LABEL_CHARS = 60
+GAP_LABEL = {"status": "decision status", "auxiliary_sensor": "auxiliary sensor", "multi_method": "multi-method",
+             "not_in_sources": "not in the supplied sources", "premise_not_covered": "premise not covered",
+             "uncited_parameter": "parameter without a source"}
+EXTERNAL_TITLE = "Secondary evidence (external, not AFS material)"
 # A step text that starts with its own number ("1." / "1)") would show the number twice in the list.
 _STEP_NUMBER = re.compile(r"^\s*\d+[.)](?!\d)\s*")   # not a decimal such as "1.5 mm"
 
@@ -223,6 +228,96 @@ def stated_from_intake(r: RunResult) -> list[str]:
     return [f'"{q}"' for q in dict.fromkeys(" ".join(q.split()) for q in quotes)]
 
 
+def basis_text(r: RunResult) -> str:
+    """The proposal basis; an engineering-judgement proposal may name verified secondary external support."""
+    pr = r.assessment.proposal
+    support = (r.external or {}).get("proposal_support", [])
+    if pr.basis == "engineering_judgement" and support:
+        return f"engineering judgement, with secondary external support {', '.join(support)} (not AFS material)"
+    return BASIS_LABEL[pr.basis]
+
+
+def external_answer_line(r: RunResult) -> str:
+    """One Answer line: verified external items per gap, or 'no usable external source found'."""
+    ext = r.external
+    if not ext or not ext.get("gap_results"):
+        return ""
+    parts = [f"{g['gap_id']}: {', '.join(g['items']) if g['items'] else g['result']}" for g in ext["gap_results"]]
+    return f"**{EXTERNAL_TITLE}:** {'; '.join(parts)}. See Expert detail."
+
+
+def external_section(r: RunResult) -> list[str]:
+    ext = r.external
+    if not ext or not ext.get("gaps"):
+        return []
+    out = [f"### {EXTERNAL_TITLE}", "",
+           ("*Found by a literature search for gaps the supplied AFS sources leave open. Not AFS material and "
+            "not proof for this case; every quote below was verified verbatim against the fetched text.*"), ""]
+    if ext.get("fallback"):
+        out += [f"*Live search unavailable ({ext['fallback']}); curated library only.*", ""]
+    if ext.get("error"):
+        out += [f"*External step incomplete: {ext['error']}.*", ""]
+    sources = {s["id"]: s for s in ext.get("sources", [])}
+    for g in ext["gaps"]:
+        out += [f"**{g['id']} · {GAP_LABEL.get(g['kind'], g['kind'])}:** {g['text']}", ""]
+        items = [it for it in ext.get("items", []) if it["gap_id"] == g["id"]]
+        if not items:
+            out += ["- No usable external source found.", ""]
+            continue
+        for it in items:
+            c = it["citation"]
+            src = sources.get(c["source_id"], {})
+            option = f" *(supports {it['option_id']})*" if it.get("option_id") else ""
+            out.append(f"- **{c['label']}** {it['finding']} *How it applies:* {it['how_it_applies']} "
+                       f"*Limits and transfer risks:* {it['limits_and_transfer_risks']}{option}")
+            out.append(f"  > \"{c['quote']}\"")
+            out.append(f"  > {source_line(src)}")
+        out.append("")
+    return out
+
+
+def source_line(src: dict) -> str:
+    """Title, year, venue, DOI/URL, retrieval date, access level, licence (from our record, never the model)."""
+    bits = [f"{src.get('title') or 'untitled'} ({src.get('year') or 'n.d.'})"]
+    if src.get("venue"):
+        bits.append(str(src["venue"]))
+    bits.append(f"doi:{src['doi']}" if src.get("doi") else src.get("url", ""))
+    if src.get("doi") and src.get("url"):
+        bits.append(src["url"])
+    access = "full text" if src.get("access") == "full_text" else "abstract only"
+    origin = "curated library" if src.get("library_id") else src.get("api", "")
+    bits.append(f"retrieved {str(src.get('retrieved_at', ''))[:10] or 'unknown'}, {access}, "
+                f"licence: {src.get('licence') or 'unknown'}, via {origin}")
+    return " · ".join(b for b in bits if b)
+
+
+def external_verification(r: RunResult) -> list[str]:
+    ext = r.external
+    if ext is None:
+        return []
+    if not ext.get("gaps"):
+        return ["- External evidence: no gap found, so no search."]
+    hits = sum(x.get("hits", 0) for x in ext.get("search_log", []))
+    library = sum(1 for s in ext.get("sources", []) if s.get("library_id"))
+    out = [(f"- External evidence ({ext['mode']}): {len(ext.get('items', []))} quote(s) verified verbatim "
+            f"(exact or whitespace/hyphen-tolerant, at most 400 characters and 2 sentences, against the cited "
+            f"paragraph); {len(ext.get('dropped', []))} item(s) dropped."),
+           (f"- External search: {len(ext.get('queries', []))} query(ies), {hits} hit(s), "
+            f"{len(ext.get('sources', []))} source(s) ({library} from the curated library)"
+            + (f"; ⚠ {ext['fallback']}" if ext.get("fallback") else "") + "."),
+           (f"- External step: {ext.get('calls', 0)} model call(s), {ext.get('seconds', 0):.1f} s extra "
+            f"(cost in the run JSON).")]
+    for d in ext.get("dropped", []):
+        c = d["citation"]
+        out.append(f"  - ⚠ dropped {d['gap_id']} {c['source_id']} ¶{c['para']}: {'; '.join(d['reasons'])}")
+    for it in ext.get("items", []):
+        for note in it.get("notes", []):
+            out.append(f"  - {it['citation']['label']}: {note}")
+    if ext.get("error"):
+        out.append(f"- ⚠ External step incomplete: {ext['error']}.")
+    return out
+
+
 def to_markdown(r: RunResult, title: str = "") -> str:
     a = r.assessment
     cite = _Citer()
@@ -245,9 +340,12 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     best_text = f"{best.id} ({best.tier})" if best else "(invalid option id)"   # the table names the methods
     out += ["### Proposal", "",
             f"- **Best current option:** {best_text}{warn('proposal')}",
-            f"- **Basis:** {BASIS_LABEL[pr.basis]}",
+            f"- **Basis:** {basis_text(r)}",
             f"- **What would change it:** {pr.what_would_change_it}{warn('proposal.what_would_change_it')}",
             f"- **Next step:** {pr.next_step}{warn('proposal.next_step')}", ""]
+    line = external_answer_line(r)
+    if line:
+        out += [line, ""]
     out += [f"**Decision status:** {STATUS_LABEL[a.decision_status]}", ""]     # the reason is in Expert detail
 
     if a.solution_options:
@@ -373,6 +471,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     if notes:
         out += ["### Further notes", ""] + [f"- **{label}:** {text}{warn(n)}" for label, text, n in notes] + [""]
 
+    out += external_section(r)
     out += ["### Evidence (verified quotes)", ""]
     for i, (c, precedent) in enumerate(zip(cite.entries, cite.precedent, strict=True), 1):
         badge = "✓ (precedent only)" if precedent else "✓"
@@ -403,6 +502,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         out += [f"  - {x['location']}: {x['reason']}" for x in intake_removed]
     for p in r.manifest.get("intake_problems", []):
         out.append(f"- ⚠ Intake incomplete after {r.manifest.get('intake_attempts', 1)} attempt(s): {p}")
+    out += external_verification(r)
     # The API cost stays in the run JSON and manifest: no currency sign in any Markdown output.
     out += ["", f"*Run {r.run_id} · models {', '.join(r.manifest.get('models', []))}*", ""]
     return "\n".join(out)
@@ -432,4 +532,5 @@ def to_json(r: RunResult) -> dict:
         "calls": r.calls,
         "timings_s": r.timings,
         "manifest": r.manifest,
+        **({"external": r.external} if r.external is not None else {}),
     }

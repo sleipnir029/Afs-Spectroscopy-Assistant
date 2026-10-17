@@ -6,6 +6,8 @@ verification with at most MAX_REPAIR_ROUNDS repair calls; the round with the few
 hard failures is kept. Finalize never shows an unverified citation as verified: failing
 citations are removed, items that lost one or failed a number check are flagged, and
 duplicates, screen violations and inconsistent status are fixed deterministically.
+With `external` set to live or cache, the external-evidence step (Phase 4) runs after
+finalize; it adds a separate secondary block and never changes the assessment.
 """
 
 from __future__ import annotations
@@ -19,6 +21,7 @@ from datetime import UTC, datetime
 from functools import cache, lru_cache
 
 from afs_assistant import kb, paths, quotes
+from afs_assistant.external import step as external_step
 from afs_assistant.methods import named_methods
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
@@ -124,6 +127,7 @@ class RunResult:
     timings: dict[str, float] = field(default_factory=dict)  # seconds per stage, plus wall
     named_methods: dict[str, str] = field(default_factory=dict)  # method -> enquiry span naming it
     recheck: list = field(default_factory=list)  # option/proposal/premise checks failing on the final assessment
+    external: dict | None = None  # secondary external evidence (Phase 4); None when the step is off
 
 
 def _assess_user(enquiry: str, intake: Intake, candidates: list[Candidate]) -> str:
@@ -358,7 +362,8 @@ def _finalize_proposal_basis(data: dict, removed: list[dict], flagged: dict[str,
     flagged["proposal"] = f"{flagged['proposal']}; {why}" if "proposal" in flagged else why
 
 
-def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
+def run(enquiry: str, client, run_id: str | None = None, external: str = "off", fetcher=None) -> RunResult:
+    """One assessment. `external`: off (default) | live | cache; `fetcher` overrides the HTTP fetcher (tests)."""
     run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:6]
     tracker = getattr(client, "tracker", None)
     if tracker is not None:
@@ -420,6 +425,10 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
     final, removed, flagged = finalize(best, best_report, candidates)
     still_failing = recheck(final, candidates).hard_failures
     lap("finalize")
+    ext = None
+    if external != "off":
+        ext = external_step.run(intake, final, client, external, fetcher=fetcher)
+        lap("external")
     timings["wall"] = round(time.monotonic() - wall, 3)
     calls = tracker.calls[first_call:] if tracker is not None else []
     manifest = {
@@ -443,5 +452,10 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
         "timings_s": timings,
         "verification": best_report.summary(),
     }
+    if ext is not None:
+        manifest["prompt_sha256"].update(ext["prompt_sha256"])
+        manifest["external_mode"] = external
+        manifest["external_library_sha256"] = ext["library_sha256"]
     return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
-                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing)
+                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing,
+                     ext)

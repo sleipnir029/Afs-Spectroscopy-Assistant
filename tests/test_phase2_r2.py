@@ -492,7 +492,7 @@ def test_run_set_continues_after_a_failing_scenario_and_exits_nonzero(monkeypatc
     items = [{"id": "X01", "title": "a", "enquiry": "first"}, {"id": "X02", "title": "b", "enquiry": "second"}]
     seen = []
 
-    def fake_assess_one(enquiry, scenario_id, client, out_dir, title):
+    def fake_assess_one(enquiry, scenario_id, client, out_dir, title, **_):
         seen.append(scenario_id)
         if scenario_id == "X01":
             raise RuntimeError("LLM call failed after retries")

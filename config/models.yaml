@@ -11,6 +11,9 @@ roles:
   intake: {model: deepseek/deepseek-v4.1-flash, max_tokens: 16000}
   assess: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000}
   repair: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000}
+  # Phase 4 external evidence (gap-gated): a small query plan and one secondary-evidence call.
+  external_queries: {model: deepseek/deepseek-v4.1-flash, max_tokens: 16000}
+  external_evidence: {model: deepseek/deepseek-v4.1-flash, max_tokens: 32000}
 # Provider routing per model: only strict-JSON capable, non-fp4 endpoints, cheapest first (checked 2026-10-17 10:14).
 provider_routing:
   deepseek/deepseek-v4.1-flash: {order: [deepinfra, atlas-cloud, coreweave], only: [deepinfra, atlas-cloud, coreweave], allow_fallbacks: true}

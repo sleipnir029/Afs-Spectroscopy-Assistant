@@ -20,11 +20,15 @@ TABLE1_FILE = KNOWLEDGE / "table1_methods.json"
 FIBERS_FILE = KNOWLEDGE / "fibers.json"
 RULES_FILE = KNOWLEDGE / "rules.yaml"
 GRAPH_FILE = KNOWLEDGE / "graph.json"
+# Curated external library: metadata, verified short passages and sha256 only (no full text).
+EXTERNAL_LIBRARY = KNOWLEDGE / "external" / "library.jsonl"
 
 SKILLS = ROOT / "skills"
 SCENARIOS = ROOT / "scenarios"
 OUTPUTS = ROOT / "outputs"
 RUNS = ROOT / "runs"
+# Fetched external responses and full text: local only (runs/ is gitignored).
+EXTERNAL_CACHE = RUNS / "external_cache"
 
 # Source PDFs keyed by the citation id the organizers use (S01 p.10, S02 p.13, ...).
 SOURCE_PDFS = {

@@ -1,4 +1,4 @@
-"""Verify that a quoted passage appears on the cited source page.
+"""Verify that a quoted passage appears on the cited source page (or in a stored external paragraph).
 
 Match levels, strongest first:
   exact         normalised quote is a substring of the normalised page text
@@ -62,13 +62,16 @@ def _loose_with_map(text: str) -> tuple[str, list[int]]:
 
 def verify(doc: str, page: int, quote: str) -> QuoteCheck:
     record = kb.page(doc, page)
-    q = normalize(quote)
     if record is None:
         return QuoteCheck(doc, page, quote, "bad_page")
+    return verify_text(record["text"], quote, record["sha256"], doc, page)
+
+
+def verify_text(text: str, quote: str, sha: str, doc: str = "", page: int = 0) -> QuoteCheck:
+    """The matcher on any stored text (a supplied page or an external paragraph); `sha` identifies that text."""
+    q = normalize(quote)
     if len(q) < MIN_QUOTE_CHARS:
-        return QuoteCheck(doc, page, quote, "too_short", page_sha256=record["sha256"])
-    text = record["text"]
-    sha = record["sha256"]
+        return QuoteCheck(doc, page, quote, "too_short", page_sha256=sha)
 
     pos = text.find(q)
     if pos >= 0:

@@ -80,9 +80,21 @@ def run() -> list[Finding]:
                         hits.append(f"{f.relative_to(paths.ROOT)}:{i}")
     findings.append(Finding("no_case_ids", not hits, f"scenario ids found at: {hits}"))
 
+    findings.append(_external_library())
     findings.append(_s02_guard(pages))
     findings.append(Finding("graph_present", paths.GRAPH_FILE.exists(), str(paths.GRAPH_FILE.name)))
     return findings
+
+
+def _external_library() -> Finding:
+    """Every curated external passage is short (<= 400 chars, <= 2 sentences), numbered and carries sha256."""
+    from afs_assistant.external import library
+
+    entries = library.load()
+    problems = library.problems(entries)
+    passages = sum(len(e.get("passages", [])) for e in entries)
+    return Finding("external_library", not problems,
+                   f"{len(entries)} entries, {passages} passages; problems: {problems}")
 
 
 def _s02_guard(pages: dict) -> Finding:

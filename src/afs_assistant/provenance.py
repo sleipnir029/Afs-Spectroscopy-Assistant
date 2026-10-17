@@ -135,6 +135,8 @@ def run_files(result_json: dict, markdown: str) -> dict[str, str]:
     }
     for rep in result_json["repairs"]:
         files[f"repair_round_{rep['round']}.json"] = dump(rep)
+    if "external" in result_json:       # metadata, verified quotes and sha256 only; never fetched full text
+        files["external.json"] = dump(result_json["external"])
     return files
 
 
