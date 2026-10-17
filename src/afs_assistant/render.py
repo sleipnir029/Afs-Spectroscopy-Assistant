@@ -296,6 +296,8 @@ def external_verification(r: RunResult) -> list[str]:
     if ext is None:
         return []
     if not ext.get("gaps"):
+        if ext.get("error"):
+            return [f"- ⚠ External step incomplete: {ext['error']}."]
         return ["- External evidence: no gap found, so no search."]
     hits = sum(x.get("hits", 0) for x in ext.get("search_log", []))
     library = sum(1 for s in ext.get("sources", []) if s.get("library_id"))

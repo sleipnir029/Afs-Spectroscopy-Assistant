@@ -118,6 +118,7 @@ class ExternalQuoteCheck:
     status: str                     # exact | loose | fuzzy_review | not_found | too_short | too_long | bad_para
     paragraph_sha256: str | None = None
     problem: str = ""
+    span: str = ""                  # the matched text of the paragraph (verified quotes only)
 
     @property
     def ok(self) -> bool:
@@ -139,7 +140,8 @@ def verify_quote(source: SourceRecord, para: int, quote: str) -> ExternalQuoteCh
     else:
         check = quotes.verify_text(text, quote, sha(text))
         if check.ok or check.status == "too_short":
-            return ExternalQuoteCheck(source.id, para, para, check.status, check.page_sha256)
+            return ExternalQuoteCheck(source.id, para, para, check.status, check.page_sha256,
+                                      span=text[check.start:check.end] if check.ok else "")
         status = check.status
     for number, other in source.numbered():
         if number == para:
@@ -147,6 +149,7 @@ def verify_quote(source: SourceRecord, para: int, quote: str) -> ExternalQuoteCh
         check = quotes.verify_text(other, quote, sha(other))
         if check.ok:
             return ExternalQuoteCheck(source.id, number, para, check.status, check.page_sha256,
-                                      f"found in ¶{number}, not in the cited ¶{para}; paragraph corrected")
+                                      f"found in ¶{number}, not in the cited ¶{para}; paragraph corrected",
+                                      other[check.start:check.end])
     return ExternalQuoteCheck(source.id, para, para, status,
                               problem="cited paragraph does not exist" if status == "bad_para" else "")

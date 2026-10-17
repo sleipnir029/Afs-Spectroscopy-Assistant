@@ -426,8 +426,11 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     still_failing = recheck(final, candidates).hard_failures
     lap("finalize")
     ext = None
-    if external != "off":
-        ext = external_step.run(intake, final, client, external, fetcher=fetcher)
+    if external != "off":      # the primary result is complete here; no failure of the step may discard it
+        try:
+            ext = external_step.run(intake, final, client, external, fetcher=fetcher)
+        except Exception as exc:        # noqa: BLE001 - malformed API data, cache I/O, extractor bugs, ...
+            ext = external_step.failed_block(final, external, f"external step failed: {type(exc).__name__}")
         lap("external")
     timings["wall"] = round(time.monotonic() - wall, 3)
     calls = tracker.calls[first_call:] if tracker is not None else []
