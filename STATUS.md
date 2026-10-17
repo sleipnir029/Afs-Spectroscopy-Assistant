@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 19:58 CEST (Claude, Phase 4 started)._
+_Last updated: 2026-10-17 20:14 CEST (Claude, Phase 4)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 4 (External evidence, option B): IN PROGRESS (started 19:52).** Implementation plan + D-034 committed 57ab2ba (19:56); implementer agent working on plan items 1–11 (code + offline tests). Next: live API probes, library curation, D01–D08 `--external=live`, replay, G4 review.
+**Phase 4 (External evidence, option B): IN PROGRESS (started 19:52).** Implementation plan + D-034 committed 57ab2ba (19:56); **Code 2e9a47a + 77fb873** (items 1–11; D-035 implementer choices + two Claude additions): pytest 413 passed, 2 skipped; ruff clean; kb check all PASS (library empty). 20:14 agent started: live API probes + curated library (6–10 entries). Next: D01–D08 `--external=live`, `external replay`, G4 review.
 
 **Phase 3 (Assessment upgrade): CLOSED 19:36 (G3 passed).** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
 - **User mode (D-020, 14:24):** Claude is fully in charge; the user is woken (push notification) only for their decisions. At each phase end: write this handoff and tell the user to switch sessions ("do the next task").
