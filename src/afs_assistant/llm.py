@@ -115,7 +115,6 @@ class OpenRouterClient:
         cfg = config()
         role_cfg = cfg["roles"][role]
         model = role_cfg["model"]
-        self.tracker.check()
         if cfg.get("response_mode", "json_schema") == "json_schema":
             response_format = {"type": "json_schema",
                                "json_schema": {"name": schema_name, "strict": True, "schema": strict_schema(schema)}}
@@ -126,6 +125,7 @@ class OpenRouterClient:
 
         last_error: Exception | None = None
         for attempt in range(3):
+            self.tracker.check()          # per attempt: a retried call must not run past the cap
             started = time.monotonic()
             try:
                 response = self.client.chat.completions.create(
@@ -139,7 +139,10 @@ class OpenRouterClient:
                 last_error = exc
                 time.sleep(2 * (attempt + 1))
                 continue
-            latency = time.monotonic() - started
+            # Cost every reply, including the ones discarded below (truncated or invalid JSON).
+            result = LLMResult(data={}, model=response.model or model, latency_s=time.monotonic() - started,
+                               response_id=response.id or "", provider=getattr(response, "provider", "") or "")
+            _account(result, response.usage, cfg.get("prices", {}).get(model, {"input": 0, "output": 0}))
             content = response.choices[0].message.content or ""
             finish = response.choices[0].finish_reason
             try:
@@ -147,25 +150,26 @@ class OpenRouterClient:
                     raise json.JSONDecodeError("reply truncated at max_tokens", content, len(content))
                 data = json.loads(content)
             except json.JSONDecodeError as exc:  # empty or truncated reply from the provider: retry
-                last_error = RuntimeError(f"invalid JSON from provider {getattr(response, 'provider', '?')} "
-                                          f"(finish={response.choices[0].finish_reason}, {len(content)} chars): {exc}")
+                self.tracker.add(role + ":discarded", result)
+                last_error = RuntimeError(f"invalid JSON from provider {result.provider or '?'} "
+                                          f"(finish={finish}, {len(content)} chars): {exc}")
                 continue
-            result = LLMResult(data=data, model=response.model or model, latency_s=latency,
-                               response_id=response.id or "", provider=getattr(response, "provider", "") or "")
-            usage = response.usage
-            if usage is not None:
-                result.prompt_tokens = usage.prompt_tokens or 0
-                result.completion_tokens = usage.completion_tokens or 0
-                details = getattr(usage, "prompt_tokens_details", None)
-                result.cached_tokens = getattr(details, "cached_tokens", 0) or 0
-                result.cost_usd = float(getattr(usage, "cost", 0.0) or 0.0)
-            if not result.cost_usd:
-                price = cfg.get("prices", {}).get(model, {"input": 0, "output": 0})
-                result.cost_usd = (result.prompt_tokens * price["input"] +
-                                   result.completion_tokens * price["output"]) / 1e6
+            result.data = data
             self.tracker.add(role, result)
             return result
         raise RuntimeError(f"LLM call failed after retries: {last_error}")
+
+
+def _account(result: LLMResult, usage, price: dict) -> None:
+    """Fill tokens and cost from the usage block; fall back to configured prices."""
+    if usage is not None:
+        result.prompt_tokens = usage.prompt_tokens or 0
+        result.completion_tokens = usage.completion_tokens or 0
+        details = getattr(usage, "prompt_tokens_details", None)
+        result.cached_tokens = getattr(details, "cached_tokens", 0) or 0
+        result.cost_usd = float(getattr(usage, "cost", 0.0) or 0.0)
+    if not result.cost_usd:
+        result.cost_usd = (result.prompt_tokens * price["input"] + result.completion_tokens * price["output"]) / 1e6
 
 
 class FakeClient:
