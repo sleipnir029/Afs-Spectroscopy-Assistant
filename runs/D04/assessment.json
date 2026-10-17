@@ -1,0 +1,486 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified for an aqueous cell culture pilot, but the choice between Raman and NIR/UV-Vis geometries depends on unknown optical and process facts. The assessment is therefore conditional on the stated assumptions.",
+ "premise_checks": [
+  {
+   "premise": "In situ spectroscopy can be checked against existing laboratory measurements.",
+   "verdict": "supported",
+   "explanation": "The customer already has laboratory measurements for glucose and lactate, so a pilot can be compared against them. This is a feasibility-planning premise, not a claim that any specific method is validated.",
+   "citations": []
+  },
+  {
+   "premise": "The medium and cell population change during the run, which may affect the measurement.",
+   "verdict": "supported",
+   "explanation": "The sources state that sample inhomogeneity and process turbulence must be considered, and that calibration is matrix-specific. The customer's concern is therefore technically relevant.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "In situ measurement in an aqueous cell culture process",
+  "Targets: glucose and lactate",
+  "Prompt detection of changes",
+  "Pilot must be checkable against existing laboratory measurements",
+  "No probe or calibration strategy selected yet"
+ ],
+ "key_unknowns": [
+  "Concentration ranges of glucose and lactate",
+  "Optical regime of the medium: clear, turbid, or highly scattering",
+  "Cell density and its effect on scattering",
+  "Presence of fluorescent species or media components",
+  "Installation point and probe access",
+  "Required accuracy and response time",
+  "Reference method frequency and uncertainty",
+  "Fouling and cleaning constraints"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the expected concentration ranges for glucose and lactate during the run?",
+   "why_it_matters": "This decides whether NIR is viable at all. The source notes NIR may lack sensitivity for trace components in a bioprocess context. Raman may be needed if concentrations are low.",
+   "affects": [
+    "method_choice",
+    "calibration_strategy"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Is the medium clear, slightly turbid, or highly scattering/opaque at the intended measurement point?",
+   "why_it_matters": "This determines whether transmission/transflection is usable or whether ATR or diffuse reflection is required. Transmission fails when light cannot penetrate the sample.",
+   "affects": [
+    "technique_choice",
+    "probe_geometry"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the typical cell density or optical density range at the measurement point?",
+   "why_it_matters": "Cell density affects scattering and optical density. In UV-Vis, high optical density saturates transmission and may require ATR. It also affects whether NIR diffuse reflection is representative.",
+   "affects": [
+    "technique_choice",
+    "probe_geometry"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Does the medium or do the cells contain known fluorescent species, or is fluorescence background likely?",
+   "why_it_matters": "Fluorescence can swamp Raman signals and is also a possible method in its own right only if a relevant fluorescent species or indicator exists. It also affects whether metal-coated silica fibers are needed.",
+   "affects": [
+    "method_choice",
+    "fiber_choice"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Where would the probe be installed, and what is the distance from the probe to the spectrometer?",
+   "why_it_matters": "Fiber transmission limits depend on the method. Long cables are stated only for low-OH silica fibers; MIR fiber lengths are not specified in the sources and must be confirmed.",
+   "affects": [
+    "installation",
+    "fiber_choice"
+   ]
+  },
+  {
+   "id": "Q6",
+   "question": "What accuracy and response time are required for glucose and lactate?",
+   "why_it_matters": "This sets the go/no-go criteria for the feasibility experiment and determines whether a full-spectrum method or a simplified sensor approach is appropriate.",
+   "affects": [
+    "go_no_go_criteria",
+    "method_choice"
+   ]
+  },
+  {
+   "id": "Q7",
+   "question": "How often are the existing laboratory measurements taken, and what is their uncertainty?",
+   "why_it_matters": "The pilot must be checked against independent reference measurements. Their frequency and uncertainty determine how well the in situ method can be validated.",
+   "affects": [
+    "feasibility_plan",
+    "validation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "R1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "rationale": "Raman is well suited to aqueous media because water interferes less than in infrared methods. It can provide a molecular fingerprint for metabolites such as glucose and lactate. The source describes Raman as suitable for direct detection of specific metabolites like glucose, acetate, or lactate in a bioprocess context.",
+   "conditions": "Requires checking fluorescence background on real samples. Raman signals are weak and can be swamped by fluorescence.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "R2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "rationale": "NIR transmission or transflection is the preferred geometry for transparent or semi-transparent liquids. It could be used for glucose and lactate if the medium is clear enough and concentrations are sufficient.",
+   "conditions": "Applies only if the medium is transparent or semi-transparent and the optical pathlength can be controlled. NIR may lack sensitivity for trace components.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "R3",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "rationale": "NIR diffuse reflection suits opaque, concentrated or scattering samples. It may be appropriate if the cell culture becomes turbid or highly scattering.",
+   "conditions": "Applies only if the medium is opaque or highly scattering. Reflection is sensitive to surface characteristics and particle size, so physical variation can mimic composition change.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Because the light does not penetrate deeply, the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R4",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "conditional",
+   "rationale": "UV-ATR can measure highly scattering or optically dense fluids without dilution because the evanescent wave penetrates only a few micrometres. It could be considered if the medium becomes very turbid and a UV-absorbing target or biomass proxy is relevant.",
+   "conditions": "Applies only if a defined UV-Vis absorption is relevant to glucose, lactate, or a justified biomass proxy. UV-Vis signals overlap strongly in mixtures, so chemometrics are needed.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "In these high-OD scenarios, a UV-ATR (Attenuated Total Reflection) probe is used. Instead of passing light through the sample, ATR relies on the evanescent wave that penetrates only a few micrometers into the medium at the crystal interface, effectively creating an extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, the strong overlap of spectral signals in UV spectra complicates the analysis of real samples and makes the use of chemometric algorithms a necessary component of qualitative mixture analysis methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R5",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "rationale": "MIR-ATR is a pass screening candidate and provides well-defined vibrational bands. It could be tested as a comparison method for glucose and lactate in aqueous media, but water absorbs strongly in the MIR, so ATR is required and the usable range depends on the fiber and crystal.",
+   "conditions": "Requires tight contact with the ATR crystal and is limited to a surface layer a few micrometres deep. MIR fiber link length is an open question.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "In contrast, strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR) by connecting appropriate attachments and probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R6",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "rationale": "Fluorescence only measures species that fluoresce or a justified fluorescent indicator. No fluorescent species or indicator has been identified for glucose or lactate, and most chemicals do not fluoresce.",
+   "conditions": "Would become relevant only if a fluorescent indicator or a relevant intrinsic fluorophore is identified.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Another highly sensitive method, UV/Vis fluorimetry, is based on the secondary emission of excited molecules of certain substances, most often of biological origin. However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R7",
+   "method": "NIR",
+   "technique": "diffuse_reflection_remote",
+   "role": "not_recommended",
+   "rationale": "Remote diffuse reflection is not justified for an in situ liquid cell culture pilot. The source lists surface-at-a-distance measurement for solid or powder samples, and the sample state is liquid with unknown optical regime.",
+   "conditions": "Not applicable unless the customer specifically needs non-contact measurement of a solid or powder.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 6,
+     "quote": "surface at a distance solid, powder 2-5 mm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "R8",
+   "method": "UV-Vis",
+   "technique": "emission_probe",
+   "role": "not_recommended",
+   "rationale": "Emission probe is for an external source radiating sample, not for measuring glucose or lactate in a cell culture medium.",
+   "conditions": "Not applicable to the stated targets.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 6,
+     "quote": "probe, lens emission of an external source radiating sample any high",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "For the primary Raman route, a Raman fiber probe in contact with the liquid medium. For the conditional NIR route, transmission/transflection if the medium is clear, or diffuse reflection if it is turbid. For MIR comparison, an ATR probe in contact with the medium.",
+  "location": "In situ at a point where the medium is representative and well-mixed, with the spectrometer located away from the process via fiber optics.",
+  "fiber_link": "Raman and NIR can use silica fibers. MIR requires chalcogenide, polycrystalline, or hollow waveguide fibers; the achievable MIR link length is not stated in the sources and must be confirmed.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "The use of fiber optics is critical here, as it allows the sensitive spectrometers to be located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "Chalcogenide As-S IR Fibers 6500 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1; laser excitation wavelength must be stated separately. The source example for pharmaceutical blend monitoring used 785 nm excitation, but the excitation wavelength for this customer is not selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm. Usable range depends on the instrument, fiber, and probe selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal MIR range 4000-400 cm-1 (2.5-25 µm). Usable range depends on the fiber and crystal selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Raman fluorescence background could swamp the glucose and lactate signals.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "observing Raman bands is often complicated by light scattering from the illuminating laser, and for many organic compounds, by the superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "NIR may lack sensitivity if glucose or lactate concentrations are below roughly 0.1 percent.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "risk": "Changing medium and cell population during the run can invalidate a fixed calibration.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Transmission geometry may fail if the medium becomes too turbid or optically dense.",
+   "rule_ids": [
+    "R-GEO-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "ATR samples only a surface layer a few micrometres deep, so fouling or surface deposits could bias the measurement.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns, providing information on molecular composition and biochemical changes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Sample inhomogeneity and turbulence at the measurement point could make the signal unrepresentative.",
+   "rule_ids": [
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples across the expected chemical and physical variation.",
+    "purpose": "Include different glucose and lactate concentrations, cell densities, and medium ages to cover the range seen during a run.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure each sample with the primary single method first (Raman), then the conditional single methods (NIR transmission/transflection or diffuse reflection, MIR-ATR) separately.",
+    "purpose": "Single methods first, combinations only after. This avoids confounding a method gain with a combination effect.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference measurements for glucose and lactate using the existing laboratory method on the same samples.",
+    "purpose": "The pilot must be checked against independent reference measurements.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Independent reference measurements",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build and validate chemometric models for each single method using held-out runs or batches.",
+    "purpose": "Validation on held-out runs or batches prevents overfitting and tests whether the method generalizes to new process runs.",
+    "citations": []
+   },
+   {
+    "step": "Compare the best single method against any proposed combination only after single-method performance is known.",
+    "purpose": "A combination gain is a hypothesis to test against the best single method.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Existing laboratory measurements of glucose and lactate on the same samples, with known uncertainty and frequency.",
+  "decision_basis": "Go/no-go criteria must come from the customer's required accuracy and response time for glucose and lactate. The source does not provide numerical criteria for this application; they must be defined by the customer."
+ },
+ "assumptions": [
+  "The medium is liquid and aqueous, as stated.",
+  "The cell population makes the medium at least somewhat heterogeneous or scattering.",
+  "Glucose and lactate are present at concentrations relevant to the chosen method; this is unknown and must be confirmed.",
+  "The pilot is for feasibility testing, not for production or clinical use."
+ ],
+ "not_in_sources": [
+  "Specific detection limits for glucose or lactate in cell culture media",
+  "Achievable MIR fiber link length for this application",
+  "Numerical go/no-go criteria for glucose or lactate accuracy",
+  "Performance of any method on this customer's exact medium",
+  "In vivo or production readiness for this specific cell culture process"
+ ]
+}
