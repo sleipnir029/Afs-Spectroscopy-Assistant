@@ -681,6 +681,14 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 
 ---
 
+### Phase 4 close (2026-10-17 22:48)
+- **Dev run** (code f6538ee, outputs 16f85fb, `--external=live`, D03–D08 restarted after a hung call, D-038): 8/8 pass, 0 hard failures, 227/227 supplied citations; 23 external items kept, 0 dropped; every gap has a verified item or "no usable external source found"; `external replay` 8/8 equal; external step 38–76 s and $0.0018–0.0036 per case; `check_cost_class` 8/8; `check_mermaid` 15/15; no third-party text in git beyond capped quotes (longest tracked run 43 words); no secrets.
+- **G4:** code review NEEDS_FIXES (B1–B4) → 4.R; re-review NEEDS_FIXES (B1 proposal support from sensor gaps) → fixed 314557e (D-041); **final verdict PASS WITH NON-BLOCKING** (22:47). pytest 441 passed, 2 skipped; ruff clean; kb check 10/10. Phase 4 **closed**.
+- **Known:** committed D03 output still shows the old "secondary external support E01 ¶12" basis line (D-041); re-run D03 in Phase 5 or don't show it.
+- **Carried to Phase 5** (G4 non-blocking): **must before the freeze:** N2 code guard so queries cannot carry customer/brand/place names; N5 LLM call timeouts (5.0 item 3). Others: N1 digit-hyphen loose rule too broad (keep hyphens next to digits in the loose form, drop whitespace around them); N3 off-domain abstract items (require ≥2 shared sample terms for abstract-only sources); N4 one search timeout abandons all live search; N6 sentence splitter; earlier deferred N11/N12.
+
+---
+
 ## Phase 5 — Quality, eval and demo surface (Sun 07:00–14:00)
 
 ### Steps
