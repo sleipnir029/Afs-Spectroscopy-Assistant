@@ -574,6 +574,18 @@ Pattern: GRADE (start high, downgrade per named weakness) and the IPCC AR5 calib
 8. **Simplicity (cheap NON-BLOCKING items):** the Decision status in the Answer is a one-line label (its prose moves to Expert detail); the extended-option chart moves to Expert detail; "Best current option" shows the id and tier only; prompt: table cells about 6 words; no section repeats the brief answer; prompt line: never speak for AFS ("we will confirm", "our material"); a combination recommendation's headline shows "+ <method> (combination)"; repeated identical quotes are merged in Evidence; soft check: every method named in `brief_answer` appears in the best option or is marked conditional.
 9. Tests for each item (including the model's real `affects` spelling, a non-Latin summary, a mostly-removed intake, soft_solid vs a `solid` row, a non-fusion two-method option, empty stated requirements, combined-method cost). Re-run D01–D08; both check scripts; short re-review of the outputs (at least D05 and D08) → G3.
 
+### Phase 3 fixes (3.R4) — 18:20, from the 3.R3 code review (APPROVE WITH FIXES; Claude, D-020 mode; D-032)
+The 3.R3 dev run started 18:19 was stopped at D01 so the run uses the fixed code.
+1. **B1 visible intake warning:** the Verification section lists each `manifest.intake_problems` item as "⚠ Intake incomplete after N attempt(s): …"; `intake_problems` counts only non-placeholder removals. Test: the line is in the Markdown; a placeholder-only vague intake is not "collapsed".
+2. **B2 customer words only:** the "Stated by the customer" fallback shows the verified enquiry quotes of facts and targets (deduplicated), never the model's paraphrase.
+3. **N1:** the dark-sample (`opaque_absorbing`) and unknown-regime reasons are kept when the near-match reason applies (both reasons listed).
+4. **N2:** `affects` accepts option ids (O1…) and any word starting with "method"; an option id in a top-3 question affects that option.
+5. **N3:** finalize logs only dropped `affects` items, not case-only normalisation.
+6. **N4:** merged Evidence entries show the precedent badge if any merged citation is precedent.
+7. **Calibration (N5, decided by Claude in D-020 mode; D-032):** an open top-3 question that affects the option or the method sets the **starting level to Medium** instead of High; each weakness then drops one level (floor Low). Reasons list the start reason first. Rationale: GRADE starting levels; the cap made 19/22 options Medium and hid single weaknesses.
+8. **N7:** check_cost_class checks that "at least" appears exactly when a method's row was not identified.
+9. Tests for each; then re-run D01–D08, both check scripts, short re-review of the outputs (D05, D08 at least) → G3.
+
 ---
 
 ## Phase 4 — External evidence, option B (Sat 21:00–Sun 07:00)
