@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 11:21 CEST (Claude)._
+_Last updated: 2026-10-17 11:23 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -69,6 +69,7 @@ Known open points for Phase 3: claims that go beyond their valid quotes (needs c
 2. 13:38 Q&A (user), using the questions in Plan v3 §10.
 
 ## Open decisions
+- Output length (11:23, user): not a hard rule; minimise later (Phase 3). The soft length check stays a warning.
 - Product name: later.
 
 ## Blockers
