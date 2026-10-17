@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 09:19 CEST (Claude)._
+_Last updated: 2026-10-17 09:29 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2: Pipeline MVP.** Offline parts 2.1–2.9 done (commit c04dcb9; 74 offline tests). **Blocked: `OPENROUTER_API_KEY` not yet in `.env`**; then live D01–D08 runs.
+**Phase 2: Pipeline MVP.** Offline parts 2.1–2.9 done (commit c04dcb9; 74 offline tests). Key in place. Live smoke run OK. **In progress: live D01–D08 run.**
 
 ## Phase overview
 | Phase | State | Gate | Notes |
@@ -19,6 +19,14 @@ _Last updated: 2026-10-17 09:19 CEST (Claude)._
 | 6 Deliverables | Not planned yet | Submit by 22:30 | |
 
 ## Done
+- Decisions (09:29, user):
+  - External reference library: **yes**. Curated, each entry with URL + verbatim quoted passage, marked secondary; to be planned in Phase 3.
+  - Jury evaluation: **may be both** (jury runs the repo with their own key, and/or asks us to run an enquiry live). We therefore need a reproducible repo (README, fresh-clone test, own key) and a robust live demo (pinned providers, saved-run replay fallback, video).
+- Live smoke run (09:27, generic ethanol enquiry; not a dev or final case):
+  - End to end in 2.5 min, $0.064 (provider pinning D-010 after a first empty response).
+  - 22/24 citations verified. The 2 removed were a quote taken from the organizer's worked answer (not in our knowledge base) and a quote spanning a page break; both were correctly caught.
+  - 3 unverifiable intake items were sanitized.
+  - Observed for Phase 3: claims that go beyond their (valid) quotes, e.g. "ethanol has characteristic NIR bands"; only an entailment check / critic can catch these. Output length is above the organizer examples.
 - Phase 2 offline (09:19): LLM client (strict JSON, cost tracking, spend caps), scenario parser (8 dev, 2 worked references, 6 final), schemas, prompts (intake/assess/repair), pipeline, claim-local verifier, intake sanitizer (D-009), renderer, dulwich provenance, CLI. pytest 74 passed + 1 live test skipped.
 - Decisions (09:12): Phase 2 approved; dev model deepseek/deepseek-v4-pro-0813; `runs/` gitignored; the user adds the key to `.env`.
 - Phase 1 closed (09:06): 1.R2 leftovers fixed (transflection exception scoped to R-GEO-5, S02 provenance guard, performance_figure/method_gain scope, `for_method` required, R-GEN-3 reworded, unit/quantifier guard words, `+` ranges and time units). pytest 59/59, kb check 9/9.
@@ -52,11 +60,10 @@ _Last updated: 2026-10-17 09:19 CEST (Claude)._
 2. 13:38 Q&A (user), using the questions in Plan v3 §10.
 
 ## Open decisions
-- External reference library: after Q&A.
 - Product name: later.
 
 ## Blockers
-- `.env` with `OPENROUTER_API_KEY` (user). Needed for the live D01–D08 runs.
+None.
 
 ## Check results
 **Phase 1 (pre-review):** `afs-assist kb check` 8/8 PASS (page counts, scopes, rule ids/effects, string slot values, 58/58 quotes exact, no scenario ids, graph present); `pytest` 21 passed; `ruff check` clean; `kb build` run twice gives identical sha256 for all knowledge files.
