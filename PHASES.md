@@ -400,3 +400,8 @@ Also covers the D08 diagnosis: a repetition loop in the bare enum array `Intake.
 8. **Re-run D01–D08 on v4.1-flash** (about $0.15) → short re-review → G2.
 
 Deferred to Phase 3: entailment critic (N12), length scoring, eval harness, bake-off, external reference library.
+
+### Phase 2 fixes (2.R3) — APPROVED 2026-10-17 11:20 (user), from the 2.R2 run findings
+1. **Methods named in the enquiry, detected in code.** `proposed_methods` leaves the LLM intake schema. Code finds method names in the enquiry with a fixed generic word list (NIR/near-infrared, MIR/mid-infrared/FTIR, Raman, fluorescence, UV-Vis/UV/Vis/ultraviolet). Quotes are verbatim by construction. The result goes to the assess context and the run JSON as "methods the customer named"; the assess model judges whether they are proposed.
+2. **Intake prompt: short generic definitions of the physical_state values**, tied to S01 Table 1's sample types: liquid, paste, soft_solid (soft, deformable material such as gels, soft food or soft tissue), powder, solid (rigid).
+3. Tests for 1–2; re-run D01–D08 (~$0.2); then an independent review of the outputs plus 9a7e465, 10ff73a and 2.R3; then G2.
