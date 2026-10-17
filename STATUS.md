@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 11:55 CEST (Claude)._
+_Last updated: 2026-10-17 09:00 CEST (Claude). Earlier guessed times were removed (D-008)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 1: Knowledge foundation.** Approved 08:55. Steps 1.1–1.10 implemented. Reviewer: APPROVE WITH FIXES (B1–B8). Fix plan 1.R approved 11:00; R1–R8 implemented 11:55. **Next: focused re-review, then G1.**
+**Phase 1: Knowledge foundation.** Approved. Steps 1.1–1.10 implemented. Reviewer: APPROVE WITH FIXES (B1–B8). Fix plan 1.R approved; R1–R8 implemented. **Next: focused re-review, then G1.**
 
 ## Phase overview
 | Phase | State | Gate | Notes |
@@ -19,7 +19,7 @@ _Last updated: 2026-10-17 11:55 CEST (Claude)._
 | 6 Deliverables | Not planned yet | Submit by 22:30 | |
 
 ## Done
-- 1.R fixes (11:55):
+- 1.R fixes:
   - R1: fuzzy quote matches become `fuzzy_review` (not verified); a changed number or negation is rejected.
   - R2: S02 `text` = PDF text layer + transcribed image text; our descriptions moved to `notes` (never quotable).
   - R3: R-FIB-2 corrected (MIR samples are 1–2 m lab lengths; no source gives an MIR link length); slide-10 legend added.
@@ -29,7 +29,7 @@ _Last updated: 2026-10-17 11:55 CEST (Claude)._
   - R7: 9 rule wording/quote fixes plus 5 new generic rules (44 rules / 76 exact quotes).
   - R8: private-use glyphs mapped, unit guards, `.gitignore` comment.
 - Design note for Phase 2: number provenance must be claim-local (a claim's numbers are checked against that claim's own cited quotes); a KB-wide pool lets e.g. a silica '300 m' pass on an MIR claim.
-- Review (10:50): APPROVE WITH FIXES. Decisions 11:00: fix all R1–R8; B8: keep `pages.jsonl` committed (user).
+- Review: APPROVE WITH FIXES. Decisions: fix all R1–R8; B8: keep `pages.jsonl` committed (user).
 - 1.1 `normalize.py` (NFKC, keep line-break hyphens, collapse whitespace; `loose()` for tolerant matching).
 - 1.2 `pages.jsonl`: S01 19, S03 17, S04 6, S05 2, S06 1, REF 2; reproducible (identical sha256 on rebuild).
 - 1.3 `s02_slide_notes.md`: 20 slides (verbatim slide text, our figure descriptions, uncertain readings).
@@ -41,7 +41,7 @@ _Last updated: 2026-10-17 11:55 CEST (Claude)._
 - 1.10 `tests/test_phase1.py`: 21 tests.
 - Bugs caught by our own checks and fixed: (a) one regime slot mixed state and optics (D-005); (b) a shadowed variable failed ATR for liquids (regression test added); (c) YAML `yes` parsed as boolean, so the fluorophore requirement never passed (quoted, plus a new `kb check` guard).
 - 1.5 `table1_methods.json` (19 rows, path in mm) and `fibers.json` (7 fiber families with S02 p.6 quotes).
-- Decision 08:55: docx §3/§5 citable as `REF`; D01–D08 and the worked answers are dev/eval data only.
+- Decision: docx §3/§5 citable as `REF`; D01–D08 and the worked answers are dev/eval data only.
 - Phase 0. Verified: `git rev-list --objects --all` shows 0 objects under `resources/`; files still on disk; backup at `~/Desktop/aails-backup-2026-10-17.tgz`.
 
 ## Next
@@ -57,5 +57,5 @@ _Last updated: 2026-10-17 11:55 CEST (Claude)._
 None.
 
 ## Check results
-**Phase 1 (10:35):** `afs-assist kb check` 8/8 PASS (page counts, scopes, rule ids/effects, string slot values, 58/58 quotes exact, no scenario ids, graph present); `pytest` 21 passed; `ruff check` clean; `kb build` run twice gives identical sha256 for all knowledge files.
+**Phase 1 (pre-review):** `afs-assist kb check` 8/8 PASS (page counts, scopes, rule ids/effects, string slot values, 58/58 quotes exact, no scenario ids, graph present); `pytest` 21 passed; `ruff check` clean; `kb build` run twice gives identical sha256 for all knowledge files.
 Not yet done: visual spot check of 5 pages against the PDFs (assigned to the reviewer).

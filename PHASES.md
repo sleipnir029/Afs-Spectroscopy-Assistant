@@ -34,7 +34,7 @@ Phases 2–6 get their detailed plans written when the previous phase closes. Th
 
 ---
 
-## Phase 1 — Knowledge foundation (APPROVED 2026-10-17 08:55 — in progress)
+## Phase 1 — Knowledge foundation (APPROVED 2026-10-17 — implemented; review fixes done)
 
 **Goal.** A committed, checkable knowledge layer: page text, slide notes, scope tags, tables, generic rules, and a knowledge graph. Plus the deterministic tools that later phases use to check answers. **No LLM calls in this phase.**
 
@@ -136,7 +136,7 @@ Phases 2–6 get their detailed plans written when the previous phase closes. Th
 ### Out of scope
 LLM calls, pipeline, prompts, UI, provenance, external references (decided after Q&A).
 
-### Phase 1 review fixes (1.R) — APPROVED 2026-10-17 11:00 (all R1–R8); B8 decision: keep `pages.jsonl` committed (user)
+### Phase 1 review fixes (1.R) — APPROVED 2026-10-17 (all R1–R8; implemented); B8 decision: keep `pages.jsonl` committed (user)
 The reviewer verdict was APPROVE WITH FIXES (B1–B8 blocking). Fixes, in order:
 - **R1 `quotes.py`:** a fuzzy match becomes status `fuzzy_review` (`ok=False`). On top of that, fuzzy is rejected if the numbers or negation words (not, no, never, cannot, without, only, below, above, less, more) differ between the quote and the matched span. Only `exact` and `loose` count as verified. Tests: "above 0.1 percent", "below 1 percent", "do exhibit" must all fail.
 - **R2 S02 provenance:** `pages.jsonl` S02 `text` = verbatim slide text only. Our figure descriptions and uncertain readings move to a `notes` field the verifier never searches. Slide-6 values are recorded as verbatim label sequences, tagged `figure_reading`. R-FIB-1, R-FIB-2 and `fibers.json` are re-quoted against verbatim text. New `kb check`: S02 verbatim text is compared against the PDF text layer where one exists. Test: our own description text must NOT verify.
