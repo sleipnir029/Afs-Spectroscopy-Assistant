@@ -1,11 +1,19 @@
 # Status
 
-_Last updated: 2026-10-17 09:29 CEST (Claude)._
+_Last updated: 2026-10-17 10:10 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2: Pipeline MVP.** Offline parts 2.1–2.9 done (commit c04dcb9; 74 offline tests). Key in place. Live smoke run OK. **In progress: live D01–D08 run.**
+**Phase 2: Pipeline MVP.** 2.R fixes done (commit 6ca7bba); D01–D08 re-run launched. Remaining: check re-run, independent review, G2.
+
+## Next session starts with (handoff 09:55)
+Session rule (user): ≤200k tokens per session, one phase or task per session.
+1. Read `CLAUDE.md`, this file, `PHASES.md` (Phase 2 section incl. "first live run findings" and 2.R) and `DEVIATIONS.md` (D-009, D-010).
+2. Check the D01–D08 re-run in `outputs/dev/*.json|md`. Summary numbers are below under "Check results"; `git log provenance` lists the runs.
+3. Launch an independent reviewer agent on Phase 2: code (`src/afs_assistant/{llm,pipeline,verify,render,provenance,schema,scenarios,cli}.py`, `prompts/`) plus outputs D01/D02 vs `scenarios/dev_reference.jsonl` (organizer worked answers) and the REF §3 style rules. Fix blocking findings (plan → approve → fix).
+4. G2: the user reads D01, D02 + 2 others. Then close Phase 2 and write the Phase 3 plan (critic, external reference library, adversarial set, eval harness, bake-off, baseline table) for approval, in a new session.
+Known open points for Phase 3: claims that go beyond their valid quotes (needs critic/entailment); output length; external references (approved in principle); jury may run the repo themselves or ask for a live run (both).
 
 ## Phase overview
 | Phase | State | Gate | Notes |
@@ -66,5 +74,22 @@ _Last updated: 2026-10-17 09:29 CEST (Claude)._
 None.
 
 ## Check results
+**Phase 2 re-run after 2.R (10:10), dev model deepseek-v4-pro-0813, session cost $0.345:**
+
+| Case | Status | Recs | Questions | Citations verified | Hard failures left | Repair rounds | Cost |
+|---|---|---|---|---|---|---|---|
+| D01 | provisional | 4 | 6 | 21/21 | 0 | 1 | $0.047 |
+| D02 | provisional | 4 | 5 | 24/25 | 1 | 2 | $0.057 |
+| D03 | provisional | 4 | 5 | 17/17 | 1 | 2 | $0.047 |
+| D04 | provisional | 3 | 5 | 18/23 | 6 | 2 | $0.057 |
+| D05 | provisional | 5 | 5 | 22/22 | 0 | 1 | $0.040 |
+| D06 | insufficient_information | 5 | 5 | 25/25 | 0 | 1 | $0.041 |
+| D07 | provisional | 4 | 5 | 25/26 | 1 | 2 | $0.055 |
+| D08 | **FAILED** | — | — | — | — | — | — |
+
+- Recommendations dropped from up to 13 to 3–5; questions from 7 to 5–6.
+- **D08 still fails at intake:** the reply is truncated at max_tokens 8000 (19k chars; Ionstream). The same scenario failed in both runs, so it is likely a degenerate or repetitive intake output for this enquiry. Fix next session (e.g. cap intake list lengths in the schema/prompt, inspect the raw reply).
+- D04 has the most remaining failures (6); inspect them in the review.
+
 **Phase 1 (pre-review):** `afs-assist kb check` 8/8 PASS (page counts, scopes, rule ids/effects, string slot values, 58/58 quotes exact, no scenario ids, graph present); `pytest` 21 passed; `ruff check` clean; `kb build` run twice gives identical sha256 for all knowledge files.
 Not yet done: visual spot check of 5 pages against the PDFs (assigned to the reviewer).
