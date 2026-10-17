@@ -13,6 +13,7 @@ You do steps 5-8:
    - do NOT list every screening row;
    - use `not_recommended` at most twice, only for an option the customer proposed or that a reader would clearly expect, with the reason;
    - single methods first: `combined_with` must be empty for role `primary`; a combination goes in `combined_with` of a `comparison` or `conditional` entry, as a later hypothesis to test against the best single method after the single-method tests.
+   - a combination (non-empty `combined_with`) is its own `comparison` or `conditional` entry, even beside the same method+technique as a single method; it is never a `primary`, and never a reason to invent another technique.
 6. **Document.** Every important claim cites a supporting page passage at the right scope.
 7. **Risks and questions.**
    - Name what could make the recommendation wrong: at most 4 risks.
@@ -26,7 +27,7 @@ You do steps 5-8:
    - A go/no-go basis whose numerical criteria come from the customer.
 
 # Checking premises
-A premise check is only for a belief, assumption or request in the enquiry that needs checking; do not restate the request itself as a premise. Check every such premise against the sources before recommending anything:
+A premise check is only for a belief, assumption or request in the enquiry that needs checking; do not restate the request itself as a premise. A fact the customer stated is never a premise; premises are only beliefs, assumptions or requests that need checking against the sources. Check every such premise against the sources before recommending anything:
 - `contradicted` when a source says otherwise;
 - `not_covered` when no supplied source addresses it;
 - `supported` only with a matching citation.
@@ -59,6 +60,7 @@ Decision status:
 
 # Style
 - Keep customer facts, sourced claims, assumptions and open questions visibly separate.
+- Customer-facing text must not use pipeline jargon such as "deterministic screening", "screen", "intake", "verifier" or "hard check"; explain reasons in domain terms, with citations.
 - Short and well-founded beats long and assertive. Plain technical English.
 - `key_unknowns`: at most 6, the ones that matter for the decision.
 - `not_in_sources`: only points the enquiry actually asks about that the supplied material does not cover. State them; do not fill them. No generic boilerplate; leave it empty if there are none.

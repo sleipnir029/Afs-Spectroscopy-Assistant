@@ -16,8 +16,9 @@ METHOD_PATTERNS: dict[Method, re.Pattern] = {
     "NIR": re.compile(r"\bNIRS?\b|\bnear[- ]?infra-?red\b", re.IGNORECASE),
     "MIR": re.compile(r"\bMIRS?\b|\bmid[- ]?infra-?red\b|\bmid[- ]?IR\b|\bFT-?IR\b", re.IGNORECASE),
     "Raman": re.compile(r"\bRaman\b|\bSERS\b", re.IGNORECASE),
-    # Not "non-fluorescent"/"nonfluorescent"; "autofluorescence" counts.
-    "Fluorescence": re.compile(r"(?<!non-)\b(?!non)\w*fluoresc\w*", re.IGNORECASE),
+    # Also fluorimetry/fluorometer/fluorometry. Not "non-fluorescent"/"non fluorescent"/"nonfluorescent";
+    # "autofluorescence" counts.
+    "Fluorescence": re.compile(r"(?<!non-)(?<!non )\b(?!non)\w*fluor(?:esc|im|om)\w*", re.IGNORECASE),
     # Not UV used for curing, lamps or stabilisers.
     "UV-Vis": re.compile(r"\bUV(?:[-/ ]?vis(?:ible)?)?\b(?![- ]?(?:cur|lamp|stabili))|\bultra[- ]?violet\b",
                          re.IGNORECASE),

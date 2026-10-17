@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 from afs_assistant import kb, scope
 from afs_assistant.pipeline import RunResult
@@ -15,6 +16,8 @@ STATUS_LABEL = {
 }
 ROLE_LABEL = {"primary": "Primary candidate", "comparison": "Comparison candidate",
               "conditional": "Conditional candidate", "not_recommended": "Not recommended"}
+# A step text that starts with its own number ("1." / "1)") would show the number twice in the list.
+_STEP_NUMBER = re.compile(r"^\s*\d+[.)](?!\d)\s*")   # not a decimal such as "1.5 mm"
 
 
 class _Citer:
@@ -98,7 +101,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
 
     fp = a.feasibility_plan
     out += ["## First feasibility experiment", ""]
-    out += [f"{i}. **{s.step}** {s.purpose}{cite.refs(s.citations)}{warn(f'feasibility_plan.steps[{i - 1}]')}"
+    out += [f"{i}. **{_STEP_NUMBER.sub('', s.step)}** {s.purpose}{cite.refs(s.citations)}{warn(f'feasibility_plan.steps[{i - 1}]')}"
             for i, s in enumerate(fp.steps, 1)]
     out += ["", (f"**Reference measurements:** {fp.reference_measurements}"
                  f"{warn('feasibility_plan.reference_measurements')}"), "",

@@ -22,15 +22,20 @@ from afs_assistant.screen import Candidate
 MAX_QUESTIONS = 7
 MAX_RECOMMENDATIONS = 5
 MAX_WORDS = 1800
+RECOMMENDED_ROLES = ("primary", "comparison", "conditional")
+MIN_STEP_WORDS = 3
+_BARE_NUMBER = re.compile(r"^\s*\d+[.)]?\s*$")
 # A forbidden phrase preceded (within a few words, same clause) by one of these is a cautious negation,
 # not a claim. The clause ends at ; , : a dash, a line break, a sentence end, "but", "however" or
 # "because". A comma aside directly after an auxiliary negation ("cannot, at this stage, guarantee")
-# stays in the clause; after "no"/"never" it does not ("No, honestly, it will work" is a claim).
+# stays in the clause, as does a dash aside ("cannot - at this stage - guarantee", also with en/em dashes);
+# after "no"/"never" neither does ("No, honestly, it will work" is a claim).
 # Emphatic idioms ("no doubt") are not negations.
 _NEGATION_WORDS = r"(?:not|no|never|cannot|can't|without|nor|neither|isn't|doesn't|don't|won't)"
 _ASIDE_WORDS = r"(?:not|cannot|can't|isn't|doesn't|don't|won't)"
 _NEGATION_BEFORE = re.compile(rf"\b{_NEGATION_WORDS}\b(?:\W+\w+){{0,6}}\W*$", re.IGNORECASE)
-_NEGATION_ASIDE = re.compile(rf"\b({_ASIDE_WORDS})\s*,[^,;.!?]{{1,40}},", re.IGNORECASE)
+_NEGATION_ASIDE = re.compile(rf"\b({_ASIDE_WORDS})(?:\s*,[^,;.!?]{{1,40}},|\s+[-\u2013\u2014]\s"
+                             rf"[^,;.!?\-\u2013\u2014]{{1,40}}\s[-\u2013\u2014](?=\s))", re.IGNORECASE)
 _EMPHATIC = re.compile(r"\b(?:no doubt|without (?:a |any )?doubt|no question)\b", re.IGNORECASE)
 _CLAUSE_BREAK = re.compile(r"[;,:\n\u2013\u2014]|\s-\s|[.!?](?=[\s\"'\u201d\u2019)\]]|$)|\b(?:but|however|because)\b",
                            re.IGNORECASE)
@@ -289,10 +294,11 @@ def check_style(a: Assessment, report: Report) -> None:
     text = _all_text(a)
     hits = forbidden_hits(text)
     report.add("forbidden_wording", not hits, "hard", "assessment", "; ".join(hits))
-    keys = [(r.method, r.technique) for r in a.recommendations]
-    dupes = sorted({f"{m} {tq}" for m, tq in keys if keys.count((m, tq)) > 1})
+    keys = [recommendation_key(r.method, r.technique, r.combined_with) for r in a.recommendations]
+    dupes = sorted({" ".join([m, tq, *(["+ " + "+".join(cw)] if cw else [])])
+                    for m, tq, cw in keys if keys.count((m, tq, cw)) > 1})
     report.add("recommendations_unique", not dupes, "hard", "recommendations",
-               f"same method+technique listed more than once: {dupes}")
+               f"same method+technique (and combination) listed more than once: {dupes}")
     fused = [r.id for r in a.recommendations if r.role == "primary" and r.combined_with]
     report.add("primary_single_method", not fused, "soft", "recommendations",
                f"primary entries {fused} carry combined_with; the primary is a single method, "
@@ -308,6 +314,27 @@ def check_style(a: Assessment, report: Report) -> None:
     report.add("length_budget", words <= MAX_WORDS, "soft", "assessment", f"{words} words (budget {MAX_WORDS})")
 
 
+def recommendation_key(method: str, technique: str, combined_with: list[str]) -> tuple[str, str, tuple[str, ...]]:
+    """Identity of a recommendation: a combination is its own entry beside the single method."""
+    return method, technique, tuple(sorted(combined_with))
+
+
+def check_sections(a: Assessment, report: Report) -> None:
+    """Sections the reader needs must have content: spectral ranges and real plan steps."""
+    recommended = list(dict.fromkeys(r.method for r in a.recommendations if r.role in RECOMMENDED_ROLES))
+    report.add("spectral_ranges_present", not (recommended and not a.spectral_ranges), "hard", "spectral_ranges",
+               f"no spectral range given; state the nominal range for each recommended method {recommended}")
+    covered = {s.method for s in a.spectral_ranges}
+    for m in recommended:
+        report.add("spectral_range_per_method", m in covered, "soft", "spectral_ranges",
+                   f"recommended method {m} has no spectral_ranges entry")
+    for i, s in enumerate(a.feasibility_plan.steps):
+        bare = bool(_BARE_NUMBER.match(s.step)) or len(s.step.split()) < MIN_STEP_WORDS
+        report.add("plan_step_text", not bare, "hard", f"feasibility_plan.steps[{i}]",
+                   f"step text {s.step!r} is a bare number or under {MIN_STEP_WORDS} words; "
+                   f"write the action itself (no numbering)")
+
+
 def verify(enquiry: str, intake: Intake, a: Assessment, candidates: list[Candidate], slots: dict,
            intake_removed: list[dict] | None = None) -> Report:
     """`intake` must already be sanitized; `intake_removed` records what sanitizing dropped."""
@@ -319,4 +346,5 @@ def verify(enquiry: str, intake: Intake, a: Assessment, candidates: list[Candida
     check_against_screen(a, candidates, slots, report)
     check_status(a, report)
     check_style(a, report)
+    check_sections(a, report)
     return report

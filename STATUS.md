@@ -1,13 +1,14 @@
 # Status
 
-_Last updated: 2026-10-17 12:05 CEST (Claude)._
+_Last updated: 2026-10-17 12:09 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
 **Phase 2: Pipeline MVP.**
 - **Code:** 2.R2 and 2.R3 are implemented. The independent review of Claude's commits 9a7e465, 10ff73a and 315a90a was APPROVE WITH FIXES (B1: an unverified contradiction behind the model's own status; B2: the negation aside let "No, honestly, it will work" through). Fixed in 75a4469 (D-014 amended, D-016).
-- **Checks:** pytest 162 passed, 1 skipped.
+- **2.R4 (12:09):** implemented with tests (spectral-range and plan-step checks, combination key, two assess-prompt lines, dash aside, fluorimetry words; D-018). Not yet reviewed; D01–D08 re-run not done.
+- **Checks:** pytest 189 passed, 1 skipped; ruff clean; kb check PASS.
 - **Run:** done (11:53, see Check results); the D01–D08 run on 75a4469 had started 11:29; the run on 315a90a was stopped at D03.
 - **Next:** check the run → independent review of the outputs (and the 75a4469 diff) → G2 (user reads D01, D02 + 2 others) → close Phase 2 → Phase 3 plan in a new session.
 

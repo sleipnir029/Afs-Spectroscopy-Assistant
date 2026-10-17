@@ -22,10 +22,16 @@ from afs_assistant import kb, paths, quotes
 from afs_assistant.methods import named_methods
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
-from afs_assistant.verify import Report, check_status, sanitize_intake, verify
+from afs_assistant.verify import (
+    Report,
+    check_status,
+    recommendation_key,
+    sanitize_intake,
+    verify,
+)
 
 MAX_REPAIR_ROUNDS = 2
-# Highest role first: a duplicate method+technique keeps the entry with the best role.
+# Highest role first: a duplicate method+technique (+combination) keeps the entry with the best role.
 ROLE_RANK = {"primary": 0, "comparison": 1, "conditional": 2, "not_recommended": 3}
 PROMPTS = paths.ROOT / "prompts"
 
@@ -130,7 +136,7 @@ def finalize(a: Assessment, report: Report,
 
     1. Remove citations that failed verification.
     2. A recommended entry whose candidate failed screening becomes not_recommended.
-    3. Same method+technique listed twice: keep the highest role, drop the others.
+    3. Same method+technique (and same combined_with) listed twice: keep the highest role, drop the others.
     4. A `supported` or `contradicted` premise with no citation left becomes `not_covered`.
     5. Status inconsistent with premises -> premise_not_supported; with recommendations
        -> insufficient_information (re-checked on the result of steps 1-4).
@@ -174,19 +180,19 @@ def finalize(a: Assessment, report: Report,
             flagged[f"recommendations[{i}]"] = "failed screening; changed to not recommended by verification"
             r["role"] = "not_recommended"
 
-    # Dedupe method+technique (stable: on equal role the earlier entry wins), then renumber flags.
+    # Dedupe method+technique+combination (stable: on equal role the earlier entry wins), then renumber flags.
     recs = data["recommendations"]
-    best: dict[tuple[str, str], int] = {}
+    best: dict[tuple[str, str, tuple[str, ...]], int] = {}
     for i, r in enumerate(recs):
-        key = (r["method"], r["technique"])
+        key = recommendation_key(r["method"], r["technique"], r["combined_with"])
         if key not in best or ROLE_RANK[r["role"]] < ROLE_RANK[recs[best[key]]["role"]]:
             best[key] = i
     keep = sorted(best.values())
     for i, r in enumerate(recs):
         if i not in keep:
-            winner = best[(r["method"], r["technique"])]
+            winner = best[recommendation_key(r["method"], r["technique"], r["combined_with"])]
             removed.append({"location": f"recommendations[{i}]", "item": r,
-                            "reason": f"duplicate method+technique; kept recommendations[{winner}] "
+                            "reason": f"duplicate method+technique (and combination); kept recommendations[{winner}] "
                                       f"(role {recs[winner]['role']})",
                             "corrects": "recommendations_unique"})
     new_index = {old: new for new, old in enumerate(keep)}

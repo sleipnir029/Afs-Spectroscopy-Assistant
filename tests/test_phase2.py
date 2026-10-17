@@ -78,7 +78,10 @@ ASSESSMENT = {
                             "location": "In the flowing line, to be agreed.", "fiber_link": "Silica fibers.",
                             "citations": [cit("S01", 16, RAMAN_QUOTE)]},
     "spectral_ranges": [{"method": "NIR", "statement": "Nominal NIR range 780-2500 nm; usable range depends on the setup.",
-                         "citations": [cit("S01", 10, NIR_QUOTE)]}],
+                         "citations": [cit("S01", 10, NIR_QUOTE)]},
+                        {"method": "Raman", "statement": "State the excitation wavelength separately from the "
+                                                         "Raman shift; usable range depends on the setup.",
+                         "citations": [cit("S01", 16, RAMAN_QUOTE)]}],
     "risks": [{"risk": "Fluorescence background may limit Raman.", "rule_ids": ["R-RAM-1"],
                "citations": [cit("S01", 11, "superposition of luminescence (fluorescence), which has a significantly higher intensity.")]}],
     "feasibility_plan": {"steps": [{"step": "Collect representative broth samples with GC references.",
