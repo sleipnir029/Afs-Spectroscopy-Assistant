@@ -508,3 +508,19 @@ def test_first_question_and_premise_pattern_predicates(tmp_path, base):
     pv = {"check": "premise_verdict_in", "values": ["not_covered"]}
     assert evaluate.predicate(premised, {**pv, "pattern": "fib(?:er|re)"})[0]
     assert not evaluate.predicate(premised, {**pv, "pattern": "viscos"})[0]
+
+
+def test_assessment_must_not_fails_on_a_wrong_off_topic_redirect(tmp_path):
+    result, _ = _off_topic_run()
+    run = _write(tmp_path, render.to_json(result), render.to_markdown(result))
+    scenario = {"must_not": [{"check": "forbidden_wording"}, {"check": "status_in", "values": ["provisional_assessment"]},
+                             {"check": "assessment_present"}, {"check": "currency"}]}
+    items = evaluate.scenario_items(run, scenario)
+    assert [x["result"] for x in items] == [FAIL, FAIL, PASS, PASS]
+    assert "no assessment" in items[0]["reason"]
+
+
+def test_not_run_case_with_a_malformed_spec_still_gets_rows(tmp_path):
+    case = evaluate.evaluate_case({"id": "X09", "must": [{"no_check_key": 1}], "must_not": [{"check": "any_of"}]},
+                                  tmp_path)
+    assert case["status"] == NOT_RUN and [x["result"] for x in case["scenario_items"]] == [NOT_RUN, NOT_RUN]

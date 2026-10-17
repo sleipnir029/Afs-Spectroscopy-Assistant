@@ -576,14 +576,23 @@ def _spec_text(spec: dict) -> str:
         return json.dumps(spec, ensure_ascii=False, default=str)
 
 
+# Predicates that read the run itself, not its assessment; every other predicate needs an assessment.
+RUN_LEVEL_CHECKS = {"off_topic", "assessment_present", "route_in", "currency", "any_of"}
+
+
 def scenario_items(run: Run, scenario: dict) -> list[dict]:
-    """One row per must / must_not item; a predicate that raises fails that item only."""
+    """One row per must / must_not item; a predicate that raises fails that item only.
+
+    A must_not on the assessment fails when there is no assessment (a wrong off-topic redirect),
+    so it cannot pass vacuously."""
     out = []
     for kind in ("must", "must_not"):
         for spec in scenario.get(kind, []):
             try:
                 holds, found = predicate(run, spec)
                 ok = holds if kind == "must" else not holds
+                if ok and kind == "must_not" and run.a is None and spec.get("check") not in RUN_LEVEL_CHECKS:
+                    ok, found = False, "no assessment to check (off-topic run)"
             except Exception as exc:  # noqa: BLE001 - a malformed predicate or run fails the item, not the rest
                 ok, found = False, f"check error: {type(exc).__name__}: {exc}"
             out.append({"kind": kind, "predicate": _spec_text(spec), "why": spec.get("why", ""),
@@ -611,14 +620,14 @@ def evaluate_case(scenario: dict, out_dir: Path, mermaid: bool = False, cache_ro
     if missing:
         case.update(status=NOT_RUN, reason=f"missing {', '.join(missing)}")
         case["checklist"] = {item: {"result": NOT_RUN, "reason": ""} for item, *_ in CHECKLIST}
-        case["scenario_items"] = [{"kind": k, "predicate": describe(s), "why": s.get("why", ""), "result": NOT_RUN,
+        case["scenario_items"] = [{"kind": k, "predicate": _spec_text(s), "why": s.get("why", ""), "result": NOT_RUN,
                                    "reason": "", "found": ""} for k in ("must", "must_not") for s in scenario.get(k, [])]
         return case
     case["inputs"] = {"json_sha256": _sha(json_path), "md_sha256": _sha(md_path)}
     try:
         run = Run(json.loads(json_path.read_text(encoding="utf-8")), md_path.read_text(encoding="utf-8"),
                   json_path, md_path)
-    except (ValueError, AttributeError, TypeError, KeyError) as exc:
+    except (ValueError, AttributeError, TypeError, KeyError, OSError) as exc:
         run, reason = None, f"unreadable run JSON: {exc}"
     else:
         # An assessed run whose assessment is missing or off-schema cannot be judged: a must_not such as
