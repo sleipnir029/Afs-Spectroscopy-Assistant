@@ -475,7 +475,7 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     ext = None
     if external != "off":      # the primary result is complete here; no failure of the step may discard it
         try:
-            ext = external_step.run(intake, final, client, external, fetcher=fetcher)
+            ext = external_step.run(intake, final, client, external, fetcher=fetcher, enquiry=enquiry)
         except RunCancelled:            # Ctrl-C on a set run: stop the case, write nothing
             raise
         except Exception as exc:        # noqa: BLE001 - malformed API data, cache I/O, extractor bugs, ...
