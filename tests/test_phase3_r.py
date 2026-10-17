@@ -1,5 +1,7 @@
-"""Phase 3 fix round (3.R) offline tests: review fixes B1-B3 and N1-N10, two layers,
-the code-derived confidence rating, and the distinct-options check.
+"""Phase 3 fix rounds (3.R, 3.R2) offline tests: review fixes B1-B3 and N1-N10, two layers,
+the code-derived confidence rating, the distinct-options check, and the 3.R2 fixes
+(precedent by page scope, unscreened technique, open top questions, Sources cell pool,
+open-check warning, currency codes, request label, heading levels).
 
 Same made-up generic enquiry and fixtures as test_phase2 (no dev or final scenario text).
 """
@@ -21,6 +23,7 @@ from afs_assistant.options import (
     CONFIDENCE_NOTE,
     confidence,
     confidence_label,
+    option_citations,
     option_confidence,
 )
 from afs_assistant.schema import Assessment, Intake
@@ -29,7 +32,9 @@ from afs_assistant.verify import (
     MAX_ANSWER_WORDS,
     PRICE_PATTERN,
     RECHECK_NAMES,
+    answer_texts,
     forbidden_hits,
+    request_text,
     sanitize_intake,
 )
 
@@ -185,7 +190,7 @@ def test_invalid_best_option_does_not_echo_the_model_value():
     a = with_()
     a["proposal"]["best_current_option"] = "the Raman one"
     md = render.to_markdown(run_with(assess=a, repairs=[a, a])[0])
-    proposal = md.split("## Proposal", 1)[1].split("\n## ", 1)[0]
+    proposal = md.split("\n### Proposal\n", 1)[1].split("\n#", 1)[0]
     assert "**Best current option:** (invalid option id)" in proposal and "the Raman one" not in proposal
 
 
@@ -257,12 +262,13 @@ def test_cost_class_script_has_its_own_mapping():
 # ----------------------------------------------------------------- two layers
 def test_answer_comes_first_and_expert_detail_holds_the_rest():
     md = render.to_markdown(run_with()[0])
-    answer, expert = md.split("\n# Expert detail\n", 1)
-    for part in ("**Customer request:** Follow ethanol in a flowing aqueous fermentation broth.", "## Brief answer",
-                 "## Proposal", "**Decision status:**", "## Solution options", "## Setup sketch", "## Key questions"):
+    answer, expert = md.split("\n## Expert detail\n", 1)
+    for part in ("**Customer request (our summary):** Follow ethanol in a flowing aqueous fermentation broth.",
+                 "### Brief answer", "### Proposal", "**Decision status:**", "### Solution options", "### Setup sketch",
+                 "### Key questions"):
         assert part in answer
-    for part in ("## Parameters", "## Requirements", "## Recommendation",
-                 "## Evidence (verified quotes)", "## Verification", "**Customer enquiry**"):
+    for part in ("### Parameters", "### Requirements", "### Recommendation",
+                 "### Evidence (verified quotes)", "### Verification", "**Customer enquiry**"):
         assert part in expert and part not in answer
     assert "cost drivers" not in answer and "**O2 cost drivers:**" in expert
 
@@ -272,8 +278,8 @@ def test_answer_shows_only_the_top_three_questions():
     questions = [{"id": f"Q{i}", "question": f"Question number {w}?", "why_it_matters": "Decides the method.",
                   "affects": ["M1"]} for i, w in enumerate(words, 1)]
     md = render.to_markdown(run_with(assess=with_(clarification_questions=questions))[0])
-    answer, expert = md.split("\n# Expert detail\n", 1)
-    key = answer.split("## Key questions", 1)[1]
+    answer, expert = md.split("\n## Expert detail\n", 1)
+    key = answer.split("### Key questions", 1)[1]
     assert "Question number three?" in key and "Question number four?" not in key and "Why it matters" not in key
     assert all(f"Question number {w}?" in expert for w in ("one", "five"))
 
@@ -289,7 +295,7 @@ def test_request_line_falls_back_to_the_enquiry_when_the_summary_has_an_unsuppor
 def test_answer_length_is_a_soft_check():
     ok, _ = run_with()
     assert not soft(ok, "answer_length")
-    answer = render.to_markdown(ok).split("\n# Expert detail\n", 1)[0]
+    answer = render.to_markdown(ok).split("\n## Expert detail\n", 1)[0]
     assert len(re.sub(r"```mermaid.*?```", "", answer, flags=re.DOTALL).split()) <= MAX_ANSWER_WORDS
     long = with_(status_reason=" ".join(["word"] * (MAX_ANSWER_WORDS + 1)))
     result, _ = run_with(assess=long)
@@ -301,31 +307,74 @@ def _assessment(**changes) -> Assessment:
     return Assessment.model_validate(with_(**changes))
 
 
+def cit_model(doc, page, quote, kind="general"):
+    from afs_assistant.schema import Citation
+
+    return Citation.model_validate(cit(doc, page, quote, kind))
+
+
+def _clean(**changes) -> Assessment:
+    """The fixture with nothing that downgrades O2: the auxiliary sensor cited, no question on a method."""
+    a = _assessment(**changes)
+    a.parameters[1].citations = [cit_model("S01", 16, RAMAN_QUOTE)]
+    for q in a.clarification_questions:
+        q.affects = ["status"]
+    return a
+
+
 def _conf(a: Assessment, option_id: str, slots: dict = LIQUID_CLEAR) -> dict:
     option = next(o for o in a.solution_options if o.id == option_id)
     return confidence(a, option, screen(slots), slots)
 
 
 def test_confidence_no_downgrade_is_high():
-    assert _conf(_assessment(), "O2") == {"level": "High", "reasons": []}
+    assert _conf(_clean(), "O2") == {"level": "High", "reasons": []}
 
 
 def test_confidence_rule1_unknown_deciding_slot():
     slots = {"physical_state": "liquid"}                     # clarity unknown: NIR transmission open
-    conf = _conf(_assessment(), "O1", slots)
+    conf = _conf(_clean(), "O1", slots)
     assert conf == {"level": "Medium", "reasons": ["sample clarity unknown"]}
-    assert _conf(_assessment(), "O2", slots)["level"] == "High"    # Raman probe passes on "liquid"
+    assert _conf(_clean(), "O2", slots)["level"] == "High"    # Raman probe passes on "liquid"
 
 
 def test_confidence_rule1_counts_a_combined_method_without_its_own_entry():
-    a = _assessment()
+    a = _clean()
     a.recommendations[0].combined_with = ["Fluorescence"]        # fluorophore unknown -> Fluorescence open
     conf = _conf(a, "O2")
     assert "fluorescent target unknown" in conf["reasons"]
 
 
+@pytest.mark.parametrize("method,technique", [("Raman", "to_be_determined"), ("NIR", "ATR")])
+def test_confidence_rule1_unscreened_or_undetermined_technique(method, technique):
+    a = _clean()
+    a.recommendations[0].method, a.recommendations[0].technique = method, technique
+    assert _conf(a, "O2") == {"level": "Medium", "reasons": ["technique not screened for this sample"]}
+
+
+def test_confidence_rule1_open_top_question_on_the_option():
+    a = _clean()
+    a.clarification_questions[0].affects = ["M1"]
+    assert _conf(a, "O2")["reasons"] == ["open question: Q1"]
+    assert _conf(a, "O1")["reasons"] == []                       # Q1 does not affect M2
+    a.clarification_questions[0].affects = ["method_choice"]
+    assert _conf(a, "O1")["reasons"] == _conf(a, "O2")["reasons"] == ["open question: Q1"]
+
+
+def test_confidence_rule1_ignores_a_question_below_the_top_three():
+    words = ["one", "two", "three", "four"]
+    questions = [{"id": f"Q{i}", "question": f"Question {w}?", "why_it_matters": "Decides it.",
+                  "affects": ["status"]} for i, w in enumerate(words, 1)]
+    a = _clean(clarification_questions=questions)
+    a.clarification_questions[3].affects = ["M1"]
+    assert _conf(a, "O2")["level"] == "High"
+    a.clarification_questions[1].affects = ["M1"]
+    a.clarification_questions[2].affects = ["method_choice"]
+    assert _conf(a, "O2")["reasons"] == ["open question: Q2, Q3"]
+
+
 def test_confidence_rule2_no_verified_citation_and_precedent_only():
-    a = _assessment()
+    a = _clean()
     a.solution_options[1].citations = []
     a.recommendations[0].citations = []
     assert _conf(a, "O2")["reasons"] == ["no verified source citation"]
@@ -333,40 +382,47 @@ def test_confidence_rule2_no_verified_citation_and_precedent_only():
     assert _conf(a, "O2")["reasons"] == ["precedent only"]
 
 
-def cit_model(doc, page, quote, kind):
-    from afs_assistant.schema import Citation
+@pytest.mark.parametrize("doc,page", [("S02", 13), ("S01", 15), ("S01", 3)])
+def test_confidence_rule2_general_citation_to_an_example_page_is_precedent(doc, page):
+    tags = set(kb.page(doc, page)["scope"])
+    assert not tags & {"method", "component_spec", "guidance"}
+    a = _clean()
+    a.solution_options[1].citations = []
+    a.recommendations[0].citations = [cit_model(doc, page, "a quote from this page")]
+    assert _conf(a, "O2")["reasons"] == ["precedent only"]
 
-    return Citation.model_validate(cit(doc, page, quote, kind))
+
+def test_confidence_rule2_general_citation_to_a_method_page_is_not_precedent():
+    a = _clean()
+    a.solution_options[1].citations = [cit_model("S02", 13, "a quote from this page")]
+    assert set(kb.page("S01", 16)["scope"]) & {"method"}            # M1 keeps its S01 p.16 citation
+    assert _conf(a, "O2")["level"] == "High"
 
 
-def test_confidence_rule3_uncited_required_auxiliary_sensor_or_not_measurable():
-    a = _assessment()
-    a.parameters[1].necessity = "required"
-    assert _conf(a, "O2")["reasons"] == ["uncited auxiliary sensor"]
-    a.parameters[1].citations = [cit_model("S01", 16, RAMAN_QUOTE, "general")]
+def test_confidence_rule3_auxiliary_sensor_or_not_measurable_whatever_the_necessity():
+    a = _clean()
+    a.parameters[1].citations = []
+    for necessity in ("optional", "required"):
+        a.parameters[1].necessity = necessity
+        assert _conf(a, "O2")["reasons"] == ["uncited auxiliary sensor"]
+    a.parameters[1].citations = [cit_model("S01", 16, RAMAN_QUOTE)]
     assert _conf(a, "O2")["reasons"] == []
     a.parameters[1].necessity = "optional"
-    a.parameters[0].measured_by.type = "not_measurable_inline"
-    assert _conf(a, "O2")["reasons"] == ["a required parameter is not measurable in-line"]
-
-
-def test_confidence_rule3_ignores_an_optional_auxiliary_sensor():
-    a = _assessment()
-    assert a.parameters[1].necessity == "optional" and not a.parameters[1].citations
-    assert _conf(a, "O2")["level"] == "High"
+    a.parameters[1].measured_by.type = "not_measurable_inline"
+    assert _conf(a, "O2")["reasons"] == ["a parameter is not measurable in-line"]
 
 
 def test_confidence_rule4_contradicted_premise_or_status():
     premise = {"premise": "Water blocks Raman.", "verdict": "contradicted", "explanation": "Low water absorbance.",
                "citations": [cit("S01", 16, RAMAN_QUOTE)]}
-    a = _assessment(decision_status="premise_not_supported", premise_checks=[premise])
+    a = _clean(decision_status="premise_not_supported", premise_checks=[premise])
     assert _conf(a, "O2")["reasons"] == ["a customer premise is contradicted, status: premise not supported"]
-    b = _assessment(decision_status="insufficient_information")
+    b = _clean(decision_status="insufficient_information")
     assert _conf(b, "O2")["reasons"] == ["status: insufficient information"]
 
 
 def test_confidence_rule5_multi_method():
-    a = _assessment(solution_options=ASSESSMENT["solution_options"] + [EXTENDED])
+    a = _clean(solution_options=ASSESSMENT["solution_options"] + [EXTENDED])
     assert _conf(a, "O3") == {"level": "Medium", "reasons": ["multi-method, fusion benefit not yet shown"]}
 
 
@@ -375,10 +431,10 @@ def test_confidence_floor_is_low_and_all_reasons_are_kept():
                     solution_options=ASSESSMENT["solution_options"] + [EXTENDED])
     for r in a.recommendations:
         r.citations = []
-    a.parameters[1].necessity = "required"
     conf = _conf(a, "O3", {"physical_state": "liquid"})
     assert conf["level"] == "Low" and len(conf["reasons"]) == 5
-    assert confidence_label(conf).startswith("Low: sample clarity unknown; no verified source citation; ")
+    assert confidence_label(conf).startswith("Low: sample clarity unknown, open question: Q1; "
+                                             "no verified source citation; uncited auxiliary sensor; ")
 
 
 def test_confidence_is_rendered_and_in_the_json():
@@ -386,11 +442,65 @@ def test_confidence_is_rendered_and_in_the_json():
     result, _ = run_with(assess=a)
     md = render.to_markdown(result)
     assert "| O3 | Extended (multi-method) | M1 Raman probe; M2 NIR, transmission/transflection probe | " \
-           "Medium: multi-method, fusion benefit not yet shown | high (rows 7, 12) |" in md
+           "Low: open question: Q1; uncited auxiliary sensor; multi-method, fusion benefit not yet shown | " \
+           "high cost (rows 7, 12) |" in md
     assert CONFIDENCE_NOTE in md and "not a predicted accuracy" in CONFIDENCE_NOTE
     data = render.to_json(result)
     assert data["option_confidence"] == option_confidence(result.assessment, result.candidates, result.slots)
-    assert data["option_confidence"]["O2"] == {"level": "High", "reasons": []}
+    assert data["option_confidence"]["O2"] == {"level": "Medium", "reasons": ["uncited auxiliary sensor"]}
+
+
+# ----------------------------------------------------------------- 3.R2 item 3: Sources cell = rating pool
+def _option_row(md: str, option_id: str) -> str:
+    return next(line for line in md.splitlines() if line.startswith(f"| {option_id} |"))
+
+
+def test_sources_cell_shows_the_recommendations_citations():
+    md = render.to_markdown(run_with()[0])
+    o1 = _option_row(md, "O1")                     # O1 has no own citation; its M2 cites S01 p.10
+    assert "no verified source" not in o1 and o1.rstrip(" |").endswith("S01 p.10]")
+    o2 = _option_row(md, "O2")                     # O2 and M1 cite the same quote: shown once
+    assert o2.count("S01 p.16") == 1
+
+
+def test_sources_cell_says_no_source_only_when_the_pool_is_empty():
+    a = with_()
+    a["recommendations"][1]["citations"] = []
+    md = render.to_markdown(run_with(assess=a)[0])
+    row = _option_row(md, "O1")
+    assert "no verified source citation" in row and "no verified source: engineering judgement" in row
+
+
+def test_option_citations_is_the_rating_pool():
+    a = _clean()
+    recs = {r.id: r for r in a.recommendations}
+    pool = option_citations(a.solution_options[1], recs)
+    assert [(c.doc, c.page) for c in pool] == [("S01", 16)]
+    assert [(c.doc, c.page) for c in option_citations(a.solution_options[0], recs)] == [("S01", 10)]
+
+
+# ----------------------------------------------------------------- 3.R2 N3: open checks, per-index confidence
+def test_answer_warns_when_hard_checks_are_still_open():
+    clean = render.to_markdown(run_with()[0])
+    assert "still open; see Verification" not in clean
+    a = with_()
+    a["solution_options"][1]["id"] = "O1"
+    a["proposal"]["best_current_option"] = "O1"
+    result, _ = run_with(assess=a, repairs=[a, a])
+    md = render.to_markdown(result)
+    n = len(render.open_failures(result))
+    assert n and md.split("\n## Answer\n\n", 1)[1].startswith(
+        f"⚠ {n} verification check(s) still open; see Verification.\n")
+
+
+def test_confidence_is_computed_per_option_row_even_with_repeated_ids():
+    a = with_()
+    a["solution_options"][1]["id"] = "O1"
+    a["proposal"]["best_current_option"] = "O1"
+    md = render.to_markdown(run_with(assess=a, repairs=[a, a])[0])
+    rows = [line for line in md.splitlines() if line.startswith("| O1 |")]
+    assert len(rows) == 2
+    assert "Medium: open question: Q1 |" in rows[0] and "Medium: uncited auxiliary sensor |" in rows[1]
 
 
 def test_model_never_writes_the_confidence():
@@ -404,13 +514,63 @@ def test_assess_and_repair_have_room_for_reasoning():
     assert roles["assess"]["max_tokens"] >= 64000 and roles["repair"]["max_tokens"] >= 64000
 
 
-def test_currency_codes_are_case_sensitive_so_journal_abbreviations_pass():
-    import re
+@pytest.mark.parametrize("text", ["eur 500", "about 3000 usd", "EUR 5,000", "Priced in chf.", "500 Gbp each"])
+def test_currency_codes_match_in_any_case(text):
+    assert re.search(PRICE_PATTERN, text, re.IGNORECASE), text
+    assert any(h.startswith("price") for h in forbidden_hits(text)), text
 
-    from afs_assistant.verify import PRICE_PATTERN
 
+def test_journal_abbreviation_is_not_a_currency_code():
     pat = re.compile(PRICE_PATTERN, re.IGNORECASE)
-    assert pat.search("about 5,000 EUR")
-    assert pat.search("a few thousand euros")
     assert not pat.search("Eur. Urol. 2009, 56, 636-643")
-    assert not pat.search("Usd and Chf are not codes here")
+    assert not pat.search("Eur.Urol.")
+    hits = [(key, m.group()) for key, page in kb.pages().items()
+            for m in re.finditer(r"\bEur\.\s?[A-Z]\w*", page["text"])]
+    assert hits                                                       # the supplied pages carry one
+    for key, abbreviation in hits:
+        assert not pat.search(abbreviation), (key, abbreviation)
+
+
+def test_cost_class_script_uses_the_same_currency_rule_and_skips_the_evidence_section(tmp_path):
+    script = _load_script("check_cost_class")
+    assert script.CURRENCY.search("about 3000 usd") and not script.CURRENCY.search("Eur. Urol.")
+    result, _ = run_with()
+    (tmp_path / "X.json").write_text(json.dumps(render.to_json(result)), encoding="utf-8")
+    md = render.to_markdown(result)
+    evidence = "\n### Evidence (verified quotes)\n\n"
+    assert evidence in md
+    (tmp_path / "X.md").write_text(md.replace(evidence, evidence + "1. ✓ quote \"Eur 5 here\"\n"), encoding="utf-8")
+    assert script.check_pair(tmp_path / "X.json", tmp_path / "X.md", kb.table1()) == []
+    (tmp_path / "X.md").write_text(md.replace("\n### Verification\n", "\n### Verification\n\nAbout 5 eur.\n"),
+                                   encoding="utf-8")
+    assert any("currency" in p for p in script.check_pair(tmp_path / "X.json", tmp_path / "X.md", kb.table1()))
+
+
+# ----------------------------------------------------------------- 3.R2 N4, N7
+def test_request_label_says_our_summary_only_for_the_summary():
+    md = render.to_markdown(run_with()[0])
+    assert "**Customer request (our summary):** Follow ethanol" in md
+    intake = copy.deepcopy(INTAKE)
+    intake["summary"] = "Follow ethanol down to 3 g/L in a broth."
+    md = render.to_markdown(run_with(intake=intake)[0])
+    assert "**Customer request:** We want to follow ethanol" in md and "(our summary)" not in md
+
+
+def test_answer_length_counts_the_rendered_request_line():
+    intake = copy.deepcopy(INTAKE)
+    intake["summary"] = "Follow ethanol down to 3 g/L in a broth."            # falls back to the enquiry
+    long = with_(status_reason=" ".join(["word"] * MAX_ANSWER_WORDS))       # fails, so the count is shown
+    result, _ = run_with(intake=intake, assess=long)
+    line = render.request_line(result)
+    assert line == request_text(result.intake.summary, result.enquiry) and "3 g/L" not in line
+    words = sum(len(t.split()) for t in answer_texts(result.assessment, line))
+    check = soft(result, "answer_length")[0]
+    assert check.message.startswith(f"{words} words")
+    assert words > sum(len(t.split()) for t in answer_texts(result.assessment, result.intake.summary))
+
+
+def test_layer_headings_are_h2_and_sections_h3():
+    md = render.to_markdown(run_with()[0])
+    assert re.findall(r"^## .+$", md, re.MULTILINE) == ["## Answer", "## Expert detail"]
+    assert re.findall(r"^# .+$", md, re.MULTILINE) == ["# First technical assessment"]
+    assert "\n### Solution options\n" in md and "\n### Verification\n" in md

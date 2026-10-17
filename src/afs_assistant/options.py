@@ -68,7 +68,7 @@ class CostClass:
         if self.cost_class is None:
             return NOT_RATED
         rows = ", ".join(str(r["row"]) for r in self.rows)
-        text = f"{self.cost_class} (row{'s' if len(self.rows) > 1 else ''} {rows})"
+        text = f"{self.cost_class} cost (row{'s' if len(self.rows) > 1 else ''} {rows})"
         if self.unrated:
             text += f"; {NOT_RATED}: {', '.join(self.unrated)}"
         return text
@@ -150,8 +150,44 @@ def _unknown_phrases(cand: Candidate, slots: dict) -> list[str]:
     return phrases
 
 
+# Page scope tags that can carry a general statement about a method or component (page_scopes.yaml).
+GENERAL_SCOPES = {"method", "component_spec", "guidance"}
+OPEN_QUESTION_ANY = "method_choice"     # a question that affects the method choice affects every option
+
+
 def _is_precedent(c) -> bool:
-    return c.claim_kind == "application_precedent" or scope.check(c.claim_kind, c.doc, c.page)[0] == "precedent_only"
+    """A citation is precedent when its claim kind or scope says so, or its page has no general tag
+    (a 'general' citation to an example or study page is still only precedent; 3.R2 B1)."""
+    from afs_assistant import kb
+
+    page = kb.page(c.doc, c.page)
+    tags = set(page["scope"]) if page else set()
+    return (c.claim_kind == "application_precedent"
+            or scope.check(c.claim_kind, c.doc, c.page)[0] == "precedent_only"
+            or not tags & GENERAL_SCOPES)
+
+
+def option_citations(option: SolutionOption, recs: dict[str, Recommendation]) -> list:
+    """The citations of an option and of its recommendations, de-duplicated, order kept (3.R2 item 3).
+
+    The confidence rating and the Sources cell use this same pool.
+    """
+    used = [recs[i] for i in option.recommendation_ids if i in recs]
+    pool, seen = [], set()
+    for c in [*option.citations, *(c for r in used for c in r.citations)]:
+        key = (c.doc, c.page, c.quote)
+        if key not in seen:
+            seen.add(key)
+            pool.append(c)
+    return pool
+
+
+def open_questions(a: Assessment, option: SolutionOption) -> list[str]:
+    """Ids of the top clarification questions (as shown in the Answer) that affect the option."""
+    from afs_assistant.verify import ANSWER_QUESTIONS
+
+    affected = {*option.recommendation_ids, OPEN_QUESTION_ANY}
+    return [q.id for q in a.clarification_questions[:ANSWER_QUESTIONS] if affected & set(q.affects)]
 
 
 def confidence(a: Assessment, option: SolutionOption, cands: list[Candidate], slots: dict) -> dict:
@@ -160,16 +196,18 @@ def confidence(a: Assessment, option: SolutionOption, cands: list[Candidate], sl
     Runs on the finalized assessment, whose citations are all verified.
     """
     recs = {r.id: r for r in a.recommendations}
-    used = [recs[i] for i in option.recommendation_ids if i in recs]
     by_key = {(c.method, c.technique): c for c in cands}
     reasons: list[str] = []
 
-    # 1. A sample property that decides one of the option's methods is unknown.
+    # 1. A sample property that decides one of the option's methods is unknown, the technique was not
+    #    screened for this sample, or a top clarification question that affects the option is open.
     unknown: list[str] = []
     for method, technique in option_parts(option, recs):
         if technique is not None:
             cand = by_key.get((method, technique))
-            if cand is not None and cand.status == "unknown":
+            if cand is None:
+                unknown.append("technique not screened for this sample")
+            elif cand.status == "unknown":
                 unknown += _unknown_phrases(cand, slots)
         else:   # a combined method without its own entry: open if none of its in-line candidates passes
             same = [c for c in cands if c.method == method]
@@ -177,24 +215,27 @@ def confidence(a: Assessment, option: SolutionOption, cands: list[Candidate], sl
                 for c in same:
                     if c.status == "unknown":
                         unknown += _unknown_phrases(c, slots)
+    questions = open_questions(a, option)
+    if questions:
+        unknown.append(f"open question: {', '.join(questions)}")
     if unknown:
         reasons.append(", ".join(dict.fromkeys(unknown)))
 
     # 2. Only precedent citations, or no verified supplied-source citation, behind the option's methods.
-    cits = [*option.citations, *(c for r in used for c in r.citations)]
+    cits = option_citations(option, recs)
     if not cits:
         reasons.append("no verified source citation")
     elif all(_is_precedent(c) for c in cits):
         reasons.append("precedent only")
 
-    # 3. Relies on an uncited auxiliary sensor or a parameter not measurable in-line.
+    # 3. Uses an uncited auxiliary sensor or a parameter not measurable in-line (any necessity; 3.R2 N5).
     params = {p.id: p for p in a.parameters}
-    required = [params[i] for i in option.parameter_ids if i in params and params[i].necessity == "required"]
+    referenced = [params[i] for i in option.parameter_ids if i in params]
     weak = []
-    if any(p.measured_by.type == "auxiliary_sensor" and not p.citations for p in required):
+    if any(p.measured_by.type == "auxiliary_sensor" and not p.citations for p in referenced):
         weak.append("uncited auxiliary sensor")
-    if any(p.measured_by.type == "not_measurable_inline" for p in required):
-        weak.append("a required parameter is not measurable in-line")
+    if any(p.measured_by.type == "not_measurable_inline" for p in referenced):
+        weak.append("a parameter is not measurable in-line")
     if weak:
         reasons.append(" and ".join(weak))
 

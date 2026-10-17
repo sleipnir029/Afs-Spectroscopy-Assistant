@@ -300,7 +300,7 @@ def test_cost_class_comes_from_table1_rows():
     assert (costs["O1"]["cost_class"], [r["row"] for r in costs["O1"]["rows"]]) == ("average", [7])
     assert (costs["O2"]["cost_class"], [r["row"] for r in costs["O2"]["rows"]]) == ("high", [12])
     assert costs["O3"]["cost_class"] == "high" and [r["row"] for r in costs["O3"]["rows"]] == [7, 12]
-    assert costs["O3"]["label"] == "high (rows 7, 12)" and costs["O3"]["citation"] == "S01 Table 1 (p.6)"
+    assert costs["O3"]["label"] == "high cost (rows 7, 12)" and costs["O3"]["citation"] == "S01 Table 1 (p.6)"
     table = {r["row"]: r["cost"] for r in kb.table1()}
     for c in costs.values():
         assert all(table[r["row"]] == r["cost"] for r in c["rows"])
@@ -312,7 +312,7 @@ def test_unrated_parts_are_never_guessed():
     a.recommendations[0].combined_with = ["Fluorescence"]
     o2 = cost_class(a.solution_options[1], _recs(a))
     assert o2.cost_class == "high" and o2.unrated == ["Fluorescence (technique not specified)"]
-    assert o2.label() == f"high (row 12); {NOT_RATED}: Fluorescence (technique not specified)"
+    assert o2.label() == f"high cost (row 12); {NOT_RATED}: Fluorescence (technique not specified)"
     o1 = cost_class(a.solution_options[0], _recs(a))
     assert o1.cost_class is None and o1.label() == NOT_RATED
 
@@ -334,7 +334,7 @@ def test_cost_class_cross_check_script(tmp_path):
     script = _load_script("check_cost_class")
     table = kb.table1()
     assert script.check_pair(tmp_path / "X.json", tmp_path / "X.md", table) == []
-    (tmp_path / "X.md").write_text(md.replace("| average (row 7) |", "| low (row 7) |"), encoding="utf-8")
+    (tmp_path / "X.md").write_text(md.replace("| average cost (row 7) |", "| low cost (row 7) |"), encoding="utf-8")
     assert script.check_pair(tmp_path / "X.json", tmp_path / "X.md", table)
 
 
@@ -451,15 +451,15 @@ def test_mermaid_check_script_finds_blocks(tmp_path):
 # ----------------------------------------------------------------- 3.6 render order and tables
 def test_render_order():
     md = render.to_markdown(run_with(assess=with_(chemometrics_note="One model per method."))[0])
-    order = ["# Answer", "**Customer request:**", "## Brief answer", "## Proposal", "**Decision status:**",
-             "## Solution options", "## Setup sketch", "## Key questions", "# Expert detail", "**Customer enquiry**",
-             "## Parameters", "## Solution option details", "## Requirements", "## Clarification questions",
-             "## Recommendation", "## First feasibility experiment", "## Further notes", "## Evidence",
-             "## Verification"]
+    order = ["\n## Answer\n", "**Customer request (our summary):**", "\n### Brief answer\n", "\n### Proposal\n",
+             "**Decision status:**", "\n### Solution options\n", "\n### Setup sketch\n", "\n### Key questions\n",
+             "\n## Expert detail\n", "**Customer enquiry**", "\n### Parameters\n", "\n### Solution option details\n",
+             "\n### Requirements\n", "\n### Clarification questions", "\n### Recommendation\n",
+             "\n### First feasibility experiment\n", "\n### Further notes\n", "\n### Evidence", "\n### Verification\n"]
     positions = [md.index(h) for h in order]
     assert positions == sorted(positions)
     assert "| P1 | Ethanol concentration | quantitative | required | Spectroscopy: Raman |" in md
-    assert "| O2 | Recommended | M1 Raman probe | High | high (row 12) |" in md
+    assert "| O2 | Recommended | M1 Raman probe | Medium: uncited auxiliary sensor | high cost (row 12) |" in md
 
 
 def test_table_cells_escape_pipes():

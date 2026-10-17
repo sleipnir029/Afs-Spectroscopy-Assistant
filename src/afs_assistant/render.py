@@ -14,20 +14,21 @@ import re
 
 from afs_assistant import kb, scope
 from afs_assistant.fibers import method_fiber_coverage
-from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.options import (
     CONFIDENCE_NOTE,
     TABLE1_CITATION,
+    confidence,
     confidence_label,
     cost_class,
     method_label,
+    option_citations,
     option_confidence,
     option_costs,
     option_parts,
 )
 from afs_assistant.pipeline import RunResult
 from afs_assistant.schema import Assessment, Parameter, SolutionOption
-from afs_assistant.verify import ANSWER_QUESTIONS, RECHECK_NAMES, forbidden_hits
+from afs_assistant.verify import ANSWER_QUESTIONS, RECHECK_NAMES, request_text
 
 STATUS_LABEL = {
     "provisional_assessment": "Provisional feasibility assessment",
@@ -180,12 +181,14 @@ def _option_methods_text(option: SolutionOption, a: Assessment) -> str:
 
 
 def request_line(r: RunResult) -> str:
-    """The customer request in one line: the intake summary, unless it carries a figure that is not in
-    the enquiry or forbidden wording; then the enquiry itself."""
+    """The customer request in one line (`verify.request_text`, which the answer_length check counts)."""
+    return request_text(r.intake.summary, r.enquiry)
+
+
+def request_label(r: RunResult) -> str:
+    """'Customer request (our summary)' for the intake summary; the enquiry text itself needs no note."""
     summary = " ".join(r.intake.summary.split())
-    if not summary or unsupported_numbers(summary, [r.enquiry]) or forbidden_hits(summary):
-        return " ".join(r.enquiry.split())
-    return summary
+    return "Customer request (our summary)" if summary and request_line(r) == summary else "Customer request"
 
 
 def to_markdown(r: RunResult, title: str = "") -> str:
@@ -197,16 +200,19 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         return f" ⚠ *({r.flagged[path]})*" if path in r.flagged else ""
 
     # ================================================================ Answer
-    out = [f"# First technical assessment{': ' + title if title else ''}", "", "# Answer", ""]
-    out += [f"**Customer request:** {request_line(r)}", ""]
-    out += ["## Brief answer", "", f"{a.brief_answer}{warn('brief_answer')}", ""]
+    out = [f"# First technical assessment{': ' + title if title else ''}", "", "## Answer", ""]
+    still_open = open_failures(r)
+    if still_open:
+        out += [f"⚠ {len(still_open)} verification check(s) still open; see Verification.", ""]
+    out += [f"**{request_label(r)}:** {request_line(r)}", ""]
+    out += ["### Brief answer", "", f"{a.brief_answer}{warn('brief_answer')}", ""]
 
     options = {o.id: o for o in a.solution_options}
     pr = a.proposal
     best = options.get(pr.best_current_option)
     best_text = (f"{best.id} ({TIER_LABEL[best.tier].lower()}): {_option_methods_text(best, a)}" if best
                  else "(invalid option id)")
-    out += ["## Proposal", "",
+    out += ["### Proposal", "",
             f"- **Best current option:** {best_text}{warn('proposal')}",
             f"- **Basis:** {BASIS_LABEL[pr.basis]}",
             f"- **What would change it:** {pr.what_would_change_it}{warn('proposal.what_would_change_it')}",
@@ -215,22 +221,22 @@ def to_markdown(r: RunResult, title: str = "") -> str:
 
     if a.solution_options:
         recs = {x.id: x for x in a.recommendations}
-        conf = option_confidence(a, r.candidates, r.slots)
-        out += ["## Solution options", "",
+        out += ["### Solution options", "",
                 (f"| ID | Tier | Methods | Confidence | Cost class, {TABLE1_CITATION} | Ease of use | Maintenance | "
                  f"Performance fit | Sources |"), "|---|---|---|---|---|---|---|---|---|"]
         for i, o in enumerate(a.solution_options):
+            conf = confidence(a, o, r.candidates, r.slots)    # per index: ids may repeat (still open then)
             out.append(f"| {_cell(o.id)} | {TIER_LABEL[o.tier]} | {_cell(_option_methods_text(o, a))} | "
-                       f"{_cell(confidence_label(conf[o.id]))} | {_cell(cost_class(o, recs).label())} | "
+                       f"{_cell(confidence_label(conf))} | {_cell(cost_class(o, recs).label())} | "
                        f"{_cell(o.ease_of_use)} | {_cell(o.maintenance)} | "
                        f"{_cell(o.performance_fit)}{_cell(warn(f'solution_options[{i}]'))} | "
-                       f"{_cell(cite.refs(o.citations))} |")
+                       f"{_cell(cite.refs(option_citations(o, recs)))} |")
         out += ["", f"*{CONFIDENCE_NOTE}*", "",
                 (f"*Cost class is the relative rating in {TABLE1_CITATION} for the in-line method+technique "
                  f"rows named (the highest one for a multi-method option); it is not a price.*"), ""]
 
     charts = setup_charts(r)
-    out += ["## Setup sketch", ""]
+    out += ["### Setup sketch", ""]
     if not charts:
         out += ["No recommended option, so no setup sketch.", ""]
     for o, chart in charts:
@@ -239,15 +245,15 @@ def to_markdown(r: RunResult, title: str = "") -> str:
 
     top = a.clarification_questions[:ANSWER_QUESTIONS]
     if top:
-        out += ["## Key questions", ""]
+        out += ["### Key questions", ""]
         out += [f"{k}. {q.question}{warn(f'clarification_questions[{k - 1}]')}" for k, q in enumerate(top, 1)]
         out.append("")
 
     # ================================================================ Expert detail
-    out += ["# Expert detail", "", "**Customer enquiry**", "", f"> {r.enquiry}", ""]
+    out += ["## Expert detail", "", "**Customer enquiry**", "", f"> {r.enquiry}", ""]
 
     if a.parameters:
-        out += ["## Parameters", "", "| ID | Parameter | Kind | Need | Measured by | Why | Sources |",
+        out += ["### Parameters", "", "| ID | Parameter | Kind | Need | Measured by | Why | Sources |",
                 "|---|---|---|---|---|---|---|"]
         for i, p in enumerate(a.parameters):
             out.append(f"| {_cell(p.id)} | {_cell(p.name)} | {p.kind} | {p.necessity} | "
@@ -256,7 +262,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         out.append("")
 
     if a.solution_options:
-        out += ["## Solution option details", ""]
+        out += ["### Solution option details", ""]
         for o in a.solution_options:
             out.append(f"- **{o.id} cost drivers:** {o.cost_drivers}")
             if o.fusion_note:
@@ -264,24 +270,24 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         out.append("")
 
     if a.premise_checks:
-        out += ["## Premise check", ""]
+        out += ["### Premise check", ""]
         for i, p in enumerate(a.premise_checks):
             out.append(f"- **{p.verdict.replace('_', ' ').capitalize()}:** {p.premise.rstrip().rstrip('.')}. "
                        f"{p.explanation}{cite.refs(p.citations)}{warn(f'premise_checks[{i}]')}")
         out.append("")
 
-    out += ["## Requirements", "", "**Stated by the customer**", ""]
+    out += ["### Requirements", "", "**Stated by the customer**", ""]
     out += [f"- {s}{warn(f'requirements_stated[{i}]')}" for i, s in enumerate(a.requirements_stated)]
     out += ["", "**Key unknowns**", ""]
     out += [f"- {s}{warn(f'key_unknowns[{i}]')}" for i, s in enumerate(a.key_unknowns)] + [""]
 
-    out += ["## Clarification questions (most decision-relevant first)", ""]
+    out += ["### Clarification questions (most decision-relevant first)", ""]
     for i, q in enumerate(a.clarification_questions):
         out.append(f"{q.id}. {q.question} *Why it matters:* {q.why_it_matters} *(affects: {', '.join(q.affects)})*"
                    f"{warn(f'clarification_questions[{i}]')}")
     out.append("")
 
-    out += ["## Recommendation", ""]
+    out += ["### Recommendation", ""]
     for i, m in enumerate(a.recommendations):
         cond = "" if m.conditions.strip().lower() in ("", "none") else f" *Conditions:* {m.conditions}"
         # A combination is never part of the headline: single methods are tested first.
@@ -292,23 +298,23 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     out.append("")
 
     mc = a.measurement_concept
-    out += ["## Measurement concept", "",
+    out += ["### Measurement concept", "",
             f"- **Probe and geometry:** {mc.probe_and_geometry}",
             f"- **Location:** {mc.location}",
             f"- **Fiber link:** {mc.fiber_link}{cite.refs(mc.citations)}{warn('measurement_concept')}", ""]
 
-    out += ["## Spectral range", ""]
+    out += ["### Spectral range", ""]
     out += [f"- **{s.method}:** {s.statement}{cite.refs(s.citations)}{warn(f'spectral_ranges[{i}]')}"
             for i, s in enumerate(a.spectral_ranges)] + [""]
 
-    out += ["## Risks and uncertainty", ""]
+    out += ["### Risks and uncertainty", ""]
     for i, k in enumerate(a.risks):
         rules = f" *(rules: {', '.join(k.rule_ids)})*" if k.rule_ids else ""
         out.append(f"- {k.risk}{rules}{cite.refs(k.citations)}{warn(f'risks[{i}]')}")
     out.append("")
 
     fp = a.feasibility_plan
-    out += ["## First feasibility experiment", ""]
+    out += ["### First feasibility experiment", ""]
     out += [f"{i}. **{_STEP_NUMBER.sub('', s.step)}** {s.purpose}{cite.refs(s.citations)}{warn(f'feasibility_plan.steps[{i - 1}]')}"
             for i, s in enumerate(fp.steps, 1)]
     out += ["", (f"**Reference measurements:** {fp.reference_measurements}"
@@ -316,17 +322,17 @@ def to_markdown(r: RunResult, title: str = "") -> str:
             f"**Decision basis:** {fp.decision_basis}{warn('feasibility_plan.decision_basis')}", ""]
 
     if a.assumptions:
-        out += ["## Assumptions", ""] + [f"- {s}{warn(f'assumptions[{i}]')}" for i, s in enumerate(a.assumptions)]
+        out += ["### Assumptions", ""] + [f"- {s}{warn(f'assumptions[{i}]')}" for i, s in enumerate(a.assumptions)]
         out.append("")
     if a.not_in_sources:
-        out += ["## Not covered by the supplied sources", ""]
+        out += ["### Not covered by the supplied sources", ""]
         out += [f"- {s}{warn(f'not_in_sources[{i}]')}" for i, s in enumerate(a.not_in_sources)] + [""]
 
     notes = [(NOTE_LABEL[n], getattr(a, n), n) for n in NOTE_LABEL if getattr(a, n)]
     if notes:
-        out += ["## Further notes", ""] + [f"- **{label}:** {text}{warn(n)}" for label, text, n in notes] + [""]
+        out += ["### Further notes", ""] + [f"- **{label}:** {text}{warn(n)}" for label, text, n in notes] + [""]
 
-    out += ["## Evidence (verified quotes)", ""]
+    out += ["### Evidence (verified quotes)", ""]
     for i, c in enumerate(cite.entries, 1):
         precedent = scope.check(c.claim_kind, c.doc, c.page)[0] == "precedent_only"
         badge = "✓ (precedent only)" if precedent else "✓"
@@ -337,8 +343,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     s = r.report.summary()
     removed_citations = [x for x in r.removed if "citation" in x]
     changes = [x for x in r.removed if "citation" not in x]
-    still_open = open_failures(r)
-    out += ["## Verification", "",
+    out += ["### Verification", "",
             (f"- Citations verified: {s['citations_verified']} of {s['citations_total']} "
              f"(exact or whitespace/hyphen-tolerant match on the cited page, scope checked)."),
             (f"- Hard check failures before deterministic corrections: {s['hard_failures']}; still open: "

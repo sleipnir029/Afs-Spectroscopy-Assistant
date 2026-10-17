@@ -49,8 +49,9 @@ _CLAUSE_BREAK = re.compile(r"[;,:\n\u2013\u2014]|\s-\s|[.!?](?=[\s\"'\u201d\u201
                            re.IGNORECASE)
 # A verbatim enquiry quote needs at least this many normalised characters (and a word character).
 MIN_ENQUIRY_QUOTE_CHARS = 4
-# Any currency sign, code or word: the assistant never states a price (3.R B3).
-PRICE_PATTERN = r"[€$£]|\b(?-i:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b"
+# Any currency sign, code or word: the assistant never states a price (3.R B3). Codes in any case,
+# except before a journal abbreviation ("Eur. Urol."): a dot and a capital letter (3.R2 N6, D-028).
+PRICE_PATTERN = r"[€$£]|\b(?:eur|usd|gbp|chf)\b(?!\.\s?(?-i:[A-Z]))|\beuros?\b|\bdollars?\b"
 # Wording that asserts certainty or commercial facts the sources cannot support (REF §3 "Do not invent").
 FORBIDDEN = [
     (re.compile(PRICE_PATTERN, re.IGNORECASE), "price"),
@@ -463,17 +464,28 @@ def check_style(a: Assessment, report: Report) -> None:
                f"{len(a.premise_checks)} premises (max {MAX_PREMISES}); keep the central ones")
 
 
-def check_answer_length(a: Assessment, summary: str, report: Report) -> None:
-    """Soft: the Answer part stays short (about MAX_ANSWER_WORDS words of model text)."""
-    words = sum(len(t.split()) for t in answer_texts(a, summary))
+def request_text(summary: str, enquiry: str) -> str:
+    """The customer request line of the Answer: the intake summary, unless it carries a figure that is
+    not in the enquiry or forbidden wording; then the enquiry itself."""
+    summary = " ".join(summary.split())
+    if not summary or unsupported_numbers(summary, [enquiry]) or forbidden_hits(summary):
+        return " ".join(enquiry.split())
+    return summary
+
+
+def check_answer_length(a: Assessment, request: str, report: Report) -> None:
+    """Soft: the Answer part stays short (about MAX_ANSWER_WORDS words of model text).
+
+    `request` is the rendered request line (`request_text`), the summary or the enquiry itself."""
+    words = sum(len(t.split()) for t in answer_texts(a, request))
     report.add("answer_length", words <= MAX_ANSWER_WORDS, "soft", "assessment",
                f"{words} words of model text in the Answer part (budget about {MAX_ANSWER_WORDS})")
 
 
-def answer_texts(a: Assessment, summary: str = "") -> list[str]:
-    """Model-written text shown in the Answer part: brief answer, status reason, proposal,
+def answer_texts(a: Assessment, request: str = "") -> list[str]:
+    """Text shown in the Answer part: the request line, brief answer, status reason, proposal,
     option table cells and the top questions (code labels and the sketch are not counted)."""
-    texts = [summary, a.brief_answer, a.status_reason, a.proposal.what_would_change_it, a.proposal.next_step]
+    texts = [request, a.brief_answer, a.status_reason, a.proposal.what_would_change_it, a.proposal.next_step]
     texts += [x for o in a.solution_options for x in (o.ease_of_use, o.maintenance, o.performance_fit)]
     texts += [q.question for q in a.clarification_questions[:ANSWER_QUESTIONS]]
     return texts
@@ -521,7 +533,7 @@ def verify(enquiry: str, intake: Intake, a: Assessment, candidates: list[Candida
     check_status(a, report)
     check_premise_basis(a, report)
     check_style(a, report)
-    check_answer_length(a, intake.summary, report)
+    check_answer_length(a, request_text(intake.summary, enquiry), report)
     check_sections(a, report)
     check_options(a, candidates, report)
     return report

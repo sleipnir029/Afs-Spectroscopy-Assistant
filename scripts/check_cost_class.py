@@ -5,8 +5,9 @@ Usage: uv run python scripts/check_cost_class.py [DIR ...]   (default: outputs/d
 For each <id>.json + <id>.md pair: re-derive each option's cost class straight from
 the Table 1 rows (independently of afs_assistant: the name mappings below are this
 script's own copy), then compare it with the cost cell of the rendered options table
-and with `option_costs` in the run JSON. Also scans the whole Markdown for any currency
-sign, code or word. Exit 0 if all agree, 1 otherwise.
+and with `option_costs` in the run JSON. Also scans the Markdown for any currency sign,
+code or word, except the "Evidence (verified quotes)" section (verbatim supplied quotes,
+e.g. a journal abbreviation). Exit 0 if all agree, 1 otherwise.
 """
 
 from __future__ import annotations
@@ -48,7 +49,11 @@ ORDER = ["low", "average", "high"]
 CELL = r"(?:[^|\\]|\\.)*"
 # | ID | Tier | Methods | Confidence | Cost class | ...
 ROW = re.compile(rf"^\| (O\d+) \| [^|]+ \| {CELL} \| {CELL} \| ({CELL}) \|")
-CURRENCY = re.compile(r"[€$£]|\b(?-i:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b", re.IGNORECASE)
+# Codes in any case, except before a journal abbreviation such as "Eur. Urol." (a dot and a capital).
+CURRENCY = re.compile(r"[€$£]|\b(?:eur|usd|gbp|chf)\b(?!\.\s?(?-i:[A-Z]))|\beuros?\b|\bdollars?\b", re.IGNORECASE)
+# A section from its heading (any level) to the next heading of any level.
+SOLUTION_OPTIONS = re.compile(r"^#+ Solution options\n(.*?)(?=^#|\Z)", re.MULTILINE | re.DOTALL)
+EVIDENCE = re.compile(r"^#+ Evidence \(verified quotes\)\n.*?(?=^#|\Z)", re.MULTILINE | re.DOTALL)
 
 
 def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None, list[int]]]:
@@ -69,7 +74,8 @@ def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None,
 
 
 def rendered(markdown: str) -> dict[str, str]:
-    section = markdown.split("## Solution options", 1)[1].split("\n## ", 1)[0] if "## Solution options" in markdown else ""
+    m = SOLUTION_OPTIONS.search(markdown)
+    section = m.group(1) if m else ""
     return {m.group(1): m.group(2).strip() for line in section.splitlines() if (m := ROW.match(line))}
 
 
@@ -89,15 +95,16 @@ def check_pair(json_path: Path, md_path: Path, table: list[dict]) -> list[str]:
             if not cell.startswith("not rated in S01 Table 1"):
                 problems.append(f"{oid}: expected 'not rated', rendered {cell!r}")
         else:
-            m = re.match(r"(low|average|high) \(rows? ([\d, ]+)\)", cell)
+            m = re.match(r"(low|average|high) cost \(rows? ([\d, ]+)\)", cell)
             got = (m.group(1), sorted(int(x) for x in m.group(2).split(","))) if m else None
             if got != (top, rows):
                 problems.append(f"{oid}: expected {top} rows {rows}, rendered {cell!r}")
         s = stored.get(oid)
         if s is None or s["cost_class"] != top or sorted(r["row"] for r in s["rows"]) != rows:
             problems.append(f"{oid}: run JSON option_costs {s} disagrees with {top} rows {rows}")
-    for m in CURRENCY.finditer(markdown):
-        problems.append(f"currency in the Markdown: {markdown[max(0, m.start() - 40):m.end() + 40]!r}")
+    scanned = EVIDENCE.sub("", markdown)
+    for m in CURRENCY.finditer(scanned):
+        problems.append(f"currency in the Markdown: {scanned[max(0, m.start() - 40):m.end() + 40]!r}")
     return problems
 
 
