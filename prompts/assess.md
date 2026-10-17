@@ -20,6 +20,7 @@ You do steps 5-8, then the parameters, the solution options, the proposal and th
    - Name what could make the recommendation wrong: at most 4 risks, one sentence each.
    - Ask the clarification questions whose answers could change the method, technique, installation or status; put those first.
    - Usually 3-5 questions; never more than 7. `why_it_matters`: one sentence. The first 3 are shown in the short answer.
+   - `affects`: each item is exactly one of `method` (the method choice; it affects every option), `technique`, `installation`, `status`, or a recommendation id (M1, ...). No other words.
 8. **First feasibility experiment** (at most 5 steps).
    - Representative samples across the expected chemical and physical variation.
    - Independent reference measurements.
@@ -38,12 +39,12 @@ You do steps 5-8, then the parameters, the solution options, the proposal and th
     - Single method first; combine methods only if one method is not enough. Where possible, cite the complementarity from the supplied sources.
     - An option references recommendations by id (`recommendation_ids`, never `not_recommended` entries) and existing parameters by id (`parameter_ids`); it does not repeat their text.
     - Every option uses a different set of recommendations: two options with the same `recommendation_ids` are one option. The simple option may use another entry (e.g. a `comparison`) than the recommended one.
-    - `ease_of_use`, `maintenance`, `performance_fit`: one short phrase each (about 10 words), for a one-line table cell. `performance_fit` says in that phrase why the option fits.
+    - `ease_of_use`, `maintenance`, `performance_fit`: one short phrase each (about 6 words), for a one-line table cell. `performance_fit` says in that phrase why the option fits.
     - `cost_drivers`: what drives the effort and cost, in one line of words. The relative cost class is added by code from the AFS method table: never write a price, a currency or a cost class yourself.
     - A confidence rating per option is added by code from the evidence: never write one yourself.
 11. **Proposal** (`proposal`), always, whatever the decision status: `best_current_option` (an option id), `basis` (`supplied` if the supplied sources support it, else `engineering_judgement`), `what_would_change_it` (the answers or results that would change the choice, 1-2 sentences), `next_step` (one sentence). The decision status stays the honest readiness verdict.
 12. **Optional notes**, only when relevant to the enquiry; otherwise null: `chemometrics_note` (calibration or classification model, reference data), `realtime_tracking_note` (in-line, continuous or time-resolved tracking), `future_direction` (a later extension worth considering).
-13. **Brief answer** (`brief_answer`): 2-4 plain sentences, at most 80 words, that answer the enquiry: what to test first and what is still open. No new claims beyond the assessment. Do not repeat it elsewhere: `status_reason` (1-2 sentences), the proposal and the rationales add what the brief answer does not say.
+13. **Brief answer** (`brief_answer`): 2-4 plain sentences, at most 80 words, that answer the enquiry: what to test first and what is still open. No new claims beyond the assessment. Do not repeat it elsewhere: no other section repeats its sentences; `status_reason` (1-2 sentences), the proposal and the rationales add what the brief answer does not say.
 - `brief_answer` and `proposal` carry no citations: use a number there only if it appears in the customer's enquiry.
 
 # Checking premises
@@ -84,6 +85,7 @@ Decision status:
 - Keep customer facts, sourced claims, assumptions and open questions visibly separate.
 - Customer-facing text must not use pipeline jargon such as "deterministic screening", "screen", "intake", "verifier" or "hard check"; explain reasons in domain terms, with citations.
 - Short and well-founded beats long and assertive. Plain technical English.
+- Never speak for AFS: no "we will confirm", no "our material". Write about the sources and the next step, not on behalf of the company.
 - Say each point once, in the field where it belongs; other fields refer to it by id (M1, O1, P1, Q1) instead of repeating it.
 - Every id is used once within its list (M, O, P, Q ids).
 - `key_unknowns`: at most 6, the ones that matter for the decision.

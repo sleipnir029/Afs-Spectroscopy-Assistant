@@ -257,7 +257,8 @@ def test_unverified_contradiction_behind_the_models_own_status_is_flagged(citati
     assert "contradiction not verified" in result.flagged["premise_checks[0]"]
     assert "failed verification" in result.flagged["status_reason"]
     md = render.to_markdown(result)
-    status_line = next(line for line in md.splitlines() if line.startswith("**Decision status:**"))
+    # 3.R3 item 8: the Answer shows the label only; the reason and its warning are in the Expert detail.
+    status_line = [line for line in md.splitlines() if line.startswith("**Decision status:**")][-1]
     assert "⚠" in status_line
 
 
@@ -300,7 +301,7 @@ def test_status_change_flags_the_reason_and_hides_the_corrected_failure():
     result, _ = run_with(assess=a, repairs=[a, a])
     assert "status_reason" in result.flagged
     md = render.to_markdown(result)
-    status_line = next(line for line in md.splitlines() if line.startswith("**Decision status:**"))
+    status_line = [line for line in md.splitlines() if line.startswith("**Decision status:**")][-1]
     assert "⚠ *(status changed by verification" in status_line
     assert "⚠ status_vs_premises" not in md and "still open: 0" in md
 

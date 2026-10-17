@@ -118,8 +118,8 @@ ASSESSMENT = {
     "proposal": {"best_current_option": "O2", "basis": "supplied",
                  "what_would_change_it": "A low ethanol range or a strong fluorescence background of the broth.",
                  "next_step": "Measure representative broth samples with GC references."},
-    "brief_answer": ("Test a Raman probe in the line first, with NIR transmission as a comparison. "
-                     "The ethanol range and the fluorescence of the broth are still open."),
+    "brief_answer": ("Test a Raman probe in the line first. The ethanol range and the background signal "
+                     "of the broth are still open; they decide whether a comparison method is needed."),
 }
 
 
@@ -331,6 +331,7 @@ def test_combination_is_rendered_as_hypothesis():
     combo["recommendations"][0]["combined_with"] = ["NIR"]
     result, _ = run_with(assess=combo)
     md = render.to_markdown(result)
-    assert "Primary candidate: Raman probe.**" in md and "Raman + NIR" not in md
-    assert "Later hypothesis, after single-method tests: combine with NIR." in md
+    # 3.R3 item 8: the headline names the combination; it stays a later hypothesis.
+    assert "Primary candidate: Raman probe + NIR (combination).**" in md
+    assert "Later hypothesis, after single-method tests." in md
     assert any(c.name == "primary_single_method" for c in result.report.soft_failures)

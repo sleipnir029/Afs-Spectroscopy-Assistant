@@ -9,11 +9,13 @@ item's own verified quotes or from the enquiry.
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import asdict, dataclass, field
 
 from rapidfuzz import fuzz
 
 from afs_assistant import kb, quotes, scope
+from afs_assistant.methods import named_methods
 from afs_assistant.normalize import normalize
 from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.options import option_methods
@@ -70,6 +72,18 @@ SLOT_WORDS = {
 }
 SLOT_PATTERNS = {slot: re.compile(r"\b(?:" + "|".join(words) + r")\b", re.IGNORECASE)
                  for slot, words in SLOT_WORDS.items()}
+# What a clarification question may affect (3.R3 B3): these words or a recommendation id (M1, ...).
+AFFECTS_WORDS = ("method", "technique", "installation", "status")
+AFFECTS_SYNONYMS = {"method_choice": "method"}
+_REC_ID = re.compile(r"^m\d+$")
+# The request line falls back to the enquiry unless the summary is Latin script and shares content words.
+MIN_LATIN_SHARE = 0.9
+MIN_SHARED_WORDS = 3
+_CONTENT_WORD = re.compile(r"[a-z]{4,}")
+_FUNCTION_WORDS = frozenset({"about", "also", "been", "both", "does", "each", "from", "have", "into", "more",
+                             "must", "only", "other", "over", "same", "should", "some", "such", "than", "that",
+                             "their", "them", "then", "there", "these", "they", "this", "very", "were", "what",
+                             "when", "which", "while", "will", "with", "would", "your"})
 
 
 @dataclass
@@ -276,6 +290,41 @@ def is_placeholder(span: str | None) -> bool:
     return span is None or re.sub(r"[^a-z/ -]", "", normalize(span).strip().lower()).strip() in PLACEHOLDERS
 
 
+INTAKE_LISTS = tuple(INTAKE_VALUE_FIELDS)
+
+
+def intake_problems(intake: Intake, removed: list[dict]) -> list[str]:
+    """Hard intake check (3.R3 B1): a collapsed intake must not reach the assessment.
+
+    Fails when no target is left, or when half or more of the facts, targets, process details
+    and premises were removed by sanitizing (placeholders included)."""
+    problems = []
+    if not intake.targets:
+        problems.append("no target left after checking the quotes against the enquiry")
+    dropped = sum(1 for r in removed if r["location"].split("[")[0].removeprefix("intake.") in INTAKE_LISTS)
+    total = dropped + sum(len(getattr(intake, k)) for k in INTAKE_LISTS)
+    if total and dropped * 2 >= total:
+        problems.append(f"{dropped} of {total} intake items removed (quote not verbatim in the enquiry, "
+                        f"or a placeholder)")
+    return problems
+
+
+def normalize_affects(values: list[str]) -> tuple[list[str], list[str]]:
+    """(kept, dropped): affects items in the fixed vocabulary or as recommendation ids, order kept."""
+    kept, dropped = [], []
+    for value in values:
+        word = re.sub(r"[\s-]+", "_", str(value).strip().lower())
+        word = AFFECTS_SYNONYMS.get(word, word)
+        if _REC_ID.match(word):
+            word = word.upper()
+        elif word not in AFFECTS_WORDS:
+            dropped.append(value)
+            continue
+        if word not in kept:
+            kept.append(word)
+    return kept, dropped
+
+
 def check_against_screen(a: Assessment, candidates: list[Candidate], slots: dict, report: Report) -> None:
     status = {(c.method, c.technique): c for c in candidates}
     for i, r in enumerate(a.recommendations):
@@ -462,13 +511,40 @@ def check_style(a: Assessment, report: Report) -> None:
                f"{brief} words (max {MAX_BRIEF_WORDS})")
     report.add("premise_count", len(a.premise_checks) <= MAX_PREMISES, "soft", "premise_checks",
                f"{len(a.premise_checks)} premises (max {MAX_PREMISES}); keep the central ones")
+    check_brief_answer_methods(a, report)
+
+
+def check_brief_answer_methods(a: Assessment, report: Report) -> None:
+    """Soft (3.R3 item 8): every method the brief answer names is a method of the proposed option or
+    of a conditional recommendation. Skipped when the proposed option does not exist (a hard failure)."""
+    recs = {r.id: r for r in a.recommendations}
+    best = next((o for o in a.solution_options if o.id == a.proposal.best_current_option), None)
+    if best is None:
+        return
+    allowed = set(option_methods(best, recs)) | {r.method for r in a.recommendations if r.role == "conditional"}
+    extra = [m for m in named_methods(a.brief_answer) if m not in allowed]
+    report.add("brief_answer_methods", not extra, "soft", "brief_answer",
+               f"brief answer names {extra}, not in the proposed option {best.id} and not a conditional "
+               f"recommendation")
+
+
+def _latin_share(text: str) -> float:
+    letters = [c for c in text if c.isalpha()]
+    return sum("LATIN" in unicodedata.name(c, "") for c in letters) / len(letters) if letters else 0.0
+
+
+def _content_words(text: str) -> set[str]:
+    return set(_CONTENT_WORD.findall(text.lower())) - _FUNCTION_WORDS
 
 
 def request_text(summary: str, enquiry: str) -> str:
     """The customer request line of the Answer: the intake summary, unless it carries a figure that is
-    not in the enquiry or forbidden wording; then the enquiry itself."""
+    not in the enquiry or forbidden wording, is not mostly Latin script, or shares fewer than
+    MIN_SHARED_WORDS content words with the enquiry (3.R3 B1); then the enquiry itself."""
     summary = " ".join(summary.split())
-    if not summary or unsupported_numbers(summary, [enquiry]) or forbidden_hits(summary):
+    if (not summary or unsupported_numbers(summary, [enquiry]) or forbidden_hits(summary)
+            or _latin_share(summary) < MIN_LATIN_SHARE
+            or len(_content_words(summary) & _content_words(enquiry)) < MIN_SHARED_WORDS):
         return " ".join(enquiry.split())
     return summary
 
@@ -483,9 +559,10 @@ def check_answer_length(a: Assessment, request: str, report: Report) -> None:
 
 
 def answer_texts(a: Assessment, request: str = "") -> list[str]:
-    """Text shown in the Answer part: the request line, brief answer, status reason, proposal,
-    option table cells and the top questions (code labels and the sketch are not counted)."""
-    texts = [request, a.brief_answer, a.status_reason, a.proposal.what_would_change_it, a.proposal.next_step]
+    """Text shown in the Answer part: the request line, brief answer, proposal, option table cells and
+    the top questions (code labels and the sketch are not counted; the status reason is in the Expert
+    detail since 3.R3)."""
+    texts = [request, a.brief_answer, a.proposal.what_would_change_it, a.proposal.next_step]
     texts += [x for o in a.solution_options for x in (o.ease_of_use, o.maintenance, o.performance_fit)]
     texts += [q.question for q in a.clarification_questions[:ANSWER_QUESTIONS]]
     return texts

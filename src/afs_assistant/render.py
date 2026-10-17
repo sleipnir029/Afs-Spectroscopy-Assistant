@@ -14,12 +14,14 @@ import re
 
 from afs_assistant import kb, scope
 from afs_assistant.fibers import method_fiber_coverage
+from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.options import (
     CONFIDENCE_NOTE,
     TABLE1_CITATION,
     confidence,
     confidence_label,
     cost_class,
+    is_fusion,
     method_label,
     option_citations,
     option_confidence,
@@ -28,7 +30,12 @@ from afs_assistant.options import (
 )
 from afs_assistant.pipeline import RunResult
 from afs_assistant.schema import Assessment, Parameter, SolutionOption
-from afs_assistant.verify import ANSWER_QUESTIONS, RECHECK_NAMES, request_text
+from afs_assistant.verify import (
+    ANSWER_QUESTIONS,
+    RECHECK_NAMES,
+    forbidden_hits,
+    request_text,
+)
 
 STATUS_LABEL = {
     "provisional_assessment": "Provisional feasibility assessment",
@@ -53,18 +60,24 @@ _STEP_NUMBER = re.compile(r"^\s*\d+[.)](?!\d)\s*")   # not a decimal such as "1.
 
 
 class _Citer:
-    """Numbers citations in order of appearance and collects them for the evidence list."""
+    """Numbers citations in order of appearance and collects them for the evidence list.
+
+    An identical quote (same document, page and text) keeps its first number (3.R3 item 8)."""
 
     def __init__(self) -> None:
-        self.entries: list[dict] = []
+        self.entries: list = []
+        self._numbers: dict[tuple, int] = {}
 
     def refs(self, citations) -> str:
         if not citations:
             return " *(no verified source: engineering judgement)*"
         marks = []
         for c in citations:
-            self.entries.append(c)
-            marks.append(f"[{len(self.entries)}: {kb.citation_label(c.doc, c.page)}]")
+            key = (c.doc, c.page, c.quote)
+            if key not in self._numbers:
+                self.entries.append(c)
+                self._numbers[key] = len(self.entries)
+            marks.append(f"[{self._numbers[key]}: {kb.citation_label(c.doc, c.page)}]")
         return " " + " ".join(marks)
 
 
@@ -130,26 +143,35 @@ def measured_by_text(p: Parameter) -> str:
 
 
 def mermaid_chart(a: Assessment, option: SolutionOption, slots: dict) -> str:
-    """flowchart LR: process point -> probe -> fiber -> spectrometer -> model -> result; aux sensors dashed."""
+    """flowchart LR: process point -> probe -> fiber -> spectrometer -> model -> result; aux sensors dashed.
+
+    One data fusion model only for a fusion option (`is_fusion`); otherwise one chemometric model
+    per spectrometer (two methods side by side are a comparison, 3.R3 B4)."""
     recs = {r.id: r for r in a.recommendations}
     params = {p.id: p for p in a.parameters}
     used = [params[i] for i in option.parameter_ids if i in params]
     nodes = [("proc", f"Process point: {a.measurement_concept.location}")]
     edges = []
     parts = option_parts(option, recs)
+    fused = len(parts) <= 1 or is_fusion(option, recs)
+    models = ["model"] if fused else [f"model{k}" for k in range(1, len(parts) + 1)]
     for k, (method, technique) in enumerate(parts, 1):
+        model = "model" if fused else f"model{k}"
         nodes += [(f"probe{k}", method_label(method, technique)), (f"fiber{k}", fiber_label(method, slots)),
                   (f"spec{k}", f"{method} spectrometer")]
-        edges += [f"proc --> probe{k}", f"probe{k} --> fiber{k}", f"fiber{k} --> spec{k}", f"spec{k} --> model"]
-    nodes.append(("model", "Chemometric model" if len(parts) <= 1
-                  else "Data fusion model (per-method calibration)"))
+        edges += [f"proc --> probe{k}", f"probe{k} --> fiber{k}", f"fiber{k} --> spec{k}", f"spec{k} --> {model}"]
+        if not fused:
+            nodes.append((model, f"Chemometric model ({method})"))
+    if fused:
+        nodes.append(("model", "Chemometric model" if len(parts) <= 1
+                      else "Data fusion model (per-method calibration)"))
     spectro = [p.name for p in used if p.measured_by.type == "spectroscopy"] or [p.name for p in used]
     nodes.append(("result", "Result: " + (", ".join(spectro) if spectro else "measured parameters")))
-    edges.append("model --> result")
+    edges += [f"{m} --> result" for m in models]
     aux = [p for p in used if p.measured_by.type == "auxiliary_sensor"]
     for k, p in enumerate(aux, 1):
         nodes.append((f"aux{k}", f"Auxiliary: {p.measured_by.sensor or p.name} (confirm with AFS)"))
-        edges.append(f"aux{k} -.-> model")
+        edges += [f"aux{k} -.-> {m}" for m in models]
     lines = ["flowchart LR"]
     lines += [f'    {nid}["{mermaid_escape(_short(label))}"]' for nid, label in nodes]
     lines += [f"    {e}" for e in edges]
@@ -191,6 +213,20 @@ def request_label(r: RunResult) -> str:
     return "Customer request (our summary)" if summary and request_line(r) == summary else "Customer request"
 
 
+def _intake_text(text: str, quote: str, enquiry: str) -> str:
+    """Model wording of an intake item, unless it adds a figure or forbidden wording; then its enquiry quote."""
+    text = " ".join(text.split())
+    return quote if unsupported_numbers(text, [enquiry]) or forbidden_hits(text) else text
+
+
+def stated_from_intake(r: RunResult) -> list[str]:
+    """The intake's verified facts and targets, for when the assessment states no requirement (3.R3 B5)."""
+    items = [_intake_text(f.text, f.enquiry_quote, r.enquiry) for f in r.intake.facts_stated]
+    items += [_intake_text(f"Target: {t.variable} ({t.purpose})", t.enquiry_quote, r.enquiry)
+              for t in r.intake.targets]
+    return items
+
+
 def to_markdown(r: RunResult, title: str = "") -> str:
     a = r.assessment
     cite = _Citer()
@@ -210,14 +246,13 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     options = {o.id: o for o in a.solution_options}
     pr = a.proposal
     best = options.get(pr.best_current_option)
-    best_text = (f"{best.id} ({TIER_LABEL[best.tier].lower()}): {_option_methods_text(best, a)}" if best
-                 else "(invalid option id)")
+    best_text = f"{best.id} ({best.tier})" if best else "(invalid option id)"   # the table names the methods
     out += ["### Proposal", "",
             f"- **Best current option:** {best_text}{warn('proposal')}",
             f"- **Basis:** {BASIS_LABEL[pr.basis]}",
             f"- **What would change it:** {pr.what_would_change_it}{warn('proposal.what_would_change_it')}",
             f"- **Next step:** {pr.next_step}{warn('proposal.next_step')}", ""]
-    out += [f"**Decision status:** {STATUS_LABEL[a.decision_status]}. {a.status_reason}{warn('status_reason')}", ""]
+    out += [f"**Decision status:** {STATUS_LABEL[a.decision_status]}", ""]     # the reason is in Expert detail
 
     if a.solution_options:
         recs = {x.id: x for x in a.recommendations}
@@ -235,13 +270,17 @@ def to_markdown(r: RunResult, title: str = "") -> str:
                 (f"*Cost class is the relative rating in {TABLE1_CITATION} for the in-line method+technique "
                  f"rows named (the highest one for a multi-method option); it is not a price.*"), ""]
 
-    charts = setup_charts(r)
-    out += ["### Setup sketch", ""]
-    if not charts:
-        out += ["No recommended option, so no setup sketch.", ""]
-    for o, chart in charts:
-        out += [(f"*{TIER_LABEL[o.tier]} option {o.id}; drawn by code from the option, a schematic, "
+    def sketch(o: SolutionOption, chart: str) -> list[str]:
+        return [(f"*{TIER_LABEL[o.tier]} option {o.id}; drawn by code from the option, a schematic, "
                  f"not a configuration.*"), "", "```mermaid", chart, "```", ""]
+
+    charts = setup_charts(r)
+    answer_charts = [(o, c) for o, c in charts if o.tier == "recommended"]
+    out += ["### Setup sketch", ""]
+    if not answer_charts:
+        out += ["No recommended option, so no setup sketch.", ""]
+    for o, chart in answer_charts:
+        out += sketch(o, chart)
 
     top = a.clarification_questions[:ANSWER_QUESTIONS]
     if top:
@@ -251,6 +290,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
 
     # ================================================================ Expert detail
     out += ["## Expert detail", "", "**Customer enquiry**", "", f"> {r.enquiry}", ""]
+    out += [f"**Decision status:** {STATUS_LABEL[a.decision_status]}. {a.status_reason}{warn('status_reason')}", ""]
 
     if a.parameters:
         out += ["### Parameters", "", "| ID | Parameter | Kind | Need | Measured by | Why | Sources |",
@@ -268,6 +308,9 @@ def to_markdown(r: RunResult, title: str = "") -> str:
             if o.fusion_note:
                 out.append(f"- **{o.id} combining methods:** {o.fusion_note}")
         out.append("")
+        for o, chart in charts:
+            if o.tier != "recommended":          # the extended sketch is expert detail (3.R3 item 8)
+                out += sketch(o, chart)
 
     if a.premise_checks:
         out += ["### Premise check", ""]
@@ -278,6 +321,8 @@ def to_markdown(r: RunResult, title: str = "") -> str:
 
     out += ["### Requirements", "", "**Stated by the customer**", ""]
     out += [f"- {s}{warn(f'requirements_stated[{i}]')}" for i, s in enumerate(a.requirements_stated)]
+    if not a.requirements_stated:
+        out += [f"- {s}" for s in stated_from_intake(r)]
     out += ["", "**Key unknowns**", ""]
     out += [f"- {s}{warn(f'key_unknowns[{i}]')}" for i, s in enumerate(a.key_unknowns)] + [""]
 
@@ -290,11 +335,11 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     out += ["### Recommendation", ""]
     for i, m in enumerate(a.recommendations):
         cond = "" if m.conditions.strip().lower() in ("", "none") else f" *Conditions:* {m.conditions}"
-        # A combination is never part of the headline: single methods are tested first.
-        combo = (f" Later hypothesis, after single-method tests: combine with {', '.join(m.combined_with)}."
-                 if m.combined_with else "")
-        out.append(f"- **{m.id} · {ROLE_LABEL[m.role]}: {method_label(m.method, m.technique)}.** "
-                   f"{m.rationale}{cond}{cite.refs(m.citations)}{combo}{warn(f'recommendations[{i}]')}")
+        # A combination shows in the headline; it stays a later hypothesis after the single-method tests.
+        combo = f" + {', '.join(m.combined_with)} (combination)" if m.combined_with else ""
+        later = " Later hypothesis, after single-method tests." if m.combined_with else ""
+        out.append(f"- **{m.id} · {ROLE_LABEL[m.role]}: {method_label(m.method, m.technique)}{combo}.** "
+                   f"{m.rationale}{cond}{cite.refs(m.citations)}{later}{warn(f'recommendations[{i}]')}")
     out.append("")
 
     mc = a.measurement_concept

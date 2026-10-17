@@ -297,7 +297,8 @@ def test_answer_length_is_a_soft_check():
     assert not soft(ok, "answer_length")
     answer = render.to_markdown(ok).split("\n## Expert detail\n", 1)[0]
     assert len(re.sub(r"```mermaid.*?```", "", answer, flags=re.DOTALL).split()) <= MAX_ANSWER_WORDS
-    long = with_(status_reason=" ".join(["word"] * (MAX_ANSWER_WORDS + 1)))
+    long = with_()
+    long["proposal"]["next_step"] = " ".join(["word"] * (MAX_ANSWER_WORDS + 1))
     result, _ = run_with(assess=long)
     assert soft(result, "answer_length") and result.report.passed
 
@@ -355,10 +356,11 @@ def test_confidence_rule1_unscreened_or_undetermined_technique(method, technique
 def test_confidence_rule1_open_top_question_on_the_option():
     a = _clean()
     a.clarification_questions[0].affects = ["M1"]
-    assert _conf(a, "O2")["reasons"] == ["open question: Q1"]
+    assert _conf(a, "O2") == {"level": "Medium", "reasons": ["open question: Q1 (at most Medium)"]}
     assert _conf(a, "O1")["reasons"] == []                       # Q1 does not affect M2
-    a.clarification_questions[0].affects = ["method_choice"]
-    assert _conf(a, "O1")["reasons"] == _conf(a, "O2")["reasons"] == ["open question: Q1"]
+    for word in ("method", "method_choice", "Method choice"):    # the model's real spelling is "method"
+        a.clarification_questions[0].affects = [word]
+        assert _conf(a, "O1")["reasons"] == _conf(a, "O2")["reasons"] == ["open question: Q1 (at most Medium)"]
 
 
 def test_confidence_rule1_ignores_a_question_below_the_top_three():
@@ -370,7 +372,7 @@ def test_confidence_rule1_ignores_a_question_below_the_top_three():
     assert _conf(a, "O2")["level"] == "High"
     a.clarification_questions[1].affects = ["M1"]
     a.clarification_questions[2].affects = ["method_choice"]
-    assert _conf(a, "O2")["reasons"] == ["open question: Q2, Q3"]
+    assert _conf(a, "O2")["reasons"] == ["open question: Q2, Q3 (at most Medium)"]
 
 
 def test_confidence_rule2_no_verified_citation_and_precedent_only():
@@ -399,17 +401,20 @@ def test_confidence_rule2_general_citation_to_a_method_page_is_not_precedent():
     assert _conf(a, "O2")["level"] == "High"
 
 
-def test_confidence_rule3_auxiliary_sensor_or_not_measurable_whatever_the_necessity():
+def test_confidence_rule3_counts_only_required_parameters():
+    """3.R3 item 7 (c): an optional auxiliary or not-measurable parameter does not downgrade."""
     a = _clean()
     a.parameters[1].citations = []
-    for necessity in ("optional", "required"):
-        a.parameters[1].necessity = necessity
-        assert _conf(a, "O2")["reasons"] == ["uncited auxiliary sensor"]
+    a.parameters[1].necessity = "optional"
+    assert _conf(a, "O2")["reasons"] == []
+    a.parameters[1].necessity = "required"
+    assert _conf(a, "O2")["reasons"] == ["uncited auxiliary sensor"]
     a.parameters[1].citations = [cit_model("S01", 16, RAMAN_QUOTE)]
     assert _conf(a, "O2")["reasons"] == []
-    a.parameters[1].necessity = "optional"
     a.parameters[1].measured_by.type = "not_measurable_inline"
     assert _conf(a, "O2")["reasons"] == ["a parameter is not measurable in-line"]
+    a.parameters[1].necessity = "optional"
+    assert _conf(a, "O2")["reasons"] == []
 
 
 def test_confidence_rule4_contradicted_premise_or_status():
@@ -431,10 +436,12 @@ def test_confidence_floor_is_low_and_all_reasons_are_kept():
                     solution_options=ASSESSMENT["solution_options"] + [EXTENDED])
     for r in a.recommendations:
         r.citations = []
+    a.parameters[1].necessity = "required"
     conf = _conf(a, "O3", {"physical_state": "liquid"})
-    assert conf["level"] == "Low" and len(conf["reasons"]) == 5
-    assert confidence_label(conf).startswith("Low: sample clarity unknown, open question: Q1; "
-                                             "no verified source citation; uncited auxiliary sensor; ")
+    assert conf["level"] == "Low" and len(conf["reasons"]) == 6
+    assert confidence_label(conf) == ("Low: sample clarity unknown; no verified source citation; "
+                                      "uncited auxiliary sensor; status: insufficient information; "
+                                      "multi-method, fusion benefit not yet shown; open question: Q1 (at most Medium)")
 
 
 def test_confidence_is_rendered_and_in_the_json():
@@ -442,12 +449,12 @@ def test_confidence_is_rendered_and_in_the_json():
     result, _ = run_with(assess=a)
     md = render.to_markdown(result)
     assert "| O3 | Extended (multi-method) | M1 Raman probe; M2 NIR, transmission/transflection probe | " \
-           "Low: open question: Q1; uncited auxiliary sensor; multi-method, fusion benefit not yet shown | " \
+           "Medium: multi-method, fusion benefit not yet shown; open question: Q1 (at most Medium) | " \
            "high cost (rows 7, 12) |" in md
     assert CONFIDENCE_NOTE in md and "not a predicted accuracy" in CONFIDENCE_NOTE
     data = render.to_json(result)
     assert data["option_confidence"] == option_confidence(result.assessment, result.candidates, result.slots)
-    assert data["option_confidence"]["O2"] == {"level": "Medium", "reasons": ["uncited auxiliary sensor"]}
+    assert data["option_confidence"]["O2"] == {"level": "High", "reasons": []}       # P2 is optional
 
 
 # ----------------------------------------------------------------- 3.R2 item 3: Sources cell = rating pool
@@ -500,7 +507,7 @@ def test_confidence_is_computed_per_option_row_even_with_repeated_ids():
     md = render.to_markdown(run_with(assess=a, repairs=[a, a])[0])
     rows = [line for line in md.splitlines() if line.startswith("| O1 |")]
     assert len(rows) == 2
-    assert "Medium: open question: Q1 |" in rows[0] and "Medium: uncited auxiliary sensor |" in rows[1]
+    assert "Medium: open question: Q1 (at most Medium) |" in rows[0] and "| High |" in rows[1]
 
 
 def test_model_never_writes_the_confidence():
@@ -559,7 +566,8 @@ def test_request_label_says_our_summary_only_for_the_summary():
 def test_answer_length_counts_the_rendered_request_line():
     intake = copy.deepcopy(INTAKE)
     intake["summary"] = "Follow ethanol down to 3 g/L in a broth."            # falls back to the enquiry
-    long = with_(status_reason=" ".join(["word"] * MAX_ANSWER_WORDS))       # fails, so the count is shown
+    long = with_()
+    long["proposal"]["next_step"] = " ".join(["word"] * MAX_ANSWER_WORDS)  # fails, so the count is shown
     result, _ = run_with(intake=intake, assess=long)
     line = render.request_line(result)
     assert line == request_text(result.intake.summary, result.enquiry) and "3 g/L" not in line

@@ -25,6 +25,8 @@ from afs_assistant.screen import UNKNOWN, Candidate, screen
 from afs_assistant.verify import (
     Report,
     check_status,
+    intake_problems,
+    normalize_affects,
     normalized_combined_with,
     recheck,
     recommendation_key,
@@ -33,6 +35,7 @@ from afs_assistant.verify import (
 )
 
 MAX_REPAIR_ROUNDS = 2
+MAX_INTAKE_ATTEMPTS = 2      # a collapsed intake is retried once, then the case fails (3.R3 B1)
 # Highest role first: a duplicate method+technique (+combination) keeps the entry with the best role.
 ROLE_RANK = {"primary": 0, "comparison": 1, "conditional": 2, "not_recommended": 3}
 PROMPTS = paths.ROOT / "prompts"
@@ -160,6 +163,7 @@ def finalize(a: Assessment, report: Report,
     4. A `supported` or `contradicted` premise with no citation left becomes `not_covered`.
     5. Status inconsistent with premises -> premise_not_supported; with recommendations
        -> insufficient_information (re-checked on the result of steps 1-4).
+    6. Question `affects` items are normalised to the fixed vocabulary; other words are dropped.
     Locations in the change log use the numbering of `a`. Returns the assessment, the
     change log and the flagged items (path in the returned assessment -> reason) that
     render marks with a warning: items that lost a citation or failed a number check.
@@ -256,6 +260,14 @@ def finalize(a: Assessment, report: Report,
                 demoted_contradiction = True
             removed.append(change)
             p["verdict"] = "not_covered"
+
+    for i, q in enumerate(data["clarification_questions"]):
+        kept, dropped = normalize_affects(q["affects"])
+        if kept != q["affects"]:
+            note = f"; dropped {dropped} (not method, technique, installation, status or an M id)" if dropped else ""
+            removed.append({"location": f"clarification_questions[{i}].affects", "item": list(q["affects"]),
+                            "reason": f"affects normalised to {kept}{note}"})
+            q["affects"] = kept
 
     interim = Report()
     check_status(Assessment.model_validate(data), interim)
@@ -361,9 +373,15 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
         timings[stage] = round(timings.get(stage, 0.0) + now - clock, 3)
         clock = now
 
-    intake_res = client.complete_json("intake", prompt("intake"), "# CUSTOMER ENQUIRY\n" + enquiry,
-                                      "intake", Intake.model_json_schema())
-    intake, intake_removed = sanitize_intake(Intake.model_validate(intake_res.data), enquiry)
+    for attempt in range(1, MAX_INTAKE_ATTEMPTS + 1):
+        intake_res = client.complete_json("intake", prompt("intake"), "# CUSTOMER ENQUIRY\n" + enquiry,
+                                          "intake", Intake.model_json_schema())
+        intake, intake_removed = sanitize_intake(Intake.model_validate(intake_res.data), enquiry)
+        problems = intake_problems(intake, intake_removed)
+        if not problems:
+            break
+    else:
+        raise RuntimeError(f"intake failed after {MAX_INTAKE_ATTEMPTS} attempts: {'; '.join(problems)}")
     lap("intake")
     slots = slots_from_intake(intake)
     candidates = screen(slots)
@@ -414,6 +432,7 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
                    "completion": sum(c["completion_tokens"] for c in calls),
                    "cached": sum(c["cached_tokens"] for c in calls)},
         "calls": len(calls),
+        "intake_attempts": attempt,
         "repair_rounds": len(repairs),
         "kept_round": best_round,
         "timings_s": timings,

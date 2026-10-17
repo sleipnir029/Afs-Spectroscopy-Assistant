@@ -111,7 +111,9 @@ class Question(BaseModel):
     id: str = Field(description="Q1, Q2, ... in priority order.")
     question: str
     why_it_matters: str
-    affects: list[str] = Field(description="Recommendation ids (M1, ...) or 'method_choice' / 'status' it could change.")
+    affects: list[str] = Field(description="What the answer could change; each item is exactly one of 'method', "
+                                           "'technique', 'installation', 'status', or a recommendation id (M1, ...). "
+                                           "'method' (the method choice) affects every option.")
 
 
 class Recommendation(BaseModel):

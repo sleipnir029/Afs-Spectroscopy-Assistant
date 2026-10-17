@@ -56,6 +56,15 @@ SOLUTION_OPTIONS = re.compile(r"^#+ Solution options\n(.*?)(?=^#|\Z)", re.MULTIL
 EVIDENCE = re.compile(r"^#+ Evidence \(verified quotes\)\n.*?(?=^#|\Z)", re.MULTILINE | re.DOTALL)
 
 
+def _rows(table: list[dict], method: str, technique: str) -> set[int]:
+    found = set()
+    for row in table:
+        tech, in_line = TECHNIQUES[row["measurement_technique"]]
+        if in_line and METHOD_IDS[row["method"]] == method and tech == technique:
+            found.add(row["row"])
+    return found
+
+
 def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None, list[int]]]:
     recs = {r["id"]: r for r in assessment["recommendations"]}
     result = {}
@@ -63,10 +72,17 @@ def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None,
         used = [recs[i] for i in o["recommendation_ids"] if i in recs]
         rows = set()
         for r in used:
-            for row in table:
-                technique, in_line = TECHNIQUES[row["measurement_technique"]]
-                if in_line and METHOD_IDS[row["method"]] == r["method"] and technique == r["technique"]:
-                    rows.add(row["row"])
+            rows |= _rows(table, r["method"], r["technique"])
+        # A combined method without its own entry: the first other recommended entry with that method
+        # that has an in-line row (3.R3 B6); none -> no row (the cell says "at least").
+        own = {r["method"] for r in used}
+        for m in dict.fromkeys(m for r in used for m in r["combined_with"] if m not in own):
+            for other in assessment["recommendations"]:
+                if other["method"] == m and other["role"] != "not_recommended":
+                    found = _rows(table, other["method"], other["technique"])
+                    if found:
+                        rows |= found
+                        break
         costs = [next(x["cost"] for x in table if x["row"] == n) for n in rows]
         top = max(costs, key=ORDER.index) if costs else None
         result[o["id"]] = (top, sorted(rows))
@@ -95,7 +111,7 @@ def check_pair(json_path: Path, md_path: Path, table: list[dict]) -> list[str]:
             if not cell.startswith("not rated in S01 Table 1"):
                 problems.append(f"{oid}: expected 'not rated', rendered {cell!r}")
         else:
-            m = re.match(r"(low|average|high) cost \(rows? ([\d, ]+)\)", cell)
+            m = re.match(r"(?:at least )?(low|average|high) cost \(rows? ([\d, ]+)\)", cell)
             got = (m.group(1), sorted(int(x) for x in m.group(2).split(","))) if m else None
             if got != (top, rows):
                 problems.append(f"{oid}: expected {top} rows {rows}, rendered {cell!r}")

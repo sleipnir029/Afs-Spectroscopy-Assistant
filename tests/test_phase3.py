@@ -311,8 +311,9 @@ def test_unrated_parts_are_never_guessed():
     a.recommendations[1].technique = "to_be_determined"
     a.recommendations[0].combined_with = ["Fluorescence"]
     o2 = cost_class(a.solution_options[1], _recs(a))
-    assert o2.cost_class == "high" and o2.unrated == ["Fluorescence (technique not specified)"]
-    assert o2.label() == f"high cost (row 12); {NOT_RATED}: Fluorescence (technique not specified)"
+    # 3.R3 B6: no recommendation names a Fluorescence technique, so the class is a lower bound.
+    assert o2.cost_class == "high" and o2.unrated == [] and o2.unidentified == ["Fluorescence"]
+    assert o2.label() == "at least high cost (row 12); Fluorescence row not identified"
     o1 = cost_class(a.solution_options[0], _recs(a))
     assert o1.cost_class is None and o1.label() == NOT_RATED
 
@@ -459,7 +460,7 @@ def test_render_order():
     positions = [md.index(h) for h in order]
     assert positions == sorted(positions)
     assert "| P1 | Ethanol concentration | quantitative | required | Spectroscopy: Raman |" in md
-    assert "| O2 | Recommended | M1 Raman probe | Medium: uncited auxiliary sensor | high cost (row 12) |" in md
+    assert "| O2 | Recommended | M1 Raman probe | High | high cost (row 12) |" in md     # P2 is optional
 
 
 def test_table_cells_escape_pipes():

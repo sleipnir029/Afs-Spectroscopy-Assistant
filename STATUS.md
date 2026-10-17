@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 18:05 CEST (Claude, 3.R2 implementer)._
+_Last updated: 2026-10-17 18:13 CEST (Claude, 3.R3 implementer)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -14,7 +14,8 @@ _Last updated: 2026-10-17 18:05 CEST (Claude, 3.R2 implementer)._
 - **3.R2 implemented (16:27, offline):** items 1–4 done (B1 precedent by page scope, B2 unscreened/to-be-determined technique, N3 ⚠ open-check line + per-row confidence, N4 request label, N5 rule 3 any necessity, N6 currency codes any case except a journal abbreviation + Evidence section skipped by check_cost_class, N7 request line counted / "high cost (row N)" / H2 layers + H3 sections, item 3 Sources cell = rating pool, item 4 open top-3 question). pytest 319 passed, 1 skipped; ruff check clean; kb check 9/9. Implementer choices in D-028. `check_cost_class.py outputs/dev`: 0/8 (only the old cost wording, expected until the re-run); `check_mermaid.py outputs/dev`: 15/15. Not yet run live.
 - **3.R2 dev run (16:58–17:55, $0.175, code 7ebe590):** 8/8, 0 hard failures, 227/227 citations, 14/14 charts, 8/8 cost; confidence 2 High / 7 Medium / 13 Low.
 - **G3 review (18:05): NEEDS_FIXES:** D05 intake collapsed (Russian request line), D08 fluorescence wrongly failed by the screen, `affects` vocabulary, comparison treated as fusion, empty stated requirements, extended options undercosted; calibration driven by the temperature-sensor and fusion rules.
-- **Next:** 3.R3 (18:05, PHASES.md; D-029) → re-run D01–D08 → check scripts → short re-review (D05, D08) → close Phase 3 → handoff for Phase 4.
+- **3.R3 implemented (18:13, offline):** items 1–9 done (intake check + one retry + request-line fallback; screen near-match neighbours soft_solid/paste; `affects` vocabulary normalised in finalize; fusion only for extended / fusion_note / combined_with, per-method models in the sketch; stated-requirements fallback; borrowed technique or "at least" cost; confidence: required parameters only, open question caps at Medium; simplicity items). pytest 354 passed, 1 skipped; ruff clean; kb check 9/9. graph.json unchanged (the state mapping does not feed it). Implementer choices in D-030. Offline recompute of the 3.R2 dev outputs with the new rules: 19 Medium / 3 Low of 22 (every option carries an open method question). Not yet run live; outputs/dev are still the 3.R2 run.
+- **Next:** independent code review of 3.R3 → re-run D01–D08 → check scripts → short re-review (D05, D08) → close Phase 3 → handoff for Phase 4.
 
 ## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.

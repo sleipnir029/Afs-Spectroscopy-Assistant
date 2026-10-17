@@ -51,6 +51,12 @@ STATE_SAMPLE_TYPES = {
     "powder": {"powder"},
     "solid": {"solid", "solid film", "pill"},
 }
+# Near-match Table 1 words per state (3.R3 B2): a row that lists only a neighbour is "to be tested",
+# not a fail. Generic physics neighbours only; states far apart (e.g. powder vs liquid) still fail.
+STATE_NEIGHBOURS = {
+    "soft_solid": {"solid", "paste"},
+    "paste": {"soft", "liquid"},
+}
 REGIME_SAMPLE_TYPES = {
     "clear": set(),
     "turbid": {"colloidal", "scattering media"},
@@ -194,9 +200,13 @@ def screen(slots: dict) -> list[Candidate]:
     known_types = STATE_SAMPLE_TYPES.get(state, set()) | REGIME_SAMPLE_TYPES.get(regime, set())
     for cand in candidates():
         fiber_family = _fiber_for(cand, slots)
-        # S01 Table 1 sample-type fit: pass on any overlap; otherwise unknown if a slot is missing.
+        # S01 Table 1 sample-type fit: pass on any overlap; unknown for a near-match state or a missing slot.
         if known_types & cand.sample_types:
             pass
+        elif STATE_NEIGHBOURS.get(state, set()) & cand.sample_types:
+            cand.downgrade("unknown", "S01 Table 1 (p.6)",
+                           f"Table 1 lists {sorted(cand.sample_types)} for this technique; "
+                           f"fit for {state.replace('_', ' ')} to be tested")
         elif regime == "opaque_absorbing" and cand.technique.startswith("diffuse_reflection"):
             cand.downgrade("unknown", "S01 Table 1 (p.6)",
                            "dark, absorbing (non-scattering) sample: diffuse reflection signal must be tested")
