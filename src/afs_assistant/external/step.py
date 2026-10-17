@@ -11,8 +11,9 @@
    search gave hits. Searching and fetching stop when the step has used STEP_BUDGET_S.
 4. Fetch and extract the text (full text if open access, else the abstract); any failure of one
    text path only skips that path (logged); full text is cached locally only (runs/external_cache/).
-   An abstract-only source is kept only if it shares >= MIN_ABSTRACT_SHARED content words with the
-   intake's sample and target terms (off-domain abstracts never reach the evidence call).
+   An abstract-only source is kept only if it shares >= min(MIN_ABSTRACT_SHARED, number of terms)
+   content words with the intake's sample and target terms; none when there are no terms (D-045;
+   off-domain abstracts never reach the evidence call).
 5. Evidence call (LLM role `external_evidence`, no tools): per source at most SOURCE_CHARS of the
    best-overlapping paragraphs, original ¶ numbers kept, in fenced SOURCE blocks in the user message.
 6. Verify every item (`check_item`): known gap, source and ¶, the quote verbatim (exact or loose,
@@ -326,10 +327,14 @@ def sample_terms(intake: Intake) -> set[str]:
 
 
 def off_domain(record: SourceRecord, terms: set[str] | None) -> bool:
-    """An abstract-only source sharing fewer than MIN_ABSTRACT_SHARED words with the sample/target terms."""
+    """An abstract-only source sharing fewer than min(MIN_ABSTRACT_SHARED, len(terms)) words with the
+    sample/target terms (D-045: one term must appear; no terms -> always off-domain)."""
     if terms is None or record.access != "abstract_only":
         return False
-    return len(_relevance_words(" ".join([record.title, *record.paragraphs])) & terms) < MIN_ABSTRACT_SHARED
+    if not terms:
+        return True
+    shared = _relevance_words(" ".join([record.title, *record.paragraphs])) & terms
+    return len(shared) < min(MIN_ABSTRACT_SHARED, len(terms))
 
 
 def retrieve(queries: list[dict], gaps: list[Gap], fetcher: Fetcher, entries: list[dict],

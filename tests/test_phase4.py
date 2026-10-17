@@ -1093,3 +1093,10 @@ def test_sample_terms_and_the_two_word_rule():                                  
     assert not step.off_domain(abstract_b, step.sample_terms(intake))
     assert not step.off_domain(record(["Unrelated full text."]), {"ethanol", "broth"})   # full text: no check
     assert not step.off_domain(hyphen, None)                                            # no terms given: no check
+
+
+def test_a_single_sample_term_must_appear_in_the_abstract():                       # 5.0b D-045
+    wet = record(["Near-infrared determination of water in a petroleum stream."], access="abstract_only")
+    dry = record(["Near-infrared determination of sulfur in a petroleum stream."], access="abstract_only")
+    assert not step.off_domain(wet, {"water"}) and step.off_domain(dry, {"water"})
+    assert step.off_domain(wet, set())                                                  # no terms: dropped
