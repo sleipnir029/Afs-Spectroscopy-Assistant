@@ -1,11 +1,13 @@
 # Status
 
-_Last updated: 2026-10-17 22:46 CEST (Claude, Phase 4 close)._
+_Last updated: 2026-10-17 23:01 CEST (Claude, Phase 5 early items)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
 **Phase 4 (External evidence): CLOSED 22:46 (G4 PASS WITH NON-BLOCKING).** See PHASES.md "### Phase 4 close". **Phase 5 started early (user 22:35/22:41, D-039/D-040):** web UI per the approved plan 5.6''' (approved 22:45; agent building in a worktree), 5.0 robustness items (off-topic short-circuit, parallel runs, LLM timeouts; agent in a worktree). Both to be merged after their checks.
+- **5.0 + 5.0.R merged (23:01):** review NEEDS_FIXES (two misroutes of real enquiries to off-topic; per-read timeout not a deadline) → 5.0.R (D-042: stricter off-topic rule, first attempt only, intake prompt `out_of_scope` line; wall-clock LLM deadline; Ctrl-C cancel) → re-review APPROVE WITH FIXES (cancel in the external step) → fixed add6c87. pytest 490 passed, 2 skipped; ruff clean. Live check: "What is the capital of France?" → redirect + 3 examples after one intake call, $0.0004.
+- **Phase 5 must-dos before the freeze:** G4 N2 query-privacy code guard; re-run D03 (D-041); dev re-run with `--workers 4` on the new intake prompt.
 
 **Phase 4 (External evidence, option B): IN PROGRESS (started 19:52).** Implementation plan + D-034 committed 57ab2ba (19:56); **Code 2e9a47a + 77fb873** (items 1–11; D-035 implementer choices + two Claude additions): pytest 413 passed, 2 skipped; ruff clean; kb check all PASS (library empty). **Live API probe (20:14–20:18, keyless, one call each):** OpenAlex search 200, 0.83 s, 5 parsed, ratelimit remaining 960/1000 ($0.096 left, $0.001/search); Europe PMC search 200, 0.32 s; EPMC fullTextXML 200, 0.67 s, 105 paragraphs; Unpaywall 200, 0.51 s, OA PDF + cc-by. OpenAlex searches used: 3.
 **Curated library df33769:** 9 entries (EPMC full text, cc by), 28 passages ≤398 chars; topics: PAT data fusion, multi-block fusion, Raman as PAT, optical PAT trends, in-line NIR tools, in-line ATR-FTIR, NIR temperature correction, FT-IR+Raman maintenance, Raman probe cleaning. Spec `scripts/external_library_spec.yaml`. No OA source found for reactor temperature measurement or viscosity. kb check 9/9 + external_library PASS; pytest 413/2 skipped.
