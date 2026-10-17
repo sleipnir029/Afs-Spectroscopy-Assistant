@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 13:36 CEST (Claude)._
+_Last updated: 2026-10-17 13:50 CEST (Claude, Phase 3 implementer)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -8,7 +8,8 @@ _Last updated: 2026-10-17 13:36 CEST (Claude)._
 **Phase 2 closed (G2 passed, user 13:33).** **Re-plan of Phases 3–6 APPROVED (13:36, user)**, with the simple chat (`afs-assist chat` + HTML view replace the pi shell). **Phase 3 (Assessment upgrade) in progress.**
 - **Validation (D-020, user 13:35):** the user no longer runs tests or reads outputs. Claude runs all checks; reviewer agents replace the user at G3–G6. Ask the user only short yes/no questions.
 - **Cache path (user 13:33):** full fetched external text → `runs/external_cache/` (already gitignored).
-- **Next:** Phase 3 implementation (implementer agent), then the D01–D08 run, then reviewer agent (G3 ~21:00).
+- **Phase 3 implementation committed (3c7e881, 13:50)**; implementer choices in D-021. Offline checks pass (see Check results).
+- **Next:** the D01–D08 run on flash, then `scripts/check_mermaid.py` and `scripts/check_cost_class.py` on outputs/dev, then the reviewer agent (G3 ~21:00).
 
 ## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
@@ -162,6 +163,11 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
 None.
 
 ## Check results
+**Phase 3 implementation (13:50), code 3c7e881, offline only (no live LLM calls):**
+- pytest 248 passed, 1 skipped (live smoke); ruff clean; `kb check` 9/9 PASS (incl. the scenario-id lint, which now also covers `skills/`).
+- `scripts/check_mermaid.py` renders charts with mmdc (npx mermaid-cli, using the installed Chrome via `PUPPETEER_EXECUTABLE_PATH`): 2/2 sample charts with escaped quotes, brackets and pipes rendered; a broken chart fails. Not yet run on dev outputs (they predate Phase 3).
+- `scripts/check_cost_class.py` re-derives each option's cost class from `table1_methods.json`; tested offline on rendered fixtures.
+
 **2.R4 dev run (finished ~13:00), flash, code e208980 (+8330c8c regex, no effect on dev), session cost $0.1938:**
 - **Completion:** all 8 complete; 0 hard failures, 0 still open; citations 318/318 verified.
 - **Status:** provisional ×7, D05 insufficient_information.
