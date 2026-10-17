@@ -747,6 +747,13 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 6. `external replay` on an off-topic run says "off-topic run".
 7. Tests: both misrouting repros, a vague one-line measurement enquiry, the wall-clock deadline, Ctrl-C cancel, replay message; make the order test deterministic (events, not sleeps).
 
+**5.0b External-search carry-overs from G4 (Claude, 23:23, D-020 mode; from "### Phase 4 close"):**
+1. **N2 query privacy (must before freeze):** code guard in `clean_queries`: drop a query that contains a token which appears capitalised in the enquiry (not sentence-initial), is not in a domain vocabulary (methods, techniques, fiber families, sample/process words from knowledge/ and a small generic list), or contains digits/units copied from the enquiry, an email, URL or a word from the intake facts that looks like a proper name; logged in `dropped_queries` with the reason; never sends the raw enquiry text.
+2. **N1 digit-hyphen loose rule:** in the loose form keep hyphens next to digits and drop only whitespace around them, so "1-10" matches "1 - 10" and "10-20" still does not match "1020"; re-check every supplied quote in outputs/ and kb check.
+3. **N4 one search timeout:** a timeout or error on one search API skips that API for the run (logged); fall back to library-only only when every live API failed.
+4. **N3 off-domain abstracts:** an abstract-only source enters the evidence call only if it shares ≥2 content words with the enquiry's sample/target terms.
+5. Offline tests for each; pytest/ruff/kb check green.
+
 **5.6 Demo surface: a simple local web app** (D-023; replaces the `afs-assist chat` REPL and the static HTML view; approved 14:22)
 - `uv run afs-assist ui` starts a Streamlit app on localhost (`uv add streamlit`). Streamlit fits a report-style page (columns, tabs, expanders); Gradio is aimed at model demos and Chainlit at chat-first apps.
 - **Start screen:** paste an enquiry or pick a saved run (dev, adversarial, later the frozen H runs). Saved runs open instantly, which is the safe live-demo path.
