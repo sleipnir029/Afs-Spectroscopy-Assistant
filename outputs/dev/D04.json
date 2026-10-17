@@ -1,0 +1,1790 @@
+{
+ "run_id": "D04",
+ "enquiry": "We run a cell culture process in an aqueous medium. Glucose and lactate are measured from samples, and the delay makes it difficult to see changes promptly. We are exploring an in situ spectroscopy pilot that can be checked against those existing laboratory measurements. The medium and cell population change during the run; we have not yet selected a probe or a calibration strategy.",
+ "intake": {
+  "routes": [
+   "in_scope",
+   "needs_clarification",
+   "premise_to_check"
+  ],
+  "summary": "Customer runs a cell culture process in an aqueous medium and wants to explore an in situ spectroscopy pilot for glucose and lactate, to be checked against existing laboratory measurements. No probe or calibration strategy has been selected yet.",
+  "facts_stated": [
+   {
+    "text": "We run a cell culture process in an aqueous medium.",
+    "enquiry_quote": "We run a cell culture process in an aqueous medium."
+   },
+   {
+    "text": "Glucose and lactate are measured from samples.",
+    "enquiry_quote": "Glucose and lactate are measured from samples"
+   },
+   {
+    "text": "The delay makes it difficult to see changes promptly.",
+    "enquiry_quote": "the delay makes it difficult to see changes promptly"
+   },
+   {
+    "text": "We are exploring an in situ spectroscopy pilot.",
+    "enquiry_quote": "We are exploring an in situ spectroscopy pilot"
+   },
+   {
+    "text": "The pilot can be checked against existing laboratory measurements.",
+    "enquiry_quote": "that can be checked against those existing laboratory measurements"
+   },
+   {
+    "text": "The medium and cell population change during the run.",
+    "enquiry_quote": "The medium and cell population change during the run"
+   },
+   {
+    "text": "No probe or calibration strategy has been selected yet.",
+    "enquiry_quote": "we have not yet selected a probe or a calibration strategy"
+   }
+  ],
+  "targets": [
+   {
+    "variable": "glucose",
+    "purpose": "monitoring",
+    "enquiry_quote": "Glucose and lactate are measured from samples"
+   },
+   {
+    "variable": "lactate",
+    "purpose": "monitoring",
+    "enquiry_quote": "Glucose and lactate are measured from samples"
+   }
+  ],
+  "sample": {
+   "physical_state": {
+    "value": "liquid",
+    "basis": "inferred_from_stated",
+    "enquiry_quote": "aqueous medium"
+   },
+   "optical_regime": {
+    "value": "unknown",
+    "basis": "unknown",
+    "enquiry_quote": null
+   },
+   "aqueous": {
+    "value": "yes",
+    "basis": "stated",
+    "enquiry_quote": "aqueous medium"
+   },
+   "heterogeneous": {
+    "value": "yes",
+    "basis": "stated",
+    "enquiry_quote": "cell population"
+   },
+   "fluorophore": {
+    "value": "unknown",
+    "basis": "unknown",
+    "enquiry_quote": null
+   }
+  },
+  "process": [
+   {
+    "aspect": "temperature",
+    "value": "unknown",
+    "enquiry_quote": "cell culture process"
+   },
+   {
+    "aspect": "pressure",
+    "value": "unknown",
+    "enquiry_quote": "cell culture process"
+   },
+   {
+    "aspect": "location",
+    "value": "unknown",
+    "enquiry_quote": "in situ"
+   },
+   {
+    "aspect": "distance_or_remote_analyzer",
+    "value": "unknown",
+    "enquiry_quote": "in situ"
+   },
+   {
+    "aspect": "cleaning_or_fouling",
+    "value": "unknown",
+    "enquiry_quote": "cell culture process"
+   },
+   {
+    "aspect": "response_time",
+    "value": "unknown",
+    "enquiry_quote": "see changes promptly"
+   }
+  ],
+  "customer_premises": [
+   {
+    "claim": "In situ spectroscopy can be checked against existing laboratory measurements.",
+    "enquiry_quote": "that can be checked against those existing laboratory measurements"
+   },
+   {
+    "claim": "The delay in laboratory measurements is the reason changes are not seen promptly.",
+    "enquiry_quote": "the delay makes it difficult to see changes promptly"
+   },
+   {
+    "claim": "The changing medium and cell population are relevant to probe or calibration selection.",
+    "enquiry_quote": "The medium and cell population change during the run"
+   }
+  ],
+  "proposed_methods": [
+   "NIR",
+   "Raman",
+   "MIR",
+   "UV-Vis"
+  ],
+  "proposed_fiber": {
+   "family": "none",
+   "for_method": "none",
+   "enquiry_quote": null
+  },
+  "unknowns": [
+   "Target species concentration ranges for glucose and lactate",
+   "Matrix composition and potential interferences",
+   "Optical behaviour of the medium (clear, turbid, opaque, absorbing)",
+   "Cell density and its effect on scattering",
+   "Temperature and pressure at the measurement point",
+   "Installation point and probe access",
+   "Required accuracy and response time",
+   "Reference method details and sampling frequency",
+   "Cleaning and fouling considerations",
+   "Calibration strategy and model maintenance"
+  ]
+ },
+ "slots": {
+  "physical_state": "liquid",
+  "optical_regime": "unknown",
+  "aqueous": "yes",
+  "heterogeneous": "yes",
+  "fluorophore": "unknown"
+ },
+ "screening": [
+  {
+   "method": "MIR",
+   "technique": "ATR",
+   "status": "pass",
+   "reasons": [],
+   "warnings": [
+    "R-MIR-3",
+    "R-FIB-2",
+    "R-CMB-2",
+    "R-GEN-3",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "status": "unknown",
+   "reasons": [
+    {
+     "status": "unknown",
+     "rule": "R-GEO-2",
+     "message": "Transmission fails when the sample is too thick, opaque or fat-rich because light cannot penetrate it."
+    }
+   ],
+   "warnings": [
+    "R-NIR-2",
+    "R-NIR-4",
+    "R-CAL-1",
+    "R-CMB-2",
+    "R-GEN-3",
+    "R-GEN-4",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "status": "unknown",
+   "reasons": [
+    {
+     "status": "unknown",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "sample state or optical regime unknown: Table 1 sample-type fit not confirmed"
+    }
+   ],
+   "warnings": [
+    "R-GEO-6",
+    "R-NIR-2",
+    "R-NIR-4",
+    "R-CAL-1",
+    "R-CMB-2",
+    "R-GEN-3",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "NIR",
+   "technique": "diffuse_reflection_remote",
+   "status": "unknown",
+   "reasons": [
+    {
+     "status": "unknown",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "sample state or optical regime unknown: Table 1 sample-type fit not confirmed"
+    }
+   ],
+   "warnings": [
+    "R-GEO-6",
+    "R-NIR-2",
+    "R-NIR-4",
+    "R-CAL-1",
+    "R-CMB-2",
+    "R-GEN-3",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "Raman",
+   "technique": "raman_probe",
+   "status": "pass",
+   "reasons": [],
+   "warnings": [
+    "R-RAM-1",
+    "R-CAL-1",
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "status": "pass",
+   "reasons": [],
+   "warnings": [
+    "R-MIR-3",
+    "R-UV-1",
+    "R-UV-2",
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "diffuse_reflection",
+   "status": "unknown",
+   "reasons": [
+    {
+     "status": "unknown",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "sample state or optical regime unknown: Table 1 sample-type fit not confirmed"
+    }
+   ],
+   "warnings": [
+    "R-GEO-6",
+    "R-UV-1",
+    "R-UV-2",
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "status": "unknown",
+   "reasons": [
+    {
+     "status": "unknown",
+     "rule": "R-GEO-2",
+     "message": "Transmission fails when the sample is too thick, opaque or fat-rich because light cannot penetrate it."
+    }
+   ],
+   "warnings": [
+    "R-UV-1",
+    "R-UV-2",
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "emission_probe",
+   "status": "unknown",
+   "reasons": [
+    {
+     "status": "unknown",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "sample state or optical regime unknown: Table 1 sample-type fit not confirmed"
+    }
+   ],
+   "warnings": [
+    "R-UV-1",
+    "R-UV-2",
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "notes": []
+  },
+  {
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "status": "unknown",
+   "reasons": [
+    {
+     "status": "unknown",
+     "rule": "R-FLU-1",
+     "message": "no fluorescent species or indicator identified yet"
+    }
+   ],
+   "warnings": [
+    "R-FLU-2",
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "notes": []
+  }
+ ],
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "A method shortlist can be justified for an aqueous cell-culture pilot, but the choice between Raman, NIR and MIR-ATR depends on concentration ranges, optical density and installation details that the customer has not yet supplied. The recommendation is therefore conditional and the first feasibility experiment is designed to resolve the deciding unknowns.",
+  "premise_checks": [
+   {
+    "premise": "In situ spectroscopy can be checked against existing laboratory measurements.",
+    "verdict": "supported",
+    "explanation": "The customer proposes a pilot checked against existing laboratory measurements. This is a reasonable feasibility-study design, not a claim that the method is already validated.",
+    "citations": []
+   },
+   {
+    "premise": "The delay in laboratory measurements is the reason changes are not seen promptly.",
+    "verdict": "supported",
+    "explanation": "The customer states that the delay makes it difficult to see changes promptly. The sources support the general motivation for in-line or in-situ fiber-optic analysis to obtain results in near real time.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 2,
+      "quote": "Fiber optic probes and cells are being integrated into reactors and production lines of ongoing technological processes, enabling on-site online analysis and obtaining results in near real time.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The changing medium and cell population are relevant to probe or calibration selection.",
+    "verdict": "supported",
+    "explanation": "The sources state that sample inhomogeneity and process turbulence must be considered when selecting a measurement technique, and that calibrations are matrix-specific.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "In situ measurement in an aqueous cell-culture medium",
+   "Targets: glucose and lactate",
+   "Pilot must be checkable against existing laboratory measurements",
+   "Medium and cell population change during the run",
+   "No probe or calibration strategy selected yet"
+  ],
+  "key_unknowns": [
+   "Concentration ranges for glucose and lactate",
+   "Optical density, turbidity and cell density of the medium",
+   "Matrix composition and potential interferences",
+   "Temperature, pressure and cleaning/fouling conditions at the measurement point",
+   "Required accuracy, precision and response time",
+   "Installation point and probe access",
+   "Reference method details and sampling frequency"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What are the expected concentration ranges for glucose and lactate during the run, and what accuracy and response time do you need?",
+    "why_it_matters": "This decides whether NIR is viable at all. NIR may lack sensitivity for trace components, and the source cites a limitation below 0.1 percent in a bioprocess context. Raman is more likely to be suitable for lower concentrations in aqueous media.",
+    "affects": [
+     "method_choice",
+     "calibration_strategy"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What is the optical appearance of the medium: clear, slightly turbid, highly turbid or opaque, and how does cell density change during the run?",
+    "why_it_matters": "This determines whether transmission/transflection is possible or whether diffuse reflection or ATR is required. Transmission fails when the sample is too thick, opaque or highly scattering.",
+    "affects": [
+     "technique_choice",
+     "probe_geometry"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "Where exactly would the probe be installed, and what are the temperature, pressure, cleaning and fouling conditions at that point?",
+    "why_it_matters": "ATR requires tight contact and samples only a surface layer a few micrometres deep, so deposits on the crystal are a risk. The installation point also determines whether a remote fiber link is needed and what length is required.",
+    "affects": [
+     "technique_choice",
+     "installation",
+     "probe_selection"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What is the composition of the culture medium beyond glucose and lactate, and are there known fluorescent species or strong absorbers?",
+    "why_it_matters": "Fluorescence is only usable if a relevant fluorescent species or indicator exists. Strong absorbers or overlapping bands affect NIR and Raman calibration. Raman is well suited to aqueous media because water interferes less than in infrared methods.",
+    "affects": [
+     "method_choice",
+     "calibration_strategy"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "What laboratory reference method is used for glucose and lactate, and how often are samples taken?",
+    "why_it_matters": "The reference method defines the independent comparison for the feasibility study and the calibration target. Sampling frequency affects how well the pilot can be checked against existing measurements.",
+    "affects": [
+     "feasibility_plan",
+     "calibration_strategy"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "REC-1",
+    "method": "Raman",
+    "technique": "raman_probe",
+    "role": "primary",
+    "combined_with": [
+     "NIR",
+     "MIR"
+    ],
+    "rationale": "Raman is the strongest first candidate for glucose and lactate in an aqueous cell-culture medium. The sources state that Raman is particularly well suited for aqueous environments because water exhibits low absorbance compared with infrared methods, and that Raman can provide a molecular fingerprint for metabolites such as glucose and lactate in a reactor. A combination of Raman with NIR or MIR is a hypothesis to test against the best single method.",
+    "conditions": "Requires confirmation that glucose and lactate are present at concentrations detectable by the selected Raman instrument and that fluorescence background from the medium or cells does not swamp the Raman signal. Combinations should be tested only after single-method feasibility has been established, with sampling location and timing aligned.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "The analysis of such systems may require a combination of two or even more spectral methods. This often provides a synergistic effect, allowing one to solve a problem that either method alone cannot handle or only partially.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   },
+   {
+    "id": "REC-2",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "NIR transmission or transflection is a common online method for clear or semi-transparent liquids and can be implemented with robust silica fiber probes. It is worth testing if the medium remains sufficiently transparent and if glucose and lactate are major components rather than trace analytes.",
+    "conditions": "Applies only if the medium is clear or only slightly turbid and if the target concentrations are high enough for NIR sensitivity. If the medium becomes highly turbid or opaque, transmission fails and this option is not suitable.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "REC-3",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "MIR-ATR is a high-selectivity method for liquids and soft solids in contact with the ATR crystal. It could provide well-defined bands for glucose and lactate, but it samples only a surface layer a few micrometres deep and requires tight contact, which makes fouling and surface representativeness important risks in a cell-culture process.",
+    "conditions": "Applies only if the probe can be kept clean and in tight contact with the medium, and if the surface layer is representative of the bulk. The usable MIR range and any remote fiber link length must be confirmed with AFS.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "For Raman, a contact Raman probe in the reactor or a flow cell. For NIR, transmission or transflection if the medium is clear, otherwise diffuse reflection. For MIR, an ATR probe in direct contact with the medium.",
+   "location": "In situ in the reactor or in a bypass/flow cell, depending on the installation point and fouling conditions.",
+   "fiber_link": "Silica fibers for Raman and NIR. MIR requires chalcogenide, polycrystalline or hollow-waveguide fibers; the achievable MIR link length is unknown and must be confirmed with AFS.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "Chalcogenide As-S IR Fibers 6500 nm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "Polycrystalline Infrared Fibers 17 μm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "Raman",
+    "statement": "Raman shift in cm-1, with the laser excitation wavelength stated separately. The nominal Raman range depends on the selected laser and spectrometer; no specific range is stated in the sources for this customer.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "MIR",
+    "statement": "Nominal MIR range 4000-400 cm-1. The usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Raman fluorescence background from the medium or cells could swamp the weak Raman signal.",
+    "rule_ids": [
+     "R-RAM-1"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "observing Raman bands is often complicated by light scattering from the illuminating laser, and for many organic compounds, by the superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "NIR may lack sensitivity for glucose and lactate if they are present at low concentrations.",
+    "rule_ids": [
+     "R-NIR-4"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "MIR-ATR samples only a surface layer a few micrometres deep, so fouling or surface deposits could make the measurement unrepresentative of the bulk medium.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns, providing information on molecular composition and biochemical changes.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "The changing cell population and medium composition may require frequent recalibration or model maintenance.",
+    "rule_ids": [
+     "R-CAL-1"
+    ],
+    "citations": []
+   },
+   {
+    "risk": "The achievable MIR fiber link length is unknown from the supplied sources, so a remote MIR installation cannot be assumed.",
+    "rule_ids": [
+     "R-FIB-2"
+    ],
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 9,
+      "quote": "PIR-Fiber & HWG Cables for QCL, OPO, CO- & CO2-Lasers",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative samples across the expected chemical and physical variation of the cell-culture run, including different glucose and lactate concentrations, cell densities and turbidity levels.",
+     "purpose": "Ensure the calibration and validation data cover the range of conditions the pilot will encounter.",
+     "citations": []
+    },
+    {
+     "step": "Measure each sample with the selected single methods first: Raman probe, NIR transmission/transflection or diffuse reflection depending on optical regime, and MIR-ATR if contact and fouling permit.",
+     "purpose": "Establish which single method can detect glucose and lactate with sufficient signal quality before considering combinations.",
+     "citations": []
+    },
+    {
+     "step": "Obtain independent reference measurements for glucose and lactate using the customer's existing laboratory method on the same samples.",
+     "purpose": "Provide the reference values for calibration and validation.",
+     "citations": []
+    },
+    {
+     "step": "Build chemometric calibration models for glucose and lactate from the spectral data and reference values, using appropriate preprocessing and validation.",
+     "purpose": "Test whether the spectral data contain usable information for the target analytes.",
+     "citations": []
+    },
+    {
+     "step": "Validate the models on held-out runs or batches that were not used for calibration.",
+     "purpose": "Estimate prediction performance under conditions closer to routine use.",
+     "citations": []
+    },
+    {
+     "step": "Compare the best single method against any proposed combination of methods only after single-method feasibility is established.",
+     "purpose": "Test whether a combination provides a real gain over the best single method.",
+     "citations": []
+    },
+    {
+     "step": "Define go/no-go criteria with the customer using numerical targets for accuracy, precision and response time based on their process requirements.",
+     "purpose": "Provide an objective basis for deciding whether to proceed to a full pilot or sensor development.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Existing laboratory measurements of glucose and lactate on the same samples or process states.",
+   "decision_basis": "Go/no-go criteria must be set by the customer from their required accuracy, precision and response time. The sources do not provide numerical criteria for this application."
+  },
+  "assumptions": [
+   "The medium is liquid and aqueous, as stated.",
+   "The cell population makes the medium at least somewhat heterogeneous and scattering.",
+   "Glucose and lactate are present at concentrations that may be detectable by Raman or NIR, but this is unconfirmed.",
+   "The pilot is for feasibility testing, not for immediate process control or clinical use."
+  ],
+  "not_in_sources": [
+   "Specific detection limits for glucose or lactate by any method in this customer's medium",
+   "Achievable MIR fiber link length for a remote installation",
+   "Numerical accuracy, precision or response-time targets for this application",
+   "Product codes, prices or component ratings for a specific AFS configuration",
+   "In vivo or production-ready evidence for this specific cell-culture application"
+  ]
+ },
+ "verification": {
+  "summary": {
+   "passed": false,
+   "hard_failures": 6,
+   "soft_failures": 2,
+   "checks": 98,
+   "citations_total": 23,
+   "citations_verified": 18
+  },
+  "checks": [
+   {
+    "name": "quote_verified",
+    "passed": false,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[0]",
+    "message": "REF p.3: quote not_found (score 81.4)"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": false,
+    "severity": "hard",
+    "location": "premise_checks[2].citations[1]",
+    "message": "REF p.5: quote not_found (score 46.6)"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_precedent_only",
+    "passed": false,
+    "severity": "soft",
+    "location": "recommendations[0].citations[2]",
+    "message": "a gain from combining methods is a hypothesis to test (R-CMB-1); S01 p.7 is precedent"
+   },
+   {
+    "name": "quote_verified",
+    "passed": false,
+    "severity": "hard",
+    "location": "recommendations[0].citations[3]",
+    "message": "REF p.5: quote not_found (score 64.9)"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[3]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_precedent_only",
+    "passed": false,
+    "severity": "soft",
+    "location": "recommendations[0].citations[3]",
+    "message": "a gain from combining methods is a hypothesis to test (R-CMB-1); REF §5 is precedent"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": false,
+    "severity": "hard",
+    "location": "recommendations[1].citations[1]",
+    "message": "S01 p.18: quote fuzzy_review (score 93.5)"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": false,
+    "severity": "hard",
+    "location": "risks[3].citations[0]",
+    "message": "REF p.5: quote not_found (score 46.6)"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[4].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[4].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[3]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[4]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[3]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[4]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[5]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[6]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "status_reason",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.decision_basis",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.reference_measurements",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": false,
+    "severity": "hard",
+    "location": "clarification_questions[0]",
+    "message": "figures in uncited text must come from the enquiry: ['0.1 percent']"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[3]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[4]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "assumptions[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "assumptions[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "assumptions[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "assumptions[3]",
+    "message": "ok"
+   },
+   {
+    "name": "respects_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "respects_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "respects_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "unknown_slot_addressed",
+    "passed": true,
+    "severity": "hard",
+    "location": "slot.optical_regime",
+    "message": "ok"
+   },
+   {
+    "name": "status_vs_premises",
+    "passed": true,
+    "severity": "hard",
+    "location": "decision_status",
+    "message": "ok"
+   },
+   {
+    "name": "status_vs_recommendations",
+    "passed": true,
+    "severity": "hard",
+    "location": "decision_status",
+    "message": "ok"
+   },
+   {
+    "name": "forbidden_wording",
+    "passed": true,
+    "severity": "hard",
+    "location": "assessment",
+    "message": "ok"
+   },
+   {
+    "name": "recommendations_unique",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations",
+    "message": "ok"
+   },
+   {
+    "name": "recommendation_count",
+    "passed": true,
+    "severity": "soft",
+    "location": "recommendations",
+    "message": "ok"
+   },
+   {
+    "name": "question_count",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[0]",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[1]",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[2]",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[3]",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[4]",
+    "message": "ok"
+   },
+   {
+    "name": "length_budget",
+    "passed": true,
+    "severity": "soft",
+    "location": "assessment",
+    "message": "ok"
+   }
+  ],
+  "citations": [
+   {
+    "location": "premise_checks[0].citations[0]",
+    "doc": "REF",
+    "page": 3,
+    "quote": "A feasibility plan needs representative samples or process states, independent reference measurements, a defined comparison and a go/no-go basis.",
+    "claim_kind": "general",
+    "quote_status": "not_found",
+    "start": null,
+    "end": null,
+    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
+    "scope_status": "ok",
+    "verified": false
+   },
+   {
+    "location": "premise_checks[1].citations[0]",
+    "doc": "S01",
+    "page": 2,
+    "quote": "Fiber optic probes and cells are being integrated into reactors and production lines of ongoing technological processes, enabling on-site online analysis and obtaining results in near real time.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 2641,
+    "end": 2835,
+    "page_sha256": "93515ebbdf71da9760b596d90175d2c60c0f00a90a567d8611da480efefc4f87",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "premise_checks[2].citations[0]",
+    "doc": "S01",
+    "page": 7,
+    "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 457,
+    "end": 621,
+    "page_sha256": "4c3f48541ce6898fb03986ecda16810268f19da358a25cd647d2bf04ca3c8401",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "premise_checks[2].citations[1]",
+    "doc": "REF",
+    "page": 5,
+    "quote": "NIR and Raman calibrations are specific to the matrix; after a change of sample matrix or composition the calibration must be re-validated (and usually rebuilt or extended) on the new material.",
+    "claim_kind": "general",
+    "quote_status": "not_found",
+    "start": null,
+    "end": null,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "scope_status": "ok",
+    "verified": false
+   },
+   {
+    "location": "recommendations[0].citations[0]",
+    "doc": "S01",
+    "page": 16,
+    "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1108,
+    "end": 1247,
+    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[0].citations[1]",
+    "doc": "S01",
+    "page": 16,
+    "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+    "claim_kind": "application_precedent",
+    "quote_status": "exact",
+    "start": 902,
+    "end": 1069,
+    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[0].citations[2]",
+    "doc": "S01",
+    "page": 7,
+    "quote": "The analysis of such systems may require a combination of two or even more spectral methods. This often provides a synergistic effect, allowing one to solve a problem that either method alone cannot handle or only partially.",
+    "claim_kind": "method_gain",
+    "quote_status": "exact",
+    "start": 622,
+    "end": 846,
+    "page_sha256": "4c3f48541ce6898fb03986ecda16810268f19da358a25cd647d2bf04ca3c8401",
+    "scope_status": "precedent_only",
+    "verified": true
+   },
+   {
+    "location": "recommendations[0].citations[3]",
+    "doc": "REF",
+    "page": 5,
+    "quote": "Combining methods can help for complex samples, but a gain is a hypothesis; compare with the best single method and align sampling location and timing.",
+    "claim_kind": "method_gain",
+    "quote_status": "not_found",
+    "start": null,
+    "end": null,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "scope_status": "precedent_only",
+    "verified": false
+   },
+   {
+    "location": "recommendations[1].citations[0]",
+    "doc": "S01",
+    "page": 18,
+    "quote": "NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 23,
+    "end": 146,
+    "page_sha256": "d013a962553dd90e6f50b2b9ed34ec71fbf5d15af42254159041abee362c3820",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[1].citations[1]",
+    "doc": "S01",
+    "page": 18,
+    "quote": "Transmission fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+    "claim_kind": "general",
+    "quote_status": "fuzzy_review",
+    "start": null,
+    "end": null,
+    "page_sha256": "d013a962553dd90e6f50b2b9ed34ec71fbf5d15af42254159041abee362c3820",
+    "scope_status": "ok",
+    "verified": false
+   },
+   {
+    "location": "recommendations[2].citations[0]",
+    "doc": "S01",
+    "page": 9,
+    "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 2758,
+    "end": 2879,
+    "page_sha256": "4986191cac00f5afd5b1d3e9e0a1ed6e247cb9b7a0d12f6bd8eeb868cf864e27",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[2].citations[1]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 3,
+    "end": 200,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "measurement_concept.citations[0]",
+    "doc": "S02",
+    "page": 6,
+    "quote": "Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 225,
+    "end": 298,
+    "page_sha256": "096b6fccd7fcb45c2adf3f4e168c3bc7178b025f9c6f03ebe2b31c3b106f335e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "measurement_concept.citations[1]",
+    "doc": "S02",
+    "page": 6,
+    "quote": "Chalcogenide As-S IR Fibers 6500 nm",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 309,
+    "end": 344,
+    "page_sha256": "096b6fccd7fcb45c2adf3f4e168c3bc7178b025f9c6f03ebe2b31c3b106f335e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "measurement_concept.citations[2]",
+    "doc": "S02",
+    "page": 6,
+    "quote": "Polycrystalline Infrared Fibers 17 μm",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 355,
+    "end": 392,
+    "page_sha256": "096b6fccd7fcb45c2adf3f4e168c3bc7178b025f9c6f03ebe2b31c3b106f335e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "spectral_ranges[0].citations[0]",
+    "doc": "S01",
+    "page": 11,
+    "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 604,
+    "end": 754,
+    "page_sha256": "4ef500a05d295627124acf6c9d0c6bd385fe40f97c3899f2c1ddfc63d3f62586",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "spectral_ranges[1].citations[0]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 934,
+    "end": 1068,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "spectral_ranges[2].citations[0]",
+    "doc": "S01",
+    "page": 9,
+    "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 2758,
+    "end": 2879,
+    "page_sha256": "4986191cac00f5afd5b1d3e9e0a1ed6e247cb9b7a0d12f6bd8eeb868cf864e27",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[0].citations[0]",
+    "doc": "S01",
+    "page": 11,
+    "quote": "observing Raman bands is often complicated by light scattering from the illuminating laser, and for many organic compounds, by the superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1822,
+    "end": 2042,
+    "page_sha256": "4ef500a05d295627124acf6c9d0c6bd385fe40f97c3899f2c1ddfc63d3f62586",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[1].citations[0]",
+    "doc": "S01",
+    "page": 16,
+    "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1453,
+    "end": 1635,
+    "page_sha256": "9424664a2926166ba256e54a0843f7e6b4147c116c7721194758e253de93c27e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[2].citations[0]",
+    "doc": "S01",
+    "page": 13,
+    "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns, providing information on molecular composition and biochemical changes.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1712,
+    "end": 1909,
+    "page_sha256": "57094f0a1392532096ecee5a930a42b2cbf34c3120f4c10099689ccce440e5d7",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[3].citations[0]",
+    "doc": "REF",
+    "page": 5,
+    "quote": "NIR and Raman calibrations are specific to the matrix; after a change of sample matrix or composition the calibration must be re-validated (and usually rebuilt or extended) on the new material.",
+    "claim_kind": "general",
+    "quote_status": "not_found",
+    "start": null,
+    "end": null,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "scope_status": "ok",
+    "verified": false
+   },
+   {
+    "location": "risks[4].citations[0]",
+    "doc": "S02",
+    "page": 9,
+    "quote": "PIR-Fiber & HWG Cables for QCL, OPO, CO- & CO2-Lasers",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 110,
+    "end": 163,
+    "page_sha256": "109b09a9f6dc4a0efd39fc3cceb221a7024d361289dbecee28d9171895e0cc67",
+    "scope_status": "ok",
+    "verified": true
+   }
+  ]
+ },
+ "removed_citations": [
+  {
+   "location": "premise_checks[0].citations[0]",
+   "citation": {
+    "doc": "REF",
+    "page": 3,
+    "quote": "A feasibility plan needs representative samples or process states, independent reference measurements, a defined comparison and a go/no-go basis.",
+    "claim_kind": "general"
+   }
+  },
+  {
+   "location": "premise_checks[2].citations[1]",
+   "citation": {
+    "doc": "REF",
+    "page": 5,
+    "quote": "NIR and Raman calibrations are specific to the matrix; after a change of sample matrix or composition the calibration must be re-validated (and usually rebuilt or extended) on the new material.",
+    "claim_kind": "general"
+   }
+  },
+  {
+   "location": "recommendations[0].citations[3]",
+   "citation": {
+    "doc": "REF",
+    "page": 5,
+    "quote": "Combining methods can help for complex samples, but a gain is a hypothesis; compare with the best single method and align sampling location and timing.",
+    "claim_kind": "method_gain"
+   }
+  },
+  {
+   "location": "recommendations[1].citations[1]",
+   "citation": {
+    "doc": "S01",
+    "page": 18,
+    "quote": "Transmission fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+    "claim_kind": "general"
+   }
+  },
+  {
+   "location": "risks[3].citations[0]",
+   "citation": {
+    "doc": "REF",
+    "page": 5,
+    "quote": "NIR and Raman calibrations are specific to the matrix; after a change of sample matrix or composition the calibration must be re-validated (and usually rebuilt or extended) on the new material.",
+    "claim_kind": "general"
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "round": 1,
+   "hard_failures_before": 7,
+   "hard_failures_after": 6
+  },
+  {
+   "round": 2,
+   "hard_failures_before": 6,
+   "hard_failures_after": 6
+  }
+ ],
+ "manifest": {
+  "run_id": "D04",
+  "created_utc": "2026-10-17T08:02:53+00:00",
+  "models": [
+   "deepseek/deepseek-v4-pro-0813"
+  ],
+  "prompt_sha256": {
+   "intake": "3919b630f3899353e2193f0937531fc09eacc2a1bef23fd06ea1c59c9335d188",
+   "assess": "2fa3c6e919d32646c59717fbe28059ba481618afdb1f40f9a06457d1a7a41688",
+   "repair": "5c821ce6bcf3216ab46ec9da2823c6a0eb658ea0b9dd9c1be39f480c18d93bc8"
+  },
+  "knowledge_sha256": "6127f9937ff775a5eb498611acad9ed591351b3fb1d309883d710404a1e6be68",
+  "pages_sha256": "7e23c2aea24f77b42dfa91e0b41851f6670044636e9eea42db5144600a04fbcb",
+  "rules_sha256": "c50712e80e6a9fa8d24992806f7ae0b4471186aa88769970b5d22cdf80ef61d8",
+  "cost_usd": 0.057478,
+  "tokens": {
+   "prompt": 125352,
+   "completion": 14234,
+   "cached": 108544
+  },
+  "repair_rounds": 2,
+  "verification": {
+   "passed": false,
+   "hard_failures": 6,
+   "soft_failures": 2,
+   "checks": 98,
+   "citations_total": 23,
+   "citations_verified": 18
+  },
+  "code_sha": "6ca7bba78b86be370f73a97870b4ca9a4b9f5764",
+  "provenance_commit": "931a031c3e3f3be3795c96ad9f47ab3f1ac84c4b"
+ }
+}
