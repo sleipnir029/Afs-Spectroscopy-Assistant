@@ -215,11 +215,6 @@ def sanitize_intake(intake: Intake, enquiry: str) -> tuple[Intake, list[dict]]:
             removed.append({"location": f"intake.sample.{name}", "item": dict(s),
                             "reason": "slot value without a verbatim enquiry quote; reset to unknown"})
             data["sample"][name] = {"value": "unknown", "basis": "unknown", "enquiry_quote": None}
-    for name, quote in data["proposed_methods"].items():
-        if quote is not None and not ok(quote):
-            removed.append({"location": f"intake.proposed_methods.{name}", "item": {name: quote},
-                            "reason": "proposed method without a verbatim enquiry quote; set to null"})
-            data["proposed_methods"][name] = None
     fiber = data["proposed_fiber"]
     if fiber["family"] != "none" and not ok(fiber["enquiry_quote"]):
         removed.append({"location": "intake.proposed_fiber", "item": dict(fiber),

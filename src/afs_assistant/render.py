@@ -146,6 +146,7 @@ def to_json(r: RunResult) -> dict:
         "run_id": r.run_id,
         "enquiry": r.enquiry,
         "intake": json.loads(r.intake.model_dump_json()),
+        "named_methods": r.named_methods,
         "slots": r.slots,
         "screening": [{"method": c.method, "technique": c.technique, "status": c.status, "reasons": c.reasons,
                        "warnings": c.warnings, "notes": c.notes} for c in r.candidates],

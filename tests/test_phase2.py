@@ -51,7 +51,6 @@ INTAKE = {
     },
     "process": [{"aspect": "reference_method", "value": "lab GC", "enquiry_quote": "Gas chromatography results"}],
     "customer_premises": [],
-    "proposed_methods": {"NIR": None, "MIR": None, "Raman": None, "Fluorescence": None, "UV_Vis": None},
     "proposed_fiber": {"family": "none", "for_method": "none", "enquiry_quote": None},
     "unknowns": ["ethanol concentration range", "temperature"],
 }

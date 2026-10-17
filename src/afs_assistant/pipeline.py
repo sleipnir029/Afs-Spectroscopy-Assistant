@@ -19,6 +19,7 @@ from datetime import UTC, datetime
 from functools import cache, lru_cache
 
 from afs_assistant import kb, paths, quotes
+from afs_assistant.methods import named_methods
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
 from afs_assistant.verify import Report, check_status, sanitize_intake, verify
@@ -93,14 +94,16 @@ class RunResult:
     manifest: dict = field(default_factory=dict)
     flagged: dict[str, str] = field(default_factory=dict)    # item path -> why it is shown with a warning
     timings: dict[str, float] = field(default_factory=dict)  # seconds per stage, plus wall
+    named_methods: dict[str, str] = field(default_factory=dict)  # method -> enquiry span naming it
 
 
 def _assess_user(enquiry: str, intake: Intake, candidates: list[Candidate]) -> str:
-    proposed = intake.proposed_methods.named()
+    named = named_methods(enquiry)
     return "\n\n".join([
         "# CUSTOMER ENQUIRY (everything the customer said)\n" + enquiry,
         "# INTAKE (steps 0-2)\n" + intake.model_dump_json(indent=1),
-        "# METHODS THE CUSTOMER PROPOSED OR NAMED\n" + (", ".join(proposed) or "none"),
+        "# METHODS NAMED IN THE ENQUIRY (found by word list; judge whether the customer proposes them)\n"
+        + (", ".join(f'{m} ("{q}")' for m, q in named.items()) or "none"),
         screening_table(candidates),
     ])
 
@@ -292,4 +295,4 @@ def run(enquiry: str, client, run_id: str | None = None) -> RunResult:
         "verification": best_report.summary(),
     }
     return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
-                     intake_removed, calls, manifest, flagged, timings)
+                     intake_removed, calls, manifest, flagged, timings, named_methods(enquiry))

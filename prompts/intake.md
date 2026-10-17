@@ -7,11 +7,17 @@ This is the first part of a staged assessment:
 
 Rules:
 1. The enquiry is everything the customer said. Anything not stated is unknown. Never fill a gap with a typical value or a guess.
-2. Every fact, target, process detail, premise and proposed method must carry `enquiry_quote`: a span copied character-for-character from the enquiry. It may be a short phrase (a few words), but it must appear exactly as written. Never use a placeholder such as "unknown" or an empty string as a quote.
+2. Every fact, target, process detail and premise must carry `enquiry_quote`: a span copied character-for-character from the enquiry. It may be a short phrase (a few words), but it must appear exactly as written. Never use a placeholder such as "unknown" or an empty string as a quote.
 3. Sample slots:
    - Use `basis: stated` when the enquiry says it directly.
    - Use `inferred_from_stated` only when it follows unavoidably from a stated fact, and quote that fact. Example: "the solution is stirred in a beaker" implies liquid.
    - Otherwise use `value: unknown`, `basis: unknown`, `enquiry_quote: null`.
+   - `physical_state` values:
+     - `liquid` flows freely (solutions, suspensions, emulsions, melts while molten).
+     - `paste` is thick but still flows or can be pumped or spread.
+     - `soft_solid` is soft and deformable: gels, soft food, soft biological tissue.
+     - `powder` is loose particles or granules.
+     - `solid` is rigid: tablets, films, polymers, minerals.
    - `optical_regime` values:
      - `opaque` means opaque because it scatters light (e.g. dense emulsions, concentrates, powders).
      - `opaque_absorbing` means dark and absorbing with little scattering.
@@ -32,8 +38,7 @@ Rules:
    - `certainty_or_approval_requested`: they ask for approval, proof, readiness or a final configuration.
    - `clinical_context`: patients, surgery or diagnosis.
    - `out_of_scope`: not a spectroscopy measurement question.
-7. `proposed_methods`: for each method the customer proposes or names, the verbatim span that names it; null for every other method.
-8. `proposed_fiber`: only if the enquiry names an existing or proposed fiber link (family + the method it would carry); otherwise family `none`, for_method `none`.
-9. `unknowns`: the missing information an expert would need before choosing a method. Examples: target species and range, matrix and interferences, physical state and optical behaviour, temperature and pressure, installation point and distance, cleaning and fouling, required accuracy and response time, reference method.
+7. `proposed_fiber`: only if the enquiry names an existing or proposed fiber link (family + the method it would carry); otherwise family `none`, for_method `none`.
+8. `unknowns`: the missing information an expert would need before choosing a method. Examples: target species and range, matrix and interferences, physical state and optical behaviour, temperature and pressure, installation point and distance, cleaning and fouling, required accuracy and response time, reference method.
 
 Return only the JSON object for the schema.

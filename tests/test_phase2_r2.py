@@ -30,6 +30,7 @@ from afs_assistant.llm import (
     SpendCapExceeded,
     SpendTracker,
 )
+from afs_assistant.methods import named_methods
 from afs_assistant.schema import Intake
 from afs_assistant.verify import SLOT_PATTERNS, forbidden_hits
 
@@ -47,26 +48,38 @@ def bad_quotes(n: int) -> dict:
     return a
 
 
-# ----------------------------------------------------------------- 1. intake: bounded proposed_methods
-def test_proposed_methods_is_a_fixed_object_not_an_array():
-    schema = llm.strict_schema(Intake.model_json_schema())
-    ref = schema["properties"]["proposed_methods"]["$ref"].split("/")[-1]
-    node = schema["$defs"][ref]
-    assert node["type"] == "object" and set(node["properties"]) == {"NIR", "MIR", "Raman", "Fluorescence", "UV_Vis"}
-    assert all(p.get("type") != "array" for p in node["properties"].values())
+# ----------------------------------------------------------------- 1. intake: methods named in the enquiry (code)
+def test_intake_schema_has_no_llm_filled_method_list():
+    assert "proposed_methods" not in Intake.model_json_schema()["properties"]
 
 
-def test_proposed_method_quotes_are_sanitized_and_shown_to_assess():
-    intake = copy.deepcopy(INTAKE)
-    intake["proposed_methods"].update(Raman="follow ethanol", UV_Vis="UV absorbance at the outlet")
-    result, client = run_with(intake=intake)
-    assert result.intake.proposed_methods.Raman == "follow ethanol"
-    assert result.intake.proposed_methods.UV_Vis is None
-    assert result.intake.proposed_methods.named() == {"Raman": "follow ethanol"}
-    assert [r["location"] for r in result.intake_removed] == ["intake.proposed_methods.UV_Vis"]
-    assert any(c.name == "intake_sanitized" for c in result.report.soft_failures)
+@pytest.mark.parametrize("text, expected", [
+    ("We want to compare MIR ATR and fluorescence information.", {"MIR": "MIR", "Fluorescence": "fluorescence"}),
+    ("Could near-infrared or Raman follow the reaction?", {"NIR": "near-infrared", "Raman": "Raman"}),
+    ("An FTIR lab method and UV/Vis absorbance are in use.", {"MIR": "FTIR", "UV-Vis": "UV/Vis"}),
+    ("A fluorescent marker is added; NIRS is the alternative.", {"NIR": "NIRS", "Fluorescence": "fluorescent"}),
+    ("Infrared spectroscopy of the mirror coating.", {}),
+])
+def test_named_methods_are_found_verbatim_by_word_list(text, expected):
+    found = named_methods(text)
+    assert found == expected
+    assert all(q in text for q in found.values())
+
+
+def test_named_methods_reach_the_assess_context_and_the_run_json():
+    enquiry = ENQUIRY + " We are considering Raman or near-infrared."
+    client = FakeClient({"intake": [INTAKE], "assess": [ASSESSMENT], "repair": [ASSESSMENT, ASSESSMENT]})
+    result = pipeline.run(enquiry, client, run_id="test-run")
     assess_user = next(s["user"] for s in client.seen if s["role"] == "assess")
-    assert "# METHODS THE CUSTOMER PROPOSED OR NAMED\nRaman" in assess_user
+    assert '# METHODS NAMED IN THE ENQUIRY' in assess_user and 'NIR ("near-infrared"), Raman ("Raman")' in assess_user
+    assert render.to_json(result)["named_methods"] == {"NIR": "near-infrared", "Raman": "Raman"}
+
+
+def test_intake_prompt_defines_physical_state_values():
+    text = (paths.ROOT / "prompts" / "intake.md").read_text(encoding="utf-8")
+    for value in ("`liquid`", "`paste`", "`soft_solid`", "`powder`", "`solid`"):
+        assert value in text
+    assert "proposed_methods" not in text
 
 
 def test_intake_prompt_has_no_enquiry_example_and_lists_stated_process_only():
