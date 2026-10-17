@@ -15,9 +15,9 @@ Rules:
    - `physical_state` values:
      - `liquid` flows freely (solutions, suspensions, emulsions, melts while molten).
      - `paste` is thick but still flows or can be pumped or spread.
-     - `soft_solid` is soft and deformable: gels, soft food, soft biological tissue.
+     - `soft_solid` is soft and deformable: gels, soft food, soft biological tissue, elastic or rubbery materials.
      - `powder` is loose particles or granules.
-     - `solid` is rigid: tablets, films, polymers, minerals.
+     - `solid` is rigid: tablets, rigid plastics, glass, minerals.
    - `optical_regime` values:
      - `opaque` means opaque because it scatters light (e.g. dense emulsions, concentrates, powders).
      - `opaque_absorbing` means dark and absorbing with little scattering.

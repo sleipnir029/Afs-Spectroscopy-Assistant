@@ -59,6 +59,10 @@ def test_intake_schema_has_no_llm_filled_method_list():
     ("An FTIR lab method and UV/Vis absorbance are in use.", {"MIR": "FTIR", "UV-Vis": "UV/Vis"}),
     ("A fluorescent marker is added; NIRS is the alternative.", {"NIR": "NIRS", "Fluorescence": "fluorescent"}),
     ("Infrared spectroscopy of the mirror coating.", {}),
+    ("A mid-IR probe or SERS, with autofluorescence as background.",
+     {"MIR": "mid-IR", "Raman": "SERS", "Fluorescence": "autofluorescence"}),
+    ("The polymer is non-fluorescent and UV-cured under a UV lamp.", {}),
+    ("Vis-NIR or ultra violet absorbance.", {"NIR": "NIR", "UV-Vis": "ultra violet"}),
 ])
 def test_named_methods_are_found_verbatim_by_word_list(text, expected):
     found = named_methods(text)
@@ -147,15 +151,24 @@ def test_negation_in_another_clause_does_not_excuse_forbidden_wording(text):
 @pytest.mark.parametrize("text", [
     "We cannot, at this stage, guarantee the result.",
     "We do not, and cannot, guarantee a detection limit.",
-    "A 0.5 mm path does not guarantee a clear spectrum.",
+    "We cannot at 0.5 mm guarantee a clear spectrum.",
 ])
 def test_negation_with_an_aside_or_a_decimal_still_excuses_cautious_wording(text):
     assert not forbidden_hits(text)
 
 
 @pytest.mark.parametrize("text", [
-    "It is not cheap, however it will work.",
+    "It is not cheap however it will work.",
     "We did not test it, so it will work.",
+    "No, honestly, it will work.",
+    "No, in our experience, the probe is guaranteed to work.",
+    "Never, ever, the result is guaranteed.",
+    'It is not "proven." It will work.',
+    "It does not matter: it will work.",
+    "No further testing needed - it will work.",
+    "No doubt it will work.",
+    "There is no need for a pilot because it will work.",
+    "Not a lab result\nRaman will work here.",
 ])
 def test_however_and_plain_commas_still_end_the_clause(text):
     assert forbidden_hits(text)
@@ -229,6 +242,33 @@ def test_finalize_contradicted_premise_sets_premise_not_supported():
                             "citations": [cit("S01", 5, "However, most chemicals do not exhibit this property.")]}]
     result, _ = run_with(assess=a, repairs=[a, a])
     assert result.assessment.decision_status == "premise_not_supported"
+
+
+@pytest.mark.parametrize("citations", [[], "bad"])
+def test_unverified_contradiction_behind_the_models_own_status_is_flagged(citations):
+    a = copy.deepcopy(ASSESSMENT)
+    a["decision_status"] = "premise_not_supported"
+    a["premise_checks"] = [{"premise": "Fluorescence can measure ethanol directly", "verdict": "contradicted",
+                            "explanation": "The sources show ethanol does not fluoresce.",
+                            "citations": [cit("S01", 16, BAD_QUOTE)] if citations == "bad" else []}]
+    result, _ = run_with(assess=a, repairs=[a, a])
+    assert result.assessment.premise_checks[0].verdict == "not_covered"
+    assert result.assessment.decision_status == "premise_not_supported"
+    assert "contradiction not verified" in result.flagged["premise_checks[0]"]
+    assert "failed verification" in result.flagged["status_reason"]
+    md = render.to_markdown(result)
+    status_line = next(line for line in md.splitlines() if line.startswith("**Decision status:**"))
+    assert "⚠" in status_line
+
+
+def test_run_json_lists_only_failures_still_open_after_finalize():
+    a = copy.deepcopy(ASSESSMENT)
+    dup = copy.deepcopy(a["recommendations"][0])
+    dup.update(id="M3", role="comparison")
+    a["recommendations"].append(dup)
+    result, _ = run_with(assess=a, repairs=[a, a])
+    assert any(c.name == "recommendations_unique" for c in result.report.hard_failures)
+    assert render.to_json(result)["still_open"] == []
 
 
 def test_finalize_supported_premise_without_citation_becomes_not_covered():

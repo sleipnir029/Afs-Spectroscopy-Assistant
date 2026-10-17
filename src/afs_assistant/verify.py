@@ -23,12 +23,17 @@ MAX_QUESTIONS = 7
 MAX_RECOMMENDATIONS = 5
 MAX_WORDS = 1800
 # A forbidden phrase preceded (within a few words, same clause) by one of these is a cautious negation,
-# not a claim. The clause ends at ; , a sentence end, "but" or "however". A comma aside directly after
-# the negation word ("cannot, at this stage, guarantee") stays in the clause.
+# not a claim. The clause ends at ; , : a dash, a line break, a sentence end, "but", "however" or
+# "because". A comma aside directly after an auxiliary negation ("cannot, at this stage, guarantee")
+# stays in the clause; after "no"/"never" it does not ("No, honestly, it will work" is a claim).
+# Emphatic idioms ("no doubt") are not negations.
 _NEGATION_WORDS = r"(?:not|no|never|cannot|can't|without|nor|neither|isn't|doesn't|don't|won't)"
+_ASIDE_WORDS = r"(?:not|cannot|can't|isn't|doesn't|don't|won't)"
 _NEGATION_BEFORE = re.compile(rf"\b{_NEGATION_WORDS}\b(?:\W+\w+){{0,6}}\W*$", re.IGNORECASE)
-_NEGATION_ASIDE = re.compile(rf"\b({_NEGATION_WORDS})\s*,[^,;.!?]{{1,40}},", re.IGNORECASE)
-_CLAUSE_BREAK = re.compile(r"[;,]|[.!?](?=\s|$)|\b(?:but|however)\b", re.IGNORECASE)
+_NEGATION_ASIDE = re.compile(rf"\b({_ASIDE_WORDS})\s*,[^,;.!?]{{1,40}},", re.IGNORECASE)
+_EMPHATIC = re.compile(r"\b(?:no doubt|without (?:a |any )?doubt|no question)\b", re.IGNORECASE)
+_CLAUSE_BREAK = re.compile(r"[;,:\n\u2013\u2014]|\s-\s|[.!?](?=[\s\"'\u201d\u2019)\]]|$)|\b(?:but|however|because)\b",
+                           re.IGNORECASE)
 # A verbatim enquiry quote needs at least this many normalised characters (and a word character).
 MIN_ENQUIRY_QUOTE_CHARS = 4
 # Wording that asserts certainty or commercial facts the sources cannot support (REF §3 "Do not invent").
@@ -271,7 +276,7 @@ def forbidden_hits(text: str) -> list[str]:
     hits = []
     for rx, label in FORBIDDEN:
         for m in rx.finditer(text):
-            window = _NEGATION_ASIDE.sub(r"\1", text[max(0, m.start() - 80):m.start()])
+            window = _NEGATION_ASIDE.sub(r"\1", _EMPHATIC.sub(" ", text[max(0, m.start() - 80):m.start()]))
             breaks = list(_CLAUSE_BREAK.finditer(window))
             if breaks:
                 window = window[breaks[-1].end():]

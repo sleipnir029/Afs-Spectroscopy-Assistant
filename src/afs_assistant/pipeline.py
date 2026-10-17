@@ -201,12 +201,16 @@ def finalize(a: Assessment, report: Report,
     flagged = renumbered
     data["recommendations"] = [recs[i] for i in keep]
 
+    demoted_contradiction = False
     for i, p in enumerate(data["premise_checks"]):
         if p["verdict"] in ("supported", "contradicted") and not p["citations"]:
             change = {"location": f"premise_checks[{i}]", "item": dict(p),
                       "reason": f"verdict {p['verdict']} without a verified citation; changed to not_covered"}
             if p["verdict"] == "contradicted":
                 change["corrects"] = "status_vs_premises"
+                flagged[f"premise_checks[{i}]"] = ("contradiction not verified; changed to not covered, "
+                                                   "explanation is the model's original")
+                demoted_contradiction = True
             removed.append(change)
             p["verdict"] = "not_covered"
 
@@ -220,6 +224,10 @@ def finalize(a: Assessment, report: Report,
                             "reason": f"{name} failed; status changed to {new_status}", "corrects": name})
             data["decision_status"] = new_status
             flagged["status_reason"] = "status changed by verification; this reason text is the model's original"
+    # The model's own premise_not_supported may rest on a contradiction that failed verification.
+    if (demoted_contradiction and data["decision_status"] == "premise_not_supported"
+            and not any(p["verdict"] == "contradicted" for p in data["premise_checks"])):
+        flagged.setdefault("status_reason", "the contradiction behind this status failed verification")
     return Assessment.model_validate(data), removed, flagged
 
 
