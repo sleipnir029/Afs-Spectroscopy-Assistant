@@ -1,0 +1,458 @@
+{
+ "decision_status": "outside_supported_scope",
+ "status_reason": "The customer's first two targets, line pressure and flow rate, are non-optical process variables that no supplied source covers; fiber-optic spectroscopy here reports chemical and morphological information, not pressure or flow. A spectroscopic indicator of blockage onset can only be a hypothesis, so the shortlist is conditional.",
+ "premise_checks": [
+  {
+   "premise": "Fiber-optic products can measure the line pressure and flow rate of the slurry.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source describes an optical or spectroscopic measurement of pressure or flow rate; the sources describe chemical and morphological information from spectra, so this part of the request lies outside the material.",
+   "citations": []
+  },
+  {
+   "premise": "Fiber-optic products can give early warning when the pipe starts to block.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses blockage, deposition or fouling detection, so early warning of blockage is not covered.",
+   "citations": []
+  },
+  {
+   "premise": "A slurry in a transfer pipe can be monitored in-line with fiber-optic probes.",
+   "verdict": "precedent_only",
+   "explanation": "Fiber probes are shown being used in-line on a flowing process stream, which is a reason to test a slurry, not proof that it works for this slurry or this blockage question.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Slurry composition (solid and liquid phases), particle size distribution and solids concentration.",
+  "Whether the slurry is optically transparent or thick and strongly scattering.",
+  "What counts as blockage (pressure drop, flow reduction, wall deposit) and the required warning lead time.",
+  "Operating temperature and pressure ranges, pipe diameter and material, and the available probe access point.",
+  "Slurry abrasiveness and fouling tendency, and what cleaning is possible at the measurement point.",
+  "Required accuracy for line pressure and flow, and the existing reference instrumentation."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the solid and liquid phases of the slurry, their particle size distribution and the solids concentration?",
+   "why_it_matters": "These decide which optical method and probe geometry can see the slurry at all.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Is the slurry optically transparent, or thick and strongly scattering?",
+   "why_it_matters": "This decides the technique: transmission or transflection for a clear liquid, diffuse reflection for an opaque, scattering one.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What exactly counts as a blockage, and how much warning time before it occurs is needed?",
+   "why_it_matters": "It sets what the optical measurement must detect and how early, which shapes the method choice.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What are the operating temperature and pressure ranges, the pipe diameter and material, and the available probe access point?",
+   "why_it_matters": "These decide probe, fiber and installation feasibility at the pipe.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Is the slurry abrasive or prone to fouling, and what cleaning is possible at the measurement point?",
+   "why_it_matters": "This decides whether a contact probe is viable and how much maintenance it would need.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "ATR is a common in-line route for liquids and pastes and samples only a thin layer at the crystal, so a flush ATR probe would sense the layer next to the pipe wall, where deposits start. Mid-IR gives well-defined, selective absorption bands.",
+   "conditions": "The slurry must wet the ATR crystal and must not abrade or foul it.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman gives a molecular fingerprint and tolerates water better than infrared methods, so it is a natural single-method comparison for a likely aqueous slurry. Its signal is weak and can be swamped by fluorescence.",
+   "conditions": "Check the fluorescence background on real slurry samples.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "NIR reflection is the most common in-line fiber-probe method and suits opaque, strongly scattering samples, so it would fit an optically thick slurry. Whether this slurry is scattering or transparent is unknown.",
+   "conditions": "Applies only if the slurry is optically thick and scattering rather than transparent.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "A single in-line fiber probe at the pipe wall: a flush ATR head for MIR, or a Raman probe for the comparison. Geometry (contact ATR versus a windowed reflection or Raman probe) depends on the answers to Q1 and Q2.",
+  "location": "One measurement point on the transfer pipe, chosen where deposits or solids build-up would show first; access for cleaning must be confirmed (Q4, Q5).",
+  "fiber_link": "Mid-IR needs chalcogenide or polycrystalline fibers or hollow waveguides; Raman and NIR use silica fibers. No fiber length, product code or rating is stated in the sources and none is assumed here.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1 (about 2.5-25 µm). The usable range depends on the instrument, fiber and ATR crystal actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "The Raman shift (cm-1) is the spectral axis; the laser excitation wavelength is stated separately and is not fixed yet.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Line pressure and flow rate cannot be obtained from optical spectra, so the shortlist addresses only a possible blockage proxy, not the customer's first two targets.",
+   "rule_ids": [
+    "R-GEN-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "If the slurry is optically thick or highly scattering, a contact ATR or Raman probe may see only a thin or local volume that does not represent the bulk stream.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "A fluorescence background or an unrepresentative probe spot could make a spectral change look like blockage when it is not.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Abrasion, fouling or deposits on the probe crystal or window could cause false signals and extra maintenance.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-CAL-1"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative slurry samples or process states across the expected composition, particle-size, temperature and flow variation, including a near-blockage state.",
+    "purpose": "Representative samples or process states",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure every sample with the single methods first (MIR ATR, then Raman) through a fiber probe at controlled temperature, and record the raw spectra.",
+    "purpose": "Single methods first",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference values for each sample: solids concentration and composition by a laboratory method, and the blockage state from the existing process instrumentation.",
+    "purpose": "Independent reference measurements",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "independent reference measurements",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build one chemometric model per method and validate it on held-out runs or batches.",
+    "purpose": "Validation on held-out data",
+    "citations": []
+   },
+   {
+    "step": "Agree the numeric go/no-go criteria with the customer (required warning lead time and acceptable false-alarm rate) before the trial starts.",
+    "purpose": "Go/no-go basis from the customer",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "the basis for the go / no-go decision",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Solids concentration and composition by a laboratory method, and the blockage state from existing process instrumentation.",
+  "decision_basis": "Numeric criteria set by the customer (warning lead time, false-alarm rate); a method passes only if its model detects the blockage state on held-out runs."
+ },
+ "assumptions": [
+  "The slurry is a flowing, heterogeneous dispersion of solids in a liquid and is measured at one point on the pipe wall.",
+  "The customer accepts that line pressure and flow rate are measured by conventional sensors, not by fiber-optic spectroscopy.",
+  "The blockage question is reframed as detecting a change in the slurry or the wall-adjacent layer at the probe."
+ ],
+ "not_in_sources": [
+  "Whether fiber-optic products can measure line pressure or flow rate (no supplied source covers optical pressure or flow measurement).",
+  "Whether fiber-optic spectroscopy can give early warning of pipe blockage or deposition (no supplied source covers this)."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Line pressure",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is a stated target, but optical spectra report chemical and morphological information, not pressure.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "a pressure transmitter"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 4,
+     "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Flow rate",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is a stated target and is not a spectroscopic quantity.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "a flow meter"
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Wall-adjacent deposit or slurry layer at the probe (blockage precursor)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "A contact ATR probe sees only a thin layer at the crystal, so it senses material building up at the pipe wall, where blockage begins.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Change in bulk slurry composition or scattering",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "A Raman probe samples a larger volume than ATR, so it senses changes in the bulk slurry rather than only at the wall.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P5",
+   "name": "Process temperature",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It is unknown and should be available because it affects the spectra and the choice of probe and fiber.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "one probe, standard silica fibers",
+   "maintenance": "probe cleaning; watch laser and fluorescence",
+   "performance_fit": "water-tolerant fingerprint of the bulk slurry",
+   "cost_drivers": "Raman spectrometer, laser, fiber probe and chemometric model",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P3",
+    "P5"
+   ],
+   "ease_of_use": "flush ATR probe, tight contact needed",
+   "maintenance": "crystal cleaning; watch abrasion and fouling",
+   "performance_fit": "selective fingerprint of the wall-adjacent layer",
+   "cost_drivers": "FTIR spectrometer, mid-IR fibers, ATR probe and chemometric model",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Both candidate methods need chemometric models: MIR and Raman calibrations are specific to the sample matrix, and a blockage indicator would most likely be a classification model built on labelled samples. Reference data for the blockage state must come from the process, not from the spectra.",
+ "realtime_tracking_note": "The early-warning goal is an in-line, time-resolved measurement: spectra would be acquired continuously at the probe and tracked against the model. The acquisition rate and the required warning lead time would have to be matched to the process.",
+ "future_direction": "A later step could combine mid-IR ATR and Raman in one multispectral probe, since their spectra are complementary; any gain would still have to be shown against the best single method on independent runs.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If the lab trial shows the slurry is transparent, or that Raman detects a blockage-related change better than mid-IR ATR, the single-method choice would change. If pressure and flow are the real priority, no optical method applies and conventional sensors are needed.",
+  "next_step": "Run a feasibility trial on representative slurry samples with the single methods, starting with a mid-IR ATR probe."
+ },
+ "brief_answer": "Line pressure and flow rate are not spectroscopic quantities, so fiber-optic spectroscopy cannot measure them; conventional pressure and flow sensors are needed. For blockage, an optical probe could be tested as a proxy: mid-IR ATR first, Raman as a comparison, and NIR reflection only if the slurry is optically thick. Whether any method sees blockage early enough is unknown and needs a lab trial on your slurry."
+}
