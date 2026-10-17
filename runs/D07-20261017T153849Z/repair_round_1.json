@@ -1,0 +1,514 @@
+{
+ "round": 1,
+ "hard_failures_before": 1,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "A method shortlist can be justified: MIR-ATR is the single method to test first, with NIR reflection as a conditional second candidate and a MIR-ATR plus NIR combination as a later hypothesis. The deciding facts (required accuracy and response time, the melt's optical regime, the real interface temperature and the build-up behaviour) are still open, so this is a provisional shortlist, not a probe selection.",
+  "premise_checks": [
+   {
+    "premise": "An in-line fiber-probe optical measurement can detect composition changes in a hot polymer melt that contains an active pharmaceutical ingredient.",
+    "verdict": "precedent_only",
+    "explanation": "A shown in-line application reports API spectra in hot polymer obtained with an ATR probe coupled to an FTIR spectrometer, and NIR reflection together with MIR-ATR was used to control polymer extrusion in-line; this is a reason to test the approach, not proof that it works for this process.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "premise": "The existing offline assays can serve as the independent reference for the in-line comparison.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source describes the customer's offline assays or their comparability with an in-line measurement, so this has to be confirmed by the customer.",
+    "citations": []
+   }
+  ],
+  "requirements_stated": [],
+  "key_unknowns": [
+   "Required accuracy, detection limit and response time for the composition change.",
+   "Optical regime of the melt (clear, turbid or opaque) and its homogeneity at the measurement point.",
+   "Actual melt temperature and pressure and the available installation point and space.",
+   "Base polymer, API and additives: spectral interferences and the range any calibration must cover.",
+   "Build-up rate and material at the interface, and the cleaning method used there.",
+   "Details of the offline assays: method, sampling point, uncertainty and time lag."
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "Which composition changes must be detected, over what range, and with what required accuracy, detection limit and response time?",
+    "why_it_matters": "These values are the go/no-go criteria and decide whether NIR or MIR-ATR can meet the target.",
+    "affects": [
+     "method",
+     "technique"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "Where in the line would the measurement sit (barrel, die, melt pipe), and what are the actual melt temperature, pressure and available space at that point?",
+    "why_it_matters": "They decide whether a contact ATR probe or a remote reflection probe is possible, and which fiber and window can be used.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What is the melt's optical behaviour at the measurement point - clear, turbid or opaque - and is it homogeneous there?",
+    "why_it_matters": "It decides between NIR transmission or transflection, NIR reflection and MIR-ATR.",
+    "affects": [
+     "method",
+     "technique"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What are the base polymer, the API and any additives, and how much build-up forms on hot surfaces and how is the interface cleaned?",
+    "why_it_matters": "This sets the spectral interferences, the fouling risk and the cleaning compatibility of the probe.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "What exactly are the offline assays - method, sampling point, uncertainty and time lag between sampling and result?",
+    "why_it_matters": "They are the independent reference against which any in-line signal is compared and calibrated.",
+    "affects": [
+     "status",
+     "method"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "MIR-ATR is the candidate with a directly comparable shown application: API spectra in hot polymer were obtained with an ATR probe coupled to an FTIR spectrometer, and NIR reflection together with MIR-ATR was used to control polymer extrusion in-line. MIR gives well-defined absorption bands, and ATR avoids the path-length problem that a thick, hot melt would create in transmission.",
+    "conditions": "Applies if the melt makes tight contact with the ATR crystal and the interface temperature and cleaning regime suit the probe.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "NIR reflection is the most common in-line fiber-probe method and is used for opaque or highly concentrated products, and the same extrusion example shows an NIR reflection probe on the barrel. It is conditional because the melt's optical regime is not yet known and NIR bands overlap, so a matrix-specific calibration is required.",
+    "conditions": "Applies if the melt is opaque or strongly scattering at the probe and the measured surface represents the bulk.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "comparison",
+    "combined_with": [
+     "NIR",
+     "NIR"
+    ],
+    "rationale": "Combining MIR-ATR with NIR reflection is a hypothesis that the two data blocks together describe the melt better than either alone, and the supplied extrusion example shows both techniques on the same process. Any gain must be shown against the best single method before a second instrument is kept.",
+    "conditions": "Test only after both single-method trials, and only if the two probes can look at the same small area of the melt with synchronised acquisition.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+      "claim_kind": "method_gain"
+     },
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "the data from each method must be obtained simultaneously.",
+      "claim_kind": "method_gain"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
+      "claim_kind": "method_gain"
+     },
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   },
+   {
+    "id": "M4",
+    "method": "Fluorescence",
+    "technique": "fluorescence_probe",
+    "role": "not_recommended",
+    "combined_with": [],
+    "rationale": "No fluorescent species or indicator has been identified in the polymer melt, and most chemicals do not fluoresce, so fluorescence would not measure the composition change directly.",
+    "conditions": "Reconsider only if the API or an additive is shown to fluoresce under process conditions.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "However, most chemicals do not exhibit this property.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Contact ATR probe at a barrel or die port for the first test, with an NIR reflection probe as the non-contact alternative; a combined ATR plus reflection probe only as a later step. Probe choice, window material and fiber link are fixed after Q2 to Q4.",
+   "location": "The measurement point in the extrusion line is not yet stated by the customer; it must be a point where the melt composition is representative.",
+   "fiber_link": "The link length and fiber family depend on the method and on the chosen port; no source states an achievable mid-infrared link length.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "These immersion probes operate on the ATR principle but allow analysis at a significant distance from the spectrometer, without the need for sampling.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "MIR",
+    "statement": "Nominal method range 4000-400 cm-1; the usable range depends on the instrument, fiber, crystal and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal method range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Build-up on the ATR crystal or probe window can drift the baseline and reduce signal, so the chosen interface may need frequent cleaning or a different window design.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "The real melt temperature and pressure at the intended port are unknown; if they exceed what the selected fiber and probe tolerate, the interface must change.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "The offline assays may not be comparable to the in-line measurement point (different sampling, time lag, heterogeneity), which would weaken the calibration and the comparison.",
+    "rule_ids": [
+     "R-CAL-1"
+    ],
+    "citations": []
+   },
+   {
+    "risk": "The API's spectral contribution may be masked by the polymer matrix or by additives, or the required detection limit may be below what NIR or MIR-ATR can reach.",
+    "rule_ids": [
+     "R-NIR-4"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative melt samples or process states that span the expected API range and the expected physical variation (polymer grade, temperature), and record the offline assay value for each as the independent reference.",
+     "purpose": "Representative samples and an independent reference",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Measure these samples with the single method first, MIR-ATR at process temperature, and build a calibration against the offline assay.",
+     "purpose": "Single method first: MIR-ATR",
+     "citations": [
+      {
+       "doc": "S02",
+       "page": 14,
+       "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+       "claim_kind": "application_precedent"
+      }
+     ]
+    },
+    {
+     "step": "Repeat with NIR reflection on the same samples and, where possible, the same spot, and compare its ability to track the composition change with MIR-ATR.",
+     "purpose": "Second single method for comparison",
+     "citations": []
+    },
+    {
+     "step": "Only after both single-method trials, test the combined MIR-ATR plus NIR measurement at the same spot with synchronised data, and compare the fused model against the better single method.",
+     "purpose": "Combination as a later hypothesis",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 5,
+       "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
+       "claim_kind": "method_gain"
+      }
+     ]
+    },
+    {
+     "step": "Validate the chosen model on held-out runs or batches not used for calibration, and decide go/no-go against the customer's required accuracy, detection limit and response time.",
+     "purpose": "Independent validation and go/no-go basis",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "The customer's existing offline assay, with a defined sampling point and uncertainty.",
+   "decision_basis": "The numerical accuracy, detection limit and response time must come from the customer (Q1)."
+  },
+  "assumptions": [
+   "The melt reaches the probe interface and can be presented to it without changing the process.",
+   "The offline assay values are traceable to the same material that passes the measurement point.",
+   "Probe and fiber materials can be selected for the real interface temperature once Q2 is answered."
+  ],
+  "not_in_sources": [
+   "The temperature rating of any probe, fiber or window at a hot extrusion interface is not stated in the supplied material.",
+   "No source states an achievable link length for a mid-infrared fiber; the mid-infrared fiber and waveguide examples given are short laboratory lengths.",
+   "No source covers probe compatibility with a specific polymer or API under process conditions."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "API concentration (composition change) in the melt",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "This is the target variable whose change in the melt must be detected.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "MIR",
+     "sensor": "ATR probe coupled to a mid-infrared spectrometer",
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Melt temperature at the measurement point",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The interface is hot, and temperature affects the melt state, the contact at the probe and the spectral response.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor at the probe interface",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Base polymer and additive composition (matrix)",
+    "kind": "qualitative",
+    "necessity": "required",
+    "why": "The matrix and additives set the spectral interferences and the range over which a calibration stays valid.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "customer formulation records and existing offline assay",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P4",
+    "name": "Build-up (fouling) at the probe interface",
+    "kind": "qualitative",
+    "necessity": "required",
+    "why": "Build-up on the crystal or window can change the signal and drives the cleaning interval and data validity.",
+    "measured_by": {
+     "type": "not_measurable_inline",
+     "method": null,
+     "sensor": null,
+     "alternative": "scheduled inspection and cleaning log, plus a reference spectrum on a clean probe"
+    },
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "Silica fibers, standard optics, familiar in-line setup",
+    "maintenance": "Reference checks and probe cleaning if build-up appears",
+    "performance_fit": "Least effort to see whether any optical signal tracks composition",
+    "cost_drivers": "One NIR spectrometer, one reflection probe, calibration samples",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "Contact ATR probe on a defined port at the barrel",
+    "maintenance": "Crystal cleaning and reference checks; fouling-sensitive",
+    "performance_fit": "Closest fit: shown API-in-polymer extrusion application and sharp bands",
+    "cost_drivers": "One MIR spectrometer, ATR probe and MIR fiber link, calibration samples",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O3",
+    "tier": "extended",
+    "recommendation_ids": [
+     "M3"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "Two spectrometers and two probes, aligned at one port",
+    "maintenance": "Separate calibration and diagnostics for each instrument",
+    "performance_fit": "Most information, but it must beat the best single method to be kept",
+    "cost_drivers": "Two spectrometers, two probes, synchronisation and fusion effort",
+    "fusion_note": "Fusion level: start with one calibration model per method as the baseline, then fuse the two spectral blocks after scaling, because variables from different methods are not equivalent. Both probes must look at the same small area of the melt, and the two data streams must be normalised to a common time step. Each instrument keeps its own calibration and diagnostics, and the fused model must beat the best single method on independent runs, otherwise the second instrument is dropped.",
+    "citations": []
+   }
+  ],
+  "chemometrics_note": "Any NIR or MIR calibration is specific to the matrix: build it on representative melt samples with the offline assay as reference, and re-validate it after a change of polymer grade, additive or API level.",
+  "realtime_tracking_note": "Both candidates can be run continuously in-line; the comparison should record time-resolved data so that real composition changes and drift caused by build-up can be separated.",
+  "future_direction": "Once the informative spectral regions are identified, a compact LED-based fiber sensor could later replace the full spectrometer for routine control.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "supplied",
+   "what_would_change_it": "If the melt proves optically clear and homogeneous, or if build-up makes a contact crystal unworkable, the first choice shifts towards a non-contact NIR reflection or transmission probe. A required detection limit that neither NIR nor MIR-ATR can reach would move the plan to the combined option.",
+   "next_step": "Answer the clarification questions above, then run the MIR-ATR trial on representative melt samples with the offline assay as reference."
+  },
+  "brief_answer": "Test mid-infrared ATR first on your hot melt: a comparable in-line polymer-extrusion case with an API is shown in our material. Compare it with NIR reflection on the same samples, and treat a combined MIR-ATR plus NIR measurement as a later hypothesis only. Before choosing a probe we need your target accuracy and response time, the melt's optical appearance and homogeneity, the real interface temperature and build-up behaviour, and details of your offline assays."
+ }
+}
