@@ -1,0 +1,535 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified for water in a petroleum stream, with explicit assumptions. The strongest source-supported candidate is MIR ATR, with Raman as a comparison. NIR and UV-Vis remain conditional because the optical regime of the stream is unknown. Fluorescence is not recommended for direct water determination.",
+ "premise_checks": [
+  {
+   "premise": "A fiber-based measurement closer to the process will allow changes to be noticed sooner than laboratory sampling.",
+   "verdict": "supported",
+   "explanation": "The sources state that fiber optic probes enable on-site online analysis and near real-time results, eliminating sampling delays.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 2,
+     "quote": "Fiber optic probes and cells are being integrated into reactors and production lines of ongoing technological processes, enabling on-site online analysis and obtaining results in near real time.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "The analyzer can be located outside the process area while the measurement is made closer to the process.",
+   "verdict": "supported",
+   "explanation": "Fiber optics allow the spectrometer to be located away from the process point. However, the achievable distance depends on the fiber type and method; long cables are stated only for low-OH silica fibers, not for MIR fibers.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "The use of fiber optics is critical here, as it allows the sensitive spectrometers to be located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "premise": "A first comparison experiment should be planned before selecting equipment.",
+   "verdict": "supported",
+   "explanation": "The AFS guided pathway and the laboratory concept both describe multi-method trials on representative samples as the first step to select the best method.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 20,
+     "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "The ability to test various optical spectroscopy approaches is crucial for solving complex analytical problems, such as analyzing natural and industrial samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Water determination in a petroleum stream",
+  "Fiber-based measurement closer to the process",
+  "Analyzer outside the process area",
+  "Earlier change detection than laboratory sampling",
+  "Clarification questions and first comparison experiment design before equipment selection"
+ ],
+ "key_unknowns": [
+  "Water concentration range and required accuracy",
+  "Matrix composition and potential interferences",
+  "Optical behavior of the petroleum stream (transparent, opaque, scattering)",
+  "Temperature and pressure at the measurement point",
+  "Installation point and distance from analyzer",
+  "Cleaning and fouling considerations",
+  "Required response time",
+  "Reference method details and sampling protocol"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the expected water concentration range and the required accuracy or detection limit?",
+   "why_it_matters": "This determines whether NIR is viable at all. The sources state NIR may lack sensitivity for trace components in a bioprocess context; the equivalent limit for water in petroleum is unknown and must be established. MIR ATR is more sensitive but the calibration range must match the process.",
+   "affects": [
+    "method_choice",
+    "go_no_go_criteria"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the composition of the petroleum stream? Specifically, what other components are present (e.g., hydrocarbons, additives, dissolved gases) and do any of them absorb in the same spectral regions as water?",
+   "why_it_matters": "Interferences determine whether a single method can resolve water or whether a combination is needed. MIR ATR has well-defined bands and high selectivity, but overlapping bands from other components could still require chemometric separation.",
+   "affects": [
+    "method_choice",
+    "calibration_design"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the optical behavior of the stream? Is it transparent, opaque, highly scattering, or does it contain particulates or emulsions?",
+   "why_it_matters": "This decides the measurement geometry. Transmission or transflection requires a transparent or semi-transparent liquid; diffuse reflection suits opaque or scattering samples; ATR requires tight contact and suits liquids, pastes and soft solids. The wrong geometry will fail.",
+   "affects": [
+    "technique_choice",
+    "probe_selection"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What are the temperature and pressure at the proposed measurement point, and what is the process environment (e.g., hazardous area classification, vibration, dust)?",
+   "why_it_matters": "Probe and fiber materials must withstand the process conditions. The analyzer location outside the process area is supported, but the fiber link length and routing depend on the distance and environment. No source states an achievable length for an MIR fiber link.",
+   "affects": [
+    "installation",
+    "fiber_selection",
+    "probe_selection"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What is the distance between the proposed measurement point and the analyzer location, and what fiber routing constraints exist?",
+   "why_it_matters": "Long cables are stated only for low-OH silica fibers. MIR fibers and hollow waveguides are shown only at laboratory lengths. If the distance is large, MIR may be impractical and NIR or Raman may be preferred.",
+   "affects": [
+    "method_choice",
+    "fiber_selection",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q6",
+   "question": "What is the current laboratory reference method for water determination, and what is its accuracy and sampling protocol?",
+   "why_it_matters": "The reference method defines the independent values for calibration and validation. Without a reliable reference, no chemometric model can be built or validated.",
+   "affects": [
+    "feasibility_experiment",
+    "calibration_design"
+   ]
+  },
+  {
+   "id": "Q7",
+   "question": "What is the required response time for detecting a change in water content?",
+   "why_it_matters": "This determines whether a full-spectrum analyzer or a simplified sensor is appropriate, and whether data acquisition speed is a constraint. Online measurements require high-speed spectral acquisition, but the required speed depends on the process dynamics.",
+   "affects": [
+    "instrument_selection",
+    "go_no_go_criteria"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "REC-1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "rationale": "MIR ATR is the strongest source-supported candidate for water in petroleum. A laboratory example shows MIR-ATR spectra of water in petroleum, with well-defined absorption bands. MIR has high selectivity and ATR is the usual in-line route for liquids.",
+   "conditions": "Requires tight contact with the liquid, a fiber that transmits MIR light (CIR or PIR), and a manageable fiber link length. The stream must be compatible with the ATR crystal material.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis. Due to the high extinction coefficients of various molecules in this region, the method is highly sensitive and can be used to analyze a wide variety of samples: solids, liquids, and gases.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR) by connecting appropriate attachments and probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "REC-2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "rationale": "Raman is well suited to aqueous media because water interferes less than in infrared methods. It is a vibrational method that can provide complementary information. However, Raman signals are weak and can be swamped by fluorescence, which must be checked on real petroleum samples.",
+   "conditions": "Requires a Raman probe and laser excitation. Fluorescence background from the petroleum matrix must be assessed. The Raman shift range and excitation wavelength must be selected for water detection.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "Measurement of the Raman scattering (RS) effect, is also a type of vibrational spectroscopy.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "From a technical standpoint, measuring Raman spectra is hampered by the low intensity of Raman signals, which are several orders of magnitude weaker than IR absorption peaks in the IR range (when these spectra are compared in the original photon count units).",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "REC-3",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "rationale": "NIR transmission or transflection is the preferred geometry for transparent or semi-transparent liquids. NIR works with silica fibers, which support long cable runs, making it attractive for remote analyzer placement. However, NIR bands are broad and overlapping, and sensitivity for trace water may be insufficient.",
+   "conditions": "Applies only if the petroleum stream is transparent or semi-transparent and the water concentration is above the NIR sensitivity limit. The optical pathlength must be controlled.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "REC-4",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "rationale": "NIR diffuse reflection suits opaque, concentrated or scattering samples. If the petroleum stream is opaque or contains scattering particulates, this geometry may be appropriate.",
+   "conditions": "Applies only if the stream is opaque or highly scattering. Reflection signals are sensitive to surface characteristics and particle size, so physical variation can mimic composition change.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Inline NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Because the light does not penetrate deeply, the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "REC-5",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "rationale": "Fluorescence only measures species that fluoresce or a justified fluorescent indicator. Water does not fluoresce, and no fluorescent indicator has been identified for this application. Most chemicals do not exhibit fluorescence.",
+   "conditions": "Would only apply if a fluorescent water-sensitive indicator were added to the stream, which is not stated and would require separate justification.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Another highly sensitive method, UV/Vis fluorimetry, is based on the secondary emission of excited molecules of certain substances, most often of biological origin. However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "Of course, it is limited to the samples containing at least one fluorescent component that often has a biological or natural origin.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "REC-6",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "not_recommended",
+   "rationale": "UV-Vis ATR is technically possible but water determination in petroleum by UV-Vis is not supported by any source. UV-Vis has low selectivity and overlapping signals in mixtures, making it a poor candidate for water in a complex petroleum matrix without a specific absorption feature.",
+   "conditions": "Would only apply if a specific UV-Vis absorption feature for water or a water-related species were identified in the petroleum matrix.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "the strong overlap of spectral signals in UV spectra complicates the analysis of real samples and makes the use of chemometric algorithms a necessary component of qualitative mixture analysis methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "For MIR ATR: an immersion ATR probe with a ZrO2 or diamond crystal tip in direct contact with the flowing petroleum stream. The probe is inserted into the process line or reactor. For Raman: a Raman fiber probe in contact with the stream. For NIR transmission/transfection: a transmission or transflection probe with a controlled optical pathlength inserted into the stream.",
+  "location": "At a point in the process where the water content is representative and where changes are expected to be detected. The exact location depends on the process flow and mixing characteristics.",
+  "fiber_link": "For MIR: CIR or PIR fiber, length to be confirmed with AFS. For Raman and NIR: silica fiber, with long runs stated for low-OH silica fibers.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 10,
+    "quote": "These immersion probes operate on the ATR principle but allow analysis at a significant distance from the spectrometer, without the need for sampling.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "The key experimental action is the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal MIR range is 4000-400 cm-1 (2.5-25 µm). The usable range depends on the instrument, fiber and probe actually selected. For water in petroleum, the relevant absorption bands must be identified from the measured spectra.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift is reported in cm-1. The laser excitation wavelength must be stated separately. The relevant Raman shift range for water must be identified from the measured spectra.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm. The usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The petroleum stream may be opaque or highly scattering, making transmission or transflection NIR impossible and requiring diffuse reflection or ATR instead.",
+   "rule_ids": [
+    "R-GEO-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The water concentration may be below the sensitivity limit of NIR, making MIR ATR or Raman the only viable options.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The MIR fiber link length may be too short for the required distance between the measurement point and the analyzer. No source states an achievable length for an MIR link.",
+   "rule_ids": [
+    "R-FIB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "risk": "Fouling or deposits on the ATR crystal can change the measured surface and bias the water determination. ATR samples only a surface layer a few micrometres deep.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns, providing information on molecular composition and biochemical changes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman signals may be swamped by fluorescence from the petroleum matrix, making water detection impossible without special filters or probe designs.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "observing Raman bands is often complicated by light scattering from the illuminating laser, and for many organic compounds, by the superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The calibration may not transfer if the petroleum matrix composition changes. NIR and Raman calibrations are specific to the matrix and must be re-validated on new material.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Sample inhomogeneity or process turbulence at the measurement point may make the measurement unrepresentative of the bulk stream.",
+   "rule_ids": [
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples",
+    "purpose": "Cover the expected range of water concentrations and the expected variation in petroleum matrix composition. Include samples from different batches or process conditions.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 3,
+      "quote": "The ability to test various optical spectroscopy approaches is crucial for solving complex analytical problems, such as analyzing natural and industrial samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure independent reference values",
+    "purpose": "Use the customer's current laboratory water determination method on the same samples to obtain reference water concentrations. The reference method must be reliable and its accuracy known.",
+    "citations": []
+   },
+   {
+    "step": "Acquire spectra with single methods first",
+    "purpose": "Measure MIR ATR spectra, Raman spectra, and NIR transmission/transfection or diffuse reflection spectra (depending on the optical regime) on the same samples. Do not combine methods yet.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 3,
+      "quote": "The ability to test various optical spectroscopy approaches is crucial for solving complex analytical problems, such as analyzing natural and industrial samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build and validate single-method calibration models",
+    "purpose": "Use chemometric methods (e.g., PLS regression) to relate spectra to reference water concentrations. Validate on held-out runs or batches, not just random subsets of the same batch.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 2,
+      "quote": "This is achieved through a special branch of analytical chemistry called chemometrics, which provides chemists with a rich toolkit for constructing calibration and classification models, as well as methods for in-depth research data analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Compare single-method performance",
+    "purpose": "Compare the prediction accuracy of MIR ATR, Raman, and NIR (if applicable) against the reference values. Select the best single method based on the go/no-go criteria.",
+    "citations": []
+   },
+   {
+    "step": "Test combinations only if no single method is sufficient",
+    "purpose": "If no single method meets the accuracy requirement, test combinations (e.g., MIR ATR + Raman) as a hypothesis. Compare the combination against the best single method.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "This often provides a synergistic effect, allowing one to solve a problem that either method alone cannot handle or only partially.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "The customer's current laboratory water determination method, applied to the same samples used for spectral acquisition. The reference method must be independent of the optical methods being tested.",
+  "decision_basis": "The go/no-go criteria must be defined by the customer based on their required accuracy and response time. A method passes if its validated prediction error on held-out samples is within the customer's required accuracy for water determination. If no method meets the criteria, the investigation should either expand the sample set, test combinations, or conclude that fiber-based measurement is not suitable for this application."
+ },
+ "assumptions": [
+  "The petroleum stream is a liquid at the measurement point.",
+  "The water concentration is within a range detectable by at least one of the candidate methods.",
+  "The stream is compatible with the probe materials (e.g., no aggressive solvents that would damage the ATR crystal or fiber).",
+  "The distance between the measurement point and the analyzer is within the achievable fiber link length for the selected method.",
+  "The customer's laboratory reference method provides sufficiently accurate water concentrations for calibration."
+ ],
+ "not_in_sources": [
+  "Achievable MIR fiber link lengths for process installations",
+  "Specific water absorption bands in petroleum for MIR, Raman, or NIR",
+  "Detection limits for water in petroleum by any optical method",
+  "Compatibility of ATR crystal materials with specific petroleum stream compositions",
+  "Response times for specific water determination applications",
+  "Any AFS product codes, prices, or component ratings"
+ ]
+}
