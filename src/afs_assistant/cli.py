@@ -169,6 +169,33 @@ def _external_replay(args: argparse.Namespace) -> int:
     return 1 if different else 0
 
 
+def _eval(args: argparse.Namespace) -> int:
+    """Deterministic checklist over saved runs; writes outputs/eval/summary.md and summary.json.
+    Exit 1 when a must-not item fails, else 0 (other failures are information in the summary)."""
+    from pathlib import Path
+
+    from afs_assistant import evaluate
+
+    if args.outputs and not args.set:
+        print("--outputs needs --set (one set per outputs directory).")
+        return 2
+    sets = [args.set] if args.set else list(evaluate.SETS)
+    results = {s: evaluate.evaluate_set(s, Path(args.outputs) if args.outputs else None, mermaid=args.mermaid,
+                                        cache_root=Path(args.external_cache) if args.external_cache else None)
+               for s in sets}
+    evaluate.write_summary(results, Path(args.out) if args.out else None)
+    must_not_failed = 0
+    for s, res in results.items():
+        t = res["totals"]
+        fails = sum(v["fail"] for v in t["per_item"].values())
+        scen = t["scenario_items"]
+        must_not_failed += scen["must_not"]["fail"]
+        print(f"{s}: {t['evaluated']}/{t['cases']} evaluated ({t['not_run']} not run); checklist failures {fails}; "
+              f"must fail {scen['must']['fail']}, must-not fail {scen['must_not']['fail']}")
+    print(f"summary: {Path(args.out) if args.out else evaluate.paths.OUTPUTS / 'eval'}/summary.md")
+    return 1 if must_not_failed else 0
+
+
 EXTERNAL_HELP = ("external evidence: live (search the web APIs; falls back to the curated library on a network "
                  "error or rate limit), cache (no network: answers HTTP requests from the recorded responses only; "
                  "the model calls run again, so queries that differ from the recorded run miss and fall back to "
@@ -193,12 +220,20 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("--external", choices=["live", "cache", "off"], default="live", help=EXTERNAL_HELP)
     a.set_defaults(func=_assess)
     r = sub.add_parser("run", help="assess a scenario set")
-    r.add_argument("--set", choices=["dev", "final"], required=True)
+    r.add_argument("--set", choices=["dev", "adversarial", "final"], required=True)
     r.add_argument("--only", help="comma-separated scenario ids")
     r.add_argument("--i-know-this-is-the-final-run", dest="final_ok", action="store_true")
     r.add_argument("--external", choices=["live", "cache", "off"], default="live", help=EXTERNAL_HELP)
     r.add_argument("--workers", type=int, default=4, help="scenarios assessed in parallel (1 = one at a time)")
     r.set_defaults(func=_run_set)
+    ev = sub.add_parser("eval", help="deterministic checklist over saved runs (no model calls)")
+    ev.add_argument("--set", choices=["dev", "adversarial"], help="one set (default: both)")
+    ev.add_argument("--outputs", help="outputs directory of the set (default outputs/<set>)")
+    ev.add_argument("--out", help="directory for summary.md/json (default outputs/eval)")
+    ev.add_argument("--mermaid", action="store_true", help="also render every Mermaid chart with mermaid-cli")
+    ev.add_argument("--external-cache", help="external full-text cache for the replay item "
+                                             "(default runs/external_cache)")
+    ev.set_defaults(func=_eval)
     e = sub.add_parser("external", help="external evidence commands")
     e_sub = e.add_subparsers(dest="external_command", required=True)
     rp = e_sub.add_parser("replay", help="re-verify a run's external items offline against the cached text")
