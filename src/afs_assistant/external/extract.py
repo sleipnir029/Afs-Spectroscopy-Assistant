@@ -25,6 +25,18 @@ INSTRUCTION = re.compile(
 )
 
 
+_TAG = re.compile(r"<[^>]*>")
+
+
+def clean_meta(text, removed: str = "[removed]") -> str:
+    """One metadata field from an API (title, venue, author): tags stripped, whitespace collapsed to one
+    line; an instruction-like value is replaced by `removed`. Applied before the fence and the render."""
+    if not isinstance(text, str):
+        return ""
+    text = normalize(_TAG.sub("", text))
+    return removed if INSTRUCTION.search(text) else text
+
+
 def clean(paragraphs: list[str]) -> tuple[list[str] | None, int]:
     """Normalise, drop instruction-like paragraphs; None if under MIN_CHARS. Returns (paragraphs, removed count)."""
     kept, removed = [], 0

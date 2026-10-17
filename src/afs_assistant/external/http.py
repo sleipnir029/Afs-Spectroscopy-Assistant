@@ -1,14 +1,18 @@
 """One guarded HTTP GET for all external clients, with a local response cache.
 
-Guards: http/https only, no IP-literal or localhost hosts, at most MAX_REDIRECTS redirects
-(each target checked again), at most MAX_BYTES, TIMEOUT_S per request, and a minimum
-interval per host (polite rate limits). Every response is cached under
+Guards: http/https only, no IP-literal, numeric-shorthand or localhost hosts, and (live, before
+every request) every address the host resolves to must be global (no loopback, private or
+link-local; DNS rebinding between this check and the connect is an accepted residual risk);
+at most MAX_REDIRECTS redirects (each target checked again), at most MAX_BYTES, TIMEOUT_S per
+connect/read, REQUEST_DEADLINE_S wall time per request (a slow drip-feed counts), and a
+minimum interval per host (polite rate limits). Every response is cached under
 runs/external_cache/http/<sha256(public url)>.json (gitignored).
 
 Modes: `live` (network, writes the cache), `cache` (cache only; a miss is unavailable),
 `off` (nothing). Any failure raises `Unavailable`. A `fatal` one (network error, timeout,
 rate limit, cache miss, mode off) makes the step fall back to the library; a non-fatal one
-(blocked url, too large, too many redirects, HTTP error status) only skips that source.
+(blocked url, too large, too many redirects, over the wall deadline, HTTP error status) only
+skips that source.
 Non-fatal failures are cached too, so `cache` mode replays them the same way.
 
 `CONTACT_EMAIL` (and an optional `OPENALEX_API_KEY`) are read from the environment or .env
@@ -23,6 +27,8 @@ import hashlib
 import ipaddress
 import json
 import os
+import re
+import socket
 import time
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -32,7 +38,8 @@ import httpx
 
 from afs_assistant import paths
 
-TIMEOUT_S = 8.0
+TIMEOUT_S = 8.0                 # per connect / read
+REQUEST_DEADLINE_S = 15.0       # wall time per request, redirects and body included
 MAX_REDIRECTS = 3
 MAX_BYTES = 10 * 1024 * 1024
 DEFAULT_INTERVAL_S = 0.2
@@ -83,10 +90,14 @@ def public_url(url: str | httpx.URL) -> str:
     return str(u.copy_with(params=params or None)) if params else str(u.copy_with(query=None))
 
 
+_NUMERIC_LABEL = re.compile(r"[0-9]+|0x[0-9a-f]*")
+
+
 def blocked_reason(url: httpx.URL) -> str | None:
+    """Static checks on the url (no DNS): scheme, local names, IP literals and numeric shorthand hosts."""
     if url.scheme not in ("http", "https"):
         return f"scheme {url.scheme!r} not allowed"
-    host = (url.host or "").strip("[]").lower()
+    host = (url.host or "").strip("[]").lower().rstrip(".")
     if not host:
         return "no host"
     if host == "localhost" or host.endswith((".localhost", ".local")):
@@ -94,8 +105,31 @@ def blocked_reason(url: httpx.URL) -> str | None:
     try:
         ipaddress.ip_address(host)
     except ValueError:
-        return None
-    return "IP-literal host not allowed"
+        pass
+    else:
+        return "IP-literal host not allowed"
+    # A host whose last label is a number is an IPv4 address to URL parsers and resolvers
+    # (127.1, 2130706433, 0x7f.1, 0177.0.0.1); a real top-level domain is never numeric.
+    if _NUMERIC_LABEL.fullmatch(host.rsplit(".", 1)[-1]):
+        return "numeric host not allowed"
+    return None
+
+
+def resolved_block_reason(host: str) -> str | None:
+    """Resolve `host`; a reason if any address is not global. Raises Unavailable (fatal) if DNS fails."""
+    host = host.strip("[]").rstrip(".")
+    try:
+        infos = socket.getaddrinfo(host, None, proto=socket.IPPROTO_TCP)
+    except (OSError, UnicodeError):
+        raise Unavailable("network error (DNS lookup failed)", host) from None
+    for info in infos:
+        address = str(info[4][0])
+        try:
+            if not ipaddress.ip_address(address).is_global:
+                return "host resolves to a non-public address"
+        except ValueError:          # e.g. a scoped IPv6 address
+            return "host resolves to a non-public address"
+    return None if infos else "host does not resolve"
 
 
 def _load_env() -> None:
@@ -171,7 +205,10 @@ class Fetcher:
             openalex_key: bool = False, accept: str | None = None) -> Response:
         """GET with the guards above. `email_param` names the query parameter for CONTACT_EMAIL (mailto/email)."""
         public_params = dict(params or {})
-        request = httpx.URL(url, params=public_params or None)
+        try:
+            request = httpx.URL(url, params=public_params or None)
+        except httpx.InvalidURL:            # e.g. an out-of-range dotted host such as 0177.0.0.1
+            raise Unavailable("invalid url", fatal=False) from None
         public = public_url(request)
         if self.mode == "off":
             raise Unavailable("external mode off", public)
@@ -191,12 +228,17 @@ class Fetcher:
             secret["api_key"] = self.openalex_key
         target = httpx.URL(url, params=secret or None)
         headers = {"Accept": accept} if accept else {}
+        deadline = self._monotonic() + REQUEST_DEADLINE_S
+        late = f"no complete response within {REQUEST_DEADLINE_S:.0f} s"
         for _ in range(MAX_REDIRECTS + 1):
-            why = blocked_reason(target)
-            if why:                         # a redirect to a blocked target
+            why = blocked_reason(target) or resolved_block_reason(target.host)
+            if why:                         # a blocked target (also after a redirect)
                 self._write_error(public, why)
                 raise Unavailable(why, public, fatal=False)
             self._wait(target.host)
+            if self._monotonic() > deadline:
+                self._write_error(public, late)
+                raise Unavailable(late, public, fatal=False)
             try:
                 with self._http().stream("GET", target, headers=headers) as resp:
                     if resp.is_redirect:
@@ -209,9 +251,15 @@ class Fetcher:
                         if len(body) > MAX_BYTES:
                             self._write_error(public, "response larger than 10 MB")
                             raise Unavailable("response larger than 10 MB", public, fatal=False)
+                        if self._monotonic() > deadline:     # a server drip-feeding bytes never hits TIMEOUT_S
+                            self._write_error(public, late)
+                            raise Unavailable(late, public, fatal=False)
                     kept = {k: resp.headers[k] for k in KEPT_HEADERS if k in resp.headers}
                     result = Response(public, resp.status_code, kept, bytes(body),
                                       datetime.now(UTC).isoformat(timespec="seconds"))
+            except httpx.InvalidURL:            # a redirect to a malformed location
+                self._write_error(public, "invalid redirect url")
+                raise Unavailable("invalid redirect url", public, fatal=False) from None
             except httpx.HTTPError as exc:      # timeouts, connection errors, protocol errors
                 raise Unavailable(f"network error ({type(exc).__name__})", public) from None
             self._write_cache(result)

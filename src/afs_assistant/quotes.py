@@ -2,7 +2,8 @@
 
 Match levels, strongest first:
   exact         normalised quote is a substring of the normalised page text
-  loose         equal after also ignoring case, hyphens and whitespace
+  loose         equal after also ignoring case, hyphens and whitespace; not used when the quote or the
+                matched text has a digit next to a hyphen ("10-20" must not match "1020")
   fuzzy_review  close (rapidfuzz partial ratio >= FUZZY_MIN) with the same numbers and
                 negation/comparison words; NOT verified, needs repair or human review
 Only exact and loose count as verified (`ok`). A near match that changes a number or a
@@ -23,6 +24,7 @@ from afs_assistant.normalize import normalize
 FUZZY_MIN = 90.0
 MIN_QUOTE_CHARS = 12
 _NUM = re.compile(r"\d+(?:[.,]\d+)?")
+_DIGIT_DASH = re.compile(r"\d\s?-|-\s?\d")     # dashes are already "-" after normalize()
 _GUARD_WORDS = {"not", "no", "never", "cannot", "without", "only", "below", "above", "less", "more",
                 "under", "over", "except", "neither", "nor", "none",
                 "some", "all", "most", "every", "any", "few", "many",
@@ -81,7 +83,10 @@ def verify_text(text: str, quote: str, sha: str, doc: str = "", page: int = 0) -
     loose_q = re.sub(r"[\s\-]", "", q.lower())
     pos = loose_text.find(loose_q)
     if pos >= 0 and loose_q:
-        return QuoteCheck(doc, page, quote, "loose", index[pos], index[pos + len(loose_q) - 1] + 1, 100.0, sha)
+        start, end = index[pos], index[pos + len(loose_q) - 1] + 1
+        # Ignoring hyphens would equate "10-20 nm" with "1020 nm": a range needs an exact match.
+        if not (_DIGIT_DASH.search(q) or _DIGIT_DASH.search(text[start:end])):
+            return QuoteCheck(doc, page, quote, "loose", start, end, 100.0, sha)
 
     alignment = fuzz.partial_ratio_alignment(q, text)
     score = round(alignment.score, 1) if alignment is not None else None

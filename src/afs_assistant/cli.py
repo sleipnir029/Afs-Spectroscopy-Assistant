@@ -129,7 +129,9 @@ def _external_replay(args: argparse.Namespace) -> int:
 
 
 EXTERNAL_HELP = ("external evidence: live (search the web APIs; falls back to the curated library on a network "
-                 "error or rate limit), cache (replay recorded HTTP responses offline), off")
+                 "error or rate limit), cache (no network: answers HTTP requests from the recorded responses only; "
+                 "the model calls run again, so queries that differ from the recorded run miss and fall back to "
+                 "the library; `afs-assist external replay RUN.json` is the exact offline re-check), off")
 
 
 def main(argv: list[str] | None = None) -> int:

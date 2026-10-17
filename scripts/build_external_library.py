@@ -21,8 +21,8 @@ held-out scenario text):
 The script fetches each source live (CONTACT_EMAIL from .env as mailto/email only), extracts
 the text exactly as a run does, and verifies every passage verbatim. An entry with any
 failing passage is not written. Written per entry: metadata, licence, access, retrieved_at
-(real clock), sha256 of the fetched text, and the passages with their paragraph number and
-the paragraph's sha256. No full text is written to the library; the fetched text stays in
+(real clock), sha256 of the fetched text, and the passages with their paragraph number, the
+paragraph's sha256 and the passage's own sha256 (`passage_sha256`). No full text is written to the library; the fetched text stays in
 the local cache under runs/external_cache/ (gitignored). Entries with the same library_id
 are replaced; others are kept. Exit 1 if any entry failed.
 """

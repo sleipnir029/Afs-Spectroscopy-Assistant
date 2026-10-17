@@ -2,9 +2,10 @@
 
 One JSON object per line:
   {library_id, title, authors[], year, venue, doi, url, licence, access, retrieved_at,
-   sha256 (of the full fetched text), topics[], passages[{para, text, sha256}]}
+   sha256 (of the full fetched text), topics[], passages[{para, text, sha256, passage_sha256}]}
 Each passage is a verified verbatim quote (<= 400 characters, <= 2 sentences) of
-paragraph `para` of the fetched text; its sha256 is that full paragraph's. No full text is
+paragraph `para` of the fetched text; `sha256` is that full paragraph's, `passage_sha256`
+that of the stored text (so `kb check` and replay detect a hand-edited passage). No full text is
 committed. In a run, an entry's paragraphs are its passages (numbered as in the source),
 so library quotes verify offline and on a fresh clone. Built by
 `scripts/build_external_library.py`. An absent or empty file means no library.
@@ -17,7 +18,8 @@ import re
 from pathlib import Path
 
 from afs_assistant import paths
-from afs_assistant.external.sources import SourceRecord, policy_problem
+from afs_assistant.external.extract import clean_meta
+from afs_assistant.external.sources import SourceRecord, policy_problem, sha
 
 MIN_SCORE = 2                       # shared content words between a query and an entry
 _WORD = re.compile(r"[a-z0-9][a-z0-9\-]{2,}")
@@ -41,8 +43,6 @@ def load(path: Path | None = None) -> list[dict]:
 
 
 def library_sha(path: Path | None = None) -> str:
-    from afs_assistant.external.sources import sha
-
     f = path or paths.EXTERNAL_LIBRARY
     return sha(f.read_text(encoding="utf-8") if f.exists() else "")
 
@@ -67,8 +67,9 @@ def search(queries: list[str], entries: list[dict], limit: int) -> list[tuple[di
 def to_record(entry: dict, source_id: str, query: str) -> SourceRecord:
     passages = entry["passages"]
     return SourceRecord(
-        id=source_id, url=entry.get("url", ""), doi=entry.get("doi"), title=entry["title"],
-        authors=list(entry.get("authors", [])), year=entry.get("year"), venue=entry.get("venue"),
+        id=source_id, url=entry.get("url", ""), doi=entry.get("doi"), title=clean_meta(entry["title"], "[title removed]"),
+        authors=[clean_meta(a, "[author removed]") for a in entry.get("authors", [])], year=entry.get("year"),
+        venue=clean_meta(entry.get("venue"), "[venue removed]") or None,
         licence=entry.get("licence"), access=entry.get("access", "full_text"),
         retrieved_at=entry.get("retrieved_at", ""), retrieval_query=query, api="library", http_status=None,
         sha256=entry["sha256"], paragraphs=[p["text"] for p in passages], library_id=entry["library_id"],
@@ -102,6 +103,8 @@ def problems(entries: list[dict]) -> list[str]:
             if not _HEX64.match(str(p.get("sha256", ""))):
                 out.append(f"{where}: passage without sha256")
             text = p.get("text", "")
+            if p.get("passage_sha256") != sha(text):
+                out.append(f"{where}: passage_sha256 missing or not the sha256 of the passage text")
             if len(text) < 12:
                 out.append(f"{where}: passage too short")
             why = policy_problem(text)
@@ -155,7 +158,7 @@ def build_entry(spec: dict, fetcher) -> tuple[dict | None, list[str]]:
     """
     from afs_assistant import quotes
     from afs_assistant.external.http import Unavailable
-    from afs_assistant.external.sources import full_text_sha, sha
+    from afs_assistant.external.sources import full_text_sha
 
     lid = spec.get("library_id", "?")
     try:
@@ -171,7 +174,9 @@ def build_entry(spec: dict, fetcher) -> tuple[dict | None, list[str]]:
         for number, para in enumerate(paragraphs, 1):
             check = quotes.verify_text(para, text, sha(para))
             if check.ok:
-                passages.append({"para": number, "text": para[check.start:check.end], "sha256": sha(para)})
+                passage = para[check.start:check.end]
+                passages.append({"para": number, "text": passage, "sha256": sha(para),
+                                 "passage_sha256": sha(passage)})
                 break
         else:
             problems.append(f"{lid}: passage not found verbatim: {text[:60]!r}")

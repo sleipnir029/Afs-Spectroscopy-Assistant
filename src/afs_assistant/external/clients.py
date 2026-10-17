@@ -3,12 +3,15 @@
 Each search returns `Hit`s (metadata plus whatever text the API gives: an abstract, an
 open-access url, a PMC id for Europe PMC full text). Fetching and extracting the text is
 the step's job. All requests go through `http.Fetcher` (guards, cache, polite intervals).
+Parsers tolerate null or missing fields; titles, venues and authors are cleaned with
+`extract.clean_meta` (tags stripped, one line, instruction-like values replaced).
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from afs_assistant.external.extract import clean_meta
 from afs_assistant.external.http import Fetcher, Unavailable
 
 EPMC_SEARCH = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
@@ -39,8 +42,28 @@ class Hit:
     http_status: int | None = None
 
 
+def _dict(value) -> dict:
+    return value if isinstance(value, dict) else {}
+
+
+def _list(value) -> list:
+    return value if isinstance(value, list) else []
+
+
+def _title(value) -> str:
+    return clean_meta(value, "[title removed]")
+
+
+def _venue(value) -> str | None:
+    return clean_meta(value, "[venue removed]") or None
+
+
+def _authors(names) -> list[str]:
+    return [a for a in (clean_meta(n, "[author removed]") for n in names) if a]
+
+
 def clean_doi(doi: str | None) -> str | None:
-    if not doi:
+    if not doi or not isinstance(doi, str):
         return None
     doi = doi.strip()
     for prefix in ("https://doi.org/", "http://doi.org/", "doi:"):
@@ -72,19 +95,21 @@ def _stamp(hits: list[Hit], r) -> list[Hit]:
 
 def parse_epmc(data: dict, query: str) -> list[Hit]:
     hits = []
-    for item in data.get("resultList", {}).get("result", []):
+    for item in _list(_dict(_dict(data).get("resultList")).get("result")):
+        item = _dict(item)
         doi = clean_doi(item.get("doi"))
-        pmcid = item.get("pmcid")
+        pmcid = item.get("pmcid") if isinstance(item.get("pmcid"), str) else None
         open_text = item.get("isOpenAccess") == "Y" and item.get("inEPMC") == "Y" and pmcid
-        journal = (item.get("journalInfo") or {}).get("journal") or {}
+        journal = _dict(_dict(item.get("journalInfo")).get("journal"))
         landing = (f"https://europepmc.org/article/PMC/{pmcid}" if pmcid
-                   else f"https://europepmc.org/article/{item.get('source', 'MED')}/{item.get('id', '')}")
-        hits.append(Hit(api="europepmc", query=query, title=item.get("title", "").strip(), doi=doi,
+                   else f"https://europepmc.org/article/{item.get('source') or 'MED'}/{item.get('id') or ''}")
+        author_string = item.get("authorString") if isinstance(item.get("authorString"), str) else ""
+        hits.append(Hit(api="europepmc", query=query, title=_title(item.get("title")), doi=doi,
                         year=_year(item.get("pubYear")),
-                        authors=[a.strip() for a in item.get("authorString", "").rstrip(".").split(",") if a.strip()],
-                        venue=journal.get("title"), licence=item.get("license"),
-                        abstract=item.get("abstractText", "") or "", landing_url=landing,
-                        pmcid=pmcid if open_text else None))
+                        authors=_authors(author_string.rstrip(".").split(",")),
+                        venue=_venue(journal.get("title")), licence=item.get("license") or None,
+                        abstract=item.get("abstractText") if isinstance(item.get("abstractText"), str) else "",
+                        landing_url=landing, pmcid=pmcid if open_text else None))
     return hits
 
 
@@ -101,9 +126,10 @@ def abstract_from_inverted_index(index: dict | None) -> str:
     if not index:
         return ""
     words: dict[int, str] = {}
-    for word, positions in index.items():
-        for p in positions:
-            words[p] = word
+    for word, positions in _dict(index).items():
+        for p in _list(positions):
+            if isinstance(p, int):
+                words[p] = word
     return " ".join(words[p] for p in sorted(words))
 
 
@@ -128,17 +154,19 @@ def budget_exhausted(headers: dict[str, str]) -> bool:
 
 def parse_openalex(data: dict, query: str) -> list[Hit]:
     hits = []
-    for w in data.get("results", []):
-        best = w.get("best_oa_location") or {}
-        primary = w.get("primary_location") or {}
-        oa = w.get("open_access") or {}
-        source = primary.get("source") or {}
+    for w in _list(_dict(data).get("results")):
+        w = _dict(w)
+        best = _dict(w.get("best_oa_location"))
+        primary = _dict(w.get("primary_location"))
+        oa = _dict(w.get("open_access"))
+        source = _dict(primary.get("source"))
         doi = clean_doi(w.get("doi"))
-        hits.append(Hit(api="openalex", query=query, title=(w.get("title") or "").strip(), doi=doi,
+        hits.append(Hit(api="openalex", query=query, title=_title(w.get("title")), doi=doi,
                         year=_year(w.get("publication_year")),
-                        authors=[(a.get("author") or {}).get("display_name", "") for a in w.get("authorships", [])
-                                 if (a.get("author") or {}).get("display_name")],
-                        venue=source.get("display_name"), licence=best.get("license") or primary.get("license"),
+                        authors=_authors(_dict(_dict(a).get("author")).get("display_name")
+                                         for a in _list(w.get("authorships"))),
+                        venue=_venue(source.get("display_name")),
+                        licence=best.get("license") or primary.get("license"),
                         abstract=abstract_from_inverted_index(w.get("abstract_inverted_index")),
                         landing_url=(f"https://doi.org/{doi}" if doi else primary.get("landing_page_url") or ""),
                         oa_url=best.get("pdf_url") or oa.get("oa_url") or best.get("landing_page_url") or ""))
@@ -157,6 +185,6 @@ def unpaywall(fetcher: Fetcher, doi: str) -> tuple[str, str | None] | None:
 
 
 def parse_unpaywall(data: dict) -> tuple[str, str | None] | None:
-    best = data.get("best_oa_location") or {}
+    best = _dict(_dict(data).get("best_oa_location"))
     url = best.get("url_for_pdf") or best.get("url") or best.get("url_for_landing_page")
     return (url, best.get("license")) if url else None
