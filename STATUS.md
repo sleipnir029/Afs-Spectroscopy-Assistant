@@ -1,14 +1,14 @@
 # Status
 
-_Last updated: 2026-10-17 13:35 CEST (Claude)._
+_Last updated: 2026-10-17 13:36 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2 closed (G2 passed, user 13:33).** **Re-plan of Phases 3–6 written in PHASES.md (13:35), awaiting user approval** (plus: pi shell → `afs-assist chat` + HTML view?).
+**Phase 2 closed (G2 passed, user 13:33).** **Re-plan of Phases 3–6 APPROVED (13:36, user)**, with the simple chat (`afs-assist chat` + HTML view replace the pi shell). **Phase 3 (Assessment upgrade) in progress.**
 - **Validation (D-020, user 13:35):** the user no longer runs tests or reads outputs. Claude runs all checks; reviewer agents replace the user at G3–G6. Ask the user only short yes/no questions.
 - **Cache path (user 13:33):** full fetched external text → `runs/external_cache/` (already gitignored).
-- **Next:** on approval, start Phase 3 (Sat 14:00–21:00).
+- **Next:** Phase 3 implementation (implementer agent), then the D01–D08 run, then reviewer agent (G3 ~21:00).
 
 ## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.

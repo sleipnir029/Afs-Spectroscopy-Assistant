@@ -431,7 +431,7 @@ Deferred to Phase 3: entailment critic (N12), length scoring, eval harness, bake
 
 ---
 
-## Re-plan of Phases 3–6 (written 2026-10-17 13:35; PROPOSED, awaiting approval)
+## Re-plan of Phases 3–6 (written 2026-10-17 13:35; APPROVED 13:36 by the user, with the simple chat: `afs-assist chat` + HTML view replace the pi shell)
 
 **Why a re-plan.** The jury input (12:22), the organizer Q&A (12:45) and the end-user trade-offs (12:57, 13:05) add musts that the original Phases 3–6 did not have. Inputs: STATUS "Done" (decisions 12:24–13:12), `docs/research-replan.md` (option B), `docs/qa-notes-2026-10-17.md`.
 
