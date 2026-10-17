@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import time
 
+from dulwich import porcelain
 from dulwich.errors import NotGitRepository
 from dulwich.object_store import iter_tree_contents
 from dulwich.objects import Blob, Commit, Tree
@@ -54,6 +55,18 @@ def code_sha(repo_path=paths.ROOT) -> str:
         return "unknown"
 
 
+def code_dirty(repo_path=paths.ROOT) -> bool | None:
+    """True if tracked files differ from HEAD (staged or unstaged); None if not a repository.
+
+    Read-only: untracked files are ignored and the index is not refreshed on disk.
+    """
+    try:
+        st = porcelain.status(str(repo_path), untracked_files="no", optional_locks=False)
+    except NotGitRepository:
+        return None
+    return bool(any(st.staged.values()) or st.unstaged)
+
+
 def record(run_id: str, files: dict[str, str | bytes], message: str, repo_path=paths.ROOT) -> str:
     """Write files under runs/<run_id>/ locally and commit them on the provenance ref."""
     encoded = {k: v.encode("utf-8") if isinstance(v, str) else v for k, v in files.items()}
@@ -91,15 +104,28 @@ def record(run_id: str, files: dict[str, str | bytes], message: str, repo_path=p
 
 def run_files(result_json: dict, markdown: str) -> dict[str, str]:
     m = result_json["manifest"]
-    return {
+
+    def dump(value) -> str:
+        return json.dumps(value, indent=1, ensure_ascii=False)
+
+    files = {
         "enquiry.txt": result_json["enquiry"] + "\n",
-        "intake.json": json.dumps(result_json["intake"], indent=1, ensure_ascii=False),
-        "screening.json": json.dumps(result_json["screening"], indent=1, ensure_ascii=False),
-        "assessment.json": json.dumps(result_json["assessment"], indent=1, ensure_ascii=False),
-        "verification.json": json.dumps(result_json["verification"], indent=1, ensure_ascii=False),
-        "manifest.json": json.dumps(m, indent=1, ensure_ascii=False),
+        "intake.json": dump(result_json["intake"]),
+        "intake_removed.json": dump(result_json["intake_removed"]),
+        "screening.json": dump(result_json["screening"]),
+        "assessment_raw.json": dump(result_json["assessment_raw"]),
+        "assessment.json": dump(result_json["assessment"]),
+        "finalize.json": dump({"removed_citations": result_json["removed_citations"],
+                               "finalize_changes": result_json["finalize_changes"],
+                               "flagged": result_json["flagged"]}),
+        "verification.json": dump(result_json["verification"]),
+        "calls.json": dump(result_json["calls"]),
+        "manifest.json": dump(m),
         "assessment.md": markdown,
     }
+    for rep in result_json["repairs"]:
+        files[f"repair_round_{rep['round']}.json"] = dump(rep)
+    return files
 
 
 def commit_message(result_json: dict) -> str:
@@ -108,7 +134,7 @@ def commit_message(result_json: dict) -> str:
     return (f"run {m['run_id']}\n\n"
             f"Run-Id: {m['run_id']}\n"
             f"Models: {', '.join(m['models'])}\n"
-            f"Code-SHA: {m.get('code_sha', 'unknown')}\n"
+            f"Code-SHA: {m.get('code_sha', 'unknown')}{' (dirty)' if m.get('code_dirty') else ''}\n"
             f"Prompt-SHA256-Assess: {m['prompt_sha256']['assess']}\n"
             f"Knowledge-SHA256: {m['knowledge_sha256']}\n"
             f"Verifier: {'pass' if v['passed'] else 'fail'} ({v['hard_failures']} hard, {v['soft_failures']} soft); "

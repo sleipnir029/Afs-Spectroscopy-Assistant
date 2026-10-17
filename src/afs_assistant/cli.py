@@ -38,20 +38,24 @@ def _scenarios_build(_: argparse.Namespace) -> int:
     return 0
 
 
-def _assess_one(enquiry: str, run_id: str | None, client, out_dir=None, title: str = "") -> dict:
+def _assess_one(enquiry: str, scenario_id: str | None, client, out_dir=None, title: str = "") -> dict:
     import json
+    from datetime import UTC, datetime
 
     from afs_assistant import pipeline, provenance, render
 
+    # Unique per run so provenance tags are never overwritten; output files keep the scenario id.
+    run_id = f"{scenario_id or 'adhoc'}-{datetime.now(UTC):%Y%m%dT%H%M%SZ}"
     result = pipeline.run(enquiry, client, run_id=run_id)
     result.manifest["code_sha"] = provenance.code_sha()
+    result.manifest["code_dirty"] = provenance.code_dirty()
     data = render.to_json(result)
     markdown = render.to_markdown(result, title)
     commit = provenance.record(result.run_id, provenance.run_files(data, markdown), provenance.commit_message(data))
     data["manifest"]["provenance_commit"] = commit
     if out_dir is not None:
         out_dir.mkdir(parents=True, exist_ok=True)
-        stem = run_id or result.run_id
+        stem = scenario_id or result.run_id
         (out_dir / f"{stem}.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         (out_dir / f"{stem}.md").write_text(markdown, encoding="utf-8")
     return {"run_id": result.run_id, "markdown": markdown, "summary": result.report.summary(),

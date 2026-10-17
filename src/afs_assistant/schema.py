@@ -141,8 +141,8 @@ class Recommendation(BaseModel):
     method: Method
     technique: Technique
     role: Literal["primary", "comparison", "conditional", "not_recommended"]
-    combined_with: list[Method] = Field(description="Other methods to fuse with this one (a hypothesis to test); "
-                                                    "empty for a single method.")
+    combined_with: list[Method] = Field(description="Other methods to fuse with this one, as a later hypothesis "
+                                                    "after single-method tests; always empty for role primary.")
     rationale: str
     conditions: str = Field(description="When this applies / what must be true; 'none' if unconditional.")
     citations: list[Citation]
