@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 12:09 CEST (Claude)._
+_Last updated: 2026-10-17 12:22 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -47,6 +47,11 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
 | 6 Deliverables | Not planned yet | Submit by 22:30 | |
 
 ## Done
+- **Jury input (12:22, relayed by the user; paraphrase, not verbatim):**
+  - The system should always make a proposal, even when the supplied data does not cover the question.
+  - If the information is not in the system, it should search online (research papers, proper scientific forums), analyse what it finds and explain how it can be used.
+  - It must be able to analyse how a multispectral system can be used for a chemical process.
+  - → A re-plan of Phases 3–6 is needed (what we have, what we plan, what can be integrated). Clarifying questions asked; no code changes until a plan is approved.
 - Dev model switched to `deepseek/deepseek-v4.1-flash` (10:15, user; D-011). Providers [deepinfra, atlas-cloud, coreweave] (fp8, strict JSON); max_tokens 16k/32k/32k (reasoning tokens count). Smoke test: the D08 intake runs clean on flash (DeepInfra, finish=stop, $0.0031, proposed_methods [MIR, Fluorescence]). pytest 84 passed, 1 skipped. D01–D07 outputs are still from v4-pro: re-run on flash before G2.
 - Decisions (09:29, user):
   - External reference library: **yes**. Curated, each entry with URL + verbatim quoted passage, marked secondary; to be planned in Phase 3.
