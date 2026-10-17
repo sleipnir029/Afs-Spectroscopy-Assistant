@@ -106,16 +106,85 @@ def test_off_topic_examples_are_generic():
     assert all(q.endswith("?") for q in pipeline.OFF_TOPIC_EXAMPLES)
 
 
-@pytest.mark.parametrize(("routes", "targets", "off"), [
-    (["out_of_scope"], [], True),
-    (["out_of_scope", "needs_clarification"], [], False),
-    (["out_of_scope"], [{"variable": "x", "purpose": "y", "enquiry_quote": "z"}], False),
-    ([], [], False),
-    (["in_scope"], [], False),
+def _intake(**changes):
+    return Intake.model_validate({**copy.deepcopy(OFF_INTAKE), **changes})
+
+
+@pytest.mark.parametrize(("intake", "removed", "enquiry", "off"), [
+    (_intake(), [], OFF_ENQUIRY, True),
+    (_intake(), [{"location": "intake.facts_stated[0]"}], OFF_ENQUIRY, True),        # stated facts may go
+    (_intake(routes=["out_of_scope", "needs_clarification"]), [], OFF_ENQUIRY, False),
+    (_intake(routes=[]), [], OFF_ENQUIRY, False),
+    (_intake(routes=["in_scope"]), [], OFF_ENQUIRY, False),
+    (_intake(targets=[{"variable": "x", "purpose": "y", "enquiry_quote": "restaurant"}]), [], OFF_ENQUIRY, False),
+    (_intake(process=[{"aspect": "other", "value": "v", "enquiry_quote": "trade fair"}]), [], OFF_ENQUIRY, False),
+    (_intake(customer_premises=[{"claim": "c", "enquiry_quote": "good restaurant"}]), [], OFF_ENQUIRY, False),
+    (_intake(sample={**OFF_INTAKE["sample"], "physical_state": {"value": "liquid", "basis": "stated",
+                                                                 "enquiry_quote": "dinner"}}), [], OFF_ENQUIRY, False),
+    (_intake(proposed_fiber={"family": "silica", "for_method": "NIR", "enquiry_quote": "fair"}), [], OFF_ENQUIRY,
+     False),
+    (_intake(), [{"location": "intake.targets[0]"}], OFF_ENQUIRY, False),             # removed by the quote check
+    (_intake(), [{"location": "intake.process[0]"}], OFF_ENQUIRY, False),
+    (_intake(), [{"location": "intake.customer_premises[0]"}], OFF_ENQUIRY, False),
+    (_intake(), [], "Is Raman fun at a team dinner?", False),                       # a named method
+    (_intake(), [], "Could you measure our team dinner?", False),                    # a measurement word
+    (_intake(), [], "Any fibre deals for the trade fair?", False),
 ])
-def test_is_off_topic(routes, targets, off):
-    intake = Intake.model_validate({**OFF_INTAKE, "routes": routes, "targets": targets})
-    assert pipeline.is_off_topic(intake) is off
+def test_is_off_topic(intake, removed, enquiry, off):
+    assert pipeline.is_off_topic(intake, removed, enquiry) is off
+
+
+def _paraphrased_in_scope():
+    bad = copy.deepcopy(INTAKE)          # quotes not verbatim: target and fact removed -> 2 problems
+    bad["targets"][0]["enquiry_quote"] = "monitor the ethanol content"
+    bad["facts_stated"][0]["enquiry_quote"] = "a clear broth"
+    return bad
+
+
+def _out_of_scope_with_unverified_target():
+    off = copy.deepcopy(OFF_INTAKE)
+    off["facts_stated"] = []
+    off["targets"] = [{"variable": "ethanol", "purpose": "follow it", "enquiry_quote": "track the ethanol level"}]
+    return off
+
+
+def _bare_out_of_scope():
+    off = copy.deepcopy(OFF_INTAKE)
+    off["facts_stated"] = []
+    return off
+
+
+@pytest.mark.parametrize("intakes", [
+    [_paraphrased_in_scope(), _bare_out_of_scope()],      # review B1: a later attempt flips to off-topic
+    [_out_of_scope_with_unverified_target()] * 2,         # review B2: the target was removed by the quote check
+], ids=["later-attempt-off-topic", "removed-target"])
+def test_misrouted_measurement_enquiry_still_gets_the_full_assessment(intakes):
+    client = FakeClient({"intake": intakes, "assess": [ASSESSMENT], "repair": [ASSESSMENT, ASSESSMENT]})
+    result = pipeline.run(ENQUIRY, client, run_id="m")
+    assert result.off_topic is None and result.assessment is not None
+    assert "assess" in [s["role"] for s in client.seen]
+    assert result.manifest["intake_attempts"] == 2
+
+
+def test_vague_one_line_measurement_enquiry_stays_full():
+    enquiry = "Can you help us measure something in our product?"
+    client = FakeClient({"intake": [_bare_out_of_scope()] * 2, "assess": [ASSESSMENT],
+                         "repair": [ASSESSMENT, ASSESSMENT]})
+    result = pipeline.run(enquiry, client, run_id="v")
+    assert result.off_topic is None and "assess" in [s["role"] for s in client.seen]
+
+
+def test_intake_prompt_defines_out_of_scope_narrowly():
+    text = pipeline.prompt("intake")
+    assert "not a measurement or process-analysis question at all" in text
+    assert "is NOT out_of_scope: use `needs_clarification`" in text
+
+
+def test_external_replay_on_an_off_topic_run(tmp_path, capsys):
+    path = tmp_path / "off.json"
+    path.write_text(json.dumps(render.to_json(_off_topic_run()[0])), encoding="utf-8")
+    assert cli.main(["external", "replay", str(path)]) == 2
+    assert "off-topic run" in capsys.readouterr().out
 
 
 def test_borderline_routes_still_get_the_full_assessment():
@@ -152,19 +221,20 @@ def test_check_scripts_skip_off_topic_runs(tmp_path):
 # ----------------------------------------------------------------- 2. parallel set runs
 class _ThreadedClient:
     """Thread-safe fake: one shared real SpendTracker; every call costs `cost`. Each case's enquiry ends
-    with "Case N."; its assess call sleeps `delays[N]`; `barrier` holds the intake calls until all runs started."""
+    with "Case N."; its assess call first waits for `gates[N]` (if any); `barrier` holds the intake calls
+    until all runs started."""
 
-    def __init__(self, cost=0.4, run_cap=1.0, session_cap=1e9, barrier=None, delays=None):
+    def __init__(self, cost=0.4, run_cap=1.0, session_cap=1e9, barrier=None, gates=None):
         self.tracker = SpendTracker(run_cap, session_cap)
-        self.cost, self.barrier, self.delays = cost, barrier, delays or {}
+        self.cost, self.barrier, self.gates = cost, barrier, gates or {}
 
     def complete_json(self, role, system, user, schema_name, schema):
         self.tracker.check()
         case = int(re.search(r"Case (\d+)\.", user).group(1))
         if role == "intake" and self.barrier is not None:
             self.barrier.wait(timeout=10)
-        if role == "assess":
-            time.sleep(self.delays.get(case, 0))
+        if role == "assess" and case in self.gates:
+            assert self.gates[case].wait(timeout=10)
         data = copy.deepcopy(INTAKE if role == "intake" else ASSESSMENT)
         result = LLMResult(data=data, model=f"fake/{role}", cost_usd=self.cost)
         self.tracker.add(role, result)
@@ -193,9 +263,19 @@ def set_env(monkeypatch, tmp_path):
     return state
 
 
-def test_parallel_run_order_and_per_run_cap(set_env, capsys, tmp_path):
-    # All four runs in flight at once (barrier); case 1 finishes last, case 4 first.
-    set_env["client"] = _ThreadedClient(barrier=threading.Barrier(4), delays={1: 0.9, 2: 0.6, 3: 0.3, 4: 0.0})
+def test_parallel_run_order_and_per_run_cap(set_env, capsys, tmp_path, monkeypatch):
+    # All four runs in flight at once (barrier). Case k's assess waits until case k+1's line was printed,
+    # so the cases finish 4, 3, 2, 1 (events, no sleeps).
+    printed = {k: threading.Event() for k in range(1, 5)}
+
+    def spy_print(*args, **kwargs):
+        print(*args, **kwargs)
+        m = re.match(r"C(\d): ", str(args[0]) if args else "")
+        if m:
+            printed[int(m.group(1))].set()
+
+    monkeypatch.setattr(cli, "print", spy_print, raising=False)
+    set_env["client"] = _ThreadedClient(barrier=threading.Barrier(4), gates={k: printed[k + 1] for k in (1, 2, 3)})
     assert cli.main(["run", "--set", "dev", "--external", "off", "--workers", "4"]) == 0
     out = capsys.readouterr().out.splitlines()
     finished = [line.split(":")[0] for line in out if re.match(r"C\d: ", line)]
@@ -358,3 +438,117 @@ def test_sdk_client_has_no_retries_and_a_timeout(monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key-not-real")
     OpenRouterClient()
     assert made["max_retries"] == 0 and made["timeout"] == float(llm.config()["timeout_s"])
+
+
+# ----------------------------------------------------------------- 5.0.R: wall-clock deadline, Ctrl-C cancel
+class _HangingOpenAI:
+    """The first `hang` calls block until `release` is set (a reply that never completes); then it replies."""
+
+    def __init__(self, hang: int):
+        self.hang, self.kwargs, self.release = hang, [], threading.Event()
+        self.chat = SimpleNamespace(completions=SimpleNamespace(create=self._create))
+
+    def _create(self, **kwargs):
+        self.kwargs.append(kwargs)
+        if len(self.kwargs) <= self.hang:
+            self.release.wait(timeout=10)
+            raise RuntimeError("released after the test")
+        return _response()
+
+
+@pytest.fixture
+def hanging(monkeypatch):
+    made = []
+
+    def make(hang, seconds=0.2):
+        monkeypatch.setattr(llm, "timeout_s", lambda role: seconds)
+        client = _client([], monkeypatch)
+        client.client = _HangingOpenAI(hang)
+        made.append(client.client)
+        return client
+
+    yield make
+    for fake in made:
+        fake.release.set()
+
+
+def test_wall_clock_deadline_counts_as_a_timeout_and_is_retried_once(hanging):
+    client = hanging(hang=1)
+    started = time.monotonic()
+    assert client.complete_json("intake", "sys", "user", "intake", SCHEMA).data == {"a": 1}
+    assert time.monotonic() - started < 3
+    assert len(client.client.kwargs) == 2
+    assert [c["role"] for c in client.tracker.calls] == ["intake:timeout", "intake"]
+
+
+def test_two_wall_clock_deadlines_fail_the_call(hanging):
+    client = hanging(hang=2)
+    with pytest.raises(RuntimeError, match="timed out 2 times"):
+        client.complete_json("intake", "sys", "user", "intake", SCHEMA)
+    assert len(client.client.kwargs) == 2
+
+
+def test_cancel_stops_a_waiting_call_at_once(hanging):
+    client = hanging(hang=1, seconds=30)
+    threading.Timer(0.2, client.tracker.cancel.set).start()
+    started = time.monotonic()
+    with pytest.raises(llm.RunCancelled):
+        client.complete_json("intake", "sys", "user", "intake", SCHEMA)
+    assert time.monotonic() - started < 3 and len(client.client.kwargs) == 1
+
+
+def test_tracker_check_raises_once_cancelled():
+    tracker = SpendTracker(1e9, 1e9)
+    tracker.check()
+    tracker.cancel.set()
+    with pytest.raises(llm.RunCancelled):
+        tracker.check()
+
+
+class _BlockingClient:
+    """Each started case blocks in its intake call until the tracker is cancelled, then checks again."""
+
+    def __init__(self):
+        self.tracker = SpendTracker(1e9, 1e9)
+        self.started, self.ended, self.lock = [], [], threading.Lock()
+
+    def complete_json(self, role, system, user, schema_name, schema):
+        case = re.search(r"Case (\d+)\.", user).group(1)
+        with self.lock:
+            self.started.append(case)
+        try:
+            self.tracker.check()
+            self.tracker.cancel.wait(timeout=10)
+            self.tracker.check()
+        except Exception as exc:
+            with self.lock:
+                self.ended.append(type(exc).__name__)
+            raise
+        raise AssertionError("not cancelled")
+
+
+def test_ctrl_c_cancels_queued_and_running_cases(set_env, monkeypatch, capsys):
+    import concurrent.futures
+
+    client = _BlockingClient()
+    set_env["client"] = client
+
+    def interrupted_wait(fs, timeout=None, return_when=None):
+        deadline = time.monotonic() + 5
+        while len(client.started) < 2 and time.monotonic() < deadline:   # both workers are in a call
+            time.sleep(0.01)
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(concurrent.futures, "wait", interrupted_wait)
+    started = time.monotonic()
+    with pytest.raises(KeyboardInterrupt):
+        cli.main(["run", "--set", "dev", "--external", "off", "--workers", "2"])
+    assert time.monotonic() - started < 3
+    assert client.tracker.cancel.is_set()
+    deadline = time.monotonic() + 5
+    while len(client.ended) < 2 and time.monotonic() < deadline:
+        time.sleep(0.01)
+    assert sorted(client.started) == ["1", "2"]                     # cases 3 and 4 never started
+    assert client.ended == ["RunCancelled", "RunCancelled"]
+    assert set_env["records"] == []
+    assert "interrupted" in capsys.readouterr().out

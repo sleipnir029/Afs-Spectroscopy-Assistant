@@ -81,7 +81,8 @@ def _assess(args: argparse.Namespace) -> int:
 def _run_set(args: argparse.Namespace) -> int:
     """Assess a scenario set on `--workers` threads (1 = one after the other). A line per case as it
     finishes, then a summary in scenario order. A spend cap (or an unexpected error) stops new cases;
-    the running ones finish, then it is raised."""
+    the running ones finish, then it is raised. Ctrl-C cancels the queued cases and sets the tracker's
+    cancel event, so running cases stop at their next model call."""
     from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 
     from openai import APIError
@@ -103,7 +104,8 @@ def _run_set(args: argparse.Namespace) -> int:
     failed: set[str] = set()
     stop: Exception | None = None
     queue = list(items)
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+    pool = ThreadPoolExecutor(max_workers=args.workers)
+    try:
         running = {}
         while queue or running:
             while queue and stop is None and len(running) < args.workers:
@@ -125,6 +127,12 @@ def _run_set(args: argparse.Namespace) -> int:
                 else:
                     lines[sid] = f"{sid}: verification {out['summary']} cost ${out['cost_usd']:.4f}"
                 print(lines[sid], flush=True)
+    except KeyboardInterrupt:      # Ctrl-C: queued cases never start; running ones stop at their next LLM wait
+        client.tracker.cancel.set()
+        pool.shutdown(wait=False, cancel_futures=True)
+        print("interrupted: queued cases cancelled; running cases stop at their next model call", flush=True)
+        raise
+    pool.shutdown()
     order = [s["id"] for s in items]
     print("summary (scenario order):")
     for sid in order:
@@ -144,6 +152,9 @@ def _external_replay(args: argparse.Namespace) -> int:
     from afs_assistant.external import step
 
     data = json.loads(Path(args.run_json).read_text(encoding="utf-8"))
+    if data.get("off_topic") is not None:
+        print("This is an off-topic run (stopped after the intake): no external block to re-verify.")
+        return 2
     block = data.get("external")
     if block is None:
         print("This run has no external block (it ran with --external=off).")

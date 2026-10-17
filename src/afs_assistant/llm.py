@@ -24,6 +24,14 @@ class SpendCapExceeded(RuntimeError):
     pass
 
 
+class RunCancelled(RuntimeError):
+    """The set run was interrupted (Ctrl-C): a running case stops at its next LLM call or while waiting."""
+
+
+class DeadlineExceeded(RuntimeError):
+    """No complete reply within the role's wall-clock `timeout_s`; counted as a timeout (retried once)."""
+
+
 @lru_cache(maxsize=1)
 def config() -> dict:
     return yaml.safe_load(CONFIG_FILE.read_text(encoding="utf-8"))
@@ -56,6 +64,7 @@ class SpendTracker:
     calls: list[dict] = field(default_factory=list)
     _lock: threading.Lock = field(default_factory=threading.Lock, init=False, repr=False, compare=False)
     _local: threading.local = field(default_factory=threading.local, init=False, repr=False, compare=False)
+    cancel: threading.Event = field(default_factory=threading.Event, init=False, repr=False, compare=False)
 
     @property
     def run_usd(self) -> float:
@@ -73,6 +82,8 @@ class SpendTracker:
         self._local.calls = []
 
     def check(self) -> None:
+        if self.cancel.is_set():
+            raise RunCancelled("set run cancelled")
         with self._lock:
             if self.run_usd >= self.per_run_cap:
                 raise SpendCapExceeded(f"run spend {self.run_usd:.4f} USD reached cap {self.per_run_cap}")
@@ -131,10 +142,15 @@ class OpenRouterClient:
 
     The SDK does not retry (`max_retries=0`); this class retries transient errors itself, and a
     timed-out request (per-role `timeout_s`) at most once, so a stalled provider cannot block a run.
+    The SDK timeout bounds each network read, not the whole reply (a slow trickle never trips it), so
+    every request also runs under a wall-clock deadline of the same `timeout_s` (5.0.R).
     """
 
-    TRANSIENT = ("APIConnectionError", "APITimeoutError", "RateLimitError", "InternalServerError")
+    TRANSIENT = ("APIConnectionError", "APITimeoutError", "DeadlineExceeded", "RateLimitError",
+                 "InternalServerError")
+    TIMEOUTS = ("APITimeoutError", "DeadlineExceeded")
     MAX_TIMEOUTS = 2        # a timed-out call is retried once; the second timeout fails the call
+    POLL_S = 0.5            # how often a waiting call looks at the cancel event
 
     def __init__(self, tracker: SpendTracker | None = None) -> None:
         from dotenv import load_dotenv
@@ -169,7 +185,8 @@ class OpenRouterClient:
             self.tracker.check()          # per attempt: a retried call must not run past the cap
             started = time.monotonic()
             try:
-                response = self.client.chat.completions.create(
+                response = self._create_with_deadline(
+                    timeout_s(role),
                     model=model, messages=messages, temperature=cfg.get("temperature", 0),
                     max_tokens=role_cfg.get("max_tokens", 8000), response_format=response_format,
                     extra_body=extra, timeout=timeout_s(role),
@@ -178,7 +195,10 @@ class OpenRouterClient:
                 if type(exc).__name__ not in self.TRANSIENT:
                     raise
                 last_error = exc
-                if type(exc).__name__ == "APITimeoutError":
+                if type(exc).__name__ in self.TIMEOUTS:
+                    # Logged with cost 0: an abandoned reply that still completes later is not costed.
+                    self.tracker.add(role + ":timeout",
+                                     LLMResult(data={}, model=model, latency_s=time.monotonic() - started))
                     timeouts += 1
                     if timeouts >= self.MAX_TIMEOUTS:
                         raise RuntimeError(f"LLM call timed out {timeouts} times ({timeout_s(role):.0f} s each, "
@@ -204,6 +224,32 @@ class OpenRouterClient:
             self.tracker.add(role, result)
             return result
         raise RuntimeError(f"LLM call failed after retries: {last_error}")
+
+
+    def _create_with_deadline(self, seconds: float, **kwargs):
+        """The SDK request on a daemon thread, waited for at most `seconds` (wall clock). Past the deadline
+        the request is abandoned (DeadlineExceeded); a set cancel event stops the wait at once."""
+        box: dict = {}
+
+        def call() -> None:
+            try:
+                box["response"] = self.client.chat.completions.create(**kwargs)
+            except BaseException as exc:  # noqa: BLE001 - handed to the waiting thread
+                box["error"] = exc
+
+        worker = threading.Thread(target=call, name="llm-request", daemon=True)
+        worker.start()
+        deadline = time.monotonic() + seconds
+        while worker.is_alive():
+            if self.tracker.cancel.is_set():
+                raise RunCancelled("set run cancelled while waiting for the model")
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise DeadlineExceeded(f"no complete reply within {seconds:.0f} s (wall clock)")
+            worker.join(min(self.POLL_S, remaining))
+        if "error" in box:
+            raise box["error"]
+        return box["response"]
 
 
 def _account(result: LLMResult, usage, price: dict) -> None:

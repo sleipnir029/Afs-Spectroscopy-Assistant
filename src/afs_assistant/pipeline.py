@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -96,10 +97,25 @@ def knowledge_block() -> str:
     return "\n".join(lines)
 
 
-def is_off_topic(intake: Intake) -> bool:
-    """Only the `out_of_scope` route and no measurement target. A borderline or non-optical measurement
-    question (any other route, or a target) still gets the full assessment."""
-    return set(intake.routes) == {"out_of_scope"} and not intake.targets
+# Generic measurement words (5.0.R): an enquiry using any of them is never treated as off-topic.
+MEASUREMENT_CUE = re.compile(r"measur|monitor|spectr|analy[sz]|sensor|probe|fib(?:er|re)|in-?line|concentrat|"
+                             r"calibrat|absorb|wavelength|reactor|pipe|process|\bNIR|\bRaman\b|FT-?IR|\bUV",
+                             re.IGNORECASE)
+_SAMPLE_SLOTS = ("physical_state", "optical_regime", "aqueous", "heterogeneous", "fluorophore")
+
+
+def is_off_topic(intake: Intake, removed: list[dict], enquiry: str) -> bool:
+    """Off-topic only on strict evidence (5.0.R): the model routed it only `out_of_scope`, and nothing in
+    the intake or the enquiry hints at a measurement. Any target, process detail, premise, sample slot or
+    proposed fiber (kept, or removed by the quote check), a named method or a generic measurement word
+    sends the enquiry through the full assessment. Stated facts alone do not count."""
+    return (set(intake.routes) == {"out_of_scope"}
+            and not intake.targets and not intake.process and not intake.customer_premises
+            and all(getattr(intake.sample, name).value == "unknown" for name in _SAMPLE_SLOTS)
+            and intake.proposed_fiber.family == "none"
+            and not any(not r["location"].startswith("intake.facts_stated") for r in removed)
+            and not named_methods(enquiry)
+            and not MEASUREMENT_CUE.search(enquiry))
 
 
 def slots_from_intake(intake: Intake) -> dict:
@@ -407,11 +423,14 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
         problems = intake_problems(intake, intake_removed)
         if best_intake is None or len(problems) < len(best_intake[2]):
             best_intake = (intake, intake_removed, problems)
-        if not problems or is_off_topic(intake):     # an off-topic intake has no target by design: no retry
+        # Only the first attempt may stop the run as off-topic (it has no target by design: no retry). A
+        # retry follows an attempt that was not off-topic, so the enquiry is assessed whatever it says (5.0.R).
+        off_topic = attempt == 1 and is_off_topic(intake, intake_removed, enquiry)
+        if not problems or off_topic:
             break
     intake, intake_removed, problems = best_intake
     lap("intake")
-    if is_off_topic(intake):
+    if off_topic:
         timings["wall"] = round(time.monotonic() - wall, 3)
         calls = tracker.run_calls[first_call:] if tracker is not None else []
         manifest = _manifest(run_id, calls, attempt, problems, [], None, timings, None)
