@@ -1,0 +1,518 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The turbid aqueous broth and the two named target families justify a conditional shortlist, so this assessment is provisional. The targets themselves are not yet defined, and no supplied source shows performance for this broth.",
+ "premise_checks": [
+  {
+   "premise": "An optical measurement during yeast fermentation will help follow growth and notice changes earlier.",
+   "verdict": "precedent_only",
+   "explanation": "A published yeast-fermentation study shows a spectral combination improving biomass estimation and separating metabolites; that is a reason to test the approach, not proof for this broth.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The combination of NIR spectroscopy with fluorescence spectroscopy demonstrated the possibility of more accurately determining the biomass content during yeast fermentation, as well as distinguishing between their intra- and extracellular metabolites.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Biomass and metabolic signals can be used as separate targets.",
+   "verdict": "precedent_only",
+   "explanation": "Sources treat a physical process trend and chemical structures as distinct things to monitor in bioprocessing, but nothing here defines the two signals for this broth.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "a primary advantage of having multiple techniques is the ability to monitor both complex chemical structures and overall physical process trends simultaneously",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "The broth becoming more optically dense is a useful indicator for the process.",
+   "verdict": "supported",
+   "explanation": "The source states that turbidity correlates with cell density, so the optical-density trend is usable as a growth indicator; it is not a cell count.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Identity and concentration range of the metabolic target",
+  "Whether the broth contains a fluorescent species",
+  "Optical-density range across the run (which geometry stays usable)",
+  "Reference method and reference sampling frequency",
+  "Required accuracy and response time (go/no-go criteria)",
+  "Probe installation point, distance from the spectrometer and cleaning regime"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which metabolic species should the measurement follow, and over what concentration range?",
+   "why_it_matters": "It decides whether NIR, fluorescence or Raman can see the target at all.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Does the broth contain a fluorescent species (for example NADH, tryptophan or riboflavin), or could a justified fluorescent indicator be added?",
+   "why_it_matters": "Fluorescence only works with a fluorescing species, so this decides whether the two-channel option is usable.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the optical density from start to end of the run, and does the broth stay in the scattering regime?",
+   "why_it_matters": "It decides between transmission and reflection geometry and where each one stops working.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What accuracy and response time must the measurement reach for you to accept it?",
+   "why_it_matters": "These numbers become the go/no-go criteria for the feasibility test.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Where can a probe be installed, at what distance from the spectrometer, and how will it be cleaned?",
+   "why_it_matters": "It fixes the probe and fiber type, and deposits on the measuring window can change the signal.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "The broth is turbid and becomes denser, the regime where reflection rather than transmission is used. NIR also tracks major components such as glucose or glycerol in the millimolar range, so one method covers both the growth trend and the larger chemical changes.",
+   "conditions": "Applies if the broth stays in the scattering regime through the run and a calibration can be built from reference samples.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "reflection can work well in highly scattering environments but can be less representative for clear liquids.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "UV/Vis transmission is a robust route to a real-time growth signal, because turbidity correlates with cell density. It is usable only while the broth is still transparent enough; as the broth thickens the transmission signal saturates.",
+   "conditions": "Applies mainly to the early, lower-optical-density part of the run.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "the signal in a standard transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "combined_with": [
+    "Fluorescence"
+   ],
+   "rationale": "In yeast fermentation the published combination of NIR with fluorescence gave a better biomass estimate and separated intra- from extracellular metabolites, so the second channel is worth testing. Fluorescence reaches trace cofactors that NIR misses, but only where a fluorescent species is present.",
+   "conditions": "Applies only after the single-method tests, and only if a fluorescent species (for example NADH, tryptophan or riboflavin) is present.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The combination of NIR spectroscopy with fluorescence spectroscopy demonstrated the possibility of more accurately determining the biomass content during yeast fermentation, as well as distinguishing between their intra- and extracellular metabolites.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "To fill this gap, Fluorescence spectroscopy can be used for high-sensitivity detection (down to the nM-μM range) of critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR reflection probe flush-mounted in the reactor or a flow cell, in contact with the broth; transmission/transflection as the comparison geometry while the broth is still clear.",
+  "location": "One measuring point in the broth, in the reactor or in a recirculation loop; two methods would have to share that point.",
+  "fiber_link": "Fiber family and link length depend on the method and installation; no length can be stated from the supplied sources for a MIR link, and the NIR/UV-Vis link is an open question for AFS.",
+  "citations": []
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal method range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "UV-Vis",
+   "statement": "Nominal UV part of the range 190-360 nm; the visible part is not given as a number in the supplied sources, and the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm), but requires the use of special light sources and fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The biomass and metabolic targets are still undefined, so a method could be chosen for the wrong species or concentration range.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "NIR may lack the sensitivity for trace metabolites, so earlier changes could be missed.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "While the broth is still clear early in the run, reflection may be less representative of the bulk than later.",
+   "rule_ids": [
+    "R-GEO-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "reflection can work well in highly scattering environments but can be less representative for clear liquids.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "If no fluorescent species is present, the second channel of the two-channel option cannot be used.",
+   "rule_ids": [
+    "R-FLU-1"
+   ],
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "it is limited to the samples containing at least one fluorescent component",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "NIR and UV-Vis calibrations are specific to the matrix, so a change of medium, strain or feed requires re-validation on the new material.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "physical variation; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative broth samples across the run (early, mid, late) and from at least three independent batches, covering the expected optical-density range.",
+    "purpose": "Representative samples and process states are the base of the comparison.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure every sample with the single methods first (NIR diffuse reflection and UV-Vis transmission), on the same samples, without combining methods.",
+    "purpose": "Single methods first; a combination is a later hypothesis.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference values for each sample: dry cell weight or cell count, and the metabolite concentration by a laboratory assay.",
+    "purpose": "Reference values are needed to build and check the models.",
+    "citations": []
+   },
+   {
+    "step": "Build one chemometric model per method and validate it on held-out batches, not on further samples from the same run.",
+    "purpose": "Held-out batches show whether the model transfers.",
+    "citations": []
+   },
+   {
+    "step": "Only if no single method separates the process states, test the NIR plus fluorescence combination at the same measuring point and compare it with the best single method; the accuracy and response-time criteria come from the customer.",
+    "purpose": "A combination must beat the best single method or be dropped.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Dry cell weight or cell count, and metabolite concentration by a laboratory assay, on the same samples used for the spectra.",
+  "decision_basis": "The customer's own accuracy and response-time numbers; if no single method reaches them, the combination is tested against the best single method."
+ },
+ "assumptions": [
+  "The broth stays a pumpable liquid and can be brought into contact with a probe.",
+  "A chemometric calibration can be built from the available reference samples.",
+  "The process can provide reference samples at a usable frequency."
+ ],
+ "not_in_sources": [
+  "Accuracy, detection limits and response times for in-line monitoring of this broth.",
+  "An achievable fiber link length for a probe in this installation."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Biomass / growth signal (physical trend of the broth)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Following growth is the first stated target, and in a turbid broth the growth trend appears as a change in the scattering and absorption signal.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Major soluble components (for example carbon source such as glucose or glycerol)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "This is the metabolic side of the request at the level NIR can reach.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Fluorescent cofactor or metabolite signal (for example NADH, tryptophan, riboflavin)",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It should be available if the broth fluoresces, because it adds the sensitive trace-level metabolic channel.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Fluorescence",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "To fill this gap, Fluorescence spectroscopy can be used for high-sensitivity detection (down to the nM-μM range) of critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Optical density / turbidity",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the state the customer says changes during the run, and it decides which measurement geometry stays usable.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P5",
+   "name": "Offline reference values (dry cell weight, metabolite concentration)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Independent reference values are needed to build and validate the calibration models.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "dry cell weight; laboratory metabolite assay (for example HPLC)",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P6",
+   "name": "Temperature",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Fermentation temperature drives growth and shifts the spectra, so it should be available to interpret the trends.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "process temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P4",
+    "P6"
+   ],
+   "ease_of_use": "Single transmission probe, standard optics, little training needed.",
+   "maintenance": "Periodic window cleaning and baseline checks.",
+   "performance_fit": "Answers the growth question with the least hardware, but saturates as the broth thickens.",
+   "cost_drivers": "One spectrometer, one transmission probe, simple data handling.",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P5",
+    "P6"
+   ],
+   "ease_of_use": "One reflection probe; building the chemometric model needs skilled work.",
+   "maintenance": "Probe cleaning plus recalibration when the medium changes.",
+   "performance_fit": "Tolerates turbidity and covers growth and major components in one method.",
+   "cost_drivers": "NIR spectrometer, reflection probe, calibration samples and model work.",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P5",
+    "P6"
+   ],
+   "ease_of_use": "Two instruments and two data streams to align and keep running.",
+   "maintenance": "Two calibrations and two sets of probe diagnostics.",
+   "performance_fit": "Adds a sensitive metabolic channel where NIR alone is too coarse.",
+   "cost_drivers": "Second spectrometer, combined probe, synchronisation and fusion work.",
+   "fusion_note": "Both channels must look at the same small area of the broth, so either one combined probe head or two probes at one measuring point are needed. The two data streams must be aligned to a common time step, and each method keeps its own calibration and diagnostics. The fused model must be validated on independent batches and must beat the best single method, otherwise the second channel is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "NIR and UV-Vis bands overlap, so quantitative use needs a chemometric calibration built on reference samples and validated on held-out batches; the model is specific to the broth and must be re-validated when the medium or strain changes.",
+ "realtime_tracking_note": "The measurement is in-line and continuous, and the broth changes during the run, so the model has to cover the whole range; if two methods are used, their data must be synchronised to a common time step.",
+ "future_direction": "Once the informative spectral regions are known, a compact LED-based sensor or a Raman channel could be considered as a later step.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the metabolic target turns out to be a trace species that does not fluoresce, or if the optical-density range rules out reflection, the shortlist and the geometry would have to be revisited.",
+  "next_step": "Run the feasibility experiment on representative broth samples, single methods first, with independent reference analyses and the customer's accuracy and response-time criteria."
+ },
+ "brief_answer": "Start with NIR diffuse reflection as a single method: the broth is turbid and gets denser, the regime where reflection rather than transmission is used, and NIR also sees major components. A UV-Vis transmission measurement is the simple comparison for the growth signal. What stays open is the metabolic target itself: until its species and concentration range are defined, and reference analyses agreed, fluorescence or Raman cannot be chosen."
+}
