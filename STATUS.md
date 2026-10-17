@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 20:41 CEST (Claude, Phase 4)._
+_Last updated: 2026-10-17 21:40 CEST (Claude, Phase 4)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -10,7 +10,7 @@ _Last updated: 2026-10-17 20:41 CEST (Claude, Phase 4)._
 **20:18 D01–D08 `--external=live` started** on code df33769 (log in the session scratchpad); this run shows live behaviour only, it is re-run after 4.R.
 **G4 code review (20:22, reviewer agent, run in parallel): NEEDS_FIXES** — B1 uncapped model text in dropped items reaches git; B2 an external-step crash (null API fields) kills the primary assessment and the set; B3 no wall deadline (drip-feeding server); B4 localhost guard bypass (127.1, 0x7f.1, localhost.). N1–N12 non-blocking. → **4.R** (PHASES.md; D-036) done in a worktree (5b767ce), merged 20:37: pytest 439 passed, 2 skipped; ruff clean; kb check PASS.
 **Preview run (pre-4.R code) stopped after D01** (D-037): D01 external 4 gaps, 6 queries (EPMC ×6, OpenAlex ×3), 5 sources (3 library, 2 EPMC abstracts), 7 verified items, 0 dropped, $0.0098, **253 s** (evidence call 218 s, 19k reasoning tokens). With `reasoning: {effort: low}` on the external roles (D-037, 72e493a): **97 s, $0.0042**, 5 verified, 0 dropped. pytest 440 passed, 2 skipped.
-**20:41 D01–D08 `--external=live` re-run started on f6538ee** (log `devrun_p4r.log` in the session scratchpad). Next: `external replay` ×8, `check_cost_class`, `check_mermaid`, `git ls-files` copyright check, G4 re-review (reviewer agent).
+**20:41 D01–D08 `--external=live` re-run started on f6538ee** (log `devrun_p4r.log` in the session scratchpad). D01 (361 s; external 54 s, $0.0019, 2 verified items, library only after a Europe PMC ReadTimeout) and D02 (599 s; external 54 s, $0.0025, 4 verified) done: 0 hard failures, 21/21 and 30/30 citations. **D03 hung 42 min in an LLM call → stopped 21:39, D03–D08 restarted with `--only` (D-038).** Next: `external replay` ×8, `check_cost_class`, `check_mermaid`, `git ls-files` copyright check, G4 re-review (reviewer agent).
 
 **Phase 3 (Assessment upgrade): CLOSED 19:36 (G3 passed).** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
 - **User mode (D-020, 14:24):** Claude is fully in charge; the user is woken (push notification) only for their decisions. At each phase end: write this handoff and tell the user to switch sessions ("do the next task").
