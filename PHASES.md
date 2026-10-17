@@ -646,6 +646,22 @@ The 3.R3 dev run started 18:19 was stopped at D01 so the run uses the fixed code
 11. Tests `tests/test_phase4.py`, offline only (a fixture blocks sockets; `httpx.MockTransport`; **synthetic** API fixtures written by us, no third-party text in git): client parsing (OpenAlex inverted index, EPMC search + XML), extraction (XML/HTML/PDF, <500 chars dropped), cache round trip and cache-mode miss, replay equality, gap detection, injection fixture (instruction paragraph removed; an injected non-verbatim claim dropped; a verbatim one still marked secondary), dropped failed quotes, number check, quote length cap, timeout → library fallback, no email/full text in the run JSON, existing tests still pass. One live smoke test, skipped without network/key.
 **Then:** live probe of each API once (STATUS) → build the library → D01–D08 with `--external=live` → `external replay` on all 8 → `git ls-files` check → reviewer agent (G4).
 
+### Phase 4 fixes (4.R) — 20:23, from the G4 code review (NEEDS_FIXES; Claude, D-020 mode; D-036)
+1. **B1** dropped items store `finding`/`how_it_applies`/`limits_and_transfer_risks` cut to 600 chars + `<field>_chars`; replay skips cut fields.
+2. **B2** `pipeline.run` guards the external step: `SpendCapExceeded` re-raised, any other exception → a minimal external block with `error`, primary result kept; parsers tolerate null fields (`or ""`, `or []`). **N10** the primary result is complete before the step starts (a spend-cap hit in the step keeps the primary assessment and records `error`).
+3. **B3** per-request wall deadline (~15 s, non-fatal `Unavailable`) in the streaming loop; a step deadline (60 s) checked in `retrieve()` → stop fetching, log "time budget".
+4. **B4** `blocked_reason`: strip a trailing dot, block numeric/hex shorthand hosts, resolve with `getaddrinfo` and reject any non-global address.
+5. **N1** socket blocking exempts only the skipped live smoke test.
+6. **N2** library entries store `passage_sha256`; replay compares paragraph/passage hashes and `library_sha256` and reports a difference.
+7. **N4** an item's `finding` must share ≥2 content words with its quote (else dropped); `abstract_only` sources never give proposal support.
+8. **N5** titles/venue normalised (whitespace, tags stripped) and passed through the instruction filter before the fence and the render.
+9. **N7** fetch-phase failures (timeout on one OA URL) are per-source; only search failures are fatal.
+10. **N8** the `cache` help text says what it does (recorded HTTP responses only; new queries miss → library only; `external replay` is the exact re-check).
+11. **N9** a kept item shows the matched source span; a quote with a digit next to a hyphen must match exactly.
+12. Tests for each (null JSON, drip-feeding server, shorthand hosts, dropped-text length, edited library passage, title injection, N6 sentence edge case documented as known: the 400-char cap holds).
+Not done (logged): N3 code guard on query privacy (prompt rule stays; reviewer to re-check outputs), N6 sentence splitter, N11, N12.
+Then: merge after the running dev run, re-run D01–D08 `--external=live` on the fixed code, replay ×8, G4 re-review.
+
 ### Acceptance checks
 - [ ] pytest, ruff and the lint pass; no network in offline tests.
 - [ ] Each API was probed live once (results in STATUS).
