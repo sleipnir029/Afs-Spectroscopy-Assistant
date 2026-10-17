@@ -61,6 +61,7 @@ MAX_FETCH_ATTEMPTS = 8
 MIN_HIT_SCORE = 2               # shared content words between a hit and its query + gap
 SOURCE_CHARS = 6000
 MAX_TEXT_CHARS = 600            # finding / how_it_applies / limits_and_transfer_risks (and stored drop reasons)
+NO_METHOD_SUPPORT = ("auxiliary_sensor", "uncited_parameter")   # gap kinds that never support the proposal
 MAX_ID_CHARS = 40               # model-given ids (gap, option, source) as stored
 MIN_SHARED_WORDS = 2            # content words a finding must share with its own quote
 STEP_BUDGET_S = 60.0            # wall time for searching and fetching
@@ -481,9 +482,11 @@ def run(intake: Intake, a: Assessment, client, mode: str = "live", fetcher: Fetc
                             for g in gaps]
     if a.proposal.basis == "engineering_judgement":
         access = {s["id"]: s.get("access") for s in block["sources"]}      # an abstract never supports it
+        kinds = {g.id: g.kind for g in gaps}     # a sensor or parameter gap says nothing about the method choice
         block["proposal_support"] = [it["citation"]["label"] for it in block["items"]
                                      if it["option_id"] == a.proposal.best_current_option
-                                     and access.get(it["citation"]["source_id"]) == "full_text"]
+                                     and access.get(it["citation"]["source_id"]) == "full_text"
+                                     and kinds.get(it["gap_id"]) not in NO_METHOD_SUPPORT]
     calls = tracker.calls[first_call:] if tracker is not None else []
     block["calls"] = len(calls)
     block["cost_usd"] = round(sum(c["cost_usd"] for c in calls), 6)
