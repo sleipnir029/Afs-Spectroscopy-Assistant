@@ -1,0 +1,448 @@
+{
+ "round": 1,
+ "hard_failures_before": 4,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "The shortlist rests on two assumptions: a liquid medium that can make tight ATR contact, and a mid-infrared fiber link of about 150 m that the sources do not establish. Until the tracked species and the link are confirmed, the assessment stays provisional.",
+  "premise_checks": [
+   {
+    "premise": "A fiber can carry the mid-infrared signal about 150 m from the reactor to the analyser house.",
+    "verdict": "not_covered",
+    "explanation": "The sources list fibers that transmit mid-infrared (chalcogenide, polycrystalline, hollow waveguide), but the only stated long cables are low-OH silica for the visible and near-infrared; the mid-infrared fiber examples given are short laboratory runs. No source states an achievable mid-infrared link length.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 6,
+      "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
+      "page": 7,
+      "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
+      "page": 10,
+      "quote": "1.25 Meter Silver Halide - straight run",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The expected signal loss over that fiber link can be estimated from the sources.",
+    "verdict": "not_covered",
+    "explanation": "No supplied page gives an attenuation or loss figure for a mid-infrared fiber or cable. The only statement about coupling behaviour is qualitative (hollow waveguides couple poorly to FTIR spectrometers, polycrystalline fibers much better).",
+    "citations": []
+   },
+   {
+    "premise": "Mid-infrared ATR is suitable for following the reaction.",
+    "verdict": "precedent_only",
+    "explanation": "Fiber ATR probes are described for liquids and for in-line process analysis, and a published example uses MIR-ATR in-line for polymer extrusion. That is a reason to test the method, not proof that it works for this reaction.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [],
+  "key_unknowns": [
+   "Tracked species or spectral band, and its concentration range",
+   "Required spectral window for the tracked bands",
+   "Solvent identity and interfering absorption bands",
+   "Medium optical density and transparency (decides whether the NIR alternative is viable)",
+   "Mid-infrared fiber type, achievable length and link loss available from AFS",
+   "Reference method and accuracy / response-time targets"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "Which species or spectral band must be followed, and over what concentration range?",
+    "why_it_matters": "It decides the required mid-infrared window and whether MIR-ATR can see the reaction at all.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "Can a mid-infrared fiber link of about 150 m between the reactor and the analyser house be supplied, and what loss does it show?",
+    "why_it_matters": "No source states an achievable mid-infrared link length or attenuation, so this decides whether the planned installation is feasible and replaces the loss figure the enquiry asks for.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "How transparent is the reaction medium, and could a defined optical pathlength be used?",
+    "why_it_matters": "It decides whether the NIR transmission/transflection alternative, which uses the only cables stated for long runs, is viable.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Which spectral range must be covered for the tracked bands?",
+    "why_it_matters": "The usable range depends on the fiber and crystal actually selected, so it narrows the mid-infrared fiber choice.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "What reference method and what accuracy and response-time targets define a successful measurement?",
+    "why_it_matters": "They set the go/no-go criteria for the feasibility tests.",
+    "affects": [
+     "M1"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "MIR-ATR suits a liquid solvent stream in contact with the crystal, and fiber ATR probes are used for in-line process analysis. Mid-infrared spectra show well-defined absorption bands, which helps to resolve the reaction bands.",
+    "conditions": "Applies if the reaction medium is a liquid or soft solid that makes tight contact with the ATR crystal and does not foul it.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "Low-OH silica fibers are the only family with stated 100-300 m cables, and transmission or transflection is the geometry for transparent or semi-transparent liquids. This makes NIR the alternative to test if a mid-infrared link near 150 m is not available.",
+    "conditions": "Applies only if the medium is clear enough for a defined pathlength and the tracked species has usable NIR bands.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 7,
+      "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm)",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Immersion ATR fiber probe at the reactor port (primary); a transmission/transflection probe as the conditional alternative.",
+   "location": "Probe in the reactor or its recirculation line; spectrometer in the analyser house, about 150 m away.",
+   "fiber_link": "Mid-infrared light needs chalcogenide, polycrystalline or hollow-waveguide fibers; silica fibers reach only about 2400 nm. No achievable mid-infrared link length or loss is stated in the sources.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "MIR",
+    "statement": "Nominal mid-infrared range 4000-400 cm-1 (2.5-25 µm); the usable range depends on the fiber, crystal and probe selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal near-infrared range 780-2500 nm; the usable range depends on the instrument, fiber and probe selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "No source states an achievable length or attenuation for a mid-infrared fiber link, so the about 150 m separation may not be feasible and the loss cannot be quantified yet.",
+    "rule_ids": [
+     "R-FIB-2"
+    ],
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 7,
+      "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "The mid-infrared fiber family must match the required spectral window, which is unknown until the tracked bands are defined.",
+    "rule_ids": [
+     "R-GEN-1"
+    ],
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 6,
+      "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Hollow waveguides couple poorly to FTIR spectrometers, so that link could lose signal, while polycrystalline fibers couple much better.",
+    "rule_ids": [
+     "R-FIB-3"
+    ],
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 10,
+      "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "ATR samples only a surface layer a few micrometres deep, so fouling or a non-representative layer on the crystal could distort the reaction trend.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative batch samples or process states across the expected composition and temperature range (solvent, start, middle and end of the batch).",
+     "purpose": "Cover the expected chemical and physical variation.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Measure every sample with an independent reference method (the customer's existing batch assay) to give reference values.",
+     "purpose": "Independent reference measurements.",
+     "citations": []
+    },
+    {
+     "step": "Acquire MIR-ATR spectra on all samples under the same contact conditions; build a calibration model and validate it on held-out batches.",
+     "purpose": "Single method first, with validation on held-out runs.",
+     "citations": []
+    },
+    {
+     "step": "Repeat with NIR transmission/transflection on the same samples and compare the two single-method models; test a combined model only if neither single method is sufficient.",
+     "purpose": "Compare against the best single method before combining.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 5,
+       "quote": "compare with the best single method.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Measure the throughput of the installed reactor-to-analyser-house link and compare it with a short-link measurement; the go/no-go thresholds (accuracy, response time, minimum signal) are set by the customer.",
+     "purpose": "Basis for the go/no-go decision, with numerical criteria from the customer.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Independent laboratory analysis of the same samples with the customer's existing batch assay.",
+   "decision_basis": "Customer-defined accuracy and response-time targets versus the reference method, plus the measured throughput of the real fiber link."
+  },
+  "assumptions": [
+   "The reaction medium is a liquid that can make tight contact with the ATR crystal.",
+   "The spectrometer stays in the analyser house and the link is about 150 m.",
+   "The tracked species has an absorption band in the usable mid-infrared window of the fiber and probe selected."
+  ],
+  "not_in_sources": [
+   "An achievable length for a mid-infrared fiber link (only low-OH silica cables are stated for long runs).",
+   "An expected signal-loss or attenuation figure for a mid-infrared fiber link of about 150 m."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Concentration of the tracked reaction species",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The reaction can only be followed if the species to quantify is defined.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "MIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P2",
+    "name": "Solvent identity and matrix composition",
+    "kind": "qualitative",
+    "necessity": "required",
+    "why": "The solvent sets the background bands and interferences in the mid-infrared spectrum and the calibration matrix.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "customer's existing laboratory batch assay",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Reaction temperature",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "Batch temperature should be available because reaction progress and spectral comparability over a batch depend on it.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P4",
+    "name": "Throughput of the mid-infrared fiber link",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The enquiry asks for the expected signal loss, and no source gives an attenuation figure, so it has to be measured on the installed link.",
+    "measured_by": {
+     "type": "not_measurable_inline",
+     "method": null,
+     "sensor": null,
+     "alternative": "throughput measurement on the installed link (reference spectrum through the full fiber run)"
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P2"
+    ],
+    "ease_of_use": "standard silica probe, glass optics",
+    "maintenance": "probe cleaning, periodic recalibration",
+    "performance_fit": "only source-stated route for long cable runs",
+    "cost_drivers": "NIR spectrometer, silica probe, long cable installation",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "contact ATR probe, one spectrometer",
+    "maintenance": "ATR crystal cleaning, link checks",
+    "performance_fit": "best chemical fit for a liquid reaction",
+    "cost_drivers": "MIR spectrometer, ATR probe, mid-infrared fiber link",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "Following the reaction quantitatively will need a calibration model specific to the solvent matrix, validated on independent batches; the same applies to the NIR alternative.",
+  "realtime_tracking_note": "In-line fiber probes give near-real-time results without sampling; the achievable acquisition rate depends on the instrument and the fiber link actually installed.",
+  "future_direction": "If a long mid-infrared link proves difficult, a multiplexed analyzer close to the reactor, or a compact spectral sensor at the measuring point, could be considered later.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "supplied",
+   "what_would_change_it": "If a mid-infrared fiber link near 150 m cannot be supplied, or if the medium turns out clear enough for a defined NIR pathlength, the choice would move to the NIR option. A tracked species that mid-infrared cannot see would have the same effect.",
+   "next_step": "Ask AFS for the achievable mid-infrared fiber type, length and measured loss for this link, and obtain the tracked species and required spectral window from the customer."
+  },
+  "brief_answer": "Test mid-infrared ATR first: it suits a liquid solvent stream in contact with the crystal and is the customer's own method. The open point is the link — only chalcogenide, polycrystalline or hollow-waveguide fibers carry mid-infrared, and no source states an achievable mid-infrared length or loss figure, so the 150 m link and its loss stay open. If the medium is clear, NIR over silica fibers is the alternative."
+ }
+}
