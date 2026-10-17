@@ -122,6 +122,9 @@ class OpenRouterClient:
             response_format = {"type": "json_object"}
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
         routing = {"require_parameters": True, **cfg.get("provider_routing", {}).get(model, {})}
+        extra = {"provider": routing, "usage": {"include": True}}
+        if "reasoning" in role_cfg:          # e.g. {effort: low}: bounds the hidden reasoning of a small step
+            extra["reasoning"] = role_cfg["reasoning"]
 
         last_error: Exception | None = None
         for attempt in range(3):
@@ -131,7 +134,7 @@ class OpenRouterClient:
                 response = self.client.chat.completions.create(
                     model=model, messages=messages, temperature=cfg.get("temperature", 0),
                     max_tokens=role_cfg.get("max_tokens", 8000), response_format=response_format,
-                    extra_body={"provider": routing, "usage": {"include": True}},
+                    extra_body=extra,
                 )
             except Exception as exc:  # retry only transient API errors
                 if type(exc).__name__ not in self.TRANSIENT:

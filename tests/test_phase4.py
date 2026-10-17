@@ -924,3 +924,26 @@ def test_live_smoke_europe_pmc_search(tmp_path):
     finally:
         f.close()
     assert hits and all(h.title for h in hits)
+
+
+def test_role_reasoning_setting_is_sent_only_for_roles_that_set_it(monkeypatch):
+    from types import SimpleNamespace
+
+    from afs_assistant import llm
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    sent = []
+    message = SimpleNamespace(content='{"ok": true}')
+    response = SimpleNamespace(choices=[SimpleNamespace(message=message, finish_reason="stop")], usage=None,
+                               model="m", id="r", provider="p")
+
+    def create(**kwargs):
+        sent.append(kwargs["extra_body"])
+        return response
+
+    client = llm.OpenRouterClient()
+    client.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    for role in ("external_evidence", "assess"):
+        client.complete_json(role, "s", "u", "x", {"type": "object", "properties": {}})
+    assert sent[0]["reasoning"] == llm.config()["roles"]["external_evidence"]["reasoning"]
+    assert "reasoning" not in sent[1]
