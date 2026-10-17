@@ -727,6 +727,15 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 3. **LLM timeouts:** `OpenAI(max_retries=0)` plus a per-role `timeout_s` in `config/models.yaml` (intake 240, assess/repair 600, external roles 180); a timed-out call is retried once, other transient errors as before.
 4. Offline tests for each (FakeClient; a fake slow client for the timeout path).
 
+**5.0.R fixes (review of 8a6bde7: NEEDS_FIXES; Claude, D-020 mode; D-042):**
+1. Short-circuit only when the **first** intake attempt is off-topic; if any attempt was not off-topic, never short-circuit.
+2. Stricter `is_off_topic(intake, removed, enquiry)`: routes exactly `{out_of_scope}`; no targets; no removed item under `intake.targets` / `intake.process` / `intake.customer_premises`; process and premises empty; every sample slot `unknown`; `proposed_fiber.family == "none"`; `named_methods(enquiry)` empty; the enquiry matches no generic measurement cue (measur, monitor, spectr, analys/z, sensor, probe, fiber/fibre, in-line, concentrat, calibrat, absorb, wavelength, reactor, pipe, process, NIR, Raman, FTIR, UV).
+3. Intake prompt: `out_of_scope` = "not a measurement or process-analysis question at all (e.g. travel, sales admin, general chat); a vague, non-optical or borderline measurement question is NOT out_of_scope: use needs_clarification".
+4. **Wall-clock deadline** per LLM call (the per-read httpx timeout may never fire on a slow or keep-alive reply): run the request in a daemon thread and `join(timeout_s)`, or stream with a deadline check; a call past its deadline counts as a timeout (retried once).
+5. Ctrl-C in `run --workers`: a cancel event the tracker's `check()` raises on, `shutdown(wait=False, cancel_futures=True)`, re-raise.
+6. `external replay` on an off-topic run says "off-topic run".
+7. Tests: both misrouting repros, a vague one-line measurement enquiry, the wall-clock deadline, Ctrl-C cancel, replay message; make the order test deterministic (events, not sleeps).
+
 **5.6 Demo surface: a simple local web app** (D-023; replaces the `afs-assist chat` REPL and the static HTML view; approved 14:22)
 - `uv run afs-assist ui` starts a Streamlit app on localhost (`uv add streamlit`). Streamlit fits a report-style page (columns, tabs, expanders); Gradio is aimed at model demos and Chainlit at chat-first apps.
 - **Start screen:** paste an enquiry or pick a saved run (dev, adversarial, later the frozen H runs). Saved runs open instantly, which is the safe live-demo path.
