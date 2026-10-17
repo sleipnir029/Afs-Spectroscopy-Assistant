@@ -80,7 +80,12 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
     - P3: code-generated Mermaid sketch (~1–2 h).
     - P4: optional fields.
     - Then the shell, freeze and deliverables (~8–10 h). Cut the bake-off to a quick check.
-  - **Open questions to the user:** a written source for thermocouples; a cap on must-have parameters (~4?); 2–3 options or one; Mermaid vs images; bake-off cut.
+- **Decisions (13:07, user):**
+  - **Thermocouples:** no written source from AFS. Two web searches found none (Art Photonics ATR listings give only temperature ranges, no integrated thermocouple/Pt100). Offer temperature sensing as a suggested option in proposals, labelled engineering judgement, "confirm availability with AFS"; live search may still find a source.
+  - **Parameters: no cap.** Evaluate which parameters the case needs and whether each is necessary; also list optional "should be available" parameters with the reason.
+  - **Solution options:** always 2–3: simple, recommended, extended multi-method.
+  - **Sketch:** a Mermaid flowchart in the Markdown, no images.
+  - **Bake-off:** cut to a quick check.
 - Dev model switched to `deepseek/deepseek-v4.1-flash` (10:15, user; D-011). Providers [deepinfra, atlas-cloud, coreweave] (fp8, strict JSON); max_tokens 16k/32k/32k (reasoning tokens count). Smoke test: the D08 intake runs clean on flash (DeepInfra, finish=stop, $0.0031, proposed_methods [MIR, Fluorescence]). pytest 84 passed, 1 skipped. D01–D07 outputs are still from v4-pro: re-run on flash before G2.
 - Decisions (09:29, user):
   - External reference library: **yes**. Curated, each entry with URL + verbatim quoted passage, marked secondary; to be planned in Phase 3.
