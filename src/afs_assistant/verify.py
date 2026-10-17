@@ -23,10 +23,12 @@ MAX_QUESTIONS = 7
 MAX_RECOMMENDATIONS = 5
 MAX_WORDS = 1800
 # A forbidden phrase preceded (within a few words, same clause) by one of these is a cautious negation,
-# not a claim. The clause ends at ; . , or "but".
-_NEGATION_BEFORE = re.compile(r"\b(?:not|no|never|cannot|can't|without|nor|neither|isn't|doesn't|don't|won't)\b"
-                              r"(?:\W+\w+){0,6}\W*$", re.IGNORECASE)
-_CLAUSE_BREAK = re.compile(r"[;.,]|\bbut\b", re.IGNORECASE)
+# not a claim. The clause ends at ; , a sentence end, "but" or "however". A comma aside directly after
+# the negation word ("cannot, at this stage, guarantee") stays in the clause.
+_NEGATION_WORDS = r"(?:not|no|never|cannot|can't|without|nor|neither|isn't|doesn't|don't|won't)"
+_NEGATION_BEFORE = re.compile(rf"\b{_NEGATION_WORDS}\b(?:\W+\w+){{0,6}}\W*$", re.IGNORECASE)
+_NEGATION_ASIDE = re.compile(rf"\b({_NEGATION_WORDS})\s*,[^,;.!?]{{1,40}},", re.IGNORECASE)
+_CLAUSE_BREAK = re.compile(r"[;,]|[.!?](?=\s|$)|\b(?:but|however)\b", re.IGNORECASE)
 # A verbatim enquiry quote needs at least this many normalised characters (and a word character).
 MIN_ENQUIRY_QUOTE_CHARS = 4
 # Wording that asserts certainty or commercial facts the sources cannot support (REF §3 "Do not invent").
@@ -274,7 +276,7 @@ def forbidden_hits(text: str) -> list[str]:
     hits = []
     for rx, label in FORBIDDEN:
         for m in rx.finditer(text):
-            window = text[max(0, m.start() - 80):m.start()]
+            window = _NEGATION_ASIDE.sub(r"\1", text[max(0, m.start() - 80):m.start()])
             breaks = list(_CLAUSE_BREAK.finditer(window))
             if breaks:
                 window = window[breaks[-1].end():]

@@ -131,6 +131,23 @@ def test_negation_in_another_clause_does_not_excuse_forbidden_wording(text):
     assert forbidden_hits(text)
 
 
+@pytest.mark.parametrize("text", [
+    "We cannot, at this stage, guarantee the result.",
+    "We do not, and cannot, guarantee a detection limit.",
+    "A 0.5 mm path does not guarantee a clear spectrum.",
+])
+def test_negation_with_an_aside_or_a_decimal_still_excuses_cautious_wording(text):
+    assert not forbidden_hits(text)
+
+
+@pytest.mark.parametrize("text", [
+    "It is not cheap, however it will work.",
+    "We did not test it, so it will work.",
+])
+def test_however_and_plain_commas_still_end_the_clause(text):
+    assert forbidden_hits(text)
+
+
 @pytest.mark.parametrize("field_name", ["requirements_stated", "key_unknowns", "not_in_sources"])
 def test_numbers_in_uncited_lists_must_come_from_the_enquiry(field_name):
     a = copy.deepcopy(ASSESSMENT)
