@@ -402,3 +402,15 @@ def test_model_never_writes_the_confidence():
 def test_assess_and_repair_have_room_for_reasoning():
     roles = config()["roles"]
     assert roles["assess"]["max_tokens"] >= 64000 and roles["repair"]["max_tokens"] >= 64000
+
+
+def test_currency_codes_are_case_sensitive_so_journal_abbreviations_pass():
+    import re
+
+    from afs_assistant.verify import PRICE_PATTERN
+
+    pat = re.compile(PRICE_PATTERN, re.IGNORECASE)
+    assert pat.search("about 5,000 EUR")
+    assert pat.search("a few thousand euros")
+    assert not pat.search("Eur. Urol. 2009, 56, 636-643")
+    assert not pat.search("Usd and Chf are not codes here")

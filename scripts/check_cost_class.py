@@ -48,7 +48,7 @@ ORDER = ["low", "average", "high"]
 CELL = r"(?:[^|\\]|\\.)*"
 # | ID | Tier | Methods | Confidence | Cost class | ...
 ROW = re.compile(rf"^\| (O\d+) \| [^|]+ \| {CELL} \| {CELL} \| ({CELL}) \|")
-CURRENCY = re.compile(r"[€$£]|\b(?:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b", re.IGNORECASE)
+CURRENCY = re.compile(r"[€$£]|\b(?-i:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b", re.IGNORECASE)
 
 
 def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None, list[int]]]:

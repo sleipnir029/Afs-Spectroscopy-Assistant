@@ -50,7 +50,7 @@ _CLAUSE_BREAK = re.compile(r"[;,:\n\u2013\u2014]|\s-\s|[.!?](?=[\s\"'\u201d\u201
 # A verbatim enquiry quote needs at least this many normalised characters (and a word character).
 MIN_ENQUIRY_QUOTE_CHARS = 4
 # Any currency sign, code or word: the assistant never states a price (3.R B3).
-PRICE_PATTERN = r"[€$£]|\b(?:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b"
+PRICE_PATTERN = r"[€$£]|\b(?-i:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b"
 # Wording that asserts certainty or commercial facts the sources cannot support (REF §3 "Do not invent").
 FORBIDDEN = [
     (re.compile(PRICE_PATTERN, re.IGNORECASE), "price"),
