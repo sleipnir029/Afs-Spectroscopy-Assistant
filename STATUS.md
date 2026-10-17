@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 10:50 CEST (Claude)._
+_Last updated: 2026-10-17 11:15 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -75,6 +75,17 @@ Known open points for Phase 3: claims that go beyond their valid quotes (needs c
 None.
 
 ## Check results
+**2.R2 run (finished 11:12), flash, code 9a7e465, session cost $0.1855:**
+- **Completion:** all 8 complete; 0 hard failures; citations 304/304 verified; no finalize corrections needed.
+- **Status:** provisional ×7, D02 premise_not_supported.
+- **Shape:** recommendations 3–4, a single method as primary; questions 5–6; risks 4 each.
+- **Cost and length:** $0.015–0.036 per case. Body (before Evidence) 1,616–2,483 words vs 2,100–3,650 total before; still far above the ~450 of the organizer examples and the 1,800 soft budget.
+
+Problems found:
+1. **`proposed_methods` is null in all 8 cases.** It is not the sanitizer: the model returns nulls and puts named methods into `process` as `existing_equipment`. Removing the schema docstring did not help (live A/B on D08, $0.004).
+2. **D08 shows MIR-ATR as not_recommended although the customer asked for it.** Intake classified chicken muscle/fat/liver as `solid`, not `soft_solid`, so R-MIR-2 fails ATR. The screen is right for its input; the intake prompt never defines the physical_state values.
+3. **Placeholder `"unknown"` process items** still appear (D01, D02, D08) despite the prompt; the sanitizer removes them (soft).
+
 **Flash baseline, pre-2.R2 code (finished 10:40), deepseek-v4.1-flash, session cost $0.1415:** all 8 complete (D08 too); hard failures 0 in every case; citations 271/271 verified; status provisional ×7, D08 insufficient_information; recs 2–5; questions 5–6; cost $0.015–0.022 per case. Markdown 2,082–3,656 words (longer than v4-pro's 2,000–2,700). Committed 67ce484.
 
 **Phase 2 re-run after 2.R (10:10), dev model deepseek-v4-pro-0813, session cost $0.345:**
