@@ -405,3 +405,23 @@ Deferred to Phase 3: entailment critic (N12), length scoring, eval harness, bake
 1. **Methods named in the enquiry, detected in code.** `proposed_methods` leaves the LLM intake schema. Code finds method names in the enquiry with a fixed generic word list (NIR/near-infrared, MIR/mid-infrared/FTIR, Raman, fluorescence, UV-Vis/UV/Vis/ultraviolet). Quotes are verbatim by construction. The result goes to the assess context and the run JSON as "methods the customer named"; the assess model judges whether they are proposed.
 2. **Intake prompt: short generic definitions of the physical_state values**, tied to S01 Table 1's sample types: liquid, paste, soft_solid (soft, deformable material such as gels, soft food or soft tissue), powder, solid (rigid).
 3. Tests for 1–2; re-run D01–D08 (~$0.2); then an independent review of the outputs plus 9a7e465, 10ff73a and 2.R3; then G2.
+
+### Pre-G2 output review (report received 12:04): READY WITH FIXES
+- **Blocking:**
+  - B1: D01 has an empty spectral-range section, and no check catches it.
+  - B2: feasibility-plan steps are bare numbers (D02) or carry a doubled number.
+  - B3: the uniqueness key (method, technique) blocks combination entries, so the model invented a fake technique (D01).
+- **Acceptance checks:** all PASS except "all sections" (B1/B2).
+- Non-blocking items go to the Phase 3 plan (see STATUS).
+
+### Phase 2 fixes (2.R4) — APPROVED 2026-10-17 12:04 (user, incl. the two prompt lines)
+1. **B1:** a hard check fails when there is a recommended (primary/comparison/conditional) entry but `spectral_ranges` is empty, plus a soft warning per recommended method with no range entry.
+2. **B2:** a hard check fails when a plan step is a bare number or has fewer than 3 words; render strips a leading "1." / "1)" from step text.
+3. **B3:** the uniqueness key and the finalize dedupe use (method, technique, sorted combined_with); the prompt says a combination is its own comparison or conditional entry.
+4. **Assess prompt:**
+   - no pipeline jargon in customer-facing text (e.g. "deterministic screening");
+   - a fact the customer stated is never a premise.
+5. **Small regressions:**
+   - a dash aside after an auxiliary negation stays in the clause ("cannot - at this stage - guarantee");
+   - method words: fluorimetry/fluorometer/fluorometry; "non fluorescent" with a space is excluded.
+6. Tests for 1–5; re-run D01–D08 (~$0.15) → G2.
