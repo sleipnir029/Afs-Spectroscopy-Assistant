@@ -1,0 +1,21 @@
+{% extends "fragment.html" if htmx else "job_steps_plain.html" %}
+{% block main %}
+<div id="job-steps" class="job-steps"{% if job.state == 'running' %} hx-get="/jobs/{{ job.id }}" hx-trigger="every {{ poll }}s" hx-swap="outerHTML"{% endif %}>
+  <p class="timer" aria-live="off"><span class="mono">{{ '%d:%02d' | format(job.elapsed // 60, job.elapsed % 60) }}</span> elapsed</p>
+  <ol class="steps">
+    {% for st in job.steps %}
+    <li class="step step-{{ st.state }}">
+      <span class="step-mark" aria-hidden="true">{{ {'done': '✓', 'running': '●', 'pending': '○', 'skipped': '–'}[st.state] }}</span>
+      <span class="step-label">{{ st.label }}</span>
+      <span class="step-time mono">{% if st.state in ('done', 'running') %}{{ '%.1f' | format(st.seconds) }} s{% elif st.state == 'skipped' %}skipped{% endif %}</span>
+      <span class="sr-only">{{ st.state }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="job-status" role="status">
+    {% if job.state == 'failed' %}<span class="flag">The run failed: {{ job.error }}</span> <a href="/">Back to the start</a>
+    {% elif job.state == 'done' %}Done. <a href="/runs/{{ job.result }}{{ '?compare=' ~ job.parent if job.parent else '' }}">Open the assessment</a>
+    {% else %}Running…{% endif %}
+  </p>
+</div>
+{% endblock %}

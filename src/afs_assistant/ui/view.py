@@ -12,7 +12,12 @@ import re
 from types import SimpleNamespace
 
 from afs_assistant import kb, quotes, scope
-from afs_assistant.options import CONFIDENCE_NOTE, TABLE1_CITATION, method_label, option_citations
+from afs_assistant.options import (
+    CONFIDENCE_NOTE,
+    TABLE1_CITATION,
+    method_label,
+    option_citations,
+)
 from afs_assistant.render import (
     BASIS_LABEL,
     EXTERNAL_TITLE,
@@ -30,9 +35,16 @@ from afs_assistant.render import (
     stated_from_intake,
 )
 from afs_assistant.schema import Assessment, Intake
+from afs_assistant.ui import diagrams
 from afs_assistant.verify import ANSWER_QUESTIONS
 
 CONTEXT_CHARS = 700          # page text shown on each side of a verified quote
+FIG_WIDTHS = {"wide": 560.0, "narrow": 340.0}      # side-by-side figures on desktop / one column on phone
+MAP_WIDTHS = {"wide": 900.0, "narrow": 340.0}
+# Display steps of a run and the pipeline stages (`RunResult.timings`) each one covers.
+STEPS = (("intake", "Reading enquiry", ("intake",)), ("screen", "Screening methods", ("screen",)),
+         ("assess", "Assessing", ("assess", "repair")), ("verify", "Checking quotes", ("verify", "finalize")),
+         ("external", "Searching literature", ("external",)))
 _TITLE = re.compile(r"^# First technical assessment(?::\s*(.*))?$")
 _STEP_NUMBER = re.compile(r"^\s*\d+[.)](?!\d)\s*")
 COST_NOTE = (f"Cost class is the relative rating in {TABLE1_CITATION} for the in-line method+technique rows "
@@ -62,11 +74,23 @@ def title_of(markdown: str, data: dict) -> str:
 
 
 def is_off_topic(data: dict) -> bool:
-    return "out_of_scope" in ((data.get("intake") or {}).get("routes") or [])
+    """An off-topic run: marked by the pipeline, intake routed only out_of_scope, or no assessment at all."""
+    routes = set((data.get("intake") or {}).get("routes") or [])
+    return bool(data.get("off_topic")) or routes == {"out_of_scope"} or not data.get("assessment")
 
 
-def off_topic() -> dict:
-    return {"message": OFF_TOPIC_MESSAGE, "examples": list(OFF_TOPIC_EXAMPLES)}
+def off_topic(data: dict | None = None) -> dict:
+    """The redirect line and example questions; the pipeline's own wording wins when the run carries it."""
+    given = (data or {}).get("off_topic")
+    given = given if isinstance(given, dict) else {"message": given} if isinstance(given, str) else {}
+    return {"message": given.get("message") or OFF_TOPIC_MESSAGE,
+            "examples": list(given.get("examples") or OFF_TOPIC_EXAMPLES)}
+
+
+def status_label(data: dict) -> str:
+    if is_off_topic(data):
+        return "Off topic"
+    return STATUS_LABEL.get(data["assessment"].get("decision_status", ""), "")
 
 
 class _Registry:
@@ -134,11 +158,12 @@ def _source_record(src: dict) -> dict:
 
 def build(data: dict, markdown: str = "", key: str = "") -> dict:
     """The display model of one saved run."""
+    manifest = data.get("manifest") or {}
     view = {"key": key, "run_id": data.get("run_id", ""), "title": title_of(markdown, data),
-            "enquiry": data.get("enquiry", ""), "created": (data.get("manifest") or {}).get("created_utc", ""),
-            "models": (data.get("manifest") or {}).get("models", []), "off_topic": None}
-    if is_off_topic(data) or not data.get("assessment"):
-        view["off_topic"] = off_topic()
+            "enquiry": data.get("enquiry", ""), "created": manifest.get("created_utc", ""),
+            "models": manifest.get("models", []), "off_topic": None, "has_markdown": bool(markdown)}
+    if is_off_topic(data):
+        view["off_topic"] = off_topic(data)
         return view
     a = Assessment.model_validate(data["assessment"])
     intake = Intake.model_validate(data["intake"])
@@ -176,32 +201,34 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
             methods.append({"id": rid, "label": method_label(r.method, r.technique) if r else "missing",
                             "combined_with": list(r.combined_with) if r else []})
         c = conf.get(o.id, {})
+        cost = costs.get(o.id, {})
         view["options"].append({
             "id": o.id, "tier": o.tier, "tier_label": TIER_LABEL[o.tier], "is_best": best is not None and o is best,
             "methods": methods, "confidence": {"level": c.get("level", ""), "reasons": c.get("reasons", [])},
-            "cost": {"label": costs.get(o.id, {}).get("label", ""), "class": costs.get(o.id, {}).get("cost_class", "")},
+            "cost": {"label": cost.get("label", ""), "class": cost.get("cost_class", "")},
             "ease": o.ease_of_use, "maintenance": o.maintenance, "performance_fit": o.performance_fit,
-            "cost_drivers": o.cost_drivers, "fusion_note": o.fusion_note,
+            "parameters": list(o.parameter_ids), "cost_drivers": o.cost_drivers, "fusion_note": o.fusion_note,
             "cites": reg.supplied(option_citations(o, recs)), "flag": flags.get(f"solution_options[{i}]"),
         })
+    view["proposal"]["methods"] = next((o["methods"] for o in view["options"] if o["is_best"]), [])
+    view["proposal"]["confidence"] = next((o["confidence"] for o in view["options"] if o["is_best"]), None)
     view["confidence_note"] = CONFIDENCE_NOTE
     view["cost_note"] = COST_NOTE
     view["cost_citation"] = TABLE1_CITATION
 
-    sketches = data.get("setup_sketches") or {}
-    tiers = {o.id: o.tier for o in a.solution_options}
-    view["charts"] = [{"option_id": oid, "tier": tiers.get(oid, ""), "tier_label": TIER_LABEL.get(tiers.get(oid), ""),
-                       "layer": "answer" if tiers.get(oid) == "recommended" else "expert", "code": code}
-                      for oid, code in sketches.items()]
+    proposed, others, fiber_ids = diagrams.option_highlights(a, best)
+    slots = data.get("slots") or {}
+    view["figures"] = {
+        "setup": {w: diagrams.setup(a, best, slots, px) for w, px in FIG_WIDTHS.items()} if best else None,
+        "spectral": {w: diagrams.spectral(proposed, others, fiber_ids, px) for w, px in FIG_WIDTHS.items()},
+        "params": {w: diagrams.parameter_map(a, px) for w, px in MAP_WIDTHS.items()},
+        "proposed_methods": sorted(proposed), "other_methods": sorted(others),
+    }
 
     view["questions"] = [{"id": q.id, "question": q.question, "why": q.why_it_matters, "affects": q.affects,
                           "flag": flags.get(f"clarification_questions[{i}]")}
                          for i, q in enumerate(a.clarification_questions)]
     view["top_questions"] = ANSWER_QUESTIONS
-
-    gap_results = (ext or {}).get("gap_results", [])
-    view["external_answer"] = [{"gap_id": g["gap_id"], "result": g["result"], "cites": reg.external(g["items"])}
-                               for g in gap_results]
 
     # ---------------------------------------------------------------- expert detail
     view["parameters"] = [{"id": p.id, "name": p.name, "kind": p.kind, "necessity": p.necessity,
@@ -211,10 +238,8 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
                          "premise": p.premise.rstrip().rstrip("."), "explanation": p.explanation,
                          "cites": reg.supplied(p.citations), "flag": flags.get(f"premise_checks[{i}]")}
                         for i, p in enumerate(a.premise_checks)]
-    view["requirements"] = {
-        "stated": list(a.requirements_stated) or stated_from_intake(run),
-        "unknowns": list(a.key_unknowns),
-    }
+    view["requirements"] = {"stated": list(a.requirements_stated) or stated_from_intake(run),
+                            "unknowns": list(a.key_unknowns)}
     view["recommendations"] = [{
         "id": m.id, "role": m.role, "role_label": ROLE_LABEL[m.role], "method": method_label(m.method, m.technique),
         "combined_with": list(m.combined_with), "rationale": m.rationale,
@@ -238,6 +263,7 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
     view["notes"] = [{"label": label, "text": getattr(a, n)} for n, label in NOTE_LABEL.items() if getattr(a, n)]
     view["external"] = _external_view(ext, reg)
     view["verification"] = _verification_view(data, run)
+    view["made"] = made_strip(data, len(reg.items))
     view["citations"] = reg.items
     return view
 
@@ -259,14 +285,34 @@ def _verification_view(data: dict, run) -> dict:
     return {
         "summary": s,
         "still_open": data.get("still_open", []),
-        "removed_citations": [{"location": x["location"], "label": kb.citation_label(x["citation"]["doc"],
-                                                                                     x["citation"]["page"]),
+        "removed_citations": [{"location": x["location"],
+                               "label": kb.citation_label(x["citation"]["doc"], x["citation"]["page"]),
                                "quote": x["citation"]["quote"]} for x in data.get("removed_citations", [])],
         "changes": [{"location": x["location"], "reason": x["reason"]} for x in data.get("finalize_changes", [])],
         "repair_rounds": len(data.get("repairs", [])),
         "external_lines": [line.lstrip("- ").strip() for line in external_verification(run)],
-        "timings": data.get("timings_s", {}),
     }
+
+
+def made_strip(data: dict, n_citations: int) -> dict:
+    """'How this answer was made': the display steps with their recorded times and counts."""
+    timings = data.get("timings_s") or {}
+    s = (data.get("verification") or {}).get("summary", {})
+    ext = data.get("external")
+    notes = {"intake": f"{len((data.get('intake') or {}).get('facts_stated', []))} stated fact(s)",
+             "screen": f"{len(data.get('screening', []))} method/technique pairs",
+             "assess": f"{len(data.get('repairs', []))} repair round(s)",
+             "verify": f"{s.get('citations_verified', 0)} of {s.get('citations_total', 0)} quotes verified",
+             "external": ("off" if ext is None else
+                          f"{len(ext.get('items', []))} external quote(s) verified" if ext.get("gaps")
+                          else "no gap to search")}
+    steps = []
+    for key, label, stages in STEPS:
+        ran = [timings[x] for x in stages if x in timings]
+        steps.append({"key": key, "label": label, "seconds": round(sum(ran), 1) if ran else None,
+                      "note": notes[key]})
+    return {"steps": steps, "wall": timings.get("wall"), "calls": len(data.get("calls", [])),
+            "models": (data.get("manifest") or {}).get("models", []), "citations": n_citations}
 
 
 def source(doc: str, page: int, quote: str) -> dict | None:
@@ -295,11 +341,13 @@ def source(doc: str, page: int, quote: str) -> dict | None:
 
 
 def summary(view: dict) -> dict:
-    """Status, best option and confidence per option, for the before/after comparison."""
+    """Status, proposed option and its confidence, per-option confidence: the before/after comparison."""
     if view.get("off_topic"):
-        return {"status": "Off topic", "best": None, "options": []}
+        return {"status": "Off topic", "best": None, "confidence": None, "options": []}
     best = view["proposal"]["best"]
+    conf = view["proposal"]["confidence"] or {}
     return {"status": view["status"]["label"], "best": f"{best['id']} ({best['tier']})" if best else None,
+            "confidence": conf.get("level"),
             "options": [{"id": o["id"], "tier": o["tier_label"], "confidence": o["confidence"]["level"]}
                         for o in view["options"]]}
 
@@ -314,5 +362,5 @@ def answers_to_facts(enquiry: str, answers: list[dict]) -> str:
              for a in answers if str(a.get("answer", "")).strip()]
     if not lines:
         return enquiry
-    return enquiry.rstrip() + "\n\nAdditional facts from the customer (answers to clarification questions):\n" + \
-        "\n".join(lines)
+    return (enquiry.rstrip() + "\n\nAdditional facts from the customer (answers to clarification questions):\n"
+            + "\n".join(lines))

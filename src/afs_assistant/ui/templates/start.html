@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block main %}
+<section class="start" aria-labelledby="start-title">
+  <h1 id="start-title" class="start-title">Paste a customer enquiry</h1>
+  <p class="lede">The assistant reads the enquiry, screens the in-line methods, writes a first technical assessment and checks every quote against the supplied AFS sources. A run takes a few minutes; saved runs below open instantly.</p>
+  <form class="enquiry-form" method="post" action="/assess">
+    <label class="sr-only" for="enquiry">Customer enquiry</label>
+    <textarea id="enquiry" name="enquiry" rows="8" required placeholder="What does the customer want to measure, in which process, and what do they already know?">{{ q }}</textarea>
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <div class="form-row">
+      {% if busy %}
+      <p class="muted">A run is in progress. <a href="/jobs/{{ busy.id }}">Follow it</a>.</p>
+      {% else %}
+      <button class="btn" type="submit">Assess</button>
+      <span class="muted small">Calls the language model and the literature search; the result is saved with its provenance.</span>
+      {% endif %}
+    </div>
+  </form>
+</section>
+
+<section class="runs" aria-labelledby="runs-title">
+  <h2 id="runs-title" class="h2">Saved runs</h2>
+  {% if saved %}
+  <table class="runs-table">
+    <thead><tr><th scope="col">Run</th><th scope="col">Title</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
+    <tbody>
+    {% for r in saved %}
+      <tr>
+        <td class="mono">{{ r.id }}</td>
+        <td><a href="/runs/{{ r.id }}">{{ r.title }}</a></td>
+        <td>{{ r.status }}</td>
+        <td class="mono nowrap">{{ r.date }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No saved runs yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
