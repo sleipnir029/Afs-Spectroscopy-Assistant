@@ -9,6 +9,7 @@ never touched. A local copy is also written to runs/<run_id>/ (gitignored).
 from __future__ import annotations
 
 import json
+import threading
 import time
 
 from dulwich import porcelain
@@ -21,6 +22,8 @@ from afs_assistant import paths
 
 PROVENANCE_REF = b"refs/heads/provenance"
 AUTHOR = b"afs-assistant pipeline <pipeline@afs-assistant.local>"
+# One provenance commit at a time: parallel runs would otherwise read the same parent and lose commits.
+_RECORD_LOCK = threading.Lock()
 
 
 def _tree(repo: Repo, files: dict[str, bytes]) -> bytes:
@@ -78,7 +81,12 @@ def code_dirty(repo_path=paths.ROOT) -> bool | None:
 
 
 def record(run_id: str, files: dict[str, str | bytes], message: str, repo_path=paths.ROOT) -> str:
-    """Write files under runs/<run_id>/ locally and commit them on the provenance ref."""
+    """Write files under runs/<run_id>/ locally and commit them on the provenance ref (thread-safe)."""
+    with _RECORD_LOCK:
+        return _record(run_id, files, message, repo_path)
+
+
+def _record(run_id: str, files: dict[str, str | bytes], message: str, repo_path) -> str:
     encoded = {k: v.encode("utf-8") if isinstance(v, str) else v for k, v in files.items()}
     local = paths.ROOT / "runs" / run_id if repo_path == paths.ROOT else repo_path / "runs" / run_id
     for name, data in encoded.items():
@@ -133,6 +141,11 @@ def run_files(result_json: dict, markdown: str) -> dict[str, str]:
         "manifest.json": dump(m),
         "assessment.md": markdown,
     }
+    if result_json.get("off_topic") is not None:      # stopped after the intake: nothing assessed
+        for name in ("screening.json", "assessment_raw.json", "assessment.json", "finalize.json",
+                     "verification.json"):
+            del files[name]
+        files["off_topic.json"] = dump(result_json["off_topic"])
     for rep in result_json["repairs"]:
         files[f"repair_round_{rep['round']}.json"] = dump(rep)
     if "external" in result_json:       # metadata, verified quotes and sha256 only; never fetched full text
@@ -143,12 +156,14 @@ def run_files(result_json: dict, markdown: str) -> dict[str, str]:
 def commit_message(result_json: dict) -> str:
     m = result_json["manifest"]
     v = m["verification"]
+    verifier = ("not run (off-topic enquiry: stopped after the intake)" if v is None else
+                f"{'pass' if v['passed'] else 'fail'} ({v['hard_failures']} hard, {v['soft_failures']} soft); "
+                f"citations {v['citations_verified']}/{v['citations_total']}")
     return (f"run {m['run_id']}\n\n"
             f"Run-Id: {m['run_id']}\n"
             f"Models: {', '.join(m['models'])}\n"
             f"Code-SHA: {m.get('code_sha', 'unknown')}{' (dirty)' if m.get('code_dirty') else ''}\n"
             f"Prompt-SHA256-Assess: {m['prompt_sha256']['assess']}\n"
             f"Knowledge-SHA256: {m['knowledge_sha256']}\n"
-            f"Verifier: {'pass' if v['passed'] else 'fail'} ({v['hard_failures']} hard, {v['soft_failures']} soft); "
-            f"citations {v['citations_verified']}/{v['citations_total']}\n"
+            f"Verifier: {verifier}\n"
             f"Cost-USD: {m['cost_usd']}\n")

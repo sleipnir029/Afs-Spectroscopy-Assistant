@@ -958,3 +958,17 @@ def test_role_reasoning_setting_is_sent_only_for_roles_that_set_it(monkeypatch):
         client.complete_json(role, "s", "u", "x", {"type": "object", "properties": {}})
     assert sent[0]["reasoning"] == llm.config()["roles"]["external_evidence"]["reasoning"]
     assert "reasoning" not in sent[1]
+
+
+def test_a_cancel_during_the_external_step_stops_the_case(tmp_path):           # 5.0.R review
+    from afs_assistant.llm import RunCancelled
+
+    class Cancelling(FakeClient):
+        def complete_json(self, role, *args, **kwargs):
+            if role == "external_queries":
+                raise RunCancelled("set run cancelled")
+            return super().complete_json(role, *args, **kwargs)
+
+    c = Cancelling({"intake": [INTAKE], "assess": [ASSESSMENT], "repair": []})
+    with pytest.raises(RunCancelled):
+        pipeline.run(ENQUIRY, c, run_id="t4", external="live", fetcher=fetcher(tmp_path, Server(), "live"))

@@ -37,7 +37,7 @@ Rules:
    - `premise_to_check`: at least one premise listed.
    - `certainty_or_approval_requested`: they ask for approval, proof, readiness or a final configuration.
    - `clinical_context`: patients, surgery or diagnosis.
-   - `out_of_scope`: not a spectroscopy measurement question.
+   - `out_of_scope`: not a measurement or process-analysis question at all (e.g. travel, sales admin, general chat). A vague, non-optical or borderline measurement question is NOT out_of_scope: use `needs_clarification`.
 7. `proposed_fiber`: only if the enquiry names an existing or proposed fiber link (family + the method it would carry); otherwise family `none`, for_method `none`.
 8. `unknowns`: the missing information an expert would need before choosing a method. Examples: target species and range, matrix and interferences, physical state and optical behaviour, temperature and pressure, installation point and distance, cleaning and fouling, required accuracy and response time, reference method.
 

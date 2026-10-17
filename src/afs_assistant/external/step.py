@@ -46,7 +46,7 @@ from afs_assistant.external.sources import (
     sha,
     verify_quote,
 )
-from afs_assistant.llm import SpendCapExceeded
+from afs_assistant.llm import RunCancelled, SpendCapExceeded
 from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.verify import PLACEHOLDERS, forbidden_hits
@@ -454,7 +454,7 @@ def run(intake: Intake, a: Assessment, client, mode: str = "live", fetcher: Fetc
     """The external block of a run (metadata, verified quotes, sha256; never full text)."""
     started = time.monotonic()
     tracker = getattr(client, "tracker", None)
-    first_call = len(tracker.calls) if tracker is not None else 0
+    first_call = len(tracker.run_calls) if tracker is not None else 0
     root = cache_root or paths.EXTERNAL_CACHE
     entries = library.load() if entries is None else entries
     own_fetcher = fetcher is None
@@ -487,7 +487,7 @@ def run(intake: Intake, a: Assessment, client, mode: str = "live", fetcher: Fetc
                                      if it["option_id"] == a.proposal.best_current_option
                                      and access.get(it["citation"]["source_id"]) == "full_text"
                                      and kinds.get(it["gap_id"]) not in NO_METHOD_SUPPORT]
-    calls = tracker.calls[first_call:] if tracker is not None else []
+    calls = tracker.run_calls[first_call:] if tracker is not None else []
     block["calls"] = len(calls)
     block["cost_usd"] = round(sum(c["cost_usd"] for c in calls), 6)
     block["seconds"] = round(time.monotonic() - started, 3)
@@ -519,7 +519,7 @@ def _run_steps(block: dict, intake: Intake, a: Assessment, client, gaps: list[Ga
         res = client.complete_json("external_queries", prompt("external_queries"), _queries_user(gaps, intake),
                                    "external_queries", QueryPlan.model_json_schema())
         queries, dropped_q = clean_queries(QueryPlan.model_validate(res.data), gaps)
-    except SpendCapExceeded:
+    except (SpendCapExceeded, RunCancelled):
         raise
     except (RuntimeError, ValueError) as exc:
         block["error"] = f"query plan failed: {type(exc).__name__}"
@@ -537,7 +537,7 @@ def _run_steps(block: dict, intake: Intake, a: Assessment, client, gaps: list[Ga
                                    evidence_user(intake, a, gaps, records, queries), "external_evidence",
                                    EvidenceReply.model_json_schema())
         reply = EvidenceReply.model_validate(res.data)
-    except SpendCapExceeded:
+    except (SpendCapExceeded, RunCancelled):
         raise
     except (RuntimeError, ValueError) as exc:
         block["error"] = f"evidence call failed: {type(exc).__name__}"

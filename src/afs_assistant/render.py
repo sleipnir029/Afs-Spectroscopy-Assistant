@@ -6,6 +6,8 @@ Code-derived parts (never model text): the cost class per option (S01 Table 1), 
 confidence rating per option, the auxiliary-sensor label, the not-measurable-in-line
 wording and the Mermaid setup sketch. Secondary external evidence (Phase 4), when the step
 ran, has its own section and is never mixed with the supplied-source evidence.
+An off-topic run (no assessment) renders as a short redirect page; its JSON keeps every key,
+with null or empty values where an assessment would be.
 """
 
 from __future__ import annotations
@@ -320,7 +322,19 @@ def external_verification(r: RunResult) -> list[str]:
     return out
 
 
+def off_topic_markdown(r: RunResult, title: str = "") -> str:
+    """The short page for an off-topic enquiry: the redirect line and the example questions."""
+    out = [f"# First technical assessment{': ' + title if title else ''}", "", "## Answer", "",
+           f"**{request_label(r)}:** {request_line(r)}", "", r.off_topic["message"], "",
+           "**Example questions this assistant can answer:**", ""]
+    out += [f"- {q}" for q in r.off_topic["examples"]]
+    out += ["", f"*Run {r.run_id} · models {', '.join(r.manifest.get('models', []))}*", ""]
+    return "\n".join(out)
+
+
 def to_markdown(r: RunResult, title: str = "") -> str:
+    if r.off_topic is not None:
+        return off_topic_markdown(r, title)
     a = r.assessment
     cite = _Citer()
 
@@ -511,6 +525,13 @@ def to_markdown(r: RunResult, title: str = "") -> str:
 
 
 def to_json(r: RunResult) -> dict:
+    if r.off_topic is not None:      # same keys, nothing assessed (consumers check `off_topic` first)
+        return {"run_id": r.run_id, "enquiry": r.enquiry, "intake": json.loads(r.intake.model_dump_json()),
+                "named_methods": r.named_methods, "slots": r.slots, "screening": [], "assessment": None,
+                "assessment_raw": None, "verification": None, "still_open": [], "option_costs": {},
+                "option_confidence": {}, "setup_sketches": {}, "removed_citations": [], "finalize_changes": [],
+                "flagged": r.flagged, "intake_removed": r.intake_removed, "repairs": r.repairs, "calls": r.calls,
+                "timings_s": r.timings, "manifest": r.manifest, "off_topic": r.off_topic}
     return {
         "run_id": r.run_id,
         "enquiry": r.enquiry,
