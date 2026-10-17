@@ -1,0 +1,592 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A defensible shortlist exists: MIR ATR fits these soft-solid samples and fluorescence is worth a parallel, conditional test on the same points. The shortlist and plan rest on assumptions about the fluorophore, the class reference and the acceptance criteria, which the questions below address.",
+ "premise_checks": [
+  {
+   "premise": "MIR ATR and fluorescence information are comparable and appropriate for classifying these tissues.",
+   "verdict": "precedent_only",
+   "explanation": "A published study used exactly these two techniques on chicken breast, fat and liver, but each technique separated different tissue types and only the combined data separated all three. This is a reason to test, not proof for your study.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The developed multispectral probe was tested in the practical analysis of biological tissue samples using different organs and parts of the chicken: breast, fat, and liver.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "none of the individual techniques was sufficient to completely separate the three sample classes on the PCA score plots",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "The key challenge is heterogeneity and sequential measurements not sampling the same location.",
+   "verdict": "supported",
+   "explanation": "The sources state directly that same-spot multi-method measurement is hard to achieve with two probes used alternately.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "This is difficult to achieve by using two probes alternately for measurements.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 2,
+     "quote": "Such alternating multispectral measurements cannot guarantee complete coincidence of the spots analyzed by both methods",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Chicken muscle, fat and liver are suitable model biological tissues for this study.",
+   "verdict": "precedent_only",
+   "explanation": "The same model system (chicken breast, fat, liver) is described as attractive for evaluating spectroscopic methods and equipment, but that is a published example, not proof for your group.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "Commercially produced poultry combines the availability of fresh samples and the variability of tissue types, making it an attractive model system for evaluating spectroscopic methods and equipment.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Whether the tissues contain a usable fluorophore (autofluorescence) and at which excitation and emission wavelengths.",
+  "The independent class reference (visual tissue-type assignment, histology or another method) and how the classes are defined.",
+  "Number of samples per tissue type and measurement points per sample, i.e. the statistical representativeness.",
+  "Sample preparation, thickness and how tight the contact with the ATR crystal will be.",
+  "Whether both methods can be measured at the same point simultaneously (combined probe) or only one after the other.",
+  "The numerical go/no-go criteria (accuracy, sensitivity, specificity) that will be accepted."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the independent ground truth for the class labels (visual tissue-type assignment, histology, or another method), and which spectral markers define the classes?",
+   "why_it_matters": "A comparison can only demonstrate classification if the classes have an independent reference to score against.",
+   "affects": [
+    "M1",
+    "M2",
+    "M3",
+    "O1",
+    "O2",
+    "O3",
+    "P1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Do the tissues show usable autofluorescence, or is a fluorescent indicator intended, and at which excitation and emission wavelengths?",
+   "why_it_matters": "Fluorescence only measures species that fluoresce, so without a fluorophore the fluorescence arm and the combined probe cannot contribute.",
+   "affects": [
+    "M2",
+    "M3",
+    "O1",
+    "O3",
+    "P4",
+    "P5"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Can both methods be measured at the same point simultaneously with one combined probe, or only sequentially with separate probes?",
+   "why_it_matters": "On heterogeneous tissue the same-spot requirement decides whether a method comparison is valid at all.",
+   "affects": [
+    "M3",
+    "O3"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "How will samples be prepared and presented (thickness, contact pressure on the ATR crystal, temperature)?",
+   "why_it_matters": "ATR needs tight contact and probes only a thin surface layer, so preparation and contact set the representativeness of the MIR data.",
+   "affects": [
+    "M1",
+    "O2",
+    "P2",
+    "P3",
+    "P6"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "How many samples and replicates per tissue type, and which numerical criteria (accuracy, sensitivity, specificity) define a go decision?",
+   "why_it_matters": "The go/no-go basis must come from you, not from the sources.",
+   "affects": [
+    "O1",
+    "O2",
+    "O3"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "MIR ATR fits these soft-solid samples and gives well-defined absorption bands; a contact ATR probe is made for liquids and soft solids. It is the single method to test first.",
+   "conditions": "Requires tight contact between sample and crystal, and analyses only a surface layer of a few micrometres.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Mid-IR band spectra contain well-defined peaks (absorption bands)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Fluorescence is only informative if the tissue contains a fluorescent component; in the chicken-tissue precedent the 613 nm porphyrin band separated liver from the other tissues. It applies only if that condition is met.",
+   "conditions": "Applies only if usable autofluorescence is confirmed or a justified fluorescent indicator is added, with the excitation wavelength chosen for that species.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "it is limited to the samples containing at least one fluorescent component",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The most selective peak at 613 nm, which can be assigned to porphyrins, has sufficient specificity to distinguish the liver from other measured samples.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [
+    "Fluorescence"
+   ],
+   "rationale": "A combined MIR-ATR and fluorescence probe reads both methods from the same small spot, which alternating probes cannot guarantee on heterogeneous tissue. In the precedent neither technique alone separated all three tissue classes, so a gain from combining is a hypothesis to test.",
+   "conditions": "Test after the single-method runs, and keep it only if the combined model beats the better single method.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 1,
+     "quote": "A multispectral fiber optic probe has been developed that enables simultaneous analysis of various liquid and solid samples using attenuated total reflection mid-infrared spectroscopy and fluorimetry.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Contact ATR (mid-IR) and a fluorescence probe; both must address the same small spot, ideally through one combined ATR/fluorescence probe head.",
+  "location": "Laboratory bench, probe tip in direct contact with the tissue surface.",
+  "fiber_link": "Fiber family and any link length depend on the configuration and are not fixed here; the MIR path needs a mid-IR fiber family, and long lengths are stated in the sources only for silica fibers.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 8,
+    "quote": "The use of a combined probe facilitates measurements and allows for the analysis of a smaller sample volume.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Fluorescence",
+   "statement": "The range depends on the fluorescent species and on the chosen excitation wavelength, so it can only be fixed once Q2 is answered.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "Fluorimetry is based on measuring the broad emission signal observed upon irradiation of certain samples in the UV and visible regions.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Not part of this enquiry; if it is ever added, the Raman shift in cm-1 is stated separately from the laser excitation wavelength in nm.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "If the tissues carry no usable fluorophore, the fluorescence arm adds no class information and O1 and the fluorescence part of O3 fall away.",
+   "rule_ids": [
+    "R-FLU-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "ATR probes only a surface layer a few micrometres deep, so MIR ATR may not represent the bulk heterogeneity that motivates the comparison.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "If the two methods are run with separate probes one after the other, the analysed spots may not coincide and the comparison is confounded.",
+   "rule_ids": [
+    "R-CMB-2"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Without an independent class reference and stated numerical criteria, no outcome can be judged to demonstrate classification.",
+   "rule_ids": [
+    "R-GEN-2"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "S1",
+    "purpose": "Representative samples across the expected chemical and physical variation.",
+    "citations": [
+     {
+      "doc": "S04",
+      "page": 3,
+      "quote": "three samples of each tissue type were prepared.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S04",
+      "page": 3,
+      "quote": "Each sample was represented by five distributed points.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "step": "S2",
+    "purpose": "Independent reference measurement: fix the class label of every sample and point (visual tissue-type assignment, histology if available) before any spectroscopy.",
+    "citations": []
+   },
+   {
+    "step": "S3",
+    "purpose": "Single methods first: measure MIR ATR, then fluorescence, on the same marked points with the same contact geometry; keep the two data sets separate, no fusion yet.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "the data from each method must be obtained simultaneously.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "S4",
+    "purpose": "Build one classification model per method (for example PCA or PLS-DA as in the precedent) and validate on held-out samples, keeping repeated points of one sample together in the same fold.",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 13,
+      "quote": "Repeated measurements in the same sample position produced similar spectra or sensor data; therefore, these should always be simultaneously excluded for every CV iteration.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "S5",
+    "purpose": "Go/no-go: the same-point combined model must beat the better single method on the held-out samples by the accuracy, sensitivity and specificity you set; if it does not, keep the single method.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Independent class reference per sample and point (visual tissue-type assignment, histology if available).",
+  "decision_basis": "Numerical accuracy, sensitivity and specificity criteria to be supplied by the customer."
+ },
+ "assumptions": [
+  "Tissue samples are soft enough to make tight contact with the ATR crystal.",
+  "At least one fluorescent component (autofluorescence or indicator) is present at a usable level.",
+  "Class labels can be assigned independently for every measured point."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Tissue class (muscle, fat, liver)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "The study's target is to separate these three classes, so an independent class label is needed to score any model.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "MIR",
+    "sensor": "visual tissue-type assignment, histology if available",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The developed multispectral probe was tested in the practical analysis of biological tissue samples using different organs and parts of the chicken: breast, fat, and liver.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Lipid (triglyceride) content, ester carbonyl band near 1740 cm-1",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The C=O band near 1740 cm-1 is characteristic of saturated triglycerides and was the MIR feature that separated fat from the other tissues.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "stretching vibration band of the ester carbonyl C=O at about 1740 cm-1, which is characteristic of saturated triglycerides",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Protein content, amide I and II bands near 1640 and 1548 cm-1",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Amide I and II are the major protein absorption peaks and are needed to interpret the muscle, fat and liver differences in the MIR spectra.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "the amide I and II bands, two major absorption peaks of the protein peptide group in the infrared region.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Fluorescence emission band near 520-530 nm (FAD)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The broad band with a maximum between 520 and 530 nm is the main fluorescence signal of these tissues and carries the FAD contribution.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Fluorescence",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The observed broad band with the maximum between 520 and 530 nm is formed by the emission of intracellular fluorophores with the dominating contribution of flavin adenine dinucleotide (FAD)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P5",
+   "name": "Porphyrin fluorescence band near 613 nm",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "This peak was the most selective fluorescence feature and distinguished liver from the other measured tissues.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Fluorescence",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The most selective peak at 613 nm, which can be assigned to porphyrins, has sufficient specificity to distinguish the liver from other measured samples.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P6",
+   "name": "Sample temperature",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Temperature affects band positions and the ATR contact condition; it should be available to check measurement stability between runs.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "One compact probe, simple measurement; needs a matched excitation wavelength.",
+   "maintenance": "Source lifetime and probe cleaning.",
+   "performance_fit": "Least effort single check of whether fluorescence alone carries class information.",
+   "cost_drivers": "One fluorescence spectrometer, excitation source, probe and reference samples.",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The most selective peak at 613 nm, which can be assigned to porphyrins, has sufficient specificity to distinguish the liver from other measured samples.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P6"
+   ],
+   "ease_of_use": "Single contact probe with a well-established measurement routine.",
+   "maintenance": "Regular ATR crystal cleaning and contact checks.",
+   "performance_fit": "Best single method for these soft solids: sharp, well-defined MIR bands with high selectivity.",
+   "cost_drivers": "FTIR spectrometer, mid-IR ATR probe and reference samples.",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "One combined probe, but two spectrometers and a fused data workflow.",
+   "maintenance": "Two instrument calibrations plus crystal and fiber cleaning.",
+   "performance_fit": "Adds fluorescence information at the same spot when one method cannot separate the classes.",
+   "cost_drivers": "Two spectrometers, a combined multispectral probe and data-fusion software.",
+   "fusion_note": "Fusion level: start with one model per method, then join the blocks with scaling so neither method dominates the model. Both methods must see the same small spot; with a combined ATR-fluorescence probe that is the crystal tip, and the two channels must be synchronised to a common time step. Each block keeps its own calibration and diagnostics, and the fused model must beat the better single method on held-out samples, otherwise the second method is dropped.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 1,
+     "quote": "A multispectral fiber optic probe has been developed that enables simultaneous analysis of various liquid and solid samples using attenuated total reflection mid-infrared spectroscopy and fluorimetry.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Variables obtained from different spectral methods are not equivalent.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "The study needs classification models with reference data: one model per method first, then a fused model, validated on held-out samples so that repeated points of one sample stay together. In the precedent, PCA separated the three chicken tissue classes only on the concatenated IR and fluorescence data.",
+ "realtime_tracking_note": null,
+ "future_direction": "If the comparison succeeds, the same interface could later be reduced to a small number of information channels in a compact multisensor, which the precedent illustrates for the chicken tissue classes.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the tissues show usable autofluorescence and the single-method models leave the classes overlapping, O3 becomes the choice; if no fluorophore is present, O1 falls away and only the MIR ATR route remains. A class reference and numerical criteria that cannot be met would also change the plan.",
+  "next_step": "Answer Q1-Q3 and run the five-step comparison on chicken muscle, fat and liver, starting with MIR ATR alone and adding fluorescence on the same marked points."
+ },
+ "brief_answer": "Test MIR ATR first as the single method: it suits soft tissue held in contact with the crystal and gives sharp, well-defined bands. Add a fluorescence arm only if the tissues show usable autofluorescence, and measure both methods on the same marked points. What is still open is whether a combined same-spot probe beats the better single method; the class reference and go/no-go criteria need your confirmation."
+}
