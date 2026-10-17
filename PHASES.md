@@ -338,7 +338,7 @@ Problems:
 5. **CLI:** `run --set` continues after a failed scenario, records the error, and exits non-zero at the end.
 6. **Tests** for 2–5. Then re-run D01–D08 (about $0.6) → reviewer → G2.
 
-### Phase 2 review (2026-10-17 10:20, reviewer agent): APPROVE WITH FIXES
+### Phase 2 review (2026-10-17, report received 10:18; reviewer agent): APPROVE WITH FIXES
 - Verifier sound: 152/152 citations shown as verified are exact on their page (independent check). 20 sampled for meaning: ~4 claims go beyond the quote (Phase 3 critic).
 - Acceptance: pytest/ruff/kb check PASS; D01–D08 end to end FAIL (D08); verified citations PASS; invented numbers PASS on outputs (code gap N6); cost logging FAIL (B3); provenance PASS with gaps (B4, N8); H not run PASS.
 - Blocking:
