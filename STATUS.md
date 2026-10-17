@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 11:29 CEST (Claude)._
+_Last updated: 2026-10-17 11:54 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -8,7 +8,7 @@ _Last updated: 2026-10-17 11:29 CEST (Claude)._
 **Phase 2: Pipeline MVP.**
 - **Code:** 2.R2 and 2.R3 are implemented. The independent review of Claude's commits 9a7e465, 10ff73a and 315a90a was APPROVE WITH FIXES (B1: an unverified contradiction behind the model's own status; B2: the negation aside let "No, honestly, it will work" through). Fixed in 75a4469 (D-014 amended, D-016).
 - **Checks:** pytest 162 passed, 1 skipped.
-- **Run:** the D01–D08 run on 75a4469 started 11:29; the run on 315a90a was stopped at D03.
+- **Run:** done (11:53, see Check results); the D01–D08 run on 75a4469 had started 11:29; the run on 315a90a was stopped at D03.
 - **Next:** check the run → independent review of the outputs (and the 75a4469 diff) → G2 (user reads D01, D02 + 2 others) → close Phase 2 → Phase 3 plan in a new session.
 
 ## Next session starts with (handoff 09:55)
@@ -80,6 +80,14 @@ Known open points for Phase 3: claims that go beyond their valid quotes (needs c
 None.
 
 ## Check results
+**Final Phase 2 dev run (finished 11:53), flash, code 75a4469, session cost $0.1455:**
+- **Completion:** all 8 complete; 0 hard failures, 0 still open, 0 finalize corrections; citations 254/254 verified.
+- **Status:** provisional ×8.
+- **D08 fixed:** named methods MIR + fluorescence; state soft_solid; MIR-ATR primary, fluorescence comparison.
+- **Shape:** questions 5–6; body 1,683–2,141 words (length deferred, user).
+- **Cost:** $0.014–0.033 per case.
+- Committed 7f3022a. Independent pre-G2 output review started 11:54.
+
 **2.R2 run (finished 11:12), flash, code 9a7e465, session cost $0.1855:**
 - **Completion:** all 8 complete; 0 hard failures; citations 304/304 verified; no finalize corrections needed.
 - **Status:** provisional ×7, D02 premise_not_supported.
