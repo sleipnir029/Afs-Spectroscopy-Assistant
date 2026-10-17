@@ -171,7 +171,8 @@ def _external_replay(args: argparse.Namespace) -> int:
 
 def _eval(args: argparse.Namespace) -> int:
     """Deterministic checklist over saved runs; writes outputs/eval/summary.md and summary.json.
-    Exit 1 when a must-not item fails, else 0 (other failures are information in the summary)."""
+    Exit 1 when a must-not item fails, or when a case was not run or its run is unreadable (unless
+    --allow-incomplete); else 0 (other failures are information in the summary)."""
     from pathlib import Path
 
     from afs_assistant import evaluate
@@ -184,15 +185,19 @@ def _eval(args: argparse.Namespace) -> int:
                                         cache_root=Path(args.external_cache) if args.external_cache else None)
                for s in sets}
     evaluate.write_summary(results, Path(args.out) if args.out else None)
-    must_not_failed = 0
+    must_not_failed = incomplete = 0
     for s, res in results.items():
         t = res["totals"]
         fails = sum(v["fail"] for v in t["per_item"].values())
         scen = t["scenario_items"]
         must_not_failed += scen["must_not"]["fail"]
-        print(f"{s}: {t['evaluated']}/{t['cases']} evaluated ({t['not_run']} not run); checklist failures {fails}; "
-              f"must fail {scen['must']['fail']}, must-not fail {scen['must_not']['fail']}")
+        incomplete += t["not_run"] + t["errors"]
+        print(f"{s}: {t['evaluated']}/{t['cases']} evaluated ({t['not_run']} not run, {t['errors']} unreadable); "
+              f"checklist failures {fails}; must fail {scen['must']['fail']}, must-not fail {scen['must_not']['fail']}")
     print(f"summary: {Path(args.out) if args.out else evaluate.paths.OUTPUTS / 'eval'}/summary.md")
+    if incomplete and not args.allow_incomplete:
+        print(f"{incomplete} case(s) not run or unreadable: incomplete evaluation (--allow-incomplete for a partial check)")
+        return 1
     return 1 if must_not_failed else 0
 
 
@@ -241,6 +246,8 @@ def main(argv: list[str] | None = None) -> int:
     ev.add_argument("--mermaid", action="store_true", help="also render every Mermaid chart with mermaid-cli")
     ev.add_argument("--external-cache", help="external full-text cache for the replay item "
                                              "(default runs/external_cache)")
+    ev.add_argument("--allow-incomplete", action="store_true",
+                    help="exit 0 even when cases are not run or unreadable (partial development check)")
     ev.set_defaults(func=_eval)
     e = sub.add_parser("external", help="external evidence commands")
     e_sub = e.add_subparsers(dest="external_command", required=True)

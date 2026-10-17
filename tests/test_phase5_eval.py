@@ -10,6 +10,7 @@ from __future__ import annotations
 import copy
 import json
 import re
+import typing
 
 import pytest
 from test_phase2 import ASSESSMENT, ENQUIRY, INTAKE, cit
@@ -18,6 +19,7 @@ from test_phase5_early import _off_topic_run
 from afs_assistant import cli, evaluate, kb_check, paths, pipeline, render
 from afs_assistant.evaluate import FAIL, NA, NOT_RUN, PASS
 from afs_assistant.llm import FakeClient
+from afs_assistant.schema import Assessment, Intake, MeasuredBy, PremiseCheck, Technique
 
 PLAN_QUOTE = ("Representative samples or process states, independent reference measurements, what is compared, "
               "and the basis for the go / no-go decision.")
@@ -40,9 +42,9 @@ def _write(tmp_path, data: dict, md: str, sid: str = "X01"):
     return evaluate.Run(data, md, jp, mp)
 
 
-def _produced(intake=INTAKE, assess=None):
+def _produced(intake=INTAKE, assess=None, enquiry=ENQUIRY):
     client = FakeClient({"intake": [intake], "assess": [assess or _assessment()], "repair": []})
-    result = pipeline.run(ENQUIRY, client, run_id="eval-test")
+    result = pipeline.run(enquiry, client, run_id="eval-test")
     return render.to_json(result), render.to_markdown(result, "Synthetic")
 
 
@@ -115,6 +117,15 @@ def test_currency_inside_quoted_evidence_is_allowed(tmp_path, base):
     run = _run(tmp_path, base, md_change=lambda m: m.replace(
         "### Evidence (verified quotes)\n", "### Evidence (verified quotes)\n\n1. ✓ \"cost 5 EUR\"\n"))
     assert evaluate.no_currency(run)[0] == PASS
+
+
+def test_currency_in_the_quoted_enquiry_is_allowed(tmp_path):
+    data, md = _produced(enquiry=ENQUIRY + " Our budget is 900 EUR.")
+    assert "> " + data["enquiry"] in md and "900 EUR" in md
+    run = _write(tmp_path, data, md)
+    assert evaluate.no_currency(run)[0] == PASS
+    model_text = _write(tmp_path, data, md.replace("### Brief answer\n", "### Brief answer\n\nAbout 900 EUR. "))
+    assert evaluate.no_currency(model_text)[0] == FAIL
 
 
 def test_extended_option_needs_fusion_note(tmp_path, base):
@@ -204,13 +215,20 @@ def test_external_support_from_a_sensor_gap_fails_the_proposal(tmp_path, base):
     ([{"item": "kept G1 E01 ¶3", "recorded": "kept", "replayed": "kept", "equal": True}], PASS),
     ([{"item": "kept G1 E01 ¶3", "recorded": "kept", "replayed": "dropped: x", "equal": False}], FAIL),
     ([{"item": "kept G1 E01 ¶3", "recorded": "kept", "replayed": evaluate.CACHE_MISSING, "equal": False}], NA),
+    ([{"item": "kept G1 E01 ¶3", "recorded": "kept", "replayed": "kept", "equal": True},
+      {"item": "kept G1 E02 ¶1", "recorded": "kept", "replayed": evaluate.CACHE_MISSING, "equal": False}], PASS),
+    ([{"item": "kept G1 E01 ¶3", "recorded": "kept", "replayed": "dropped: x", "equal": False},
+      {"item": "kept G1 E02 ¶1", "recorded": "kept", "replayed": evaluate.CACHE_MISSING, "equal": False}], FAIL),
 ])
 def test_external_replay_states(tmp_path, base, monkeypatch, rows, expected):
     from afs_assistant.external import step
 
     monkeypatch.setattr(step, "replay", lambda block, cache_root=None: rows)
     run = _run(tmp_path, base, data_change=_with_external, md_change=_ext_md)
-    assert evaluate.external_replay(run)[0] == expected
+    result, reason = evaluate.external_replay(run)
+    assert result == expected
+    if any(r["replayed"] == evaluate.CACHE_MISSING for r in rows):
+        assert "not in the local cache" in reason      # items without cached text are reported
     assert evaluate.external_replay(_run(tmp_path, base))[0] == NA        # no external block
 
 
@@ -357,7 +375,8 @@ def test_adversarial_file_format_and_coverage(tmp_path, base):
     off = _write(tmp_path / "off", render.to_json(result), render.to_markdown(result))
     for s in items:
         for r in (run, off):
-            assert all(x["result"] in (PASS, FAIL) for x in evaluate.scenario_items(r, s))
+            rows = evaluate.scenario_items(r, s)
+            assert all(x["result"] in (PASS, FAIL) and "check error" not in x["found"] for x in rows), rows
     off_case = next(s for s in items if "off-topic" in s["covers"])
     assert all(x["result"] == PASS for x in evaluate.scenario_items(off, off_case))
 
@@ -366,3 +385,126 @@ def test_adversarial_set_is_runnable_by_the_cli():
     parser_sets = re.search(r'"--set", choices=\[([^\]]*)\], required=True',
                             (paths.ROOT / "src" / "afs_assistant" / "cli.py").read_text(encoding="utf-8"))
     assert parser_sets and '"adversarial"' in parser_sets.group(1)
+
+
+# ----------------------------------------------------------------- review fixes (5.2)
+def _literals(annotation) -> set[str]:
+    """Every string of the Literal(s) inside an annotation (list[Literal[...]], Literal[...] | None, ...)."""
+    if typing.get_origin(annotation) is typing.Literal:
+        return {a for a in typing.get_args(annotation) if isinstance(a, str)}
+    return set().union(*(_literals(a) for a in typing.get_args(annotation)), set())
+
+
+ENUMS = {
+    "status_in": _literals(Assessment.model_fields["decision_status"].annotation),
+    "route_in": _literals(Intake.model_fields["routes"].annotation),
+    "premise_verdict_in": _literals(PremiseCheck.model_fields["verdict"].annotation),
+    "option_technique_in": _literals(Technique),
+    "primary_technique_in": _literals(Technique),
+}
+
+
+def _specs(specs):
+    for spec in specs:
+        yield spec
+        yield from _specs(spec.get("items", []))
+
+
+def test_adversarial_predicate_values_are_schema_members():
+    """A typo in an enum value would make a must_not pass silently: every value is a schema member."""
+    assert all(ENUMS.values()) and _literals(MeasuredBy.model_fields["type"].annotation)
+    checked = 0
+    for s in _adversarial():
+        for spec in _specs(s["must"] + s["must_not"]):
+            if spec["check"] in ENUMS:
+                assert spec["values"] and set(spec["values"]) <= ENUMS[spec["check"]], (s["id"], spec)
+                checked += 1
+            if spec["check"] == "parameter" and "types" in spec:
+                assert set(spec["types"]) <= _literals(MeasuredBy.model_fields["type"].annotation), (s["id"], spec)
+                checked += 1
+            if spec["check"] == "mentions":
+                assert set(spec["fields"]) <= set(evaluate.TEXT_FIELDS), (s["id"], spec)
+    assert checked >= 10
+
+
+def test_a_raising_predicate_fails_only_its_own_item(tmp_path, base):
+    run = _run(tmp_path, base)
+    scenario = {"must": [{"check": "assessment_present"}, {"check": "nonsense"},
+                         {"check": "mentions", "fields": ["no_such_field"], "pattern": "x"}],
+                "must_not": [{"check": "currency"}, {"check": "status_in"}]}       # status_in lacks "values"
+    items = evaluate.scenario_items(run, scenario)
+    assert [(x["kind"], x["result"]) for x in items] == [
+        ("must", PASS), ("must", FAIL), ("must", FAIL), ("must_not", PASS), ("must_not", FAIL)]
+    assert all("check error" in items[i]["reason"] for i in (1, 2, 4))
+
+
+def test_unreadable_and_off_schema_runs_fail_every_scenario_item(tmp_path, base):
+    scenario = {"id": "X01", "must": [{"check": "off_topic", "value": False}],
+                "must_not": [{"check": "assessment_present"}, {"check": "currency"}]}
+    (tmp_path / "X01.json").write_text("{not json", encoding="utf-8")
+    (tmp_path / "X01.md").write_text("# x", encoding="utf-8")
+    bad = evaluate.evaluate_case(scenario, tmp_path)
+    assert bad["status"] == "error" and len(bad["scenario_items"]) == 3
+    assert all(x["result"] == FAIL and "unreadable" in x["reason"] for x in bad["scenario_items"])
+    _run(tmp_path, base, data_change=lambda d: _a(d).update(decision_status="certain"))
+    off_schema = evaluate.evaluate_case(scenario, tmp_path)
+    assert off_schema["status"] == "error" and "schema" in off_schema["reason"]
+    assert [x["result"] for x in off_schema["scenario_items"]] == [FAIL, FAIL, FAIL]
+    assert off_schema["checklist"]["structured_output"]["result"] == FAIL
+
+
+def _cli_set(tmp_path, monkeypatch, cases):
+    monkeypatch.setattr(paths, "SCENARIOS", tmp_path)
+    (tmp_path / "adversarial.jsonl").write_text("".join(
+        json.dumps({"id": sid, "title": "t", "enquiry": "e", "must": [{"check": "assessment_present"}],
+                    "must_not": []}) + "\n" for sid in cases), encoding="utf-8")
+
+
+def test_cli_eval_fails_on_not_run_or_unreadable_cases(tmp_path, base, monkeypatch):
+    run_dir, out = tmp_path / "runs", tmp_path / "eval"
+    _write(run_dir, *base, sid="X01")
+    args = ["eval", "--set", "adversarial", "--outputs", str(run_dir), "--out", str(out)]
+    _cli_set(tmp_path, monkeypatch, ["X01", "X02"])                 # X02 has no output
+    assert cli.main(args) == 1
+    assert cli.main([*args, "--allow-incomplete"]) == 0
+    (run_dir / "X02.json").write_text("{not json", encoding="utf-8")
+    (run_dir / "X02.md").write_text("# x", encoding="utf-8")
+    assert cli.main(args) == 1
+    assert cli.main([*args, "--allow-incomplete"]) == 0
+    _cli_set(tmp_path, monkeypatch, ["X01"])
+    assert cli.main(args) == 0
+
+
+def _adversarial_case(covers: str) -> dict:
+    return next(s for s in _adversarial() if covers in s["covers"])
+
+
+def test_question_text_ignores_why_it_matters(tmp_path, base):
+    case = _adversarial_case("over-questioned")
+    spec = case["must_not"][0]
+    assert spec["fields"] == ["question_text"]
+    run = _run(tmp_path, base, data_change=lambda d: _a(d)["clarification_questions"][0].update(
+        question="Where along the pipe can the probe be installed?",
+        why_it_matters="The sampling point must match the reference method."))
+    assert not evaluate.predicate(run, spec)[0]
+    assert evaluate.predicate(run, {**spec, "fields": ["questions"]})[0]        # why_it_matters is in "questions"
+    rows = evaluate.scenario_items(run, {"must_not": [spec]})
+    assert rows[0]["result"] == PASS
+    asks = _run(tmp_path, base, data_change=lambda d: _a(d)["clarification_questions"][0].update(
+        question="Which reference method do you use?"))
+    assert evaluate.predicate(asks, spec)[0]
+
+
+def test_first_question_and_premise_pattern_predicates(tmp_path, base):
+    def two_questions(d):
+        first = {**_a(d)["clarification_questions"][0], "id": "Q0", "question": "Where is the pipe installed?"}
+        _a(d)["clarification_questions"].insert(0, first)
+    run = _run(tmp_path, base, data_change=two_questions)
+    spec = {"check": "mentions", "fields": ["first_question"], "pattern": "concentration"}
+    assert not evaluate.predicate(run, spec)[0]
+    assert evaluate.predicate(run, {**spec, "fields": ["question_text"]})[0]
+    check = {"premise": "A long fiber link works", "verdict": "not_covered", "explanation": "x", "citations": []}
+    premised = _run(tmp_path, base, data_change=lambda d: _a(d)["premise_checks"].append(check))
+    pv = {"check": "premise_verdict_in", "values": ["not_covered"]}
+    assert evaluate.predicate(premised, {**pv, "pattern": "fib(?:er|re)"})[0]
+    assert not evaluate.predicate(premised, {**pv, "pattern": "viscos"})[0]

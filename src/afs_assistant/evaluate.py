@@ -174,9 +174,19 @@ def no_flagged_figures(run: Run) -> Result:
     return _ok(problems)
 
 
+def _without_enquiry(run: Run) -> str:
+    """The Markdown without the customer's own words: the quoted `**Customer enquiry**` block and the
+    Answer's `**Customer request:**` line when it is the enquiry verbatim (not the "our summary" line)."""
+    md, enquiry = run.md, run.data.get("enquiry")
+    if isinstance(enquiry, str) and enquiry.strip():
+        md = md.replace(f"**Customer enquiry**\n\n> {enquiry}\n", "")
+        md = md.replace(f"**Customer request:** {' '.join(enquiry.split())}\n", "")
+    return md
+
+
 def no_currency(run: Run) -> Result:
     cc = _script("check_cost_class")
-    scanned = cc.EVIDENCE.sub("", run.md)
+    scanned = cc.EVIDENCE.sub("", _without_enquiry(run))
     hits = [scanned[max(0, m.start() - 30):m.end() + 30].replace("\n", " ") for m in cc.CURRENCY.finditer(scanned)]
     return _ok([f"currency: {h!r}" for h in hits[:3]])
 
@@ -355,7 +365,8 @@ def external_secondary(run: Run) -> Result:
 
 
 def external_replay(run: Run, cache_root: Path | None = None) -> Result:
-    """Every recorded external item re-verifies offline to the same result (`afs-assist external replay`)."""
+    """Every recorded external item whose source is in the local cache re-verifies offline to the same
+    result (`afs-assist external replay`); items without cached text are listed, n/a only if none is cached."""
     if run.a is None:
         return _OFF
     ext = run.external
@@ -364,13 +375,17 @@ def external_replay(run: Run, cache_root: Path | None = None) -> Result:
     from afs_assistant.external import step
 
     rows = step.replay(ext, cache_root=cache_root)
-    missing = [r for r in rows if not r["equal"] and r["replayed"] == CACHE_MISSING]
-    different = [r for r in rows if not r["equal"] and r["replayed"] != CACHE_MISSING]
+    missing = [r for r in rows if r["replayed"] == CACHE_MISSING]
+    cached = [r for r in rows if r["replayed"] != CACHE_MISSING]
+    different = [r for r in cached if not r["equal"]]
+    note = (f"{len(missing)}/{len(rows)} item(s) not checked, full text not in the local cache: "
+            + ", ".join(r["item"] for r in missing[:3])) if missing else ""
     if different:
-        return FAIL, "; ".join(f"{r['item']}: {r['recorded']} -> {r['replayed']}" for r in different[:3])
-    if missing:
-        return NA, f"{len(missing)}/{len(rows)} item(s) need full text not in the local cache"
-    return PASS, ""
+        return FAIL, "; ".join([f"{r['item']}: {r['recorded']} -> {r['replayed']}" for r in different[:3]]
+                               + ([note] if note else []))
+    if not cached:
+        return NA, note
+    return PASS, note
 
 
 def off_topic_handled(run: Run) -> Result:
@@ -419,7 +434,8 @@ CHECKLIST: list[tuple[str, str, str, Callable[..., Result]]] = [
      citations_verified),
     ("no_open_failures", "technical", "no hard verification failure left open", no_open_failures),
     ("no_flagged_figures", "grounding", "no flagged item or unsupported figure left", no_flagged_figures),
-    ("no_currency", "technical", "no currency sign, code or word outside quoted evidence", no_currency),
+    ("no_currency", "technical", "no currency sign, code or word outside quoted evidence and the enquiry",
+     no_currency),
     ("no_certainty_wording", "technical", "no guarantee, certainty, approval or readiness wording",
      no_certainty_wording),
     ("cost_class_table1", "technical", "every option's cost class matches S01 Table 1", cost_class_table1),
@@ -445,7 +461,7 @@ CHECKLIST: list[tuple[str, str, str, Callable[..., Result]]] = [
 
 
 # ------------------------------------------------------------------ must / must_not predicates
-TEXT_FIELDS = ("status_reason", "questions", "risks", "premises", "key_unknowns", "not_in_sources", "assumptions",
+TEXT_FIELDS = ("status_reason", "questions", "question_text", "first_question", "risks", "premises", "key_unknowns", "not_in_sources", "assumptions",
                "notes", "parameters", "options", "brief_answer", "proposal", "assessment")
 
 
@@ -454,6 +470,10 @@ def _field_text(a: Assessment, name: str) -> str:
         return a.status_reason
     if name == "questions":
         return "\n".join(f"{q.question} {q.why_it_matters}" for q in a.clarification_questions)
+    if name == "question_text":          # the questions only, without why_it_matters
+        return "\n".join(q.question for q in a.clarification_questions)
+    if name == "first_question":
+        return a.clarification_questions[0].question if a.clarification_questions else ""
     if name == "risks":
         return "\n".join(r.risk for r in a.risks)
     if name == "premises":
@@ -513,9 +533,12 @@ def predicate(run: Run, spec: dict) -> tuple[bool, str]:
         found = [f"{p.name} ({p.measured_by.type})" for p in a.parameters if rx.search(p.name)]
         hits = [p for p in a.parameters if rx.search(p.name) and p.measured_by.type in types]
         return bool(hits), f"parameters {found or 'none matching'}"
-    if kind == "premise_verdict_in":
-        verdicts = [p.verdict for p in a.premise_checks]
-        return bool(set(verdicts) & set(spec["values"])), f"verdicts {verdicts}"
+    if kind == "premise_verdict_in":     # optional "pattern": only premises whose text matches it
+        rx = re.compile(spec.get("pattern", ""), re.IGNORECASE)
+        checks = [p for p in a.premise_checks if rx.search(f"{p.premise} {p.explanation}")]
+        verdicts = [p.verdict for p in checks]
+        shown = f"verdicts {verdicts}" + (f" of premises matching /{spec['pattern']}/" if spec.get("pattern") else "")
+        return bool(set(verdicts) & set(spec["values"])), shown
     if kind in ("option_technique_in", "primary_technique_in"):
         recs = run.recs
         if kind == "option_technique_in":
@@ -546,15 +569,32 @@ def describe(spec: dict) -> str:
     return spec["check"] + (" " + json.dumps(args, ensure_ascii=False) if args else "")
 
 
+def _spec_text(spec: dict) -> str:
+    try:
+        return describe(spec)
+    except Exception:  # noqa: BLE001 - a malformed spec still gets a row
+        return json.dumps(spec, ensure_ascii=False, default=str)
+
+
 def scenario_items(run: Run, scenario: dict) -> list[dict]:
+    """One row per must / must_not item; a predicate that raises fails that item only."""
     out = []
     for kind in ("must", "must_not"):
         for spec in scenario.get(kind, []):
-            holds, found = predicate(run, spec)
-            ok = holds if kind == "must" else not holds
-            out.append({"kind": kind, "predicate": describe(spec), "why": spec.get("why", ""),
+            try:
+                holds, found = predicate(run, spec)
+                ok = holds if kind == "must" else not holds
+            except Exception as exc:  # noqa: BLE001 - a malformed predicate or run fails the item, not the rest
+                ok, found = False, f"check error: {type(exc).__name__}: {exc}"
+            out.append({"kind": kind, "predicate": _spec_text(spec), "why": spec.get("why", ""),
                         "result": PASS if ok else FAIL, "reason": "" if ok else found, "found": found})
     return out
+
+
+def failed_items(scenario: dict, reason: str) -> list[dict]:
+    """Every must and must_not item as FAIL, for a run that cannot be evaluated."""
+    return [{"kind": k, "predicate": _spec_text(s), "why": s.get("why", ""), "result": FAIL, "reason": reason,
+             "found": reason} for k in ("must", "must_not") for s in scenario.get(k, [])]
 
 
 # ------------------------------------------------------------------ evaluation of a set
@@ -578,9 +618,17 @@ def evaluate_case(scenario: dict, out_dir: Path, mermaid: bool = False, cache_ro
     try:
         run = Run(json.loads(json_path.read_text(encoding="utf-8")), md_path.read_text(encoding="utf-8"),
                   json_path, md_path)
-    except (ValueError, AttributeError) as exc:
-        case.update(status="error", reason=f"unreadable run JSON: {exc}")
-        case["checklist"] = {item: {"result": FAIL, "reason": "unreadable run"} for item, *_ in CHECKLIST}
+    except (ValueError, AttributeError, TypeError, KeyError) as exc:
+        run, reason = None, f"unreadable run JSON: {exc}"
+    else:
+        # An assessed run whose assessment is missing or off-schema cannot be judged: a must_not such as
+        # `assessment_present` must not pass by accident, so it is treated like an unreadable run.
+        reason = "" if run.off_topic or run.a is not None else (
+            f"unreadable run: {run.schema_error or 'no assessment and not marked off-topic'}")
+    if reason:
+        case.update(status="error", reason=reason)
+        case["checklist"] = {item: {"result": FAIL, "reason": reason} for item, *_ in CHECKLIST}
+        case["scenario_items"] = failed_items(scenario, reason)
         return case
     for item, _, _, fn in CHECKLIST:
         try:
@@ -593,11 +641,7 @@ def evaluate_case(scenario: dict, out_dir: Path, mermaid: bool = False, cache_ro
         except Exception as exc:  # noqa: BLE001 - a malformed run fails the item, never the harness
             result, reason = FAIL, f"check error: {type(exc).__name__}: {exc}"
         case["checklist"][item] = {"result": result, "reason": reason}
-    try:
-        case["scenario_items"] = scenario_items(run, scenario)
-    except Exception as exc:  # noqa: BLE001
-        case["scenario_items"] = [{"kind": "must", "predicate": "(evaluation)", "why": "", "result": FAIL,
-                                   "reason": f"{type(exc).__name__}: {exc}", "found": ""}]
+    case["scenario_items"] = scenario_items(run, scenario)
     return case
 
 
@@ -616,7 +660,8 @@ def _totals(cases: list[dict]) -> dict:
                 "not_run": sum(1 for x in items if x["kind"] == k and x["result"] == NOT_RUN)}
             for k in ("must", "must_not")}
     return {"cases": len(cases), "evaluated": sum(1 for c in cases if c["status"] == "evaluated"),
-            "not_run": sum(1 for c in cases if c["status"] == NOT_RUN), "per_item": per_item,
+            "not_run": sum(1 for c in cases if c["status"] == NOT_RUN),
+            "errors": sum(1 for c in cases if c["status"] == "error"), "per_item": per_item,
             "per_criterion": per_criterion, "scenario_items": scen}
 
 
@@ -653,7 +698,7 @@ def to_markdown(summary: dict) -> str:
         cases, t = res["cases"], res["totals"]
         out += [f"## Set: {set_name}", "",
                 (f"Outputs `{res['outputs']}`: {t['evaluated']} of {t['cases']} case(s) evaluated, "
-                 f"{t['not_run']} not run. Mermaid render {'checked' if res['mermaid'] else 'not checked'}."), ""]
+                 f"{t['not_run']} not run, {t.get('errors', 0)} unreadable. Mermaid render {'checked' if res['mermaid'] else 'not checked'}."), ""]
         ids = [c["id"] for c in cases]
         out += ["| Item | " + " | ".join(ids) + " | Pass |", "|---|" + "---|" * len(ids) + "---|"]
         for item, *_ in CHECKLIST:
