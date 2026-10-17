@@ -576,12 +576,13 @@ def test_timeout_falls_back_to_the_library(tmp_path):
     assert [s["api"] for s in ext["sources"]] == ["library"] and ext["sources"][0]["library_id"]
     assert [i["citation"]["label"] for i in ext["items"]] == ["E01 ¶7"]
     assert "curated library only" in render.to_markdown(result)
-    assert len(server.seen) == 1                               # stopped after the first failure
+    assert len(server.seen) == 2                    # one failed search per API, then each API is skipped (5.0b)
 
 
 def test_rate_limit_falls_back_to_the_library(tmp_path):
     library.write([_library_entry()])
-    server = Server(status={("www.ebi.ac.uk", "/europepmc/webservices/rest/search"): 429})
+    server = Server(status={("www.ebi.ac.uk", "/europepmc/webservices/rest/search"): 429,
+                            ("api.openalex.org", "/works"): 429})
     result, _, _ = run_live(tmp_path, server, client(items=[]))
     assert "rate limited" in result.external["fallback"]
 
@@ -972,3 +973,123 @@ def test_a_cancel_during_the_external_step_stops_the_case(tmp_path):           #
     c = Cancelling({"intake": [INTAKE], "assess": [ASSESSMENT], "repair": []})
     with pytest.raises(RunCancelled):
         pipeline.run(ENQUIRY, c, run_id="t4", external="live", fetcher=fetcher(tmp_path, Server(), "live"))
+
+
+# ----------------------------------------------------------------- 5.0b carry-overs from G4 (N1-N4)
+NAMED_ENQUIRY = (ENQUIRY + " Our plant near Brightwater is run by Kestrelwerk and the broth leaves the "
+                 "fermenter at 37 °C. Process Analytical Technology is new to us.")
+
+
+def test_query_guard_drops_names_and_numbers_from_the_enquiry():                 # 5.0b N2
+    from afs_assistant.schema import Intake
+
+    intake = copy.deepcopy(INTAKE)
+    intake["process"].append({"aspect": "location", "value": "site of Halvard Chemicals", "enquiry_quote": "Our plant"})
+    plan = step.QueryPlan.model_validate({"queries": [
+        {"gap_id": "G1", "query": "Kestrelwerk fermentation Raman monitoring"},
+        {"gap_id": "G1", "query": "brightwater ethanol broth"},                     # lower case is caught too
+        {"gap_id": "G1", "query": "ethanol broth Raman at 37 C"},
+        {"gap_id": "G2", "query": "Halvard in-line Raman"},                         # a name from the intake only
+        {"gap_id": "G2", "query": "Process Analytical Technology Raman ethanol fermentation"},
+        {"gap_id": "G2", "query": "in-line Raman ethanol fermentation broth 2500 nm"},   # not the customer's number
+    ]})
+    kept, dropped = step.clean_queries(plan, [gaps.Gap("G1", "x", "t", "l"), gaps.Gap("G2", "x", "t", "l")],
+                                       NAMED_ENQUIRY, Intake.model_validate(intake))
+    assert [q["query"] for q in kept] == ["Process Analytical Technology Raman ethanol fermentation",
+                                          "in-line Raman ethanol fermentation broth 2500 nm"]
+    assert [d["reason"] for d in dropped] == ["possible name from the enquiry: kestrelwerk",
+                                              "possible name from the enquiry: brightwater",
+                                              "number from the enquiry: 37",
+                                              "possible name from the enquiry: halvard"]
+
+
+def test_query_guard_keeps_sentence_starts_and_domain_words():                   # 5.0b N2
+    from afs_assistant.external import query_guard
+
+    names = query_guard.name_like_words(["Ethanol is followed in-line. We use NIR and Raman with an ATR probe.",
+                                         "- Fermentation broth (clear)", "The Kestrelwerk plant."])
+    assert names == {"kestrelwerk"}
+    assert query_guard.numbers("CO2 at 1,5 bar and 20-30 nm") == {"1.5", "20", "30"}
+
+
+def test_a_query_with_an_enquiry_name_never_reaches_a_search_api(tmp_path):       # 5.0b N2
+    queries = {"queries": [*QUERIES["queries"], {"gap_id": "G3", "query": "Kestrelwerk data fusion Raman"}]}
+    server = Server()
+    result = pipeline.run(NAMED_ENQUIRY, client(queries=queries, items=[]), run_id="t4", external="live",
+                          fetcher=fetcher(tmp_path, server, "live"))
+    ext = result.external
+    assert [q["query"] for q in ext["queries"]] == [q["query"] for q in QUERIES["queries"]]
+    assert ext["dropped_queries"] == [{"gap_id": "G3", "query": "Kestrelwerk data fusion Raman",
+                                       "reason": "possible name from the enquiry: kestrelwerk"}]
+    assert server.seen and not any("kestrelwerk" in u.lower() for u in server.seen)
+
+
+def test_loose_match_keeps_hyphens_next_to_digits_only():                         # 5.0b N1
+    from afs_assistant import quotes
+
+    page = "Typical fiber-optic probes 100-300m long are used; the gap is usually 1 - 10 mm wide."
+    assert quotes.verify_text(page, "fiber optic probes 100-300m long", "x").status == "loose"
+    assert quotes.verify_text(page, "the gap is usually 1-10 mm wide", "x").status == "loose"
+    assert quotes.verify_text(page, "Fiberoptic probes 100 - 300m", "x").status == "loose"
+    assert not quotes.verify_text(page, "fiber optic probes 100300m long", "x").ok        # "100-300" is not "100300"
+    assert not quotes.verify_text("Stored at -20 °C in the dark.", "Stored at 20 °C in the dark", "x").ok
+    assert not quotes.verify_text("Bands between 1020 nm and 1100 nm.", "Bands between 10-20 nm and", "x").ok
+
+
+def test_one_search_api_failing_skips_only_that_api(tmp_path):                    # 5.0b N4
+    server = Server(fail_at={("www.ebi.ac.uk", "/europepmc/webservices/rest/search"): httpx.ReadTimeout("t")})
+    result, _, _ = run_live(tmp_path, server, client(items=[]))
+    ext = result.external
+    assert ext["fallback"] is None and [s["api"] for s in ext["sources"]] == ["openalex"]
+    epmc = [x for x in ext["search_log"] if x["api"] == "europepmc"]
+    assert [x["status"] for x in epmc] == ["network error (ReadTimeout); europepmc skipped for the rest of the run"]
+    assert sum(u.split("?")[0].endswith("/rest/search") for u in server.seen) == 1
+    assert [x["status"] for x in ext["search_log"] if x["api"] == "openalex"] == ["ok", "ok"]
+
+
+class FailAfterFirstSearch(Server):
+    """Europe PMC answers the first search, then the network to it is down; OpenAlex is down."""
+
+    def __call__(self, request: httpx.Request) -> httpx.Response:
+        searches = [u for u in self.seen if u.split("?")[0].endswith("/rest/search")]
+        if request.url.path.endswith("/rest/search") and searches:
+            self.seen.append(str(request.url))
+            raise httpx.ConnectError("down")
+        return super().__call__(request)
+
+
+def test_a_later_failure_keeps_the_hits_already_found(tmp_path):                 # 5.0b N4
+    server = FailAfterFirstSearch(fail_at={("api.openalex.org", "/works"): httpx.ConnectError("down")})
+    result, _, _ = run_live(tmp_path, server, client(items=[]))
+    ext = result.external
+    assert ext["fallback"] is None                          # Europe PMC answered once: its hits are used
+    assert [s["api"] for s in ext["sources"]] == ["europepmc", "europepmc"]
+    assert [x["api"] for x in ext["search_log"] if "skipped for the rest of the run" in x["status"]] == \
+        ["europepmc", "openalex"]
+
+
+def test_off_domain_abstracts_never_reach_the_evidence_call(tmp_path):            # 5.0b N3
+    off = copy.deepcopy(EPMC_SEARCH)
+    off["resultList"]["result"][1]["title"] = "Ripeness grading of orchard fruit by colour imaging and fermentation"
+    off["resultList"]["result"][1]["abstractText"] = (
+        "Synthetic abstract on grading fruit ripeness in an orchard from colour images and firmness readings, "
+        "with Raman spectroscopy monitoring and a classifier trained on harvest batches. " * 4)   # passes the hit rank
+    result, c, _ = run_live(tmp_path, Server(epmc=off), client(items=[]))
+    ext = result.external
+    assert [s["access"] for s in ext["sources"]] == ["full_text", "full_text"]
+    assert [x["status"] for x in ext["search_log"] if x["api"] == "fetch europepmc"] == [step.OFF_DOMAIN]
+    user = next(s["user"] for s in c.seen if s["role"] == "external_evidence")
+    assert "orchard" not in user
+
+
+def test_sample_terms_and_the_two_word_rule():                                    # 5.0b N3
+    from afs_assistant.schema import Intake
+
+    intake = Intake.model_validate(INTAKE)
+    assert step.sample_terms(intake) == {"ethanol", "flows", "pipe", "clear", "aqueous", "fermentation", "broth"}
+    hyphen = record(["A hot-melt study of broth."], access="abstract_only")
+    assert step.off_domain(hyphen, {"melt", "pellet"}) and not step.off_domain(hyphen, {"melt", "broth"})
+    abstract_b = record([ABSTRACT_B], access="abstract_only")
+    assert not step.off_domain(abstract_b, step.sample_terms(intake))
+    assert not step.off_domain(record(["Unrelated full text."]), {"ethanol", "broth"})   # full text: no check
+    assert not step.off_domain(hyphen, None)                                            # no terms given: no check

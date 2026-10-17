@@ -2,8 +2,8 @@
 
 Match levels, strongest first:
   exact         normalised quote is a substring of the normalised page text
-  loose         equal after also ignoring case, hyphens and whitespace; not used when the quote or the
-                matched text has a digit next to a hyphen ("10-20" must not match "1020")
+  loose         equal after also ignoring case, whitespace and hyphens; a hyphen next to a digit (only
+                whitespace between) is kept, so "1-10" matches "1 - 10" but "10-20" never matches "1020"
   fuzzy_review  close (rapidfuzz partial ratio >= FUZZY_MIN) with the same numbers and
                 negation/comparison words; NOT verified, needs repair or human review
 Only exact and loose count as verified (`ok`). A near match that changes a number or a
@@ -24,7 +24,6 @@ from afs_assistant.normalize import normalize
 FUZZY_MIN = 90.0
 MIN_QUOTE_CHARS = 12
 _NUM = re.compile(r"\d+(?:[.,]\d+)?")
-_DIGIT_DASH = re.compile(r"\d\s?-|-\s?\d")     # dashes are already "-" after normalize()
 _GUARD_WORDS = {"not", "no", "never", "cannot", "without", "only", "below", "above", "less", "more",
                 "under", "over", "except", "neither", "nor", "none",
                 "some", "all", "most", "every", "any", "few", "many",
@@ -51,11 +50,23 @@ class QuoteCheck:
         return asdict(self)
 
 
+def _next_to_digit(text: str, i: int) -> bool:
+    """Is the nearest non-whitespace character on either side of position i a digit?"""
+    j = i - 1
+    while j >= 0 and text[j].isspace():
+        j -= 1
+    k = i + 1
+    while k < len(text) and text[k].isspace():
+        k += 1
+    return (j >= 0 and text[j].isdigit()) or (k < len(text) and text[k].isdigit())
+
+
 def _loose_with_map(text: str) -> tuple[str, list[int]]:
-    """Lowercased text without hyphens/whitespace, plus index map back to `text`."""
+    """Lowercased text without whitespace and without hyphens that are not next to a digit, plus an
+    index map back to `text`. Dashes are already "-" after normalize()."""
     chars, index = [], []
     for i, ch in enumerate(text):
-        if ch.isspace() or ch == "-":
+        if ch.isspace() or (ch == "-" and not _next_to_digit(text, i)):
             continue
         chars.append(ch.lower())
         index.append(i)
@@ -80,13 +91,11 @@ def verify_text(text: str, quote: str, sha: str, doc: str = "", page: int = 0) -
         return QuoteCheck(doc, page, quote, "exact", pos, pos + len(q), 100.0, sha)
 
     loose_text, index = _loose_with_map(text)
-    loose_q = re.sub(r"[\s\-]", "", q.lower())
+    loose_q, _ = _loose_with_map(q)
     pos = loose_text.find(loose_q)
     if pos >= 0 and loose_q:
         start, end = index[pos], index[pos + len(loose_q) - 1] + 1
-        # Ignoring hyphens would equate "10-20 nm" with "1020 nm": a range needs an exact match.
-        if not (_DIGIT_DASH.search(q) or _DIGIT_DASH.search(text[start:end])):
-            return QuoteCheck(doc, page, quote, "loose", start, end, 100.0, sha)
+        return QuoteCheck(doc, page, quote, "loose", start, end, 100.0, sha)
 
     alignment = fuzz.partial_ratio_alignment(q, text)
     score = round(alignment.score, 1) if alignment is not None else None
