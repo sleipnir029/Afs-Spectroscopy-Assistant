@@ -1,16 +1,14 @@
 # Status
 
-_Last updated: 2026-10-17 13:24 CEST (Claude)._
+_Last updated: 2026-10-17 13:35 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2: Pipeline MVP.**
-- **Code:** 2.R2 and 2.R3 are implemented. The independent review of Claude's commits 9a7e465, 10ff73a and 315a90a was APPROVE WITH FIXES (B1: an unverified contradiction behind the model's own status; B2: the negation aside let "No, honestly, it will work" through). Fixed in 75a4469 (D-014 amended, D-016).
-- **2.R4 (12:09):** implemented with tests (spectral-range and plan-step checks, combination key, two assess-prompt lines, dash aside, fluorimetry words; D-018). Not yet reviewed; D01–D08 re-run not done.
-- **Checks:** pytest 189 passed, 1 skipped; ruff clean; kb check PASS.
-- **Run:** done (11:53, see Check results); the D01–D08 run on 75a4469 had started 11:29; the run on 315a90a was stopped at D03.
-- **Next:** G2: the user reads D01, D02, D07, D08 (D04 optional) in `outputs/dev/*.md`. Then close Phase 2 and write the re-plan of Phases 3–6 in a new session (inputs: `docs/research-replan.md`, `docs/qa-notes-2026-10-17.md`, the decisions under Done).
+**Phase 2 closed (G2 passed, user 13:33).** **Re-plan of Phases 3–6 written in PHASES.md (13:35), awaiting user approval** (plus: pi shell → `afs-assist chat` + HTML view?).
+- **Validation (D-020, user 13:35):** the user no longer runs tests or reads outputs. Claude runs all checks; reviewer agents replace the user at G3–G6. Ask the user only short yes/no questions.
+- **Cache path (user 13:33):** full fetched external text → `runs/external_cache/` (already gitignored).
+- **Next:** on approval, start Phase 3 (Sat 14:00–21:00).
 
 ## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
