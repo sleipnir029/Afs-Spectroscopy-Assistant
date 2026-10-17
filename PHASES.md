@@ -549,6 +549,15 @@ Pattern: GRADE (start high, downgrade per named weakness) and the IPCC AR5 calib
 
 **5. Tests, dev run, output review.** Offline tests for 1–4; re-run D01–D08; both check scripts on outputs/dev; an independent reviewer agent reviews code + outputs (G3).
 
+### Phase 3 fixes (3.R2) — 16:19, from the 3.R code review (APPROVE WITH FIXES) and the 3.R dev run (Claude; D-020 mode, logged as D-027)
+**3.R dev run (15:22–16:16, $0.171, code 9cfc7f2):** 8/8 complete, 0 hard failures left, citations 227/227 verified, 15/15 Mermaid charts render, 8/8 cost classes agree with Table 1. Answer part 598–731 words (without chart code); body before Evidence 2,460–2,887. Confidence: 6 High, 9 Medium, 7 Low of 22 options.
+
+1. **Review blocking:** B1 `_is_precedent` decides by page scope tags as well as claim kind (a "general" citation to an example/study page counts as precedent); B2 an unscreened or to-be-determined technique triggers rule 1 ("technique not screened for this sample"). Tests for both.
+2. **Review non-blocking:** N3 a ⚠ line in the Answer when hard checks are still open, and confidence computed per option index; N4 label "Customer request (our summary)"; N5 rule 3 counts every auxiliary_sensor / not_measurable_inline parameter the option references, whatever its necessity; N6 currency codes matched case-insensitively except a journal abbreviation (`\b(?:eur|usd|gbp|chf)\b(?!\.\s?[A-Z])`), and check_cost_class skips the Evidence section; N7 answer_length counts the rendered request line; "high cost (row 12)" wording in the cost cell; layer headings H2 with the sections under them demoted.
+3. **Run finding: confidence vs sources shown.** D05: options rated High show "no verified source: engineering judgement" in their Sources cell, because the rating pools the recommendations' citations but the table shows only the option's own. Fix: the Sources cell shows the verified citations of the option and of its recommendations (the same pool the rating uses), so the page never contradicts itself.
+4. **Run finding: open decision-relevant questions.** Rule 1 also fires when one of the top 3 clarification questions lists one of the option's recommendation ids (or `method_choice`) in `affects`: "open question: <short id>". A first assessment with the method choice still open is not High.
+5. Tests for 1–4; re-run D01–D08; both check scripts; then the independent output + code review (G3).
+
 ---
 
 ## Phase 4 — External evidence, option B (Sat 21:00–Sun 07:00)
