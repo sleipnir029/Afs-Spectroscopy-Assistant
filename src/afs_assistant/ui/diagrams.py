@@ -48,7 +48,9 @@ ICONS = {
 
 def _lines(text: str, width_px: float, size: float) -> list[str]:
     chars = max(6, int(width_px / (size * CHAR_W)))
-    return textwrap.wrap(" ".join(str(text).split()), chars, break_long_words=False) or [""]
+    # A slash may break a line ("transmission/ transflection"): wrap with a space after it, then remove it.
+    spaced = " ".join(str(text).split()).replace("/", "/ ")
+    return [line.replace("/ ", "/") for line in textwrap.wrap(spaced, chars, break_long_words=False)] or [""]
 
 
 def _wrap(text: str, width_px: float, max_lines: int, size: float) -> list[str]:
