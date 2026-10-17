@@ -1,11 +1,11 @@
 # Status
 
-_Last updated: 2026-10-17 10:24 CEST (Claude)._
+_Last updated: 2026-10-17 10:41 CEST (Claude)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 2: Pipeline MVP.** Review done (APPROVE WITH FIXES, see PHASES.md). 2.R2 approved 10:24; an implementer agent is running items 1–7. A D01–D08 flash baseline run (pre-2.R2 code) was launched at 10:17. Next: check 2.R2 → re-run D01–D08 on flash → short re-review → G2.
+**Phase 2: Pipeline MVP.** Review: APPROVE WITH FIXES. 2.R2 approved and implemented (5479553..4455326). Re-review: APPROVE WITH FIXES; BF1/BF2/N-a fixed in 9a7e465 (Claude, not yet reviewed). The D01–D08 run on 2.R2 code started 10:41. Next: check that run → short independent review (outputs + 9a7e465) → G2. Open question to user: N-b (negation window too strict on commas).
 
 ## Next session starts with (handoff 09:55)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
@@ -75,6 +75,8 @@ Known open points for Phase 3: claims that go beyond their valid quotes (needs c
 None.
 
 ## Check results
+**Flash baseline, pre-2.R2 code (finished 10:40), deepseek-v4.1-flash, session cost $0.1415:** all 8 complete (D08 too); hard failures 0 in every case; citations 271/271 verified; status provisional ×7, D08 insufficient_information; recs 2–5; questions 5–6; cost $0.015–0.022 per case. Markdown 2,082–3,656 words (longer than v4-pro's 2,000–2,700). Committed 67ce484.
+
 **Phase 2 re-run after 2.R (10:10), dev model deepseek-v4-pro-0813, session cost $0.345:**
 
 | Case | Status | Recs | Questions | Citations verified | Hard failures left | Repair rounds | Cost |
