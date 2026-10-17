@@ -239,8 +239,10 @@ def finalize(a: Assessment, report: Report,
               for i in range(len(recs))}
     for i in keep:                      # a kept entry always keeps its own id (also with duplicate ids)
         id_map[recs[i]["id"]] = recs[i]["id"]
+    dropped_roles = {recs[i]["id"]: recs[i]["role"] for i in range(len(recs)) if i not in keep}
     data["recommendations"] = [recs[i] for i in keep]
-    _finalize_options(data, id_map, removed, flagged)
+    _finalize_options(data, id_map, removed, flagged, dropped_roles)
+    _finalize_proposal_basis(data, removed, flagged)
 
     demoted_contradiction = False
     for i, p in enumerate(data["premise_checks"]):
@@ -272,7 +274,8 @@ def finalize(a: Assessment, report: Report,
     return Assessment.model_validate(data), removed, flagged
 
 
-def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], flagged: dict[str, str]) -> None:
+def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], flagged: dict[str, str],
+                      dropped_roles: dict[str, str] | None = None) -> None:
     """Keep option references consistent with the finalized recommendations.
 
     A reference to a deduplicated entry is remapped to the kept entry; a reference to an
@@ -292,8 +295,11 @@ def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], f
                                 "reason": f"reference {ref} dropped ({why})", "corrects": "option_recommendation_refs"})
                 continue
             if target != ref:
+                old_role = (dropped_roles or {}).get(ref)
+                role_note = (f" (role changed from {old_role} to {roles[target]})"
+                             if old_role and old_role != roles[target] else "")
                 removed.append({"location": f"solution_options[{i}].recommendation_ids", "item": ref,
-                                "reason": f"reference {ref} pointed to a removed duplicate; now {target}"})
+                                "reason": f"reference {ref} pointed to a removed duplicate; now {target}{role_note}"})
             if target not in refs:
                 refs.append(target)
         if not refs:
@@ -319,6 +325,25 @@ def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], f
     data["solution_options"] = kept_options
     if data["proposal"]["best_current_option"] not in {o["id"] for o in kept_options}:
         flagged["proposal"] = "the proposed option was removed by verification"
+
+
+def _finalize_proposal_basis(data: dict, removed: list[dict], flagged: dict[str, str]) -> None:
+    """`supplied` needs a verified citation behind the proposed option (its own or its recommendations');
+    otherwise the basis becomes engineering_judgement (3.R B2). Runs after the citations were stripped."""
+    proposal = data["proposal"]
+    if proposal["basis"] != "supplied":
+        return
+    option = next((o for o in data["solution_options"] if o["id"] == proposal["best_current_option"]), None)
+    recs = {r["id"]: r for r in data["recommendations"]}
+    cited = option is not None and (bool(option["citations"]) or any(
+        recs[x]["citations"] for x in option["recommendation_ids"] if x in recs))
+    if cited:
+        return
+    removed.append({"location": "proposal.basis", "item": "supplied", "corrects": "proposal_basis",
+                    "reason": "no verified citation behind the proposed option; basis changed to engineering_judgement"})
+    proposal["basis"] = "engineering_judgement"
+    why = "basis changed to engineering judgement: no verified source behind the proposed option"
+    flagged["proposal"] = f"{flagged['proposal']}; {why}" if "proposal" in flagged else why
 
 
 def run(enquiry: str, client, run_id: str | None = None) -> RunResult:

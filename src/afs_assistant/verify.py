@@ -26,6 +26,8 @@ MAX_WORDS = 1800
 RECOMMENDED_ROLES = ("primary", "comparison", "conditional")
 MIN_STEP_WORDS = 3
 MAX_BRIEF_WORDS = 80
+MAX_ANSWER_WORDS = 600       # model-written text shown in the Answer part (two layers, D-022)
+ANSWER_QUESTIONS = 3         # the Answer part shows the top questions only
 MAX_PREMISES = 3
 MIN_OPTIONS, MAX_OPTIONS = 2, 3
 # Values a model writes instead of leaving an intake item out; not client facts.
@@ -47,9 +49,11 @@ _CLAUSE_BREAK = re.compile(r"[;,:\n\u2013\u2014]|\s-\s|[.!?](?=[\s\"'\u201d\u201
                            re.IGNORECASE)
 # A verbatim enquiry quote needs at least this many normalised characters (and a word character).
 MIN_ENQUIRY_QUOTE_CHARS = 4
+# Any currency sign, code or word: the assistant never states a price (3.R B3).
+PRICE_PATTERN = r"[€$£]|\b(?:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b"
 # Wording that asserts certainty or commercial facts the sources cannot support (REF §3 "Do not invent").
 FORBIDDEN = [
-    (re.compile(r"[€$£]\s*\d|\b\d+(?:[.,]\d+)?\s*(?:EUR|USD|euro|dollars?)\b", re.IGNORECASE), "price"),
+    (re.compile(PRICE_PATTERN, re.IGNORECASE), "price"),
     (re.compile(r"\bguarantee[sd]?\b", re.IGNORECASE), "guarantee"),
     (re.compile(r"\bwill (?:definitely |certainly )?work\b", re.IGNORECASE), "certainty"),
     (re.compile(r"\b(?:is|are) (?:approved|validated|certified|proven) (?:for|to)\b", re.IGNORECASE), "approval claim"),
@@ -217,6 +221,10 @@ def check_numbers(a: Assessment, enquiry: str, verified: dict[str, list[str]], r
                    f"figures in uncited text must come from the enquiry: {[n.text for n in missing]}")
 
 
+# The field that carries each intake item's content; a placeholder item has a placeholder quote AND value.
+INTAKE_VALUE_FIELDS = {"facts_stated": "text", "targets": "variable", "process": "value", "customer_premises": "claim"}
+
+
 def sanitize_intake(intake: Intake, enquiry: str) -> tuple[Intake, list[dict]]:
     """Remove intake items whose quote is not verbatim in the enquiry (no invented client facts).
 
@@ -236,12 +244,12 @@ def sanitize_intake(intake: Intake, enquiry: str) -> tuple[Intake, list[dict]]:
 
     data = intake.model_dump()
     removed: list[dict] = []
-    for key in ("facts_stated", "targets", "process", "customer_premises"):
+    for key, value_field in INTAKE_VALUE_FIELDS.items():
         kept = []
         for i, item in enumerate(data[key]):
             if ok(item["enquiry_quote"]):
                 kept.append(item)
-            elif is_placeholder(item["enquiry_quote"]):
+            elif is_placeholder(item["enquiry_quote"]) and is_placeholder(item[value_field]):
                 removed.append({"location": f"intake.{key}[{i}]", "item": item, "placeholder": True,
                                 "reason": "placeholder quote (no information given); dropped"})
             else:
@@ -329,6 +337,12 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
     report.add("proposal_option_exists", p.best_current_option in ids, "hard", "proposal.best_current_option",
                f"best_current_option {p.best_current_option!r} is not an option id {ids}")
 
+    for key in ("recommendations", "solution_options", "parameters"):
+        item_ids = [x.id for x in getattr(a, key)]
+        dupes = sorted({x for x in item_ids if item_ids.count(x) > 1})
+        report.add("ids_unique", not dupes, "hard", key, f"ids used more than once in {key}: {dupes}; "
+                   f"give every entry its own id")
+
     n = len(a.solution_options)
     report.add("option_count", MIN_OPTIONS <= n <= MAX_OPTIONS, "hard", "solution_options",
                f"{n} options; give {MIN_OPTIONS}-{MAX_OPTIONS} (simple / recommended / extended)")
@@ -339,6 +353,7 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
                f"{tiers.count('recommended')} options with tier recommended; exactly one is needed")
 
     recs = {r.id: r for r in a.recommendations}
+    param_ids = {p.id for p in a.parameters}
     status = {(c.method, c.technique): c.status for c in candidates}
     method_status: dict[str, set[str]] = {}
     for c in candidates:
@@ -355,6 +370,9 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
         failed += [f"{m} (combined)" for x in o.recommendation_ids if x in recs for m in recs[x].combined_with
                    if method_status.get(m) == {"fail"}]
         report.add("option_screen", not failed, "hard", loc, f"option {o.id} uses candidates that failed: {failed}")
+        missing = [x for x in o.parameter_ids if x not in param_ids]
+        report.add("option_parameter_refs", not missing, "hard", loc,
+                   f"option {o.id} references parameters {missing} that do not exist")
         if o.tier == "extended":
             report.add("extended_fusion_note", bool(o.fusion_note and o.fusion_note.strip()), "hard", loc,
                        f"extended option {o.id} needs a fusion_note (fusion level, same sampling spot, "
@@ -362,6 +380,12 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
             methods = option_methods(o, recs)
             report.add("extended_multi_method", len(methods) >= 2, "soft", loc,
                        f"extended option {o.id} uses {methods}; the extended tier combines two or more methods")
+
+    sets = [frozenset(o.recommendation_ids) for o in a.solution_options]
+    same = sorted({" = ".join(o.id for o, s in zip(a.solution_options, sets, strict=True) if s == key)
+                   for key in sets if sets.count(key) > 1})
+    report.add("options_distinct", not same, "hard", "solution_options",
+               f"options use the same recommendations: {same}; each option must differ in its methods")
 
     in_options = {m for o in a.solution_options for m in option_methods(o, recs)}
     for i, prm in enumerate(a.parameters):
@@ -372,17 +396,20 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
                    f"parameters[{i}]", f"parameter {prm.id} is measured by spectroscopy method {mb.method}, "
                    f"which no solution option uses {sorted(in_options)}")
 
-    primaries = [r.id for r in a.recommendations if r.role == "primary"]
-    report.add("single_primary", len(primaries) == 1, "hard", "recommendations",
-               f"{len(primaries)} primary recommendations {primaries}; exactly one is needed "
-               f"(others are comparison or conditional)")
+    # An out-of-scope case may end without any recommendable method, so no primary (D-024).
+    if a.decision_status != "outside_supported_scope":
+        primaries = [r.id for r in a.recommendations if r.role == "primary"]
+        report.add("single_primary", len(primaries) == 1, "hard", "recommendations",
+                   f"{len(primaries)} primary recommendations {primaries}; exactly one is needed "
+                   f"(others are comparison or conditional)")
 
 
 # Hard checks that are re-run on the finalized assessment; their open state comes from that re-run.
 RECHECK_NAMES = frozenset({"brief_answer_present", "proposal_present", "proposal_option_exists", "option_count",
                            "option_tiers_distinct", "option_recommended_tier", "option_has_methods",
                            "option_recommendation_refs", "option_screen", "extended_fusion_note",
-                           "parameter_method_in_option", "single_primary", "status_needs_contradiction"})
+                           "parameter_method_in_option", "single_primary", "status_needs_contradiction",
+                           "ids_unique", "option_parameter_refs", "options_distinct"})
 
 
 def recheck(a: Assessment, candidates: list[Candidate]) -> Report:
@@ -436,6 +463,22 @@ def check_style(a: Assessment, report: Report) -> None:
                f"{len(a.premise_checks)} premises (max {MAX_PREMISES}); keep the central ones")
 
 
+def check_answer_length(a: Assessment, summary: str, report: Report) -> None:
+    """Soft: the Answer part stays short (about MAX_ANSWER_WORDS words of model text)."""
+    words = sum(len(t.split()) for t in answer_texts(a, summary))
+    report.add("answer_length", words <= MAX_ANSWER_WORDS, "soft", "assessment",
+               f"{words} words of model text in the Answer part (budget about {MAX_ANSWER_WORDS})")
+
+
+def answer_texts(a: Assessment, summary: str = "") -> list[str]:
+    """Model-written text shown in the Answer part: brief answer, status reason, proposal,
+    option table cells and the top questions (code labels and the sketch are not counted)."""
+    texts = [summary, a.brief_answer, a.status_reason, a.proposal.what_would_change_it, a.proposal.next_step]
+    texts += [x for o in a.solution_options for x in (o.ease_of_use, o.maintenance, o.performance_fit)]
+    texts += [q.question for q in a.clarification_questions[:ANSWER_QUESTIONS]]
+    return texts
+
+
 def recommendation_key(method: str, technique: str, combined_with: list[str]) -> tuple[str, str, tuple[str, ...]]:
     """Identity of a recommendation: a combination is its own entry beside the single method.
 
@@ -478,6 +521,7 @@ def verify(enquiry: str, intake: Intake, a: Assessment, candidates: list[Candida
     check_status(a, report)
     check_premise_basis(a, report)
     check_style(a, report)
+    check_answer_length(a, intake.summary, report)
     check_sections(a, report)
     check_options(a, candidates, report)
     return report

@@ -3,9 +3,10 @@
 Usage: uv run python scripts/check_cost_class.py [DIR ...]   (default: outputs/dev)
 
 For each <id>.json + <id>.md pair: re-derive each option's cost class straight from
-the Table 1 rows (independently of afs_assistant.options), then compare it with the
-cost cell of the rendered options table and with `option_costs` in the run JSON.
-Exit 0 if all agree, 1 otherwise.
+the Table 1 rows (independently of afs_assistant: the name mappings below are this
+script's own copy), then compare it with the cost cell of the rendered options table
+and with `option_costs` in the run JSON. Also scans the whole Markdown for any currency
+sign, code or word. Exit 0 if all agree, 1 otherwise.
 """
 
 from __future__ import annotations
@@ -16,12 +17,38 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
 
-from afs_assistant.screen import METHOD_IDS, TECHNIQUES
+# Own copy of the S01 Table 1 name mappings (independent of afs_assistant.screen, review N10).
+METHOD_IDS = {
+    "IR spectroscopy": "MIR",
+    "NIR spectroscopy": "NIR",
+    "Raman spectroscopy": "Raman",
+    "UV/Visible spectroscopy": "UV-Vis",
+    "Fluorimetry": "Fluorescence",
+}
+# Table 1 technique -> (technique id, usable in-line at a process point)
+TECHNIQUES = {
+    "ATR platform": ("ATR", False),
+    "ATR probe*": ("ATR", True),
+    "ATR probe": ("ATR", True),
+    "cuvette": ("cuvette", False),
+    "cuvette 90 deg": ("cuvette", False),
+    "sample layer": ("thin_film_transmission", False),
+    "sample surface": ("diffuse_reflection", False),
+    "transmission or transflection probe": ("transmission_transflection", True),
+    "diffuse reflection probe": ("diffuse_reflection", True),
+    "integrating sphere": ("diffuse_reflection", False),
+    "surface at a distance": ("diffuse_reflection_remote", True),
+    "Raman probe": ("raman_probe", True),
+    "probe, lens": ("emission_probe", True),
+    "fluorimetric probe": ("fluorescence_probe", True),
+}
 
 ORDER = ["low", "average", "high"]
-ROW = re.compile(r"^\| (O\d+) \| [^|]+ \| (?:[^|\\]|\\.)* \| ((?:[^|\\]|\\.)*) \|")
+CELL = r"(?:[^|\\]|\\.)*"
+# | ID | Tier | Methods | Confidence | Cost class | ...
+ROW = re.compile(rf"^\| (O\d+) \| [^|]+ \| {CELL} \| {CELL} \| ({CELL}) \|")
+CURRENCY = re.compile(r"[€$£]|\b(?:EUR|USD|GBP|CHF)\b|\beuros?\b|\bdollars?\b", re.IGNORECASE)
 
 
 def expected(assessment: dict, table: list[dict]) -> dict[str, tuple[str | None, list[int]]]:
@@ -49,7 +76,8 @@ def rendered(markdown: str) -> dict[str, str]:
 def check_pair(json_path: Path, md_path: Path, table: list[dict]) -> list[str]:
     data = json.loads(json_path.read_text(encoding="utf-8"))
     want = expected(data["assessment"], table)
-    cells = rendered(md_path.read_text(encoding="utf-8"))
+    markdown = md_path.read_text(encoding="utf-8")
+    cells = rendered(markdown)
     stored = data.get("option_costs", {})
     problems = []
     for oid, (top, rows) in want.items():
@@ -68,8 +96,8 @@ def check_pair(json_path: Path, md_path: Path, table: list[dict]) -> list[str]:
         s = stored.get(oid)
         if s is None or s["cost_class"] != top or sorted(r["row"] for r in s["rows"]) != rows:
             problems.append(f"{oid}: run JSON option_costs {s} disagrees with {top} rows {rows}")
-    if re.search(r"[€$£]\s*\d|\b\d+(?:[.,]\d+)?\s*(?:EUR|USD|euros?|dollars?)\b", "\n".join(cells.values())):
-        problems.append("currency in a cost cell")
+    for m in CURRENCY.finditer(markdown):
+        problems.append(f"currency in the Markdown: {markdown[max(0, m.start() - 40):m.end() + 40]!r}")
     return problems
 
 

@@ -286,7 +286,7 @@ def test_proposal_pointing_to_a_dropped_option_is_flagged_and_open():
     assert [o.id for o in result.assessment.solution_options] == ["O1"]
     assert "proposal" in result.flagged
     assert {"proposal_option_exists", "option_count", "option_recommended_tier"} <= still_open(result)
-    assert "not an available option" in render.to_markdown(result)
+    assert "**Best current option:** (invalid option id)" in render.to_markdown(result)
 
 
 # ----------------------------------------------------------------- 3.2 cost class
@@ -338,20 +338,21 @@ def test_cost_class_cross_check_script(tmp_path):
     assert script.check_pair(tmp_path / "X.json", tmp_path / "X.md", table)
 
 
-def test_cost_never_shows_currency():
-    md = render.to_markdown(run_with(assess=with_(solution_options=ASSESSMENT["solution_options"] + [EXTENDED]))[0])
-    assert not re.search(r"[€$£]\s*\d|\b(?:EUR|USD)\b", md.split("## Evidence")[0])
+# test_cost_never_shows_currency is replaced by the currency fail-fixtures in test_phase3_r.py (3.R B3).
 
 
 # ----------------------------------------------------------------- 3.2 auxiliary label, not measurable in-line
-def test_auxiliary_sensor_label_unless_verified_citation():
+def test_auxiliary_sensor_label_always_stays_and_says_cited_when_verified():
     result, _ = run_with()
     md = render.to_markdown(result)
     assert "Auxiliary sensor: temperature sensor in the line (engineering judgement: confirm availability with AFS)" in md
     a = with_()
     a["parameters"][1]["citations"] = [cit("S01", 16, RAMAN_QUOTE)]
     md = render.to_markdown(run_with(assess=a)[0])
-    assert "Auxiliary sensor: temperature sensor in the line |" in md and "confirm availability" not in md
+    assert "Auxiliary sensor: temperature sensor in the line (cited; confirm availability with AFS) |" in md
+    assert "engineering judgement: confirm availability" not in md
+    nodes, _ = _structure(_charts(md)[0])
+    assert nodes["aux1"].endswith("(confirm with AFS)")                 # the sketch keeps the label too
 
 
 def test_auxiliary_label_returns_when_the_citation_fails():
@@ -450,13 +451,15 @@ def test_mermaid_check_script_finds_blocks(tmp_path):
 # ----------------------------------------------------------------- 3.6 render order and tables
 def test_render_order():
     md = render.to_markdown(run_with(assess=with_(chemometrics_note="One model per method."))[0])
-    order = ["## Brief answer", "## Proposal", "**Decision status:**", "## Parameters", "## Solution options",
-             "## Setup sketch", "## Requirements", "## Recommendation", "## First feasibility experiment",
-             "## Further notes", "## Evidence"]
+    order = ["# Answer", "**Customer request:**", "## Brief answer", "## Proposal", "**Decision status:**",
+             "## Solution options", "## Setup sketch", "## Key questions", "# Expert detail", "**Customer enquiry**",
+             "## Parameters", "## Solution option details", "## Requirements", "## Clarification questions",
+             "## Recommendation", "## First feasibility experiment", "## Further notes", "## Evidence",
+             "## Verification"]
     positions = [md.index(h) for h in order]
     assert positions == sorted(positions)
     assert "| P1 | Ethanol concentration | quantitative | required | Spectroscopy: Raman |" in md
-    assert "| O2 | Recommended | M1 Raman probe | high (row 12) |" in md
+    assert "| O2 | Recommended | M1 Raman probe | High | high (row 12) |" in md
 
 
 def test_table_cells_escape_pipes():

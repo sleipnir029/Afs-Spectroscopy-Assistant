@@ -52,7 +52,16 @@ def render(chart: str, workdir: Path, name: str) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, f"timeout after {TIMEOUT_S} s"
     ok = proc.returncode == 0 and out.exists() and out.stat().st_size > 0
-    return ok, (proc.stderr or proc.stdout).strip()[-400:]
+    return ok, error_excerpt(proc.stderr or proc.stdout)
+
+
+def error_excerpt(text: str, context: int = 3) -> str:
+    """The parse-error line and the lines after it (mmdc puts a long stack trace around it); else the tail."""
+    lines = text.strip().splitlines()
+    for i, line in enumerate(lines):
+        if re.search(r"parse error|syntax error|lexical error|error:", line, re.IGNORECASE):
+            return "\n".join(lines[i:i + 1 + context])
+    return text.strip()[-400:]
 
 
 def main(argv: list[str]) -> int:

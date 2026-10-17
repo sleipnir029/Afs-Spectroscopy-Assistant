@@ -1,7 +1,10 @@
-"""Render a pipeline run as Markdown (organizer section order) and JSON.
+"""Render a pipeline run as Markdown and JSON.
 
+Two layers (D-022): a short Answer part (request, brief answer, proposal, options table,
+setup sketch, top questions) and an Expert detail part with everything else.
 Code-derived parts (never model text): the cost class per option (S01 Table 1), the
-auxiliary-sensor label, the not-measurable-in-line wording and the Mermaid setup sketch.
+confidence rating per option, the auxiliary-sensor label, the not-measurable-in-line
+wording and the Mermaid setup sketch.
 """
 
 from __future__ import annotations
@@ -11,16 +14,20 @@ import re
 
 from afs_assistant import kb, scope
 from afs_assistant.fibers import method_fiber_coverage
+from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.options import (
+    CONFIDENCE_NOTE,
     TABLE1_CITATION,
+    confidence_label,
     cost_class,
     method_label,
+    option_confidence,
     option_costs,
     option_parts,
 )
 from afs_assistant.pipeline import RunResult
 from afs_assistant.schema import Assessment, Parameter, SolutionOption
-from afs_assistant.verify import RECHECK_NAMES
+from afs_assistant.verify import ANSWER_QUESTIONS, RECHECK_NAMES, forbidden_hits
 
 STATUS_LABEL = {
     "provisional_assessment": "Provisional feasibility assessment",
@@ -33,6 +40,7 @@ ROLE_LABEL = {"primary": "Primary candidate", "comparison": "Comparison candidat
 TIER_LABEL = {"simple": "Simple", "recommended": "Recommended", "extended": "Extended (multi-method)"}
 BASIS_LABEL = {"supplied": "supplied AFS sources", "engineering_judgement": "engineering judgement"}
 AUX_UNCITED = "engineering judgement: confirm availability with AFS"
+AUX_CITED = "cited; confirm availability with AFS"   # a citation supports the point, not the sensor supply
 NOTE_LABEL = {"chemometrics_note": "Chemometrics", "realtime_tracking_note": "Real-time tracking",
               "future_direction": "Future direction"}
 # Mermaid label escapes (entity codes); '#' first so the codes themselves are not escaped again.
@@ -103,17 +111,18 @@ def fiber_label(method: str, slots: dict) -> str:
 
 
 def _aux_cited(p: Parameter) -> bool:
+    """Citations left after finalize are verified ones."""
     return bool(p.citations)
 
 
 def measured_by_text(p: Parameter) -> str:
-    """Code wording for how a parameter is measured; auxiliary sensors are labelled."""
+    """Code wording for how a parameter is measured; auxiliary sensors always keep the AFS label."""
     mb = p.measured_by
     if mb.type == "spectroscopy":
         return f"Spectroscopy: {mb.method or 'method not named'}"
     if mb.type == "auxiliary_sensor":
         label = f"Auxiliary sensor: {mb.sensor or 'not named'}"
-        return label if _aux_cited(p) else f"{label} ({AUX_UNCITED})"
+        return f"{label} ({AUX_CITED})" if _aux_cited(p) else f"{label} ({AUX_UNCITED})"
     if mb.type == "reference_lab":
         return f"Reference lab method: {mb.sensor or 'not named'}"
     return f"Not measurable in-line by spectroscopy; alternative: {mb.alternative or 'none named'}"
@@ -138,8 +147,7 @@ def mermaid_chart(a: Assessment, option: SolutionOption, slots: dict) -> str:
     edges.append("model --> result")
     aux = [p for p in used if p.measured_by.type == "auxiliary_sensor"]
     for k, p in enumerate(aux, 1):
-        label = f"Auxiliary: {p.measured_by.sensor or p.name}"
-        nodes.append((f"aux{k}", label if _aux_cited(p) else f"{label} (confirm with AFS)"))
+        nodes.append((f"aux{k}", f"Auxiliary: {p.measured_by.sensor or p.name} (confirm with AFS)"))
         edges.append(f"aux{k} -.-> model")
     lines = ["flowchart LR"]
     lines += [f'    {nid}["{mermaid_escape(_short(label))}"]' for nid, label in nodes]
@@ -171,6 +179,15 @@ def _option_methods_text(option: SolutionOption, a: Assessment) -> str:
     return "; ".join(items) or "none"
 
 
+def request_line(r: RunResult) -> str:
+    """The customer request in one line: the intake summary, unless it carries a figure that is not in
+    the enquiry or forbidden wording; then the enquiry itself."""
+    summary = " ".join(r.intake.summary.split())
+    if not summary or unsupported_numbers(summary, [r.enquiry]) or forbidden_hits(summary):
+        return " ".join(r.enquiry.split())
+    return summary
+
+
 def to_markdown(r: RunResult, title: str = "") -> str:
     a = r.assessment
     cite = _Citer()
@@ -179,21 +196,55 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         """Inline warning for an item finalize flagged (lost a citation, unsupported figure)."""
         return f" ⚠ *({r.flagged[path]})*" if path in r.flagged else ""
 
-    out = [f"# First technical assessment{': ' + title if title else ''}", ""]
-    out += ["**Customer enquiry**", "", f"> {r.enquiry}", ""]
+    # ================================================================ Answer
+    out = [f"# First technical assessment{': ' + title if title else ''}", "", "# Answer", ""]
+    out += [f"**Customer request:** {request_line(r)}", ""]
     out += ["## Brief answer", "", f"{a.brief_answer}{warn('brief_answer')}", ""]
 
     options = {o.id: o for o in a.solution_options}
     pr = a.proposal
     best = options.get(pr.best_current_option)
     best_text = (f"{best.id} ({TIER_LABEL[best.tier].lower()}): {_option_methods_text(best, a)}" if best
-                 else f"{pr.best_current_option} (not an available option)")
+                 else "(invalid option id)")
     out += ["## Proposal", "",
             f"- **Best current option:** {best_text}{warn('proposal')}",
             f"- **Basis:** {BASIS_LABEL[pr.basis]}",
             f"- **What would change it:** {pr.what_would_change_it}{warn('proposal.what_would_change_it')}",
             f"- **Next step:** {pr.next_step}{warn('proposal.next_step')}", ""]
     out += [f"**Decision status:** {STATUS_LABEL[a.decision_status]}. {a.status_reason}{warn('status_reason')}", ""]
+
+    if a.solution_options:
+        recs = {x.id: x for x in a.recommendations}
+        conf = option_confidence(a, r.candidates, r.slots)
+        out += ["## Solution options", "",
+                (f"| ID | Tier | Methods | Confidence | Cost class, {TABLE1_CITATION} | Ease of use | Maintenance | "
+                 f"Performance fit | Sources |"), "|---|---|---|---|---|---|---|---|---|"]
+        for i, o in enumerate(a.solution_options):
+            out.append(f"| {_cell(o.id)} | {TIER_LABEL[o.tier]} | {_cell(_option_methods_text(o, a))} | "
+                       f"{_cell(confidence_label(conf[o.id]))} | {_cell(cost_class(o, recs).label())} | "
+                       f"{_cell(o.ease_of_use)} | {_cell(o.maintenance)} | "
+                       f"{_cell(o.performance_fit)}{_cell(warn(f'solution_options[{i}]'))} | "
+                       f"{_cell(cite.refs(o.citations))} |")
+        out += ["", f"*{CONFIDENCE_NOTE}*", "",
+                (f"*Cost class is the relative rating in {TABLE1_CITATION} for the in-line method+technique "
+                 f"rows named (the highest one for a multi-method option); it is not a price.*"), ""]
+
+    charts = setup_charts(r)
+    out += ["## Setup sketch", ""]
+    if not charts:
+        out += ["No recommended option, so no setup sketch.", ""]
+    for o, chart in charts:
+        out += [(f"*{TIER_LABEL[o.tier]} option {o.id}; drawn by code from the option, a schematic, "
+                 f"not a configuration.*"), "", "```mermaid", chart, "```", ""]
+
+    top = a.clarification_questions[:ANSWER_QUESTIONS]
+    if top:
+        out += ["## Key questions", ""]
+        out += [f"{k}. {q.question}{warn(f'clarification_questions[{k - 1}]')}" for k, q in enumerate(top, 1)]
+        out.append("")
+
+    # ================================================================ Expert detail
+    out += ["# Expert detail", "", "**Customer enquiry**", "", f"> {r.enquiry}", ""]
 
     if a.parameters:
         out += ["## Parameters", "", "| ID | Parameter | Kind | Need | Measured by | Why | Sources |",
@@ -205,30 +256,12 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         out.append("")
 
     if a.solution_options:
-        recs = {x.id: x for x in a.recommendations}
-        out += ["## Solution options", "",
-                (f"| ID | Tier | Methods | Cost class, {TABLE1_CITATION} | Ease of use | Maintenance | "
-                 f"Performance fit | Sources |"), "|---|---|---|---|---|---|---|---|"]
-        for i, o in enumerate(a.solution_options):
-            out.append(f"| {_cell(o.id)} | {TIER_LABEL[o.tier]} | {_cell(_option_methods_text(o, a))} | "
-                       f"{_cell(cost_class(o, recs).label())} | {_cell(o.ease_of_use)} | {_cell(o.maintenance)} | "
-                       f"{_cell(o.performance_fit)}{_cell(warn(f'solution_options[{i}]'))} | "
-                       f"{_cell(cite.refs(o.citations))} |")
-        out += ["", (f"*Cost class is the relative rating in {TABLE1_CITATION} for the in-line method+technique "
-                     f"rows named (the highest one for a multi-method option); it is not a price.*"), ""]
+        out += ["## Solution option details", ""]
         for o in a.solution_options:
             out.append(f"- **{o.id} cost drivers:** {o.cost_drivers}")
             if o.fusion_note:
                 out.append(f"- **{o.id} combining methods:** {o.fusion_note}")
         out.append("")
-
-    charts = setup_charts(r)
-    out += ["## Setup sketch", ""]
-    if not charts:
-        out += ["No recommended option, so no setup sketch.", ""]
-    for o, chart in charts:
-        out += [(f"*{TIER_LABEL[o.tier]} option {o.id}; drawn by code from the option, a schematic, "
-                 f"not a configuration.*"), "", "```mermaid", chart, "```", ""]
 
     if a.premise_checks:
         out += ["## Premise check", ""]
@@ -323,8 +356,8 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     if intake_removed:
         out.append(f"- Removed {len(intake_removed)} intake item(s) not quoted verbatim from the enquiry:")
         out += [f"  - {x['location']}: {x['reason']}" for x in intake_removed]
-    out += ["", (f"*Run {r.run_id} · models {', '.join(r.manifest.get('models', []))} · "
-            f"cost ${r.manifest.get('cost_usd', 0):.4f}*"), ""]
+    # The API cost stays in the run JSON and manifest: no currency sign in any Markdown output.
+    out += ["", f"*Run {r.run_id} · models {', '.join(r.manifest.get('models', []))}*", ""]
     return "\n".join(out)
 
 
@@ -342,6 +375,7 @@ def to_json(r: RunResult) -> dict:
         "verification": r.report.to_dict(),
         "still_open": [{"name": c.name, "location": c.location, "message": c.message} for c in open_failures(r)],
         "option_costs": option_costs(r.assessment),
+        "option_confidence": option_confidence(r.assessment, r.candidates, r.slots),
         "setup_sketches": {o.id: chart for o, chart in setup_charts(r)},
         "removed_citations": [x for x in r.removed if "citation" in x],
         "finalize_changes": [x for x in r.removed if "citation" not in x],

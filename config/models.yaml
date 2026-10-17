@@ -5,11 +5,12 @@ base_url: https://openrouter.ai/api/v1
 temperature: 0
 # json_schema = strict structured output (preferred); json_object = fallback with pydantic validation.
 response_mode: json_schema
-# max_tokens includes the hidden reasoning tokens of v4.1-flash (about 5k on a short intake).
+# max_tokens includes the hidden reasoning tokens of v4.1-flash (about 5k on a short intake; up to ~28k on a hard
+# assess, which cut a reply at 32k, D-025). Routed endpoints allow >=131k output tokens (checked 2026-10-17 15:10).
 roles:
   intake: {model: deepseek/deepseek-v4.1-flash, max_tokens: 16000}
-  assess: {model: deepseek/deepseek-v4.1-flash, max_tokens: 32000}
-  repair: {model: deepseek/deepseek-v4.1-flash, max_tokens: 32000}
+  assess: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000}
+  repair: {model: deepseek/deepseek-v4.1-flash, max_tokens: 64000}
 # Provider routing per model: only strict-JSON capable, non-fp4 endpoints, cheapest first (checked 2026-10-17 10:14).
 provider_routing:
   deepseek/deepseek-v4.1-flash: {order: [deepinfra, atlas-cloud, coreweave], only: [deepinfra, atlas-cloud, coreweave], allow_fallbacks: true}

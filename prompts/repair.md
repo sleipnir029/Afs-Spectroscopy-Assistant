@@ -9,7 +9,8 @@ Fix ONLY the failing items and return the complete corrected assessment JSON.
 - **unknown-slot failures:** add a clarification question about that property, or state the assumption explicitly.
 - **status failures:** make `decision_status` consistent with the premise checks and recommendations.
 - **forbidden wording:** rephrase cautiously.
-- **option failures:** give 2-3 solution options with distinct tiers and exactly one `recommended`; reference only existing recommendation ids that are not `not_recommended`; give the `extended` option a `fusion_note`; every `spectroscopy` parameter's method must be used by some option.
+- **option failures:** give 2-3 solution options with distinct tiers and exactly one `recommended`; reference only existing recommendation ids that are not `not_recommended` and existing parameter ids; no two options may use the same set of recommendation ids; give the `extended` option a `fusion_note`; every `spectroscopy` parameter's method must be used by some option.
+- **duplicate ids:** give every recommendation, option and parameter its own id and update the references.
 - **proposal / brief answer failures:** fill the empty fields; `best_current_option` must be one of the option ids.
 - **single primary:** keep exactly one `primary`; make the others `comparison` or `conditional`.
 - **premise-status failures:** `premise_not_supported` needs a `contradicted` premise check; otherwise choose another status.
