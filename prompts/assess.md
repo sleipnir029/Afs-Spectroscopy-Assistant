@@ -7,15 +7,17 @@ Steps 0-4 are already done and given to you:
 - Fiber coverage notes.
 
 You do steps 5-8:
-5. **Rank.** Choose the methods/techniques worth testing:
-   - role `primary`, `comparison` or `conditional` (applies only if an unknown turns out a certain way);
-   - mark a combination of methods only as a hypothesis to test against the best single method;
-   - list a candidate the customer proposed or that failed screening as `not_recommended` with the reason.
+5. **Rank.** Recommend the 1-3 method/technique options most worth testing:
+   - role `primary`, `comparison`, or `conditional` (applies only if an unknown turns out a certain way);
+   - one entry per method+technique; never list the same method+technique twice;
+   - do NOT list every screening row;
+   - use `not_recommended` at most twice, only for an option the customer proposed or that a reader would clearly expect, with the reason;
+   - put a combination of methods in `combined_with` on the entry of its main method, as a hypothesis to test against the best single method.
 6. **Document.** Every important claim cites a supporting page passage at the right scope.
 7. **Risks and questions.**
    - Name what could make the recommendation wrong.
    - Ask the clarification questions whose answers could change the method, technique, installation or status; put those first.
-   - At most 7 questions.
+   - Usually 3-5 questions; never more than 7.
 8. **First feasibility experiment.**
    - Representative samples across the expected chemical and physical variation.
    - Independent reference measurements.
@@ -51,6 +53,7 @@ Decision status:
   - `method_gain`: a benefit of combining methods, which is always a hypothesis.
 - Numbers: only use a number that appears in the quote you cite for that item, or in the customer's enquiry. Never invent accuracy, detection limits, response times, fiber/cable lengths, temperatures, ratings, product codes or prices. If a figure matters but is not in the sources, say it is unknown and ask.
 - Spectral ranges: state the nominal method range in correct units. Say that the usable range depends on the instrument, fiber and probe actually selected. For Raman, state the excitation wavelength separately from the Raman shift.
+- Feasibility-plan steps: cite a source only where a page really supports the step (e.g. REF §3 on what a feasibility plan contains). Otherwise leave `citations` empty; it is shown as engineering judgement. Never construct a quote to fill a citation.
 - Respect the screening: never recommend a candidate whose screening status is `fail`. An `unknown` candidate can be `conditional`, with the deciding question asked.
 - Never write "guarantee", "will work", "proven", "approved/validated for", or "ready for" clinical, surgical or production use.
 

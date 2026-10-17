@@ -18,7 +18,11 @@ from afs_assistant.schema import Assessment, Citation, Intake
 from afs_assistant.screen import Candidate
 
 MAX_QUESTIONS = 7
+MAX_RECOMMENDATIONS = 5
 MAX_WORDS = 1800
+# A forbidden phrase preceded (within a few words) by one of these is a cautious negation, not a claim.
+_NEGATION_BEFORE = re.compile(r"\b(?:not|no|never|cannot|can't|without|nor|neither|isn't|doesn't|don't|won't)\b"
+                              r"(?:\W+\w+){0,6}\W*$", re.IGNORECASE)
 # Wording that asserts certainty or commercial facts the sources cannot support (REF §3 "Do not invent").
 FORBIDDEN = [
     (re.compile(r"[€$£]\s*\d|\b\d+(?:[.,]\d+)?\s*(?:EUR|USD|euro|dollars?)\b", re.IGNORECASE), "price"),
@@ -222,11 +226,26 @@ def check_status(a: Assessment, report: Report) -> None:
                "provisional_assessment needs at least one method worth testing")
 
 
+def forbidden_hits(text: str) -> list[str]:
+    """Forbidden phrases that are asserted, i.e. not preceded by a nearby negation."""
+    hits = []
+    for rx, label in FORBIDDEN:
+        for m in rx.finditer(text):
+            if not _NEGATION_BEFORE.search(text[max(0, m.start() - 80):m.start()]):
+                hits.append(f"{label}: {m.group(0)!r}")
+    return hits
+
+
 def check_style(a: Assessment, report: Report) -> None:
     text = _all_text(a)
-    for rx, label in FORBIDDEN:
-        m = rx.search(text)
-        report.add("forbidden_wording", m is None, "hard", "assessment", f"{label}: {m.group(0)!r}" if m else "")
+    hits = forbidden_hits(text)
+    report.add("forbidden_wording", not hits, "hard", "assessment", "; ".join(hits))
+    keys = [(r.method, r.technique) for r in a.recommendations]
+    dupes = sorted({f"{m} {tq}" for m, tq in keys if keys.count((m, tq)) > 1})
+    report.add("recommendations_unique", not dupes, "hard", "recommendations",
+               f"same method+technique listed more than once: {dupes}")
+    report.add("recommendation_count", len(a.recommendations) <= MAX_RECOMMENDATIONS, "soft", "recommendations",
+               f"{len(a.recommendations)} entries (max {MAX_RECOMMENDATIONS}); list only options worth testing")
     report.add("question_count", len(a.clarification_questions) <= MAX_QUESTIONS, "soft", "clarification_questions",
                f"{len(a.clarification_questions)} questions (max {MAX_QUESTIONS})")
     for i, q in enumerate(a.clarification_questions):

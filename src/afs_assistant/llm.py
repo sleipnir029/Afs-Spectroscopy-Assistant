@@ -141,7 +141,10 @@ class OpenRouterClient:
                 continue
             latency = time.monotonic() - started
             content = response.choices[0].message.content or ""
+            finish = response.choices[0].finish_reason
             try:
+                if finish == "length":
+                    raise json.JSONDecodeError("reply truncated at max_tokens", content, len(content))
                 data = json.loads(content)
             except json.JSONDecodeError as exc:  # empty or truncated reply from the provider: retry
                 last_error = RuntimeError(f"invalid JSON from provider {getattr(response, 'provider', '?')} "

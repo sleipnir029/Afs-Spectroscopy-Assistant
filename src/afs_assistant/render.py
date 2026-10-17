@@ -58,7 +58,8 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     out += ["## Recommendation", ""]
     for m in a.recommendations:
         cond = "" if m.conditions.strip().lower() in ("", "none") else f" *Conditions:* {m.conditions}"
-        out.append(f"- **{m.id} · {ROLE_LABEL[m.role]}: {m.method}, {m.technique.replace('_', ' ')}.** "
+        combo = f" + {' + '.join(m.combined_with)} (combination: a hypothesis to test)" if m.combined_with else ""
+        out.append(f"- **{m.id} · {ROLE_LABEL[m.role]}: {m.method}{combo}, {m.technique.replace('_', ' ')}.** "
                    f"{m.rationale}{cond}{cite.refs(m.citations)}")
     out.append("")
 

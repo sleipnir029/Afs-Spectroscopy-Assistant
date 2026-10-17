@@ -17,6 +17,7 @@ from dulwich.repo import Repo
 from afs_assistant import pipeline, provenance, render
 from afs_assistant.llm import FakeClient, strict_schema
 from afs_assistant.schema import Assessment, Intake
+from afs_assistant.verify import forbidden_hits
 
 ENQUIRY = ("We want to follow ethanol in a clear aqueous fermentation broth that flows through a pipe. "
            "Gas chromatography results from the lab are available as reference.")
@@ -66,10 +67,11 @@ ASSESSMENT = {
          "why_it_matters": "Decides whether NIR sensitivity is enough.", "affects": ["M2"]},
     ],
     "recommendations": [
-        {"id": "M1", "method": "Raman", "technique": "raman_probe", "role": "primary",
+        {"id": "M1", "method": "Raman", "technique": "raman_probe", "role": "primary", "combined_with": [],
          "rationale": "Water interferes little with Raman.", "conditions": "none",
          "citations": [cit("S01", 16, RAMAN_QUOTE)]},
         {"id": "M2", "method": "NIR", "technique": "transmission_transflection", "role": "comparison",
+         "combined_with": [],
          "rationale": "NIR transmission suits clear liquids.", "conditions": "if the range is high enough",
          "citations": [cit("S01", 10, NIR_QUOTE)]},
     ],
@@ -180,7 +182,8 @@ def test_recommending_a_failed_candidate_is_flagged():
     intake["sample"]["fluorophore"] = slot("no", "stated", "ethanol")
     bad = copy.deepcopy(ASSESSMENT)
     bad["recommendations"].append({"id": "M3", "method": "Fluorescence", "technique": "fluorescence_probe",
-                                   "role": "primary", "rationale": "Very sensitive.", "conditions": "none",
+                                   "role": "primary", "combined_with": [], "rationale": "Very sensitive.",
+                                   "conditions": "none",
                                    "citations": [cit("S01", 16, RAMAN_QUOTE)]})
     result, _ = run_with(intake=intake, assess=bad, repairs=[bad, bad])
     assert failures(result, "respects_screen")
@@ -248,3 +251,52 @@ def test_live_smoke():
     from afs_assistant.llm import OpenRouterClient
     result = pipeline.run(ENQUIRY, OpenRouterClient(), run_id="live-smoke")
     assert result.assessment.recommendations
+
+
+# ----------------------------------------------------------------- fixes 2.R
+
+
+@pytest.mark.parametrize("text", [
+    "The example is a reason to test, not proof that NIR will work for this blend.",
+    "The sources do not guarantee it for this specific process.",
+    "No source says the sensor is ready for clinical use.",
+])
+def test_negated_cautious_phrases_are_not_forbidden(text):
+    assert forbidden_hits(text) == []
+
+
+@pytest.mark.parametrize("text", [
+    "NIR will work for this blend.",
+    "We guarantee the accuracy.",
+    "The sensor is ready for clinical use.",
+    "Order part ABC-12345 for about $400.",
+])
+def test_asserted_forbidden_phrases_are_flagged(text):
+    assert forbidden_hits(text)
+
+
+def test_duplicate_method_technique_is_a_hard_failure():
+    bad = copy.deepcopy(ASSESSMENT)
+    dup = copy.deepcopy(bad["recommendations"][0])
+    dup.update(id="M3", role="not_recommended")
+    bad["recommendations"].append(dup)
+    result, _ = run_with(assess=bad, repairs=[bad, bad])
+    assert failures(result, "recommendations_unique")
+
+
+def test_too_many_recommendations_is_a_soft_warning():
+    bad = copy.deepcopy(ASSESSMENT)
+    for i, (m, tq) in enumerate([("MIR", "ATR"), ("UV-Vis", "transmission_transflection"),
+                                 ("NIR", "diffuse_reflection"), ("UV-Vis", "ATR")]):
+        bad["recommendations"].append({"id": f"M{i + 3}", "method": m, "technique": tq, "role": "not_recommended",
+                                       "combined_with": [], "rationale": "Listed for completeness.",
+                                       "conditions": "none", "citations": []})
+    result, _ = run_with(assess=bad)
+    assert any(c.name == "recommendation_count" for c in result.report.soft_failures)
+
+
+def test_combination_is_rendered_as_hypothesis():
+    combo = copy.deepcopy(ASSESSMENT)
+    combo["recommendations"][0]["combined_with"] = ["NIR"]
+    result, _ = run_with(assess=combo)
+    assert "Raman + NIR (combination: a hypothesis to test)" in render.to_markdown(result)

@@ -297,3 +297,43 @@ Soft checks: length budget; question count ≤7; each question has `affects`.
 1. API key: the user puts `OPENROUTER_API_KEY=...` into `.env` (never committed or printed).
 2. Phase 2 dev model: proposed `deepseek/deepseek-v4-pro-0813` (cheap, strict JSON supported); alternatively `google/gemini-3.8-flash`. The final choice is the Phase 3 bake-off.
 3. Add `runs/` to `.gitignore` (local copies; the durable record is the `provenance` branch).
+
+### Phase 2 first live run: findings
+D01–D07 produced; D08 crashed.
+
+| Case | Citations verified | Hard failures left | Cost |
+|---|---|---|---|
+| D01 | 43/45 | 3 | $0.079 |
+| D02 | 30/30 | 0 | $0.022 |
+| D03 | 30/30 | 1 | $0.063 |
+| D04 | 30/33 | 3 | $0.167 |
+| D05 | 28/28 | 1 | $0.069 |
+| D06 | 37/37 | 0 | $0.095 |
+| D07 | 31/31 | 0 | $0.044 |
+
+Problems:
+1. **Bloated, contradictory recommendations.** The model lists every screening row (D01: 13 entries; the same method+technique appears as primary, comparison and not_recommended). The organizer worked answer has 3.
+2. **The forbidden-wording check flags negated, cautious phrases** ("not proof that … will work", "do not guarantee"): 3 false positives.
+3. **D08 crash.** An intake reply was truncated (DeepInfra, finish=length, about 10k chars); after retries the whole set aborted.
+4. **Feasibility-plan steps get invented quotes** (most of the remaining quote failures); the model feels it must cite generic plan steps.
+5. Always 7 questions (the maximum); the organizer examples have about 4.
+
+### Phase 2 fixes (2.R) — APPROVED 2026-10-17 09:49 (user), with re-run of D01–D08
+1. **Prompt (assess):**
+   - Recommend 1–3 method/technique options worth testing, one entry per method+technique.
+   - Use `not_recommended` at most 2 times, only for options the customer proposed or a reader would expect.
+   - Never list every screening row.
+   - Combinations go in a new `combined_with` field (a hypothesis to test).
+   - Questions: usually 3–5.
+   - Feasibility-plan steps cite a source only where one really fits (e.g. REF §3); otherwise leave `citations` empty (shown as engineering judgement). Never construct a quote.
+2. **Schema:** `Recommendation.combined_with: list[Method]` (empty for a single method).
+3. **Verifier:**
+   - Hard check: method+technique unique across recommendations.
+   - Soft check: recommendations ≤5.
+   - Forbidden-wording check is negation-aware (ignore a match preceded within about 6 words by not/no/never/cannot/without/do not/does not/is not).
+4. **LLM client:**
+   - Provider `order` [ionstream, together, deepinfra] (Ionstream first; it was reliable).
+   - Intake max_tokens 8000.
+   - `finish=length` counts as an invalid reply (retry).
+5. **CLI:** `run --set` continues after a failed scenario, records the error, and exits non-zero at the end.
+6. **Tests** for 2–5. Then re-run D01–D08 (about $0.6) → reviewer → G2.

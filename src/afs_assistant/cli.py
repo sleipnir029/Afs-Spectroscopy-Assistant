@@ -72,8 +72,10 @@ def _assess(args: argparse.Namespace) -> int:
 
 
 def _run_set(args: argparse.Namespace) -> int:
+    from openai import APIError
+
     from afs_assistant import paths, scenarios
-    from afs_assistant.llm import OpenRouterClient
+    from afs_assistant.llm import OpenRouterClient, SpendCapExceeded
 
     if args.set == "final" and not args.final_ok:
         print("The final set is held out. Pass --i-know-this-is-the-final-run to generate it (Phase 5 only).")
@@ -82,11 +84,19 @@ def _run_set(args: argparse.Namespace) -> int:
     items = scenarios.load(args.set)
     if args.only:
         items = [s for s in items if s["id"] in args.only.split(",")]
+    failed = []
     for s in items:
-        out = _assess_one(s["enquiry"], s["id"], client, paths.OUTPUTS / args.set, s["title"])
+        try:
+            out = _assess_one(s["enquiry"], s["id"], client, paths.OUTPUTS / args.set, s["title"])
+        except SpendCapExceeded:
+            raise
+        except (RuntimeError, ValueError, APIError) as exc:  # one bad scenario must not stop the set
+            failed.append(s["id"])
+            print(f"{s['id']}: FAILED {type(exc).__name__}: {exc}")
+            continue
         print(f"{s['id']}: verification {out['summary']} cost ${out['cost_usd']:.4f}")
-    print(f"session cost ${client.tracker.session_usd:.4f}")
-    return 0
+    print(f"session cost ${client.tracker.session_usd:.4f}; failed: {failed or 'none'}")
+    return 1 if failed else 0
 
 
 def main(argv: list[str] | None = None) -> int:

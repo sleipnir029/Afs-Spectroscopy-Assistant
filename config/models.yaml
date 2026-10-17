@@ -6,12 +6,12 @@ temperature: 0
 # json_schema = strict structured output (preferred); json_object = fallback with pydantic validation.
 response_mode: json_schema
 roles:
-  intake: {model: deepseek/deepseek-v4-pro-0813, max_tokens: 4000}
+  intake: {model: deepseek/deepseek-v4-pro-0813, max_tokens: 8000}
   assess: {model: deepseek/deepseek-v4-pro-0813, max_tokens: 16000}
   repair: {model: deepseek/deepseek-v4-pro-0813, max_tokens: 16000}
 # Provider routing per model: only strict-JSON capable, non-fp4 endpoints (checked 2026-10-17).
 provider_routing:
-  deepseek/deepseek-v4-pro-0813: {only: [ionstream, together, deepinfra], allow_fallbacks: true}
+  deepseek/deepseek-v4-pro-0813: {order: [ionstream, together, deepinfra], only: [ionstream, together, deepinfra], allow_fallbacks: true}
 # Fallback prices (USD per 1M tokens) used only if OpenRouter does not return a cost.
 prices:
   deepseek/deepseek-v4-pro-0813: {input: 0.66, output: 1.98}
