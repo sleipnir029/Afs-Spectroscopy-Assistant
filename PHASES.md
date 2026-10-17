@@ -701,6 +701,14 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 - First build works on saved runs only (no API cost); the live path is wired but tested once later. Acceptance: Playwright screenshots (light/dark, desktop/phone width) checked by Claude and a reviewer agent.
 - **Speed (user 22:35):** set runs execute cases in parallel and every LLM call gets an explicit timeout (Phase 5, with the D-038 item).
 
+**5.6'' UI brief revision (user 22:41, D-040):** no card-style showcase (options = a comparison table; sections typographic); **FastAPI + Jinja2 + htmx** (vendored, offline), minimal vanilla JS; generated diagrams: SVG setup diagram (hero), SVG spectral-range diagram (only sourced ranges), "how this answer was made" process strip with timings/counts, optional parameter → measurement map; Mermaid kept for the other options. No images from the organizer PDFs.
+
+**5.0 Early robustness items (user 22:41, D-040; done in a worktree while G4 runs):**
+1. **Off-topic short-circuit:** when the intake routes are only `out_of_scope` and there is no measurement target, the run stops after intake with a polite one-line redirect and 2–3 generic example questions (written by us, no scenario text); no assess/external calls. Markdown + JSON carry `off_topic`; non-optical or borderline measurement questions still get the full assessment (the jury wants a proposal).
+2. **Parallel set runs:** `afs-assist run --workers N` (default 4) with a thread pool; spend tracker and provenance commits thread-safe (lock); per-case output unchanged; summary in scenario order.
+3. **LLM timeouts:** `OpenAI(max_retries=0)` plus a per-role `timeout_s` in `config/models.yaml` (intake 240, assess/repair 600, external roles 180); a timed-out call is retried once, other transient errors as before.
+4. Offline tests for each (FakeClient; a fake slow client for the timeout path).
+
 **5.6 Demo surface: a simple local web app** (D-023; replaces the `afs-assist chat` REPL and the static HTML view; approved 14:22)
 - `uv run afs-assist ui` starts a Streamlit app on localhost (`uv add streamlit`). Streamlit fits a report-style page (columns, tabs, expanders); Gradio is aimed at model demos and Chainlit at chat-first apps.
 - **Start screen:** paste an enquiry or pick a saved run (dev, adversarial, later the frozen H runs). Saved runs open instantly, which is the safe live-demo path.
