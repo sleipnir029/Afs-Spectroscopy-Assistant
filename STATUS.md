@@ -69,6 +69,18 @@ Known open points for Phase 3 (from the reviews; updated 12:05):
   - Recommendations must weigh cost, ease of use and operation, maintenance and performance fit, and recommend the *optimal* option for the actual problem: not just the cheapest, not just the best result.
   - **Price = relative cost class only** (low/average/high per method+technique, cited to S01 Table 1, plus cost drivers such as fiber type, probe and chemometric-model effort). No currency figures; the verifier keeps blocking them.
   - Ease of use and maintenance come from the supplied sources (cleaning, fouling, probe contact, robustness) or are labelled engineering judgement.
+- **More organizer input (13:05, user; under discussion, not yet decided):**
+  - **Parameter-driven solution proposals:** from the enquiry, derive the *minimal* set of chemical and physical parameters (quantitative or qualitative, e.g. concentration, composition, intermediates, temperature, viscosity, phase). "As simple as possible, complex where needed": don't ask for more than needed.
+  - **Map each parameter to a measurement:** a spectroscopy method or an auxiliary sensor (AFS probes can include thermocouples, an oral Q&A statement; temperature matters for exo/endothermic reactions).
+  - **Give 1–3 solution options** with trade-offs (cost class, ease, maintenance, performance) and recommend the optimal one; a simple brief answer; sketches where useful.
+  - **Gap:** the supplied KB has nothing on thermocouples, viscosity or temperature effects, so these need external sources (live search) or must be labelled engineering judgement. Spectroscopy does not measure viscosity directly.
+  - **Proposed priorities:**
+    - P1: parameter layer + solution options + brief answer + proposal block (~4–6 h).
+    - P2: online search, option B (~10–14 h).
+    - P3: code-generated Mermaid sketch (~1–2 h).
+    - P4: optional fields.
+    - Then the shell, freeze and deliverables (~8–10 h). Cut the bake-off to a quick check.
+  - **Open questions to the user:** a written source for thermocouples; a cap on must-have parameters (~4?); 2–3 options or one; Mermaid vs images; bake-off cut.
 - Dev model switched to `deepseek/deepseek-v4.1-flash` (10:15, user; D-011). Providers [deepinfra, atlas-cloud, coreweave] (fp8, strict JSON); max_tokens 16k/32k/32k (reasoning tokens count). Smoke test: the D08 intake runs clean on flash (DeepInfra, finish=stop, $0.0031, proposed_methods [MIR, Fluorescence]). pytest 84 passed, 1 skipped. D01–D07 outputs are still from v4-pro: re-run on flash before G2.
 - Decisions (09:29, user):
   - External reference library: **yes**. Curated, each entry with URL + verbatim quoted passage, marked secondary; to be planned in Phase 3.
