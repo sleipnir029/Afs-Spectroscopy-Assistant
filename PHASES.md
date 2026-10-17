@@ -364,7 +364,7 @@ Problems:
   - N13: `scenarios/final.jsonl` committed (user decision).
 - Test gaps: retry/costing, provider order, set-run continuation, scenario parser, finalize, empty quotes, negation bypass, rule-as-quote.
 
-### Phase 2 fixes (2.R2) — PROPOSED, awaiting approval
+### Phase 2 fixes (2.R2) — APPROVED 2026-10-17 10:23 (user: all items; B6 rewrite + D-012; N13 keep `scenarios/final.jsonl` committed)
 Also covers the D08 diagnosis: a repetition loop in the bare enum array `Intake.proposed_methods` (see STATUS 10:13), and the model switch D-011.
 1. **Intake schema and prompt** (D08, B6):
    - `proposed_methods` becomes a fixed object with one field per method; each value is a verbatim enquiry quote or null. It is bounded (cannot loop) and quote-checked by the sanitizer. Pipeline and assess context are adapted.
