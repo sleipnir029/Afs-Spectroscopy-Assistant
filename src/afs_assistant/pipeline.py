@@ -25,6 +25,7 @@ from functools import cache, lru_cache
 
 from afs_assistant import kb, paths, quotes
 from afs_assistant.external import step as external_step
+from afs_assistant.llm import RunCancelled
 from afs_assistant.methods import named_methods
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
@@ -475,6 +476,8 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     if external != "off":      # the primary result is complete here; no failure of the step may discard it
         try:
             ext = external_step.run(intake, final, client, external, fetcher=fetcher)
+        except RunCancelled:            # Ctrl-C on a set run: stop the case, write nothing
+            raise
         except Exception as exc:        # noqa: BLE001 - malformed API data, cache I/O, extractor bugs, ...
             ext = external_step.failed_block(final, external, f"external step failed: {type(exc).__name__}")
         lap("external")

@@ -46,7 +46,7 @@ from afs_assistant.external.sources import (
     sha,
     verify_quote,
 )
-from afs_assistant.llm import SpendCapExceeded
+from afs_assistant.llm import RunCancelled, SpendCapExceeded
 from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.verify import PLACEHOLDERS, forbidden_hits
@@ -519,7 +519,7 @@ def _run_steps(block: dict, intake: Intake, a: Assessment, client, gaps: list[Ga
         res = client.complete_json("external_queries", prompt("external_queries"), _queries_user(gaps, intake),
                                    "external_queries", QueryPlan.model_json_schema())
         queries, dropped_q = clean_queries(QueryPlan.model_validate(res.data), gaps)
-    except SpendCapExceeded:
+    except (SpendCapExceeded, RunCancelled):
         raise
     except (RuntimeError, ValueError) as exc:
         block["error"] = f"query plan failed: {type(exc).__name__}"
@@ -537,7 +537,7 @@ def _run_steps(block: dict, intake: Intake, a: Assessment, client, gaps: list[Ga
                                    evidence_user(intake, a, gaps, records, queries), "external_evidence",
                                    EvidenceReply.model_json_schema())
         reply = EvidenceReply.model_validate(res.data)
-    except SpendCapExceeded:
+    except (SpendCapExceeded, RunCancelled):
         raise
     except (RuntimeError, ValueError) as exc:
         block["error"] = f"evidence call failed: {type(exc).__name__}"
