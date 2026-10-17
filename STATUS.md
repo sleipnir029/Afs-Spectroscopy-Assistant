@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-17 23:58 CEST (Claude, Phase 5)._
+_Last updated: 2026-10-17 23:55 CEST (Claude, Phase 5)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -12,7 +12,7 @@ _Last updated: 2026-10-17 23:58 CEST (Claude, Phase 5)._
 - **5.0b merged (23:48):** query privacy guard (names incl. sentence-initial/signatures, e-mail/URL domains, product codes; chemical formulas allowed; 0/41 dev queries dropped; known limit: an all-lowercase name cannot be caught), digit-hyphen and digit-space loose rules (880 output quotes and 77 kb quotes unchanged), per-API search failure, abstract relevance (D-045; 11/12 dev abstracts dropped). Reviewer APPROVE WITH FIXES → F1/F2 applied. pytest 509 passed, 2 skipped.
 - **UI direction A built** (branch worktree-agent-a207b0059aa193d71, 8154aa5; mermaid file removed per D-044). Review NEEDS_FIXES: B1 Origin port not compared (localhost:3000 could POST), B2 setup-diagram labels truncated with "…" in all 8 dev runs, B3 option ids (O1–O3) in the main view; + polish N1–N6, N8, N9 → implementer fixing (running). Then one confirm review, merge, show the user screenshots.
 - **5.1/5.2 done, NOT reviewed, NOT merged:** branch worktree-agent-a5dda1b856731189d, ecbb021: scenarios/adversarial.jsonl (A01–A12 with must/must_not), `afs-assist eval` (src/afs_assistant/evaluate.py, 19 items → six criteria), outputs/eval/summary.md/json; dev: 7/8 pass all applicable items, D03 fails proposal_rules (the known D-041 support line); adversarial not run. pytest 527 passed on the branch. Note: the sandbox blocks shell commands containing the word "eval" (use a wrapper).
-- **User rule (23:58): one agent at a time** (implementer → reviewer), Claude orchestrates; new work in a new session (memory: feedback_one_agent_at_a_time).
+- **User rule (23:55): one agent at a time** (implementer → reviewer), Claude orchestrates; new work in a new session (memory: feedback_one_agent_at_a_time).
 - **Phase 5 must-dos before the freeze:** G4 N2 query-privacy code guard; re-run D03 (D-041); dev re-run with `--workers 4` on the new intake prompt.
 
 **Phase 4 (External evidence, option B): IN PROGRESS (started 19:52).** Implementation plan + D-034 committed 57ab2ba (19:56); **Code 2e9a47a + 77fb873** (items 1–11; D-035 implementer choices + two Claude additions): pytest 413 passed, 2 skipped; ruff clean; kb check all PASS (library empty). **Live API probe (20:14–20:18, keyless, one call each):** OpenAlex search 200, 0.83 s, 5 parsed, ratelimit remaining 960/1000 ($0.096 left, $0.001/search); Europe PMC search 200, 0.32 s; EPMC fullTextXML 200, 0.67 s, 105 paragraphs; Unpaywall 200, 0.51 s, OA PDF + cc-by. OpenAlex searches used: 3.
