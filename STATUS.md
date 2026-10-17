@@ -5,14 +5,16 @@ _Last updated: 2026-10-17 18:05 CEST (Claude, 3.R2 implementer)._
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 3 (Assessment upgrade), fix round 3.R.** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
+**Phase 3 (Assessment upgrade), fix round 3.R3.** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
 - **User mode (D-020, 14:24):** Claude is fully in charge; the user is woken (push notification) only for their decisions. At each phase end: write this handoff and tell the user to switch sessions ("do the next task").
 - **Phase 3 code** 3c7e881: pytest 248 passed, 1 skipped; ruff clean; kb check 9/9. Code review: APPROVE WITH FIXES (B1 duplicate ids, B2 proposal basis unverified, B3 price wording) → 3.R item 1.
 - **First Phase 3 dev run (13:51–14:59, $0.211):** 7/8 complete, 0 hard failures left, citations 241/241 verified, 12/12 Mermaid charts render, cost classes match Table 1 (D01–D04 checked; the check script crashed on the stale D05). **D05 failed** (assess reply truncated at max_tokens). D06 simple = recommended option. Body 2,472–3,137 words. outputs/dev/D05.* are still the 12:41 Phase 2 output.
 - **3.R implemented (15:21, offline):** items 1, 2, 3, 4, 4b done; pytest 297 passed, 1 skipped; ruff clean; kb check 9/9. D05 diagnosis (2 raw calls, $0.0175): hidden reasoning used 27,904 of 32,000 completion tokens, no repetition loop; assess/repair max_tokens → 64,000 (D-025). Implementer choices in D-025. Not yet run live.
 - **3.R** done (0ce9801, D-025; D-026 9cfc7f2): pytest 298. 3.R code review: APPROVE WITH FIXES (2 blocking in the confidence rating). 3.R dev run (15:22–16:16): 8/8 complete, 0 hard failures, 227/227 citations, 15/15 charts, 8/8 cost classes; $0.171.
 - **3.R2 implemented (16:27, offline):** items 1–4 done (B1 precedent by page scope, B2 unscreened/to-be-determined technique, N3 ⚠ open-check line + per-row confidence, N4 request label, N5 rule 3 any necessity, N6 currency codes any case except a journal abbreviation + Evidence section skipped by check_cost_class, N7 request line counted / "high cost (row N)" / H2 layers + H3 sections, item 3 Sources cell = rating pool, item 4 open top-3 question). pytest 319 passed, 1 skipped; ruff check clean; kb check 9/9. Implementer choices in D-028. `check_cost_class.py outputs/dev`: 0/8 (only the old cost wording, expected until the re-run); `check_mermaid.py outputs/dev`: 15/15. Not yet run live.
-- **Next:** re-run D01–D08 → check scripts → output + code review (G3) → close Phase 3 → handoff for Phase 4.
+- **3.R2 dev run (16:58–17:55, $0.175, code 7ebe590):** 8/8, 0 hard failures, 227/227 citations, 14/14 charts, 8/8 cost; confidence 2 High / 7 Medium / 13 Low.
+- **G3 review (18:05): NEEDS_FIXES:** D05 intake collapsed (Russian request line), D08 fluorescence wrongly failed by the screen, `affects` vocabulary, comparison treated as fusion, empty stated requirements, extended options undercosted; calibration driven by the temperature-sensor and fusion rules.
+- **Next:** 3.R3 (18:05, PHASES.md; D-029) → re-run D01–D08 → check scripts → short re-review (D05, D08) → close Phase 3 → handoff for Phase 4.
 
 ## Next session starts with (handoff 13:24)
 Session rule (user): ≤200k tokens per session, one phase or task per session.
