@@ -1,11 +1,13 @@
 # Status
 
-_Last updated: 2026-10-17 19:36 CEST (Claude, Phase 3 close)._
+_Last updated: 2026-10-17 19:58 CEST (Claude, Phase 4 started)._
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
 ## Current phase
-**Phase 3 (Assessment upgrade): CLOSED 19:36 (G3 passed). Next: Phase 4 (External evidence, option B).** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
+**Phase 4 (External evidence, option B): IN PROGRESS (started 19:52).** Implementation plan + D-034 committed 57ab2ba (19:56); implementer agent working on plan items 1–11 (code + offline tests). Next: live API probes, library curation, D01–D08 `--external=live`, replay, G4 review.
+
+**Phase 3 (Assessment upgrade): CLOSED 19:36 (G3 passed).** Re-plan approved 13:36 (simple chat → now the Streamlit app, D-023). Additions approved 14:22 (user): two-layer answer + code-derived confidence rating (D-022). D-024: single_primary skipped for outside_supported_scope.
 - **User mode (D-020, 14:24):** Claude is fully in charge; the user is woken (push notification) only for their decisions. At each phase end: write this handoff and tell the user to switch sessions ("do the next task").
 - **Phase 3 code** 3c7e881: pytest 248 passed, 1 skipped; ruff clean; kb check 9/9. Code review: APPROVE WITH FIXES (B1 duplicate ids, B2 proposal basis unverified, B3 price wording) → 3.R item 1.
 - **First Phase 3 dev run (13:51–14:59, $0.211):** 7/8 complete, 0 hard failures left, citations 241/241 verified, 12/12 Mermaid charts render, cost classes match Table 1 (D01–D04 checked; the check script crashed on the stale D05). **D05 failed** (assess reply truncated at max_tokens). D06 simple = recommended option. Body 2,472–3,137 words. outputs/dev/D05.* are still the 12:41 Phase 2 output.
@@ -38,7 +40,7 @@ Session rule (user): ≤200k tokens per session, one phase per session. **User m
 | 1 Knowledge foundation | **Closed** | G1 passed | pytest 59/59, kb check 9/9 | G1 ~13:15 | kb check 8/8, pytest 51/51, ruff clean |
 | 2 Pipeline MVP | **Closed** 13:33 | G2 passed | |
 | 3 Assessment upgrade | **Closed** 19:36 | G3 passed | 8/8, 236/236 citations, 14/14 charts, 8/8 cost |
-| 4 External evidence (option B) | Planned (approved 13:36) | G4 Sun 07:00 | next session |
+| 4 External evidence (option B) | **In progress** (19:52) | G4 Sun 07:00 | plan 57ab2ba, D-034 |
 | 5 Quality, eval and demo surface (Streamlit) | Planned (approved 13:36, 5.6 per D-023) | G5 Sun 14:00 | + Phase 3 carry-overs in 5.4 |
 | 6 Freeze and deliverables | Planned (approved 13:36) | Submit by 22:30 | user yes/no to publish + submit |
 
