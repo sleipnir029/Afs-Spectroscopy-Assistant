@@ -764,6 +764,13 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 - **Downloads:** the Markdown and JSON of the run.
 - Acceptance: a Playwright script opens the app, loads a saved run, expands a section, and takes screenshots (checked by Claude and the reviewer agent, not the user); one scripted live enquiry → answer → re-assess loop.
 
+**5.R1 Eval fixes (planned 02:20, D-047; Claude-approved in D-020 mode).** The first eval on live dev + adversarial outputs (7c2d4c6) shows two model-structure defects that nothing repairs: (a) 0 clarification questions with 6 open key unknowns in 3/20 runs (the raw assess reply already had 0); (b) an extended option left with one method after finalize removes a recommendation's own method from `combined_with` (1/20). Fix, generic only:
+1. `verify.py`: two new **hard** checks so the existing repair round fires: `questions_for_unknowns` (no clarification question while `key_unknowns` is non-empty or the status is not `provisional_assessment`); `extended_two_methods` (an extended option whose recommendations, after the same own-method normalisation finalize applies, cover fewer than two distinct methods).
+2. `prompts/repair.md`: one line per new failure (add the deciding questions, Q1 first, each with `affects`; give the extended option a second, different method or the primary recommendation).
+3. `finalize`: deterministic fallback when a repair still leaves either failure, so no hard failure stays open: (a) up to 3 questions built from the first key unknowns (`why_it_matters`: listed as a key unknown; `affects`: ["status"]), logged in `finalize_changes`; (b) add the primary recommendation to the extended option when it brings a different method, logged; otherwise the existing behaviour. The fallback runs before any removal of failing items.
+4. `prompts/assess.md`: one line: when any key unknown is open, ask at least one question.
+5. Tests for each check, the repair trigger and both fallbacks. Then live re-run of D02, D04, A07, A11 only (~$0.15), replay, eval, commit.
+
 **5.7 Baseline table** (cut first): a single-prompt baseline vs the pipeline on dev, for the slides.
 
 ### Acceptance checks
