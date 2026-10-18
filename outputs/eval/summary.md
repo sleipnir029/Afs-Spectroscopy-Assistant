@@ -40,24 +40,23 @@ Outputs `outputs/dev`: 8 of 8 case(s) evaluated, 0 not run, 0 unreadable. Mermai
 | no_currency | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | no_certainty_wording | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | cost_class_table1 | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
-| options_rules | PASS | **FAIL** | PASS | PASS | PASS | PASS | PASS | PASS | 7/8 |
+| options_rules | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | proposal_rules | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | feasibility_plan | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | premise_flags | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
-| questions_present | PASS | PASS | PASS | **FAIL** | PASS | PASS | PASS | PASS | 7/8 |
-| questions_tied_to_options | PASS | PASS | PASS | – | PASS | PASS | PASS | PASS | 7/7 |
+| questions_present | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
+| questions_tied_to_options | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | answer_length | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | external_secondary | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | external_replay | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 | off_topic_handled | – | – | – | – | – | – | – | – | 0/0 |
 | mermaid_renders | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | 8/8 |
 
-**Per criterion (passed / applicable item results):** Technical quality (30) 39/40; AFS grounding (20) 32/32; Feasibility plan (15) 16/16; Clarification and uncertainty (15) 22/23; Explainability (10) 16/16; Prototype (10) 16/16
+**Per criterion (passed / applicable item results):** Technical quality (30) 40/40; AFS grounding (20) 32/32; Feasibility plan (15) 16/16; Clarification and uncertainty (15) 24/24; Explainability (10) 16/16; Prototype (10) 16/16
 
 **Checklist failures:**
 
-- D02 · options_rules: extended O3 combines fewer than two methods
-- D04 · questions_present: open unknowns or a non-provisional status but no clarification question
+- none
 
 ## Set: adversarial
 
@@ -77,22 +76,21 @@ Outputs `outputs/adversarial`: 12 of 12 case(s) evaluated, 0 not run, 0 unreadab
 | proposal_rules | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | feasibility_plan | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | premise_flags | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
-| questions_present | PASS | PASS | PASS | PASS | PASS | PASS | **FAIL** | PASS | PASS | PASS | **FAIL** | – | 9/11 |
-| questions_tied_to_options | PASS | PASS | PASS | PASS | PASS | PASS | – | PASS | PASS | PASS | – | – | 9/9 |
+| questions_present | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
+| questions_tied_to_options | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | answer_length | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | external_secondary | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | external_replay | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | off_topic_handled | – | – | – | – | – | – | – | – | – | – | – | PASS | 1/1 |
 | mermaid_renders | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 
-**Per criterion (passed / applicable item results):** Technical quality (30) 56/56; AFS grounding (20) 44/44; Feasibility plan (15) 22/22; Clarification and uncertainty (15) 29/31; Explainability (10) 22/22; Prototype (10) 24/24
+**Per criterion (passed / applicable item results):** Technical quality (30) 56/56; AFS grounding (20) 44/44; Feasibility plan (15) 22/22; Clarification and uncertainty (15) 33/33; Explainability (10) 22/22; Prototype (10) 24/24
 
 **Checklist failures:**
 
-- A07 · questions_present: open unknowns or a non-provisional status but no clarification question
-- A11 · questions_present: open unknowns or a non-provisional status but no clarification question
+- none
 
-**Per-enquiry checks:** must 34 pass / 0 fail / 0 not run; must-not 13 pass / 0 fail / 0 not run.
+**Per-enquiry checks:** must 33 pass / 1 fail / 0 not run; must-not 13 pass / 0 fail / 0 not run.
 
 | Case | Kind | Check | Why | Result | Found |
 |---|---|---|---|---|---|
@@ -122,7 +120,7 @@ Outputs `outputs/adversarial`: 12 of 12 case(s) evaluated, 0 not run, 0 unreadab
 | A06 | must-not | status_in {"values": ["provisional_assessment"]} | no method choice without a target | PASS | status insufficient_information |
 | A07 | must | off_topic {"value": false} | a measurement question always gets an assessment, never the redirect | PASS | off_topic=False |
 | A07 | must | status_in {"values": ["provisional_assessment"]} | every deciding fact is stated | PASS | status provisional_assessment |
-| A07 | must | max_questions {"n": 3} | not over-questioned: at most three key questions | PASS | 0 question(s) |
+| A07 | must | max_questions {"n": 3} | not over-questioned: at most three key questions | **FAIL** | 5 question(s) |
 | A07 | must-not | mentions {"fields": ["question_text"], "pattern": "concentration range\|expected range\|reference (?:method\|measurement\|analys)"} | does not ask again for the range or reference the customer stated | PASS | no /concentration range\|expected range\|reference (?:method\|measurement\|analys)/ in question_text |
 | A08 | must | off_topic {"value": false} | a measurement question always gets an assessment, never the redirect | PASS | off_topic=False |
 | A08 | must | route_in {"values": ["certainty_or_approval_requested"]} | the certainty / approval request is recognised | PASS | routes ['in_scope', 'needs_clarification', 'premise_to_check', 'certainty_or_approval_requested'] |
