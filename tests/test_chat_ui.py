@@ -164,7 +164,7 @@ def test_every_block_renders_for_every_saved_run(tmp_path, stem):
     data, _ = store.data(rid)
     best = next(o["id"] for o in v["options"] if o["is_best"])
     blocks = [{"type": t, "id": None} for t in chat.BLOCK_TYPES]
-    blocks += [{"type": "options", "id": best}, {"type": "setup", "id": best},
+    blocks += [{"type": "setup", "id": best},      # a second options block would render as this setup
                {"type": "questions", "id": v["questions"][0]["id"]}, {"type": "sources", "id": next(iter(v["citations"]))}]
     turn = chat.ask(v, data, "Show me everything.", FakeClient({"chat_answer": [
         reply([claim("Here is the assessment.", basis="engineering_judgement")], blocks=blocks)]}))

@@ -352,7 +352,12 @@ def check_answer(ans: ChatAnswer, v: dict, data: dict, question: str, user_texts
     blocks, dropped_blocks = [], []
     for b in ans.blocks:
         ok = b.type in BLOCK_TYPES and (b.id is None or b.id in ids.get(b.type, set()))
-        (blocks if ok else dropped_blocks).append(b.model_dump())
+        block = b.model_dump()
+        if ok and block["type"] == "options" and any(x["type"] == "options" for x in blocks):
+            block["type"] = "setup"         # the options table renders once; a later option shows its setup only
+        if ok and block in blocks:
+            continue                        # the same block twice adds nothing
+        (blocks if ok else dropped_blocks).append(block)
     return {"claims": claims, "next_step_failures": step_failures, "facts": facts, "dropped_facts": dropped_facts,
             "blocks": blocks, "dropped_blocks": dropped_blocks}
 

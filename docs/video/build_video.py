@@ -4,8 +4,8 @@ Usage: uv run --with pillow python docs/video/build_video.py WORKDIR   (WORKDIR/
 Needs Pillow and /opt/homebrew/bin/ffmpeg (this ffmpeg build has no drawtext/libass, so captions are drawn with Pillow).
 """
 import shutil
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -118,7 +118,7 @@ def card_closing():
 
 
 def srt_time(s):
-    return f"{int(s // 3600):02d}:{int(s % 3600 // 60):02d}:{int(s % 60):02d},{int(round((s % 1) * 1000)):03d}"
+    return f"{int(s // 3600):02d}:{int(s % 3600 // 60):02d}:{int(s % 60):02d},{round((s % 1) * 1000):03d}"
 
 
 def main():

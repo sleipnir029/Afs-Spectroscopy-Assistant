@@ -330,3 +330,13 @@ def test_live_check_script_runs_offline(tmp_path, monkeypatch, capsys):
     assert script.main([]) == 0
     assert capsys.readouterr().out.count("citations 1/1") == 2 * len(script.QUESTIONS)
     assert len(json.loads(next((tmp_path / "chat_live_check").glob("*.json")).read_text())) == 2 * len(script.QUESTIONS)
+
+
+def test_options_table_renders_once_and_duplicates_are_dropped(run):
+    _, v = run
+    ids = [o["id"] for o in v["options"]]
+    blocks = [{"type": "options", "id": ids[0]}, {"type": "options", "id": ids[1]}, {"type": "risks", "id": None},
+              {"type": "risks", "id": None}]
+    turn, _ = ask(run, reply([claim("No figures here.", basis="engineering_judgement")], blocks=blocks))
+    kept = [(b["type"], b["id"]) for b in turn["answer"]["blocks"]]
+    assert kept == [("options", ids[0]), ("setup", ids[1]), ("risks", None)]
