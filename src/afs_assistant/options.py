@@ -180,8 +180,9 @@ def _unknown_phrases(cand: Candidate, slots: dict) -> list[str]:
         else:
             rule = rules.get(reason["rule"], {})
             keys = [k for k in (*rule.get("when", {}), *rule.get("target", {})) if k in SLOT_VALUES]
-        open_slots = [SLOT_PHRASE[k] for k in keys if slots.get(k, UNKNOWN) == UNKNOWN]
-        phrases += [f"{x} unknown" for x in open_slots] or ["suitability for this sample not confirmed"]
+        open_slots = [f"{SLOT_PHRASE[k]} unknown" for k in keys if slots.get(k, UNKNOWN) == UNKNOWN]
+        open_slots += [f"{SLOT_PHRASE[k]} varies" for k in keys if slots.get(k) == "variable"]   # D-061
+        phrases += open_slots or ["suitability for this sample not confirmed"]
     return phrases
 
 

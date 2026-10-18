@@ -32,6 +32,7 @@ from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
 from afs_assistant.verify import (
     METHOD_ADDED_FLAG,
+    PROPOSAL_CHANGED_FLAG,
     QUESTION_ADDED_FLAG,
     RECOMMENDED_ROLES,
     Report,
@@ -48,8 +49,8 @@ from afs_assistant.verify import (
 )
 
 MAX_REPAIR_ROUNDS = 2
-# Finalize fallbacks (5.R1, D-047) for two structure failures a repair may leave open.
-FALLBACK_CHECKS = ("questions_for_unknowns", "extended_two_methods")
+# Finalize fallbacks (5.R1, D-047, D-061) for structure failures a repair may leave open.
+FALLBACK_CHECKS = ("questions_for_unknowns", "extended_two_methods", "proposal_is_recommended")
 FALLBACK_QUESTIONS = 3
 FALLBACK_WHY = "Listed as a key unknown in this assessment; the answer may change the status."
 MAX_INTAKE_ATTEMPTS = 2      # a collapsed intake is retried once, then the case fails (3.R3 B1)
@@ -215,7 +216,8 @@ def finalize(a: Assessment, report: Report,
        -> insufficient_information (re-checked on the result of steps 1-4).
     6. Question `affects` items are normalised to the fixed vocabulary; other words are dropped (logged).
     Deterministic fallbacks (5.R1): before step 1, a second method for a one-method extended option
-    (`_fallback_extended`); after step 5, questions from the key unknowns (`_fallback_questions`).
+    (`_fallback_extended`); after the options are finalized, the proposal follows the recommended
+    tier (`_fallback_proposal`, D-061); after step 5, questions from the key unknowns (`_fallback_questions`).
     Locations in the change log use the numbering of `a`. Returns the assessment, the
     change log and the flagged items (path in the returned assessment -> reason) that
     render marks with a warning: items that lost a citation or failed a number check.
@@ -299,6 +301,7 @@ def finalize(a: Assessment, report: Report,
     dropped_roles = {recs[i]["id"]: recs[i]["role"] for i in range(len(recs)) if i not in keep}
     data["recommendations"] = [recs[i] for i in keep]
     _finalize_options(data, id_map, removed, flagged, dropped_roles)
+    _fallback_proposal(data, removed, flagged)
     _finalize_proposal_basis(data, removed, flagged)
 
     demoted_contradiction = False
@@ -455,6 +458,23 @@ def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], f
     data["solution_options"] = kept_options
     if data["proposal"]["best_current_option"] not in {o["id"] for o in kept_options}:
         flagged["proposal"] = "the proposed option was removed by verification"
+
+
+def _fallback_proposal(data: dict, removed: list[dict], flagged: dict[str, str]) -> None:
+    """Fallback (D-061), on the finalized options: a proposal that names an existing option other than
+    the single `recommended` one is set to the recommended option. A missing proposed option or no
+    single recommended option stays a visible check failure. Logged (`corrects`: proposal_is_recommended)
+    and flagged."""
+    proposal = data["proposal"]
+    ids = {o["id"] for o in data["solution_options"]}
+    recommended = [o["id"] for o in data["solution_options"] if o["tier"] == "recommended"]
+    if proposal["best_current_option"] not in ids or len(recommended) != 1 or proposal["best_current_option"] in recommended:
+        return
+    removed.append({"location": "proposal.best_current_option", "item": proposal["best_current_option"],
+                    "reason": f"proposed option {proposal['best_current_option']} is not the recommended option; "
+                              f"changed to {recommended[0]}", "corrects": "proposal_is_recommended"})
+    proposal["best_current_option"] = recommended[0]
+    flagged["proposal"] = PROPOSAL_CHANGED_FLAG
 
 
 def _finalize_proposal_basis(data: dict, removed: list[dict], flagged: dict[str, str]) -> None:

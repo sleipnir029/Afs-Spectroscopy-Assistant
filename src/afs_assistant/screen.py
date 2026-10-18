@@ -63,6 +63,9 @@ REGIME_SAMPLE_TYPES = {
     "opaque": {"scattering media"},          # opaque because it scatters (e.g. milk concentrate)
     "opaque_absorbing": set(),               # dark, absorbing, little scattering (e.g. dark oils)
 }
+# A `variable` sample changes between clear and turbid (D-061): screened as each of these states.
+VARIABLE_REGIMES = ("clear", "turbid")
+REGIME_SAMPLE_TYPES["variable"] = set().union(*(REGIME_SAMPLE_TYPES[r] for r in VARIABLE_REGIMES))
 
 # Technique ids that a rule's `technique: transmission` / `transflection` refers to.
 TECHNIQUE_FAMILY = {
@@ -120,7 +123,10 @@ def _technique_in(target_technique, technique: str) -> bool:
 
 
 def _when_state(when: dict, cand: Candidate, slots: dict) -> str:
-    """'yes' if all conditions hold, 'no' if any fails, 'maybe' if any slot is unknown."""
+    """'yes' if all conditions hold, 'no' if any fails, 'maybe' if any slot is unknown.
+
+    A `variable` optical regime is checked as each of VARIABLE_REGIMES: a condition that holds for
+    all of them is met, for some of them gives 'maybe', for none 'no'."""
     state = "yes"
     for key, expected in when.items():
         if key == "method":
@@ -133,6 +139,12 @@ def _when_state(when: dict, cand: Candidate, slots: dict) -> str:
             actual = slots.get(key, UNKNOWN)
         if actual == UNKNOWN:
             state = "maybe"
+        elif key == "optical_regime" and actual == "variable":
+            hits = sum(_matches(expected, r) for r in VARIABLE_REGIMES)
+            if hits == 0:
+                return "no"
+            if hits < len(VARIABLE_REGIMES):
+                state = "maybe"
         elif not _matches(expected, actual):
             return "no"
     return state
@@ -141,7 +153,7 @@ def _when_state(when: dict, cand: Candidate, slots: dict) -> str:
 # Allowed slot values; anything else is a caller error, not "unknown".
 SLOT_VALUES = {
     "physical_state": {"liquid", "paste", "soft_solid", "powder", "solid"},
-    "optical_regime": {"clear", "turbid", "opaque", "opaque_absorbing"},
+    "optical_regime": {"clear", "turbid", "opaque", "opaque_absorbing", "variable"},
     "fluorophore": {"yes", "no"},
     "aqueous": {"yes", "no"},
     "heterogeneous": {"yes", "no"},
