@@ -1,0 +1,516 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified from published bioprocess precedents, but the concentration ranges, turbidity behaviour and accuracy requirements are unknown, so the assessment is provisional and the deciding questions are listed first.",
+ "premise_checks": [
+  {
+   "premise": "In situ spectroscopy can track glucose and lactate in an aqueous cell culture process",
+   "verdict": "precedent_only",
+   "explanation": "The sources show published bioprocess examples of fiber-optic Raman and NIR monitoring of metabolites such as glucose and lactate; this is a reason to test, not proof for this customer's process.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "The pilot can be validated against the existing laboratory glucose and lactate measurements",
+   "verdict": "supported",
+   "explanation": "Checking a spectral method against independent laboratory reference measurements is exactly what a feasibility plan requires, so this premise is supported as good practice.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "A pilot can be planned before a probe or calibration strategy is selected",
+   "verdict": "supported",
+   "explanation": "The sources describe multi-method laboratory trials precisely for cases where the best method is not yet known, so planning a pilot before fixing a probe is consistent with the recommended pathway.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "In situ measurement of glucose and lactate in an aqueous cell culture medium",
+  "Results must be checkable against the existing offline laboratory measurements",
+  "Method must cope with a medium and cell population that change during the run"
+ ],
+ "key_unknowns": [
+  "Glucose and lactate concentration ranges and required accuracy over the run",
+  "Turbidity / cell density range and how the optical properties of the medium change",
+  "Sterilisation, fouling and installation constraints at the measurement point",
+  "Reference sampling frequency available for calibration and validation",
+  "Other absorbing or fluorescing medium components that could interfere",
+  "Required response time for detecting changes"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the expected concentration ranges of glucose and lactate over the run, and what accuracy and detection limit does the in situ measurement need?",
+   "why_it_matters": "Concentration range and required accuracy decide whether NIR sensitivity suffices or Raman is needed, and set the go/no-go criteria.",
+   "affects": [
+    "technique",
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "How turbid is the medium over the run (cell density / optical density range), and does it change significantly?",
+   "why_it_matters": "Turbidity decides between transmission, transflection and reflection geometries and drives scattering correction in the calibration.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the sterilisation, cleaning and fouling constraints at the measurement point, and how far is the probe location from where the analyser can sit?",
+   "why_it_matters": "Sterilisation and probe access determine the probe design, and the link distance constrains which fiber families are practical.",
+   "affects": [
+    "installation",
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "How often can offline samples be taken during the pilot runs, and what is the laboratory reference method for glucose and lactate?",
+   "why_it_matters": "The number and timing of reference samples determine whether a calibration model can be built and validated at all.",
+   "affects": [
+    "M1",
+    "M2",
+    "M3"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Which other components are in the medium (amino acids, vitamins, phenol red, antifoam), and do any fluoresce or absorb strongly?",
+   "why_it_matters": "Interfering absorbers or fluorophores can swamp Raman or NIR signals and change the method choice.",
+   "affects": [
+    "method"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman works well in water and has published bioprocess precedent for direct detection of metabolites including glucose and lactate. The signal is weak and fluorescence background must be checked on real samples.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR is the most common online fiber-optic method and glucose and lactate have NIR bands, but water absorption demands a controlled pathlength and the bands overlap so chemometrics are required. Its suitability depends on the turbidity of the medium, which is still unknown.",
+   "conditions": "Applies if the medium stays clear enough for a controlled 1-10 mm pathlength; if it becomes too turbid, reflection geometry is the fallback.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "conditional",
+   "combined_with": [
+    "MIR"
+   ],
+   "rationale": "For complex, changing process media the sources state that a combination of methods may be needed to solve what one method handles only partially. Any fusion gain is a hypothesis to test against the best single method after the single-method trials.",
+   "conditions": "Only if the single-method trials show that neither Raman nor NIR alone meets the required accuracy across the changing medium.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Fluorescence only measures species that fluoresce, and glucose and lactate are not fluorophores; no fluorescent indicator has been identified in this medium. It could only serve as an indirect general metabolic indicator, not as the requested measurement.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Raman immersion probe as primary; NIR transflection or reflection probe as comparison, chosen after the turbidity question is answered.",
+  "location": "Immersion probe in the bioreactor (or a bypass sidestream) during the pilot; bench measurements on withdrawn samples first.",
+  "fiber_link": "Silica fibers cover the Raman excitation/collection and NIR ranges; the achievable link length depends on the selected configuration and is not stated in the sources for this setup.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 5,
+    "quote": "Immersible fiber optic probes operating in various spectral regions from UV to mid-IR are increasingly being used for measuring liquid and soft or powdered solid samples.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as Raman shift in cm-1 with the laser excitation wavelength stated separately; the usable shift range depends on the spectrometer and probe selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; the usable range depends on the spectrometer, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Fluorescence from medium components or cells could swamp the weak Raman signal and make Raman unusable in this specific medium.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The changing medium and cell population make the calibration matrix-specific, so a model built on early-run samples may fail later in the run.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "physical variation; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "If glucose or lactate concentrations are low, NIR may lack the sensitivity and Raman detection limits in this matrix are unverified.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Probe fouling by cells or deposits at the measurement point could bias any contact-based measurement over a long run.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative spent and fresh medium samples across several runs, spanning the full glucose and lactate ranges and the cell-density range.",
+    "purpose": "Cover the chemical and physical variation of the run: early and late medium, low and high cell density, and the expected glucose and lactate extremes.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with the existing laboratory glucose and lactate methods at matched times.",
+    "purpose": "Provide the independent reference values for calibration and validation.",
+    "citations": []
+   },
+   {
+    "step": "Record Raman spectra of all samples with a Raman immersion probe; check fluorescence background on real samples.",
+    "purpose": "Test the primary single method first.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "In parallel, record NIR spectra (transflection or reflection, per the turbidity findings) as a second single-method baseline.",
+    "purpose": "Give a second single-method baseline before any combination is considered.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build one PLS model per method, validate on held-out runs or batches, and only afterwards test a fused Raman+NIR model against the better single method.",
+    "purpose": "Demonstrate predictive performance before any in situ installation, and only then test whether a combination beats the best single method.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Every spectrum is paired with the customer's existing laboratory glucose and lactate measurement of the same sample, taken at matched times.",
+  "decision_basis": "Go/no-go agreed with the customer before the trial: e.g. a target prediction accuracy for glucose and lactate on held-out runs and a maximum acceptable deviation from the laboratory reference; the numerical criteria come from the customer (Q1)."
+ },
+ "assumptions": [
+  "The medium is a liquid cell-culture broth whose turbidity may change as the cell population grows; this is inferred from the enquiry and not yet quantified.",
+  "Glucose and lactate are present at concentrations measurable by vibrational spectroscopy; their actual ranges are unknown and must be confirmed."
+ ],
+ "not_in_sources": [
+  "Achievable fiber link length for this specific bioreactor installation",
+  "Detection limits and accuracy for glucose and lactate in this specific medium",
+  "Sterilisable probe designs for this specific reactor type"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Glucose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Glucose is the primary target analyte the in situ method must track against the laboratory reference.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "Raman",
+    "sensor": "enzymatic glucose assay",
+    "alternative": "existing laboratory glucose analyzer"
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Lactate concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Lactate is the second target analyte and co-varies with glucose consumption, so both are needed for the calibration.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "Raman",
+    "sensor": "enzymatic lactate assay",
+    "alternative": "existing laboratory lactate analyzer"
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Turbidity / cell density",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Scattering changes with cell growth and strongly affects both NIR and Raman signals, so it must be known to build a robust calibration.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": "NIR",
+    "sensor": "turbidity / optical density probe",
+    "alternative": "offline cell density measurement"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Temperature at the measurement point",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Temperature shifts spectral band positions and intensities; it should be available from the bioreactor controls and used as a covariate or at least logged.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": "Raman",
+    "sensor": "temperature sensor",
+    "alternative": "process temperature record"
+   },
+   "citations": []
+  },
+  {
+   "id": "P5",
+   "name": "Presence of fluorescing or strongly absorbing medium components",
+   "kind": "qualitative",
+   "necessity": "optional",
+   "why": "Knowing whether the medium contains fluorophores or strong absorbers decides whether Raman backgrounds or NIR bands are compromised; it should be available from the medium formulation.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": "Raman",
+    "sensor": "medium formulation and fluorescence scan",
+    "alternative": "medium formulation review and lab fluorescence scan"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Simple probe, standard glass optics",
+   "maintenance": "Low; window cleaning only",
+   "performance_fit": "Fits as low-effort first trial on real samples",
+   "cost_drivers": "NIR spectrometer, transflection or reflection probe, sample set and reference assays",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Immersion probe, no sampling needed",
+   "maintenance": "Probe window fouling checks per run",
+   "performance_fit": "Best water tolerance and metabolite specificity for this aqueous target",
+   "cost_drivers": "Raman spectrometer and laser, immersion probe, chemometric model development, reference sampling",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Two instruments to run and align",
+   "maintenance": "Two calibrations and two probes to maintain",
+   "performance_fit": "Fits only if single methods miss accuracy targets",
+   "cost_drivers": "Two spectrometers, combined or paired probes, synchronisation software, doubled calibration effort",
+   "fusion_note": "Low-level fusion: one PLS model per method first, then synchronised spectra joined into one augmented matrix with block scaling. Both probes must sample the same bioreactor zone and the data must be normalised to a common time step. The fused model must beat the better single method on held-out runs, otherwise the second instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Glucose and lactate quantification will require a PLS calibration per method, built on spectra paired with the existing laboratory measurements and validated on held-out runs; the calibration is matrix-specific and must be re-checked when the medium formulation or cell line changes.",
+ "realtime_tracking_note": "The aim is continuous in situ tracking of glucose and lactate to remove the sampling delay; during the pilot, spectra should be time-stamped and aligned with the offline reference measurements so that calibration and validation use matched time points.",
+ "future_direction": "If the pilot succeeds, a compact LED- or filter-based spectral sensor specialised to the glucose and lactate bands could later replace the full spectrometer for routine process control, following the optical multisensor concept described in the sources.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "Very low glucose or lactate concentrations below what Raman can detect, extreme turbidity or a strong fluorescent background could shift the choice toward NIR or a combined approach; the answers to Q1-Q5 will refine the probe and calibration plan.",
+  "next_step": "Run the bench Raman trial on representative samples from several runs, with paired laboratory glucose and lactate references, and agree the go/no-go accuracy criteria beforehand."
+ },
+ "brief_answer": "Test Raman first: it tolerates water and has published precedent for direct glucose and lactate detection in bioreactors. Run a bench trial on your own samples across the run, calibrate against your existing laboratory glucose and lactate measurements, then pilot an immersion Raman probe in the bioreactor. Open points: concentration ranges, turbidity over the run, required accuracy and response time, and sterilisation and installation constraints."
+}
