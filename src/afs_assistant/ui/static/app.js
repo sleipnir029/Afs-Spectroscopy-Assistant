@@ -1,6 +1,6 @@
 // Small progressive enhancements; every page works without them (server-rendered, htmx for the
-// sources panel and progress polling). Theme toggle, sources panel, option switch, part highlight,
-// example chips, copy-as-reply, print.
+// sources panel and progress polling). Theme toggle, present mode, sources panel, margin notes, option switch,
+// part highlight, example and follow-up chips, copy-as-reply, print.
 (function () {
   "use strict";
   var root = document.documentElement;
@@ -100,9 +100,68 @@
     if (closeBtn) closeBtn.addEventListener("click", closePanel);
     document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") closePanel(); });
 
+    // Present mode: larger type and blocks for a projector; remembered per browser.
+    var present = document.getElementById("present-toggle");
+    if (present) {
+      present.setAttribute("aria-pressed", root.dataset.present === "on" ? "true" : "false");
+      present.addEventListener("click", function () {
+        var on = root.dataset.present !== "on";
+        if (on) root.dataset.present = "on"; else delete root.dataset.present;
+        present.setAttribute("aria-pressed", on ? "true" : "false");
+        try { localStorage.setItem("afs-present", on ? "on" : "off"); } catch (e) { /* no persistence */ }
+      });
+    }
+
+    // Margin notes: a note's source link loads the verification view (quote in its page text, check result) into
+    // the note itself (htmx); a second click closes it. A numbered reference in the text opens its note.
+    function noteOf(el) { return el && el.closest ? el.closest(".mnote") : null; }
+    function setNote(note, open) {
+      var link = note.querySelector("a[data-note]");
+      note.classList.toggle("is-open", open);
+      if (link) link.setAttribute("aria-expanded", open ? "true" : "false");
+      if (!open) { var ctx = note.querySelector(".mnote-ctx"); if (ctx) ctx.innerHTML = ""; }
+    }
+    document.body.addEventListener("htmx:beforeRequest", function (ev) {
+      var link = ev.detail.elt;
+      if (!link || !link.matches || !link.matches("a[data-note]")) return;
+      var note = noteOf(link);
+      if (note && note.classList.contains("is-open")) { ev.preventDefault(); setNote(note, false); }
+    });
+    document.body.addEventListener("htmx:afterSwap", function (ev) {
+      var t = ev.detail.target;
+      if (!t || !t.classList || !t.classList.contains("mnote-ctx")) return;
+      setNote(noteOf(t), true);
+      var box = t.querySelector(".source-text"), mark = box && box.querySelector("mark");
+      if (mark) box.scrollTop = Math.max(0, mark.offsetTop - box.offsetTop - 48);   // the quote in view, with context
+    });
+    document.addEventListener("click", function (ev) {
+      var ref = ev.target.closest && ev.target.closest("a.ref[data-ref]");
+      if (!ref) return;
+      var note = document.getElementById(ref.getAttribute("data-ref"));
+      if (!note) return;
+      ev.preventDefault();
+      document.querySelectorAll(".claim.is-active, .dek.is-active").forEach(function (c) { c.classList.remove("is-active"); });
+      var said = ref.closest(".claim, .dek");
+      if (said) said.classList.add("is-active");
+      var link = note.querySelector("a[data-note]");
+      if (link && !note.classList.contains("is-open")) link.click();
+      note.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      if (link) link.focus({ preventScroll: true });
+    });
+
+    // Suggested follow-ups fill the composer; the person still sends.
+    var ask = document.getElementById("ask");
+    document.querySelectorAll(".chip[data-ask]").forEach(function (c) {
+      c.addEventListener("click", function () {
+        if (!ask || ask.disabled) return;
+        ask.value = c.getAttribute("data-ask");
+        ask.focus();
+      });
+    });
+
     // Hand-off: copy the plain-text reply; print with every folded row open.
-    var status = document.querySelector(".handoff .copied");
     document.querySelectorAll("[data-copy]").forEach(function (b) {
+      var status = b.parentElement.querySelector(".copied");
       b.addEventListener("click", function () {
         var src = document.getElementById(b.getAttribute("data-copy"));
         if (!src) return;

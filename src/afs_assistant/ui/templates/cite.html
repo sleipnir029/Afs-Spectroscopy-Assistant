@@ -2,7 +2,8 @@
 {% block main %}
 <div class="cite{{ ' column' if not htmx }}">
   {% if not htmx %}<p><a href="/runs/{{ v.key }}">Back to the answer</a></p>{% endif %}
-  <h2 class="cite-title" id="panel-title"><span class="mono">{{ c.label }}</span></h2>
+  {# loaded into a margin note (hx-target "...-ctx"), the heading is hidden and must not take the panel's id #}
+  <h2 class="cite-title"{% if not (request.headers.get('HX-Target') or '').endswith('-ctx') %} id="panel-title"{% endif %}><span class="mono">{{ c.label }}</span></h2>
   <p class="badges">
     {% if c.kind == 'table' %}<span class="ok">Table 1 rows (transcribed from the supplied table)</span>
     {% elif c.verified %}<span class="ok"><span aria-hidden="true">✓</span> Verified quote{% if c.quote_status %} · {{ c.quote_status }} match{% endif %}</span>

@@ -2,15 +2,19 @@
    conversation page (5.12), where `p` prefixes element ids so several turns can share one page. #}
 {% from "macros.html" import tags, judgement, flag, meter, figure %}
 
-{% macro changed_rows(rows, p='') -%}
+{% macro changed_rows(rows, p='', before='Before', after='Now') -%}
 <section class="changed" aria-labelledby="{{ p }}changed-title">
-  <h2 id="{{ p }}changed-title" class="kicker kicker-accent">What changed</h2>
-  <dl class="changed-rows">
+  <div class="bh"><h2 id="{{ p }}changed-title" class="h-block">What changed{% if before != 'Before' %}, {{ before }} <span aria-hidden="true">→</span><span class="sr-only">to</span> {{ after }}{% endif %}</h2></div>
+  <table class="diff">
+    <thead><tr><th scope="col">Item</th><th scope="col">{{ before }}</th><th scope="col">{{ after }}</th></tr></thead>
+    <tbody>
     {% for row in rows %}
-    <div class="{{ 'is-changed' if row.changed }}"><dt>{{ row.label }}</dt>
-      <dd><span class="old">{{ row.before }}</span> <span aria-hidden="true">→</span><span class="sr-only">now</span> <span class="new">{{ row.after }}</span>{% if not row.changed %} <span class="muted small">(unchanged)</span>{% endif %}</dd></div>
+    <tr class="{{ 'is-changed' if row.changed }}"><th scope="row">{{ row.label }}</th>
+      <td data-v="{{ before }}">{% if row.changed %}<del>{{ row.before }}</del>{% else %}<span class="same">{{ row.before }}</span>{% endif %}</td>
+      <td data-v="{{ after }}">{% if row.changed %}<ins>{{ row.after }}</ins>{% else %}<span class="same">unchanged</span>{% endif %}</td></tr>
     {% endfor %}
-  </dl>
+    </tbody>
+  </table>
 </section>
 {%- endmacro %}
 
@@ -65,6 +69,39 @@
 </section>
 {%- endmacro %}
 
+{# Options side by side; the proposed option's column is tinted. Each value carries its option name for the phone layout. #}
+{% macro options_table(v, p='') -%}
+<section class="opts-block" aria-labelledby="{{ p }}opts-title">
+  <div class="bh"><h2 id="{{ p }}opts-title" class="h-block">Options</h2><span class="muted">proposed option tinted</span></div>
+  <table class="opts">
+    <thead><tr><td></td>{% for o in v.options %}<th scope="col" class="{{ 'rec-col' if o.is_best }}">{{ o.tier_label }}{% if o.is_best %} <span class="best-mark">proposed</span>{% endif %}</th>{% endfor %}</tr></thead>
+    <tbody>
+      <tr><th scope="row">Methods</th>{% for o in v.options %}<td data-o="{{ o.tab }}" class="{{ 'rec-col' if o.is_best }}">{% for m in o.methods %}{{ m.label }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %} {{ flag(o.flag) }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Cost class</th>{% for o in v.options %}<td data-o="{{ o.tab }}" class="{{ 'rec-col' if o.is_best }}">{{ o.cost.label or '—' }} {{ tags(v, o.cost.cites) }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Ease of use</th>{% for o in v.options %}<td data-o="{{ o.tab }}" class="{{ 'rec-col' if o.is_best }}">{{ o.ease }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Upkeep</th>{% for o in v.options %}<td data-o="{{ o.tab }}" class="{{ 'rec-col' if o.is_best }}">{{ o.maintenance }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Confidence</th>{% for o in v.options %}<td data-o="{{ o.tab }}" class="{{ 'rec-col' if o.is_best }}">{{ meter(o.confidence.level) }} {{ o.confidence.level }}{% if o.confidence.plain %}<span class="muted small d-block">{{ o.confidence.plain | join('; ') }}</span>{% endif %}</td>{% endfor %}</tr>
+      <tr><th scope="row">Why</th>{% for o in v.options %}<td data-o="{{ o.tab }}" class="opt-why {{ 'rec-col' if o.is_best }}">{{ o.performance_fit }} {{ tags(v, o.cites) }}{{ judgement(o.cites) }}</td>{% endfor %}</tr>
+    </tbody>
+  </table>
+</section>
+{%- endmacro %}
+
+{# The setup sketch of one option (default: the proposed one) as its own block. #}
+{% macro setup_block(v, p='', oid=none) -%}
+{% set o = (v.options | selectattr('id', 'equalto', oid) | first) if oid else none %}
+{% set o = o or (v.options | selectattr('is_best') | first) or (v.options | first) %}
+{% if o %}
+<section class="setup-block" aria-labelledby="{{ p }}setup-title">
+  <div class="bh"><h2 id="{{ p }}setup-title" class="h-block">How it would be set up</h2><span class="muted">{{ o.tier_label }} option{% if o.is_best %} (proposed){% endif %}</span></div>
+  <figure class="fig-setup-wrap">
+    {{ figure(o.figure, 'fw-setup') }}
+    <figcaption>Drawn by code from this option: a schematic, not a configuration. Dashed: auxiliary sensor, availability to be confirmed with AFS.</figcaption>
+  </figure>
+</section>
+{% endif %}
+{%- endmacro %}
+
 {% macro setup(v, oid=none) -%}
 {% set o = (v.options | selectattr('id', 'equalto', oid) | first) if oid else (v.options | selectattr('is_best') | first) %}
 {% if o %}
@@ -82,15 +119,18 @@
 <section class="sharpen" id="{{ p }}sharpen" aria-labelledby="{{ p }}sharpen-title">
   <h2 id="{{ p }}sharpen-title" class="h2">Help us sharpen this</h2>
   {% if action %}
-  <p class="muted">{{ v.top_questions | length }} answer{{ 's' if v.top_questions | length > 1 }} would change the advice. Fill in what you know.</p>
+  <p class="muted">{{ v.top_questions | length }} answer{{ 's' if v.top_questions | length > 1 }} would change the advice. Pick a question to fill in the customer’s answer.</p>
   <form method="post" action="{{ action }}" class="sharpen-form">
+    <div class="qs">
     {% for q in v.top_questions %}
-    <div class="q">
-      <label for="{{ p }}answer_{{ q.id }}"><strong>{{ loop.index }}.</strong> {{ q.question }} {{ flag(q.flag) }}</label>
+    <details class="q">
+      <summary class="chip chip-q"><b>{{ loop.index }}</b>{{ q.question }}</summary>
+      <label for="{{ p }}answer_{{ q.id }}"><span class="sr-only">{{ loop.index }}. {{ q.question }} </span>{{ flag(q.flag) }}</label>
       <span class="why">Why it matters: {{ q.why }}</span>
       <input type="text" id="{{ p }}answer_{{ q.id }}" name="answer_{{ q.id }}" maxlength="{{ MAX_CHARS }}" placeholder="The customer’s answer, if known" autocomplete="off">
-    </div>
+    </details>
     {% endfor %}
+    </div>
     <div class="form-row">
       <button class="btn" type="submit"{% if busy %} disabled{% endif %}>Update the recommendation</button>
       <span class="muted small">Takes a few minutes; the new answer appears below with what changed.</span>
@@ -143,10 +183,21 @@
 </dl>
 {%- endmacro %}
 
+{# Suggested follow-ups: generic questions that fill the composer (an enhancement; hidden without script). #}
+{% macro follow_chips() -%}
+{% if not busy %}
+<div class="chips chips-follow" role="group" aria-label="Suggested follow-ups">
+  {% for s in ['Why this method and not another?', 'What are the main risks?', 'What would the first test look like?', 'Compare the options'] %}
+  <button type="button" class="chip" data-ask="{{ s }}">{{ s }}</button>
+  {% endfor %}
+</div>
+{% endif %}
+{%- endmacro %}
+
 {# One block the chat answer chose, by type; `changed` needs the rows (None: nothing to compare). #}
 {% macro block(v, b, p, changed=none) -%}
 {% if b.type == 'recommendation' %}{{ recommendation(v, p) }}
-{% elif b.type == 'options' and v.options %}{{ options(v, p, b.id) }}
+{% elif b.type == 'options' and v.options %}{{ options_table(v, p) }}{{ setup_block(v, p, b.id) }}
 {% elif b.type == 'setup' and v.options %}{{ setup(v, b.id) }}
 {% elif b.type == 'questions' %}{{ questions(v, none, p) }}
 {% elif b.type == 'parameters' %}<section class="block"><h2 class="h2">What to measure and how</h2>{{ parameters(v, p) }}</section>

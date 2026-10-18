@@ -24,9 +24,15 @@
 </div>
 {%- endmacro %}
 
-{% macro question_block(text, follow_up=false) -%}
+{% macro question_block(text, follow_up=false, label=none) -%}
 <section class="ask-block" aria-label="Your question">
-  <span class="kicker">{{ 'Your follow-up' if follow_up else 'Your question' }}</span>
+  <span class="kicker">{{ label or ('Your follow-up' if follow_up else 'Your question') }}</span>
   <p class="ask-text">{{ text }}</p>
 </section>
+{%- endmacro %}
+
+{# The decision status as a short stamp; the full label stays next to it. #}
+{% macro stamp(status) -%}
+<span class="stamp">{{ {'provisional_assessment': 'Provisional', 'insufficient_information': 'Needs information',
+  'premise_not_supported': 'Premise not supported', 'outside_supported_scope': 'Outside scope'}.get(status.code, status.label) }}</span>
 {%- endmacro %}
