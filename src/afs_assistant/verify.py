@@ -19,7 +19,13 @@ from afs_assistant.methods import named_methods
 from afs_assistant.normalize import normalize
 from afs_assistant.numbers import unsupported_numbers
 from afs_assistant.options import option_methods
-from afs_assistant.schema import Assessment, Citation, Intake
+from afs_assistant.schema import (
+    Assessment,
+    Citation,
+    Intake,
+    Recommendation,
+    SolutionOption,
+)
 from afs_assistant.screen import Candidate
 
 MAX_QUESTIONS = 7
@@ -430,9 +436,10 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
             report.add("extended_fusion_note", bool(o.fusion_note and o.fusion_note.strip()), "hard", loc,
                        f"extended option {o.id} needs a fusion_note (fusion level, same sampling spot, "
                        f"synchronisation, per-block calibration, must beat the best single method)")
-            methods = option_methods(o, recs)
-            report.add("extended_multi_method", len(methods) >= 2, "soft", loc,
-                       f"extended option {o.id} uses {methods}; the extended tier combines two or more methods")
+            methods = extended_methods(o, recs)
+            report.add("extended_two_methods", len(methods) >= 2, "hard", loc,
+                       f"extended option {o.id} uses {methods}; the extended tier combines two or more different "
+                       f"methods: add a recommendation with a second, different method (or the primary)")
 
     sets = [frozenset(o.recommendation_ids) for o in a.solution_options]
     same = sorted({" = ".join(o.id for o, s in zip(a.solution_options, sets, strict=True) if s == key)
@@ -457,12 +464,30 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
                    f"(others are comparison or conditional)")
 
 
+def extended_methods(option: SolutionOption, recs: dict[str, Recommendation]) -> list[str]:
+    """Distinct methods of an option's recommended entries, with combined_with normalised as finalize
+    does (duplicates and the entry's own method removed); not_recommended references do not count."""
+    used = [recs[i] for i in option.recommendation_ids if i in recs and recs[i].role in RECOMMENDED_ROLES]
+    return list(dict.fromkeys(m for r in used for m in (r.method, *normalized_combined_with(r.method, r.combined_with))))
+
+
+def check_questions(a: Assessment, report: Report) -> None:
+    """Hard (5.R1): at least one clarification question while a key unknown is open or the status is
+    not a provisional assessment."""
+    needed = bool(a.key_unknowns) or a.decision_status != "provisional_assessment"
+    report.add("questions_for_unknowns", bool(a.clarification_questions) or not needed, "hard",
+               "clarification_questions",
+               f"no clarification question with {len(a.key_unknowns)} key unknown(s) and status "
+               f"{a.decision_status}: ask the deciding questions (Q1 first), each with `affects`")
+
+
 # Hard checks that are re-run on the finalized assessment; their open state comes from that re-run.
 RECHECK_NAMES = frozenset({"brief_answer_present", "proposal_present", "proposal_option_exists", "option_count",
                            "option_tiers_distinct", "option_recommended_tier", "option_has_methods",
                            "option_recommendation_refs", "option_screen", "extended_fusion_note",
                            "parameter_method_in_option", "single_primary", "status_needs_contradiction",
-                           "ids_unique", "option_parameter_refs", "options_distinct"})
+                           "ids_unique", "option_parameter_refs", "options_distinct",
+                           "extended_two_methods", "questions_for_unknowns"})
 
 
 def recheck(a: Assessment, candidates: list[Candidate]) -> Report:
@@ -470,6 +495,7 @@ def recheck(a: Assessment, candidates: list[Candidate]) -> Report:
     report = Report()
     check_options(a, candidates, report)
     check_premise_basis(a, report)
+    check_questions(a, report)
     return report
 
 
@@ -615,6 +641,7 @@ def verify(enquiry: str, intake: Intake, a: Assessment, candidates: list[Candida
     check_status(a, report)
     check_premise_basis(a, report)
     check_style(a, report)
+    check_questions(a, report)
     check_answer_length(a, request_text(intake.summary, enquiry), report)
     check_sections(a, report)
     check_options(a, candidates, report)

@@ -163,13 +163,14 @@ def test_combined_method_that_fails_everywhere_fails_the_option_screen():
 
 def test_extended_option_needs_a_fusion_note_and_two_methods():
     ok, _ = run_with(assess=with_(solution_options=ASSESSMENT["solution_options"] + [EXTENDED]))
-    assert ok.report.passed and not soft(ok, "extended_multi_method")
+    assert ok.report.passed and not hard(ok, "extended_two_methods")
     bad = copy.deepcopy(EXTENDED)
     bad["fusion_note"] = None
     bad["recommendation_ids"] = ["M1"]
     a = with_(solution_options=ASSESSMENT["solution_options"] + [bad])
     result, _ = run_with(assess=a, repairs=[a, a])
-    assert hard(result, "extended_fusion_note") and soft(result, "extended_multi_method")
+    assert hard(result, "extended_fusion_note") and hard(result, "extended_two_methods")
+    assert "extended_two_methods" in still_open(result)        # the primary is already its only method
 
 
 @pytest.mark.parametrize("method", ["MIR", None])

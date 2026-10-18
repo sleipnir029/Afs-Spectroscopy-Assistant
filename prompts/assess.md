@@ -20,6 +20,7 @@ You do steps 5-8, then the parameters, the solution options, the proposal and th
    - Name what could make the recommendation wrong: at most 4 risks, one sentence each.
    - Ask the clarification questions whose answers could change the method, technique, installation or status; put those first.
    - Usually 3-5 questions; never more than 7. `why_it_matters`: one sentence. The first 3 are shown in the short answer.
+   - When any key unknown is open, ask at least one question.
    - `affects`: each item is exactly one of `method` (the method choice; it affects every option), `technique`, `installation`, `status`, or a recommendation id (M1, ...). No other words.
 8. **First feasibility experiment** (at most 5 steps).
    - Representative samples across the expected chemical and physical variation.
