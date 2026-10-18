@@ -1,0 +1,345 @@
+{
+ "decision_status": "outside_supported_scope",
+ "status_reason": "The supplied pages cover optical spectra of chemical composition and morphology; none of them addresses line pressure or flow rate, which are hydraulic quantities, so the request as asked goes beyond that material. The only optically addressable part - an early warning of blockage from a change in the slurry at the probe - has no source support and would have to be tested first on representative samples.",
+ "premise_checks": [
+  {
+   "premise": "That fiber-optic products can measure line pressure and flow rate of a slurry in a pipe.",
+   "verdict": "not_covered",
+   "explanation": "No supplied page describes pressure or flow measurement by optical spectroscopy; the pages describe chemical and morphological information obtained from spectra.",
+   "citations": []
+  },
+  {
+   "premise": "That a usable early warning of incipient pipe blockage is achievable.",
+   "verdict": "not_covered",
+   "explanation": "No supplied page describes blockage, deposit or wall build-up detection in a pipe; the closest pages show in-line tracking of other process changes.",
+   "citations": []
+  },
+  {
+   "premise": "That one fiber-optic product line can serve pressure, flow and blockage warning together.",
+   "verdict": "not_covered",
+   "explanation": "The sources describe single spectroscopic techniques and some of their combinations, but never these three measurands together.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Which quantity, range and accuracy the customer means by line pressure and by flow rate.",
+  "What measurable change counts as the start of a blockage, and how much warning time is needed.",
+  "Whether the slurry's spectrum changes detectably with its state (solids concentration, deposition) - unproven in the supplied material.",
+  "The slurry's composition, solids concentration, particle size, abrasiveness and optical behaviour (transparent, turbid or opaque).",
+  "How a probe could be fitted to the pipe: material, internal diameter, available port, line temperature and pressure."
+ ],
+ "clarification_questions": [],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "ATR is the in-line route that suits a liquid or paste stream in contact with a probe and avoids the very thin transmission path that strong mid-IR absorption would otherwise demand. Whether the ATR spectrum changes before a pipe blockage is a hypothesis, not a result in the supplied material.",
+   "conditions": "Only if the slurry can make tight contact with the crystal and is not so abrasive or fouling that the probe head cannot survive.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman is well suited to aqueous media and needs no crystal in contact with the slurry, so it is worth comparing on the same samples. Its weak signal and any fluorescence background from the slurry must be checked on real samples.",
+   "conditions": "Compare on the same samples and the same solids levels as the primary method.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Backscatter geometry is the usual NIR route for opaque or highly concentrated streams and is sensitive to particle and surface scattering, one candidate precursor of a blockage. It applies only if the slurry turns out to be opaque or strongly scattering.",
+   "conditions": "Applies only if the answer to the optical-behaviour question is that the slurry is opaque or strongly scattering.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Inline NIR Reflection is primarily used for opaque or highly concentrated dairy products",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Not settled: the geometry depends on the slurry's optical behaviour. Candidate geometries are a contact ATR probe head (M1) or a backscatter probe (M3); a Raman probe (M2) would sit behind a window.",
+  "location": "At one point on the transfer pipe wall, in contact with the flowing slurry; the exact point and port are open.",
+  "fiber_link": "Open question; the link length achievable for a mid-IR fiber is not stated in the supplied pages.",
+  "citations": []
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 µm); the usable range depends on the instrument, fiber, crystal and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as a Raman shift in cm-1, with the laser excitation wavelength stated separately (for example 785 nm in an in-line example); no excitation wavelength is fixed for this case.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "An ATR probe samples only the few micrometres in contact with the crystal, so a spectrum may report a fouling or deposit layer rather than the flowing slurry, and the result could be misread as a process change.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "An abrasive or scaling slurry can wear or foul the crystal or the probe window, so cleaning, material compatibility and probe lifetime are unresolved.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The optical behaviour of the slurry is unknown; if it is opaque or highly concentrated, transmission geometries fail and only contact or backscatter geometries remain.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "the signal in a standard transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "No supplied page shows a spectral precursor of pipe blockage or a warning time, so the early-warning target may not be achievable optically at all.",
+   "rule_ids": [],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative slurry samples across the expected variation (different solids concentrations and particle sizes) and, if it can be obtained, a sample of the deposit that forms in the pipe; record the process temperature range.",
+    "purpose": "Representative samples are the basis of any method comparison.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample in the laboratory with the single method first (M1), and repeat with the comparison method (M2) on the same samples at the same solids levels; build a controlled deposit layer on the probe head to mimic the onset of blockage.",
+    "purpose": "Tests whether any spectrum tracks the slurry state at all, single methods before any combination.",
+    "citations": []
+   },
+   {
+    "step": "Have the customer's laboratory provide independent reference values for each sample (solids concentration and particle-size distribution) so the spectra are compared with a known state.",
+    "purpose": "Reference values are needed to judge any spectral change.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "independent reference measurements",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build any calibration or classification model on one set of samples and test it on held-out samples or runs; with few reference samples, overfitting is the main risk.",
+    "purpose": "Held-out validation is required before any in-line claim.",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 14,
+      "quote": "A thorough validation, including full, segmented and random-subset CVs, as well as randomization tests, are recommended",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Set the go/no-go basis with the customer's own numbers: the smallest solids or deposit change that must be detected and the warning time needed. If the held-out samples cannot be separated at that level, the optical route stops and pressure and flow stay with conventional sensors.",
+    "purpose": "The go/no-go threshold must come from the customer, not from the assessment.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "the basis for the go / no-go decision",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Gravimetric solids concentration and particle-size distribution of each sample, from the customer's own laboratory method, measured independently of the spectra.",
+  "decision_basis": "Go/no-go on the customer's own numbers for the smallest detectable change and the required warning time, tested on held-out samples."
+ },
+ "assumptions": [
+  "The slurry is a liquid or paste-like stream that can contact a probe head; this is stated only as 'slurry' in the enquiry.",
+  "The pipe is accessible for a measurement port; this has not been stated.",
+  "Pressure and flow will be provided by conventional sensors, since no optical route to them is in the supplied material."
+ ],
+ "not_in_sources": [
+  "Measurement of line pressure with fiber-optic or spectroscopic products.",
+  "Measurement of slurry flow rate with fiber-optic or spectroscopic products.",
+  "Detection or early warning of pipe blockage, and any warning time."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Line pressure",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The customer asks for line pressure, and the supplied material contains no optical method for pressure, so it must come from a conventional sensor.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "a conventional in-line pressure transmitter or pressure tap"
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Flow rate",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Flow rate is a hydraulic quantity; the supplied material contains no optical method for it, so a conventional flow meter is needed.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "a conventional in-line flow meter"
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Solids concentration in the slurry, as the candidate precursor of a blockage",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "An early warning can only come indirectly from a change in the material at the probe, so a measurable spectral proxy has to be found; whether the ATR spectrum tracks solids concentration is unproven and is what the trial tests.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [],
+   "ease_of_use": "single probe, no contact crystal",
+   "maintenance": "window cleaning; laser safety rules",
+   "performance_fit": "cheap first check of spectral change",
+   "cost_drivers": "Raman spectrometer and laser, probe, laboratory time, reference analyses",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P3"
+   ],
+   "ease_of_use": "contact probe; needs a pipe port",
+   "maintenance": "crystal cleaning, wear and replacement",
+   "performance_fit": "best chance to see wall-layer change",
+   "cost_drivers": "FTIR spectrometer, ATR probe and crystal, laboratory time, reference analyses",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "Turning any spectral change into an early warning needs a calibration or classification model built on reference measurements of the slurry (for example solids concentration) and validated on held-out runs or batches; with few reference samples, overfitting is the main risk.",
+ "realtime_tracking_note": "The request is for an early warning, so the measurement would have to run in-line and be time-resolved; the required response time is not stated and is one of the open questions.",
+ "future_direction": null,
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "Answers on what counts as the start of a blockage, on the slurry's optical behaviour and solids content, and on whether pressure and flow are already handled by conventional sensors. If no spectral change can be tied to a blockage precursor, the optical options drop out and the enquiry stays with conventional instrumentation.",
+  "next_step": "Run the laboratory trial in the feasibility plan on the customer's own slurry, single method first, before any in-line installation is considered."
+ },
+ "brief_answer": "The supplied material covers optical spectra of chemical composition, not line pressure or flow rate, so those two targets need conventional in-line sensors. The only optical route is indirect: whether the slurry's spectrum at a probe changes as solids build up, which no source shows. Test one contact method on your own slurry in the laboratory first; the open points are the required ranges, what a blockage precursor looks like, and the slurry's optical behaviour."
+}
