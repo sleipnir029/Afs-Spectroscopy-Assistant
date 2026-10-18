@@ -24,9 +24,9 @@
   {% if job.feed or job.waiting %}
   <div class="feed">
     <span class="label">What is happening</span>
-    <ol class="feed-list" aria-live="polite">
+    <ol class="feed-list">
       {% for n in job.feed %}<li><span class="feed-at mono">{{ n.at }}</span> {{ n.text }}</li>{% endfor %}
-      {% if job.waiting %}<li class="feed-wait"><span class="feed-at mono" aria-hidden="true">…</span> {{ job.waiting }}</li>{% endif %}
+      {% if job.waiting %}<li class="feed-wait"><span class="feed-at mono" aria-hidden="true">…</span> {{ job.waiting_text }} <span aria-hidden="true">· {{ job.waiting_clock }}</span></li>{% endif %}
     </ol>
   </div>
   {% endif %}

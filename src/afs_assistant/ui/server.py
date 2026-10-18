@@ -228,14 +228,15 @@ class Job:
                               "seconds": round(seconds, 2), "time": view.seconds_text(seconds)})
             elapsed = (self.ended or now) - self.started
             feed = [{"at": f"{int(t // 60)}:{int(t % 60):02d}", "text": x} for t, x in self.notes[-FEED_SHOW:]]
-            waiting = None
+            waiting = waiting_clock = None
             if self.waiting and self.state == "running":
                 w = now - self.waiting[0]
-                waiting = f"Waiting for the model to {self.waiting[1]} · {int(w // 60)}:{int(w % 60):02d}"
+                waiting, waiting_clock = f"Waiting for the model to {self.waiting[1]}", f"{int(w // 60)}:{int(w % 60):02d}"
             return {"id": self.id, "state": self.state, "steps": steps, "parent": self.parent,
                     "question": self.question, "understood": self.understood, "elapsed": round(elapsed, 1),
                     "clock": f"{int(elapsed // 60)}:{int(elapsed % 60):02d}", "result": self.result,
-                    "error": self.error, "stop_requested": self.stop_requested, "feed": feed, "waiting": waiting}
+                    "error": self.error, "stop_requested": self.stop_requested, "feed": feed, "waiting": waiting,
+                    "waiting_text": waiting, "waiting_clock": waiting_clock}
 
 
 class ProgressClient:

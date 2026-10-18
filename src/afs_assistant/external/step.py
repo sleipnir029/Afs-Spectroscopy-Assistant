@@ -608,12 +608,14 @@ def _run_steps(block: dict, intake: Intake, a: Assessment, client, gaps: list[Ga
         block["error"] = f"query plan failed: {type(exc).__name__}"
         return
     block["queries"], block["dropped_queries"] = queries, dropped_q
-    activity.note(f"{activity.plural(len(gaps), 'gap')} the AFS documents do not cover; "
-                  f"searching the literature with {activity.plural(len(queries), 'query', 'queries')}.")
     if not queries:
         return
+    activity.note(f"{activity.plural(len(gaps), 'gap')} the AFS documents do not cover; "
+                  f"searching the literature with {activity.plural(len(queries), 'query', 'queries')}.")
     records, log, fallback = retrieve(queries, gaps, fetcher, entries, text_cache, deadline, sample_terms(intake))
     block["search_log"], block["fallback"] = log, fallback
+    if fallback:
+        activity.note("The search APIs were unavailable; using the curated literature library instead.")
     block["sources"] = [r.meta() for r in records]
     if not records:
         return

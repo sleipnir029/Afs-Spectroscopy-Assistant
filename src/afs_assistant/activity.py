@@ -9,6 +9,7 @@ from __future__ import annotations
 import threading
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
+from functools import wraps
 
 _local = threading.local()
 
@@ -30,6 +31,17 @@ def note(text: str) -> None:
             callback(" ".join(str(text).split()))
         except Exception:           # noqa: BLE001, S110 - a display problem must never stop a run
             pass
+
+
+def quiet(fn: Callable[..., None]) -> Callable[..., None]:
+    """For note builders: a problem while composing a note never stops a run."""
+    @wraps(fn)
+    def wrapper(*args, **kwargs) -> None:
+        try:
+            fn(*args, **kwargs)
+        except Exception:           # noqa: BLE001, S110 - display only
+            pass
+    return wrapper
 
 
 def plural(n: int, word: str, many: str | None = None) -> str:

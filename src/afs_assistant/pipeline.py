@@ -580,10 +580,12 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
                      ext)
 
 
+@activity.quiet
 def _note_intake(intake: Intake, enquiry: str) -> None:
     targets = ", ".join(t.variable for t in intake.targets[:3]) or "no clear target yet"
-    s = intake.sample
-    activity.note(f"Understood: target {targets}; sample {s.physical_state.value}, {s.optical_regime.value}.")
+    sample = [v.replace("_", " ") for v in (intake.sample.physical_state.value, intake.sample.optical_regime.value)
+              if v != "unknown"]
+    activity.note(f"Understood: target {targets}" + (f"; sample {', '.join(sample)}." if sample else "."))
     named = named_methods(enquiry)
     if named:
         activity.note("Methods named in the enquiry: " + ", ".join(sorted(named)) + ".")
@@ -591,22 +593,25 @@ def _note_intake(intake: Intake, enquiry: str) -> None:
         activity.note(f"{activity.plural(len(intake.unknowns), 'open point')} to ask about or assume.")
 
 
+@activity.quiet
 def _note_screen(candidates: list[Candidate]) -> None:
     counts = {k: sum(1 for c in candidates if c.status == k) for k in ("pass", "unknown", "fail")}
     activity.note(f"Screened {activity.plural(len(candidates), 'method and probe option')} against the AFS rules: "
                   f"{counts['pass']} feasible, {counts['unknown']} uncertain, {counts['fail']} ruled out.")
     for c in [c for c in candidates if c.status == "fail"][:2]:
-        why = c.reasons[0]["message"] if c.reasons else "a rule failed"
+        why = next((r["message"] for r in c.reasons if r["status"] == "fail"), "a rule failed")
         why = re.sub(r"\[([^\]]*)\]", lambda m: m.group(1).replace("'", ""), why)     # "['a', 'b']" -> "a, b"
         activity.note(f"Ruled out {method_label(c.method, c.technique)}: {why[:120]}")
 
 
+@activity.quiet
 def _note_verify(report) -> None:
     total = len(report.citations)
     ok = sum(1 for c in report.citations if c["verified"])
     hard = len(report.hard_failures)
-    activity.note(f"Checked {ok}/{total} quotes word for word against the AFS documents; "
-                  + (f"{activity.plural(hard, 'check')} still failing." if hard else "all checks pass."))
+    activity.note(f"Checked {activity.plural(total, 'citation')} against the AFS documents: {ok} verified "
+                  "(quote and page scope); "
+                  + (f"{activity.plural(hard, 'hard check')} failing." if hard else "no hard failures."))
 
 
 def _manifest(run_id: str, calls: list[dict], attempts: int, problems: list[str], repairs: list[dict],

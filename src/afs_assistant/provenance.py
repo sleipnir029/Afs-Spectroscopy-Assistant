@@ -8,7 +8,6 @@ never touched. A local copy is also written to runs/<run_id>/ (gitignored).
 
 from __future__ import annotations
 
-import fcntl
 import json
 import threading
 import time
@@ -20,6 +19,11 @@ from dulwich.objects import Blob, Commit, Tree
 from dulwich.repo import Repo
 
 from afs_assistant import paths
+
+try:
+    import fcntl
+except ImportError:                 # Windows: the thread lock still serializes runs within one process
+    fcntl = None
 
 PROVENANCE_REF = b"refs/heads/provenance"
 AUTHOR = b"afs-assistant pipeline <pipeline@afs-assistant.local>"
@@ -84,13 +88,17 @@ def code_dirty(repo_path=paths.ROOT) -> bool | None:
 
 def record(run_id: str, files: dict[str, str | bytes], message: str, repo_path=paths.ROOT) -> str:
     """Write files under runs/<run_id>/ locally and commit them on the provenance ref (thread-safe)."""
-    lock_path = f"{Repo(str(repo_path)).controldir()}/afs-provenance.lock"
+    repo = Repo(str(repo_path))
+    lock_path = f"{repo.commondir()}/afs-provenance.lock"      # shared by all worktrees, like the ref itself
+    repo.close()
     with _RECORD_LOCK, open(lock_path, "a") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
+        if fcntl:
+            fcntl.flock(lock, fcntl.LOCK_EX)
         try:
             return _record(run_id, files, message, repo_path)
         finally:
-            fcntl.flock(lock, fcntl.LOCK_UN)
+            if fcntl:
+                fcntl.flock(lock, fcntl.LOCK_UN)
 
 
 def _record(run_id: str, files: dict[str, str | bytes], message: str, repo_path) -> str:

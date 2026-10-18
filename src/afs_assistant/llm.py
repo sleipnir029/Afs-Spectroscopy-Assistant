@@ -23,7 +23,7 @@ CONFIG_FILE = paths.ROOT / "config" / "models.yaml"
 # Alternative models config (absolute, or relative to the repo root), e.g. one bake-off arm (D-054).
 CONFIG_ENV = "AFS_MODELS_CONFIG"
 # Request parameters a model may leave out via `model_params: {<model>: {omit: [...]}}` (D-054).
-OMITTABLE = ("temperature", "max_tokens", "response_format")
+OMITTABLE = ("temperature",)
 
 
 class SpendCapExceeded(RuntimeError):
@@ -70,7 +70,7 @@ def config_provenance() -> dict:
 
 def omitted_params(model: str) -> set[str]:
     """Request parameters the model does not accept (e.g. `temperature`); a name outside OMITTABLE is an error."""
-    omit = set(config().get("model_params", {}).get(model, {}).get("omit", []))
+    omit = set(((config().get("model_params") or {}).get(model) or {}).get("omit") or [])
     unknown = omit - set(OMITTABLE)
     if unknown:
         raise ValueError(f"model_params.{model}.omit: cannot omit {sorted(unknown)} (allowed: {list(OMITTABLE)})")

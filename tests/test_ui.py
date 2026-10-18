@@ -315,7 +315,7 @@ def test_activity_feed_tells_what_happened(outputs, no_provenance):
     assert notes[0].startswith("The model answered (read the enquiry)")
     assert any(n.startswith("Understood: target ") for n in notes)
     assert any(n.startswith("Screened ") and "against the AFS rules" in n for n in notes)
-    assert any(n.startswith("Checked ") and "quotes word for word" in n for n in notes)
+    assert any(n.startswith("Checked ") and "verified (quote and page scope)" in n for n in notes)
     snap = client.get(f"/api/jobs/{jid}").json()
     assert 0 < len(snap["feed"]) <= server.FEED_SHOW and snap["waiting"] is None
     assert snap["feed"][-1]["text"] == notes[-1] and re.fullmatch(r"\d+:\d\d", snap["feed"][-1]["at"])

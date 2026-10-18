@@ -378,6 +378,47 @@ def test_provenance_record_is_serialized_across_processes(tmp_path):
     paths_ = {e.path.decode() for e in iter_tree_contents(repo.object_store, head.tree)}
     assert paths_ == {f"runs/p{k}/a.txt" for k in range(4)}        # parallel set runs lose no commit
 
+
+def test_provenance_lock_is_shared_by_linked_worktrees(tmp_path):
+    import subprocess
+
+    main, linked = tmp_path / "main", tmp_path / "linked"
+    main.mkdir()
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "-C", str(main)]
+    subprocess.run([*git, "init", "-q"], check=True)
+    subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "init"], check=True)
+    subprocess.run([*git, "worktree", "add", "-q", str(linked)], check=True)
+    provenance.record("w1", {"a.txt": "1"}, "run w1", repo_path=linked)
+    assert (main / ".git" / "afs-provenance.lock").exists()           # the common git dir, not .git/worktrees/x
+
+
+def test_provenance_imports_without_fcntl(monkeypatch, tmp_path):
+    import importlib
+    import sys
+
+    monkeypatch.setitem(sys.modules, "fcntl", None)                  # as on Windows
+    module = importlib.reload(provenance)
+    try:
+        assert module.fcntl is None
+        Repo.init(str(tmp_path))
+        assert module.record("nw1", {"a.txt": "1"}, "run nw1", repo_path=tmp_path)
+    finally:
+        monkeypatch.delitem(sys.modules, "fcntl")
+        importlib.reload(provenance)
+
+
+def test_ruled_out_note_names_the_failing_rule():
+    from afs_assistant import activity
+    from afs_assistant.screen import Candidate
+
+    c = Candidate("NIR", "ATR", [], True, set())
+    c.downgrade("unknown", "R-1", "the state is not known")
+    c.downgrade("fail", "R-2", "Table 1 lists ['powder', 'solid'] for this technique")
+    seen = []
+    with activity.sink(seen.append):
+        pipeline._note_screen([c])
+    assert seen[-1].endswith("Table 1 lists powder, solid for this technique")
+
 # ----------------------------------------------------------------- 3. LLM timeouts
 def _response(content='{"a": 1}'):
     usage = SimpleNamespace(prompt_tokens=10, completion_tokens=5, prompt_tokens_details=None, cost=0.001)
