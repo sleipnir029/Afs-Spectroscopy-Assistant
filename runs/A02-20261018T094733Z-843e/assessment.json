@@ -1,0 +1,460 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Fiber-probe monitoring of liquids in vessels is supported as a demonstrated approach, but nothing in the supplied material covers dissolution testing specifically, and the optical properties of the medium and the spectral separation of the two ingredients are unknown, so the shortlist is conditional.",
+ "premise_checks": [
+  {
+   "premise": "Fiber probes can sit directly in the vessels and follow dissolution over time",
+   "verdict": "not_covered",
+   "explanation": "No supplied source covers fiber probes in dissolution vessels or dissolution testing specifically; this must be tested experimentally.",
+   "citations": []
+  },
+  {
+   "premise": "The two active ingredients can be distinguished spectroscopically in the dissolution medium",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses the spectral separation of two specific actives in a dissolution vessel; this must be established experimentally.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [
+  "Follow the dissolved amount of each of two active ingredients over time in dissolution vessels",
+  "Replace or complement manual sampling with HPLC analysis at fixed time points"
+ ],
+ "key_unknowns": [
+  "Composition and optical clarity of the dissolution medium (aqueous? turbid? excipients?)",
+  "Whether the two ingredients have spectrally separable signals in the medium",
+  "Required accuracy and whether the result must be GMP-comparable to HPLC",
+  "Vessel geometry, number of vessels and where a probe could be mounted",
+  "Whether excipients or the tablet matrix release interfering or scattering material"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the dissolution medium (aqueous or organic, with surfactants or excipients), and how optically clear is it during the test?",
+   "why_it_matters": "It decides whether a transmission/transflection probe can be used or whether an ATR or reflection geometry is needed.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Do the two active ingredients have distinct, non-overlapping absorption (or Raman) features in the medium, and at what concentrations must each be quantified?",
+   "why_it_matters": "Spectral overlap of the two actives decides whether one method suffices or a second method is needed.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What accuracy do you need against HPLC, and is the goal a development tool or a GMP replacement for the manual HPLC sampling?",
+   "why_it_matters": "It sets the calibration effort and the validation burden, and hence whether the project is feasible in one step.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "How many vessels run per test, and where could a probe enter each vessel without disturbing the flow and sampling?",
+   "why_it_matters": "It determines the installation concept and whether multiplexing or one probe per vessel is needed.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "How fast do the concentrations change, and at what time resolution must the profile be followed?",
+   "why_it_matters": "It sets the required acquisition speed and the synchronisation needs if two methods are combined.",
+   "affects": [
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "UV-Vis transmission probes with a defined 1-10 mm pathlength are the natural first test for following dissolved actives in a vessel, provided the medium stays clear enough for light to pass. Its high sensitivity suits concentration profiling, but overlapping signals mean a chemometric calibration against HPLC is required.",
+   "conditions": "Only if the dissolution medium is sufficiently transparent at the wavelengths of interest; otherwise switch to an ATR or reflection geometry.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "the strong overlap of spectral signals in UV spectra complicates the analysis of real samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman passed screening and tolerates aqueous media well, giving molecular specificity that can separate structurally different actives where UV bands overlap. Its weak signal and possible fluorescence background from excipients must be checked on real samples.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "If the two actives overlap in UV-Vis, adding Raman in the same vessel is the natural second method, since the two carry complementary molecular information. Any fusion gain is a hypothesis that must beat the best single method.",
+   "conditions": "Only if single-method UV-Vis (or Raman) cannot separate the two ingredients in the feasibility test.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Fluorescence only works if a fluorescent species or a justified indicator is present, and none has been identified for these two actives. Its low selectivity also makes it unsuitable as a standalone quantification of two actives.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion transmission or transflection fiber probe with a fixed short pathlength inserted into each dissolution vessel; ATR or reflection geometry as fallback if the medium is too opaque.",
+  "location": "In the vessel, in the flowing dissolution medium, away from the tablet and the manual sampling port.",
+  "fiber_link": "Silica fibers cover the UV-Vis/NIR ranges needed here; the usable range depends on the selected probe and spectrometer, not on the nominal method range.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 5,
+    "quote": "Immersible fiber optic probes operating in various spectral regions from UV to mid-IR are increasingly being used for measuring liquid and soft or powdered solid samples.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "UV-Vis",
+   "statement": "Nominal UV-Vis sensitivity is highest in the UV region (190-360 nm); the actual usable range depends on the selected spectrometer, fibers and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as Raman shift in cm-1 with the laser excitation wavelength stated separately; the excitation wavelength for this application is not yet chosen.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The dissolution medium or released excipients may scatter or absorb so strongly that transmission fails and the geometry must change.",
+   "rule_ids": [
+    "R-GEO-2",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The two actives may overlap spectrally, so a single method cannot quantify both and a second method or a more elaborate model is needed.",
+   "rule_ids": [
+    "R-UV-1",
+    "R-NIR-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "the strong overlap of spectral signals in UV spectra complicates the analysis of real samples",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The calibration is matrix-specific and must be rebuilt if the formulation, medium or vessel conditions change.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "physical variation; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Probe fouling or bubble formation on the optical surfaces in the vessel could bias the concentration profile over the test duration.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative dissolution media and placebo excipient solutions covering the expected variation (medium batch, temperature, expected turbidity).",
+    "purpose": "Establish the optical background and whether a transmission geometry is viable.",
+    "citations": []
+   },
+   {
+    "step": "Measure spectra of each active ingredient separately in the medium across the expected concentration range, then in combination, with a UV-Vis transmission probe and, in parallel, a Raman probe.",
+    "purpose": "Test single methods first and check whether the two actives are spectrally separable.",
+    "citations": []
+   },
+   {
+    "step": "Run full dissolution tests with the fiber probe(s) in the vessel while drawing the usual manual samples at the fixed time points.",
+    "purpose": "Provide independent HPLC reference values across the whole release profile for calibration.",
+    "citations": []
+   },
+   {
+    "step": "Build per-method calibration models against the HPLC references and validate them on held-out dissolution runs or batches.",
+    "purpose": "Quantify each method's accuracy before considering any combination.",
+    "citations": []
+   },
+   {
+    "step": "Only if a single method cannot separate the two actives, test a fused UV-Vis + Raman model and require it to beat the best single method on the held-out runs.",
+    "purpose": "Confirm or reject the combination hypothesis with customer-defined go/no-go criteria.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "HPLC on the manually drawn samples at the existing fixed time points serves as the independent reference.",
+  "decision_basis": "Go/no-go criteria (acceptable deviation from HPLC per ingredient, per time point) must be defined by the customer; they are not stated in the enquiry."
+ },
+ "assumptions": [
+  "The dissolution medium is a liquid in which the actives dissolve molecularly (standard dissolution testing).",
+  "The existing HPLC method can quantify each ingredient independently and can serve as the reference."
+ ],
+ "not_in_sources": [
+  "Dissolution testing itself, USP apparatus geometry, and fiber-optic dissolution systems are not covered by the supplied material.",
+  "No source gives accuracy, detection limits or response times for this application; these must come from the feasibility test."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Concentration of active ingredient 1 dissolved over time",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "This is the first of the two quantities the customer wants to follow in the vessel.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Concentration of active ingredient 2 dissolved over time",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "This is the second quantity the customer wants to follow; its separability from P1 decides the method choice.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Medium optical clarity / turbidity and excipient background",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It decides whether transmission is viable or an ATR/reflection geometry is needed, and whether scatter correction is required.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "turbidity or optical-density check during method development",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "HPLC reference concentrations of both actives at the fixed sampling times",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The independent reference values are needed to build and validate any calibration model.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "HPLC (existing customer method)",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P5",
+   "name": "Medium temperature",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Temperature affects both spectra and dissolution kinetics, so it should be logged to explain model variability; it is normally already controlled in dissolution tests.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P4"
+   ],
+   "ease_of_use": "Probe in vessel, straightforward operation",
+   "maintenance": "Low; probe window cleaning between runs",
+   "performance_fit": "Aqueous-tolerant molecular specificity for hard-to-separate actives",
+   "cost_drivers": "Raman spectrometer and laser, probe, calibration samples",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "Simple immersion probe, fast acquisition",
+   "maintenance": "Low; pathlength fixed, routine cleaning",
+   "performance_fit": "High sensitivity for concentration profiling if medium stays clear",
+   "cost_drivers": "UV-Vis spectrometer, transmission probes per vessel, HPLC-referenced calibration",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "Two instruments and probes to operate",
+   "maintenance": "Higher; two calibrations and two diagnostics to maintain",
+   "performance_fit": "Covers overlapping actives that one method cannot separate",
+   "cost_drivers": "Two spectrometers, fused calibration development, synchronisation software",
+   "fusion_note": "Low-level fusion: UV-Vis and Raman probes must sample the same vessel region and their data synchronised to a common time step. Start with one model per method, then fuse (e.g. concatenated, block-scaled spectra) and validate against HPLC on held-out runs. The fused model must beat the best single method, otherwise drop the second instrument.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Both UV-Vis and Raman will need multivariate calibration (e.g. PLS) against the HPLC references, with validation on held-out dissolution runs; the sources stress that overlapping UV/NIR signals require chemometrics and that calibrations are matrix-specific.",
+ "realtime_tracking_note": "The goal is a time-resolved dissolution profile per vessel; acquisition conditions must be chosen so the time resolution matches the release kinetics, and if two methods are combined their data must be synchronised to a common time step.",
+ "future_direction": "Once a validated model exists, a compact LED-based multi-wavelength sensor concept could replace the full spectrometer for routine QC use, as shown for other applications in the sources.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If the medium turns out turbid or strongly absorbing, the geometry moves to ATR or reflection; if the two actives overlap in UV-Vis, the extended UV-Vis plus Raman option becomes the lead.",
+  "next_step": "Run feasibility tests measuring spectra of each active ingredient and placebo medium in the vessel, with parallel HPLC reference sampling."
+ },
+ "brief_answer": "Yes, in-vessel fiber monitoring is worth testing, but nothing in the supplied material covers dissolution testing specifically, so this is a feasibility question, not an off-the-shelf answer. Test a UV-Vis transmission probe first, with Raman as comparison, calibrating both against your existing HPLC samples. Open points: medium clarity, spectral separation of the two actives, and the accuracy you require."
+}
