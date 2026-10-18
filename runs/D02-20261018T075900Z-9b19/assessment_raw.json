@@ -1,0 +1,472 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified from the documented dairy NIR reflection application, but the concentration ranges, temperature range, installation point and cleaning conditions are unknown, so the assessment is provisional and the deciding questions are asked first.",
+ "premise_checks": [
+  {
+   "premise": "In-line spectroscopy can track fat and protein in an opaque, concentrated milk product",
+   "verdict": "precedent_only",
+   "explanation": "The enquiry assumes spectroscopy can give earlier fat/protein information on an opaque, concentrated dairy stream. The sources show this as a documented dairy application pattern (NIR reflection with PLS), which is a reason to test, not proof for this specific product.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "A single probe geometry can cover the product across its texture and composition variation",
+   "verdict": "precedent_only",
+   "explanation": "The sources say a transflection probe can in some cases serve both low-fat and high-fat milk products; whether it works for this opaque, concentrated product is untested and must be checked in the comparison experiment.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Earlier information about fat and protein composition changes than current sampling provides",
+  "An initial spectroscopy concept and a practical comparison experiment",
+  "Laboratory checks retained as reference"
+ ],
+ "key_unknowns": [
+  "Fat and protein concentration ranges and required in-line accuracy",
+  "Product temperature range at the measurement point",
+  "Installation point and fiber distance on the line",
+  "Cleaning and fouling conditions at the probe location",
+  "Nature and timescale of the texture variation",
+  "Reference laboratory method and its accuracy"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the fat and protein concentration ranges, and what accuracy do you need in-line compared with your laboratory method?",
+   "why_it_matters": "The concentration range and required accuracy decide whether NIR reflection alone suffices or a second method is needed.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Where on the line would the measurement sit, what is the product temperature range there, and how far is it to a safe place for the spectrometer?",
+   "why_it_matters": "Temperature affects the spectra and the installation point and distance determine the probe and fiber cable design.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the cleaning-in-place and fouling conditions at the proposed measurement point?",
+   "why_it_matters": "A contact probe window fouls in concentrated dairy, so cleaning access and window material drive the probe choice.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What exactly varies in texture (e.g. viscosity, fat globule size, phase separation) and over what timescale?",
+   "why_it_matters": "Reflection signals are sensitive to surface characteristics and globule size, so texture variation must be separated from composition change in the calibration.",
+   "affects": [
+    "technique",
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Which laboratory method do you use for fat and protein, and what is its own accuracy?",
+   "why_it_matters": "The laboratory method is the reference for calibration and for the go/no-go criteria, so its accuracy bounds what in-line can be validated against.",
+   "affects": [
+    "status",
+    "method"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the documented technique for opaque, concentrated dairy products and is well suited to remote fiber-probe measurement. Quantification of fat and protein then relies on a PLS calibration against the laboratory reference.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "A transflection probe can in some cases serve both low-fat and high-fat dairy products with one probe, which would simplify the installation. For this opaque, concentrated product it is untested and must be compared against reflection.",
+   "conditions": "Test it in the comparison experiment; it applies only if the transflection geometry gives acceptable signal and accuracy on this opaque, concentrated product.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman tolerates water well and offers molecular specificity that can complement NIR in dairy matrices. Its weak signal and possible fluorescence background must be checked on real samples before relying on it.",
+   "conditions": "Test only if the NIR reflection calibration cannot meet the required accuracy across the texture and temperature variation.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "NIR transmission fails when the sample is too thick or fat-rich because the light cannot penetrate, which matches the stated opaque, concentrated product. It is therefore not worth testing first, although transflection (M2) remains a related option.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR diffuse reflection fiber optic probe, flush-mounted into the pipe or vat; a transflection probe is tested as an alternative geometry in the comparison experiment.",
+  "location": "Flush-mounted in the processing line at a point representative of the product stream, with the spectrometer located away from the line via fiber optics.",
+  "fiber_link": "Vis-NIR silica fiber cable from the flush-mounted reflection probe to the spectrometer; the achievable cable length depends on the selected fiber and is not stated for this configuration.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+    "claim_kind": "application_precedent"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as Raman shift in cm-1 with the laser excitation wavelength (e.g. 785 nm in the dairy/pharma example) stated separately; the usable range depends on the selected instrument and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Texture and globule-size variation can mimic composition change in reflection spectra, so the calibration must separate physical from chemical effects.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Product temperature variation shifts the spectra and must be covered by representative calibration samples or an auxiliary temperature input.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "A contact probe window in a concentrated dairy line can foul, degrading the signal between cleanings.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The calibration is specific to this product matrix; recipe or process changes require re-validation of the model.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "physical variation; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "",
+    "purpose": "Collect representative samples spanning the expected variation in fat, protein, temperature and texture across production runs.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Measure all samples with the NIR reflection probe in the lab and, in parallel, with the transflection probe, to compare both geometries on the same material.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Run the customer's laboratory fat and protein analysis on every sample as the independent reference.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Build PLS calibration models per analyte with scatter correction, and validate them on held-out samples or runs not used in calibration.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Mount the best probe in-line and track composition changes in real time against the laboratory checks over several production runs.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Each sample point is analysed in parallel by the customer's existing laboratory fat and protein method (Q5), which remains the retained check.",
+  "decision_basis": "Go/no-go against the customer's own criteria: the in-line PLS predictions on held-out runs must meet the accuracy the customer states in answer to Q1, with stable performance across the temperature and texture range; otherwise the geometry or method is revisited."
+ },
+ "assumptions": [
+  "The product is a water-based dairy matrix whose fat and protein lie in ranges typical of concentrated dairy products; the actual ranges are unknown and asked in Q1.",
+  "The laboratory fat/protein analysis currently used can serve as the independent reference method in a comparison trial; its method and accuracy are asked in Q5.",
+  "A probe can be mounted flush at a suitable line location with reasonable access for cleaning; the installation point and distance are asked in Q2."
+ ],
+ "not_in_sources": [
+  "Achievable fiber cable length for this specific probe and spectrometer configuration",
+  "In-line accuracy achievable for fat and protein in this specific concentrated product"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Fat concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Fat is a stated monitoring target and the main analyte the in-line model must predict.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Data processing may involve converting the reflectance values to absorbance and applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Protein concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Protein is a stated monitoring target and the second analyte the in-line model must predict.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Data processing may involve converting the reflectance values to absorbance and applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Product temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature varies during production and shifts the spectra, so it must be recorded to include or correct its effect in the calibration.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Texture state (viscosity / globule structure regime)",
+   "kind": "qualitative",
+   "necessity": "optional",
+   "why": "Texture variation can mimic composition change in reflection spectra, so knowing the texture regime per sample helps separate physical from chemical effects; it should be available from process knowledge.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "laboratory texture/viscosity characterisation of samples taken at known process states"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "straightforward lab bench trial",
+   "maintenance": "minimal, no line modification",
+   "performance_fit": "answers method choice before any line work",
+   "cost_drivers": "one reflection probe, one NIR spectrometer, lab trial samples, reference analyses",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "continuous in-line operation after calibration",
+   "maintenance": "probe window cleaning between runs",
+   "performance_fit": "matches opaque product and early-warning goal",
+   "cost_drivers": "in-line probe and flush fitting, fiber cable, calibration samples across process variation, ongoing reference analyses",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Experimentally, the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "The use of fiber optics is critical here, as it allows the sensitive spectrometers to be located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M1",
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "two instruments to run and maintain",
+   "maintenance": "two instruments, per-block calibration",
+   "performance_fit": "hypothesis if NIR alone misses accuracy",
+   "cost_drivers": "second spectrometer and Raman probe, synchronisation software, doubled calibration and maintenance effort",
+   "fusion_note": "Low-level fusion: NIR reflection and Raman spectra from the same line location are synchronised to a common time step and merged into one augmented matrix for PLS regression. Each method keeps its own calibration and diagnostics, and the fused model must beat the best single-method model on held-out runs before the extra instrument is justified.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A PLS regression model per analyte (fat, protein) is expected, built on spectra from representative production states with scatter correction (e.g. MSC or SNV) to handle the texture-driven scattering variation; the model must be validated on held-out production runs and re-checked whenever the recipe or texture regime changes.",
+ "realtime_tracking_note": "The goal is earlier information on composition changes than manual sampling allows; an in-line probe with continuous spectral acquisition and a running PLS prediction gives composition trends in near real time, with the laboratory checks retained as reference and for calibration updates.",
+ "future_direction": "If the single-method calibration proves sensitive to texture variation, a later extension could add Raman in the same reactor as a molecular-specific second view of fat and protein, tested only after the NIR reflection baseline is established.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "A very wide temperature range, severe fouling, or extreme texture variation could shift the choice toward a different probe design or a second method; concentration ranges outside typical dairy levels could require Raman as an addition.",
+  "next_step": "Run the lab comparison of NIR reflection and transflection probes on representative production samples against your laboratory fat and protein results, then mount the better probe in-line for a validation period."
+ },
+ "brief_answer": "Test in-line NIR diffuse reflection first: it is the documented technique for opaque, concentrated dairy products and can track fat and protein with a chemometric calibration against your laboratory checks. Also test a transflection probe as an alternative geometry, since transmission is unsuitable for an opaque product. Open points that decide the design: fat/protein target ranges and required accuracy, temperature range, installation point and distance, and cleaning conditions."
+}
