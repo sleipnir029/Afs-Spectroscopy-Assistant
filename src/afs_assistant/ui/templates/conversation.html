@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% from "macros.html" import flag, question_block %}
+{% import "blocks.html" as blocks with context %}
+{% block title %}{{ current.title if current else 'Conversation' }} · AFS Spectroscopy Assistant{% endblock %}
+{% block body_class %}has-composer{% endblock %}
+{% block main %}
+<div class="column thread conversation">
+{% for t in turns %}
+  {% set v = t.v %}
+  <article class="turn chat-turn chat-{{ t.kind }}" id="turn-{{ t.n }}" aria-label="Turn {{ t.n + 1 }}">
+    {{ question_block(t.question, not loop.first) }}
+    {% if t.kind != 'ask' %}
+      {% if not v %}
+      <p class="flag">This assessment is no longer on disk.</p>
+      {% elif v.off_topic %}
+      <section class="rec" aria-label="Our answer">
+        <h2 class="kicker kicker-accent">Our answer</h2>
+        <p class="rec-head">This is not a measurement question.</p>
+        <p class="rec-text">{{ v.off_topic.message }}</p>
+        <p class="label label-gap">Try one of these instead</p>
+        <ul class="link-list arrows">{% for e in v.off_topic.examples %}<li><a href="/?q={{ e | urlencode }}">{{ e }}</a></li>{% endfor %}</ul>
+      </section>
+      {% elif v.incomplete %}
+      <section class="rec" aria-label="Incomplete run"><h2 class="kicker">Incomplete run</h2><p class="rec-head">{{ v.incomplete }}</p></section>
+      {% else %}
+        {% if t.changed %}{{ blocks.changed_rows(t.changed, t.p) }}{% endif %}
+        {{ blocks.recommendation(v, t.p) }}
+        {% if v.options %}{{ blocks.options(v, t.p) }}{% endif %}
+        {{ blocks.questions(v, ('/chat/' ~ cid ~ '/reassess') if t.current else none, t.p) }}
+        <section class="more" aria-label="More detail">
+          <details class="row"><summary><span class="row-t">What to measure and how</span><span class="row-n mono">{{ v.parameters | length }} parameters</span></summary>
+            <div class="row-body">{{ blocks.parameters(v, t.p) }}</div></details>
+          <details class="row"><summary><span class="row-t">Risks</span><span class="row-n mono">{{ v.risks | length }}</span></summary>
+            <div class="row-body">{{ blocks.risks(v) }}</div></details>
+          <details class="row"><summary><span class="row-t">First feasibility test</span><span class="row-n mono">{{ v.plan.steps | length }} steps</span></summary>
+            <div class="row-body">{{ blocks.plan(v) }}</div></details>
+          <details class="row"><summary><span class="row-t">Sources</span><span class="row-n mono">{{ v.citations | length }}</span></summary>
+            <div class="row-body">{{ blocks.sources(v) }}</div></details>
+          <details class="row"><summary><span class="row-t">Status</span><span class="row-n mono">{{ v.made.verified }} quotes verified</span></summary>
+            <div class="row-body">{{ blocks.status(v) }}</div></details>
+        </section>
+        <p class="small"><a href="/runs/{{ v.key }}">Open the full answer</a> <span class="muted">(literature, how it was made, technical detail, downloads)</span></p>
+      {% endif %}
+    {% else %}
+      <section class="chat-answer" aria-label="Answer">
+        <p class="chat-answer-head"><span class="kicker kicker-accent">Answer</span>
+          {% if v %}<span class="muted small">about the assessment “{{ v.title }}”{% if t.run_id != (current.key if current else none) %} (an earlier version){% endif %}</span>{% endif %}</p>
+        <ul class="claims">
+          {% for c in t.answer.claims %}{% set ci = loop.index0 %}
+          <li class="claim claim-{{ c.basis }}">{{ c.text }}
+            {% if c.citations %}<span class="tags">{% for x in c.citations %}<a class="tag tag-{{ 'external' if x.kind == 'external' else 'supplied' }}" href="/chat/{{ cid }}/turns/{{ t.n }}/cite/{{ ci }}-{{ loop.index0 }}" hx-get="/chat/{{ cid }}/turns/{{ t.n }}/cite/{{ ci }}-{{ loop.index0 }}" hx-target="#panel-body" hx-swap="innerHTML" data-panel title="“{{ x.quote | truncate(220) }}”{{ ' (external, not AFS material)' if x.kind == 'external' else '' }} · open the verified quote">{{ x.label }}</a>{% endfor %}</span>{% endif %}
+            <span class="basis basis-{{ c.basis }}">{{ c.basis_label }}</span>{% if c.precedent %} <span class="precedent">precedent only: a reason to test, not proof</span>{% endif %}
+          </li>
+          {% endfor %}
+          {% for r in t.answer.removed %}<li class="removed">{{ r.line }}</li>{% endfor %}
+        </ul>
+        <p class="next-step"><span class="muted">Proposed next step:</span> {{ t.answer.next_step }}</p>
+        {% if v %}
+        {% for b in t.answer.blocks %}<div class="chat-block">{{ blocks.block(v, b, t.p ~ 'b' ~ loop.index0 ~ '-', t.changed) }}</div>{% endfor %}
+        {% endif %}
+        {% if t.answer.new_facts and current and t.run_id == current.key %}
+        <form method="post" action="/chat/{{ cid }}/reassess" class="facts-form">
+          <label for="{{ t.p }}facts" class="label">New facts from your message</label>
+          <textarea id="{{ t.p }}facts" name="followup" rows="2" maxlength="{{ MAX_CHARS }}">{{ t.answer.new_facts | join('\n') }}</textarea>
+          <div class="form-row"><button class="btn" type="submit"{% if busy %} disabled{% endif %}>Re-assess with these facts</button>
+            <span class="muted small">Runs the full assessment again with these facts added.</span></div>
+        </form>
+        {% endif %}
+      </section>
+    {% endif %}
+  </article>
+{% endfor %}
+{% if job %}
+  <article class="turn chat-turn" aria-label="Working">
+    {{ question_block(job.question, turns | length > 0) }}
+    {% include "job_steps.html" %}
+  </article>
+{% elif not turns %}
+  <p class="muted">Nothing here yet. <a href="/">Ask a question</a>.</p>
+{% endif %}
+</div>
+{% endblock %}
+{% block composer %}
+<div class="composer">
+  <form class="composer-in" method="post" action="/chat/{{ cid }}/message">
+    <label for="ask" class="sr-only">{{ 'Ask a follow-up question' if current else 'Describe what you want to measure' }}</label>
+    <input id="ask" name="text" type="text" autocomplete="off" maxlength="{{ MAX_CHARS }}" placeholder="{{ 'Ask about this assessment, e.g. why this probe and not another?' if current else 'Describe what you want to measure' }}"{% if busy %} disabled{% endif %}>
+    <button class="btn" type="submit"{% if busy %} disabled{% endif %}>Send</button>
+    {% if current %}<button class="btn-quiet" type="submit" formaction="/chat/{{ cid }}/reassess" title="Run the full assessment again with this detail added"{% if busy %} disabled{% endif %}>Re-assess</button>{% endif %}
+  </form>
+</div>
+{% endblock %}

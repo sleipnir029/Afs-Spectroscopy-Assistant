@@ -8,6 +8,11 @@ A run id is `<set>-<stem>` of a saved output (`outputs/<set>/<stem>.json`). New 
 same path as the CLI (`cli._assess_one`: provenance record, `outputs/ui/`), one at a time, in a
 background thread; a client proxy reports which pipeline stage is running. A follow-up turn records
 its parent in `outputs/ui/turns/<stem>.json`, so the thread survives a restart.
+Conversations (5.12, `chat.py`): `POST /chat` first message -> assess job · `GET /chat/{cid}` the thread ·
+`POST /chat/{cid}/message` free text -> ask job (a new assessment while there is no usable run) ·
+`POST /chat/{cid}/reassess` answers / added detail / suggested facts -> reassess job (the clarify path) ·
+`GET /chat/{cid}/turns/{n}/cite/{k}` source panel of an answer's citation · `POST /runs/{id}/chat` opens a
+saved run as a conversation. Every job kind shares the one-job lock.
 Requests with a foreign Host header are refused (400), and so are POSTs from another origin (403).
 """
 
@@ -35,7 +40,7 @@ from fastapi.responses import (
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from afs_assistant import activity, paths
+from afs_assistant import activity, chat, paths
 from afs_assistant.pipeline import OFF_TOPIC_EXAMPLES
 from afs_assistant.ui import view
 
@@ -50,10 +55,12 @@ MAX_CHARS = 8000                              # per enquiry, answer or follow-up
 TOO_LONG = f"Please keep each text to {MAX_CHARS} characters or fewer; shorten it and send it again."
 LOCAL_HOSTS = {"127.0.0.1", "localhost"}
 # Which display step a model call belongs to (external roles are named external_*).
-ROLE_STEP = {"intake": "intake", "assess": "assess", "repair": "assess"}
+ROLE_STEP = {"intake": "intake", "assess": "assess", "repair": "assess", "chat_answer": "answer"}
 # What the model is doing during each call, for the activity feed.
 ROLE_DOING = {"intake": "read the enquiry", "assess": "write the assessment", "repair": "fix the failed checks",
-              "external_queries": "plan literature searches", "external_evidence": "pick literature quotes"}
+              "external_queries": "plan literature searches", "external_evidence": "pick literature quotes",
+              "chat_answer": "answer the question"}
+ASK_STEPS = (("answer", "Answering"),)        # an ask job: one model call (and at most one repair call)
 FEED_KEEP, FEED_SHOW = 40, 8
 
 
@@ -163,7 +170,9 @@ class Job:
     enquiry: str
     question: str = ""                            # what the user typed for this turn
     parent: str | None = None
-    state: str = "running"                        # running | done | failed | stopped
+    kind: str = "assess"                          # assess | reassess | ask (5.12)
+    conversation: str | None = None
+    state: str = "running"                       # running | done | failed | stopped
     started: float = field(default_factory=time.monotonic)
     ended: float | None = None
     steps: list[dict] = field(default_factory=lambda: [
@@ -176,6 +185,24 @@ class Job:
     notes: list[tuple[float, str]] = field(default_factory=list)   # (seconds since start, text), newest last
     waiting: tuple[float, str] | None = None      # (since, what the model is doing) while a call runs
     lock: threading.Lock = field(default_factory=threading.Lock)
+
+    def __post_init__(self) -> None:
+        if self.kind == "ask":
+            self.steps = [{"key": k, "label": label, "state": "pending", "seconds": 0.0, "since": None}
+                          for k, label in ASK_STEPS]
+
+    @property
+    def target(self) -> str | None:
+        """Where the finished job is shown: its conversation, else the new run."""
+        if self.conversation:
+            return f"/chat/{self.conversation}"
+        return f"/runs/{self.result}" if self.result else None
+
+    @property
+    def back(self) -> str:
+        if self.conversation:
+            return f"/chat/{self.conversation}"
+        return f"/runs/{self.parent}" if self.parent else "/"
 
     def add_note(self, text: str) -> None:
         with self.lock:
@@ -232,7 +259,9 @@ class Job:
             if self.waiting and self.state == "running":
                 w = now - self.waiting[0]
                 waiting, waiting_clock = f"Waiting for the model to {self.waiting[1]}", f"{int(w // 60)}:{int(w % 60):02d}"
-            return {"id": self.id, "state": self.state, "steps": steps, "parent": self.parent,
+            return {"id": self.id, "state": self.state, "steps": steps, "parent": self.parent, "kind": self.kind,
+                    "conversation": self.conversation, "back": self.back,
+                    "target": self.target if self.state == "done" else None,
                     "question": self.question, "understood": self.understood, "elapsed": round(elapsed, 1),
                     "clock": f"{int(elapsed // 60)}:{int(elapsed % 60):02d}", "result": self.result,
                     "error": self.error, "stop_requested": self.stop_requested, "feed": feed, "waiting": waiting,
@@ -284,11 +313,13 @@ class Jobs:
     def running(self) -> Job | None:
         return next((j for j in self.jobs.values() if j.state == "running"), None)
 
-    def start(self, enquiry: str, question: str, parent: str | None = None) -> Job:
+    def start(self, enquiry: str, question: str, parent: str | None = None, kind: str = "",
+              conversation: str | None = None) -> Job:
         with self._lock:
             if self.running() is not None:
                 raise HTTPException(409, "A question is already being assessed; wait for it or stop it.")
-            job = Job(uuid.uuid4().hex[:12], enquiry, question, parent)
+            kind = kind or ("reassess" if parent else "assess")
+            job = Job(uuid.uuid4().hex[:12], enquiry, question, parent, kind=kind, conversation=conversation)
             self.jobs[job.id] = job
         threading.Thread(target=self._work, args=(job,), daemon=True).start()
         return job
@@ -296,6 +327,8 @@ class Jobs:
     def _work(self, job: Job) -> None:
         from afs_assistant import cli
 
+        if job.kind == "ask":
+            return self._ask(job)
         try:
             job.enter("intake")
             client = ProgressClient(self.client_factory(), job)
@@ -305,7 +338,27 @@ class Jobs:
             if job.parent:
                 self.store.save_turn(rid, job.parent, job.question)
             data = json.loads((self.out_dir / f"{out['run_id']}.json").read_text(encoding="utf-8"))
+            if job.conversation:
+                chat.append(self.out_dir, job.conversation, {"kind": job.kind, "question": job.question, "run_id": rid})
             job.finish(rid, data.get("timings_s"))
+        except Stopped:
+            job.finish(None, None, "Stopped before the answer was complete.", state="stopped")
+        except Exception as exc:                 # noqa: BLE001 - any failure is shown on the running page
+            job.finish(None, None, f"{type(exc).__name__}: {exc}")
+
+
+    def _ask(self, job: Job) -> None:
+        """An ask turn over the conversation's current run: one checked `chat_answer` call (5.12)."""
+        try:
+            job.enter("answer")
+            client = ProgressClient(self.client_factory(), job)
+            data, _ = self.store.data(job.parent)
+            turn = chat.ask(self.store.view(job.parent), data, job.question, client)
+            chat.append(self.out_dir, job.conversation, turn)
+            removed = len(turn["answer"]["removed"])
+            job.add_note(f"Checked the answer: {len(turn['answer']['claims'])} claim(s) shown"
+                         + (f", {removed} removed (unsupported figure or quote)." if removed else "."))
+            job.finish(job.parent, None)
         except Stopped:
             job.finish(None, None, "Stopped before the answer was complete.", state="stopped")
         except Exception as exc:                 # noqa: BLE001 - any failure is shown on the running page
@@ -413,21 +466,158 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
         job = jobs.start(text, text)
         return RedirectResponse(f"/jobs/{job.id}", status_code=303)
 
+    def _clarify_input(v: dict, form, follow_up: str) -> tuple[list[dict], str] | None:
+        """The answered questions and added detail of a clarify / reassess form; None when too long."""
+        answers = [{"question": q["question"], "answer": str(form.get(f"answer_{q['id']}", "")).strip()}
+                   for q in v.get("questions", [])]
+        given = [a for a in answers if a["answer"]]
+        if _too_long(follow_up, *(a["answer"] for a in given)):
+            return None
+        return given, "\n".join([f"{a['question']} {a['answer']}" for a in given] + ([follow_up] if follow_up else []))
+
     @app.post("/runs/{rid}/clarify")
     async def clarify(request: Request, rid: str):
         v = store.view(rid)
         form = await request.form()
         follow_up = str(form.get("followup", "")).strip()
-        answers = [{"question": q["question"], "answer": str(form.get(f"answer_{q['id']}", "")).strip()}
-                   for q in v.get("questions", [])]
-        given = [a for a in answers if a["answer"]]
-        if _too_long(follow_up, *(a["answer"] for a in given)):
+        parsed = _clarify_input(v, form, follow_up)
+        if parsed is None:
             return page(request, "error.html", status_code=422, message=TOO_LONG, back=f"/runs/{rid}")
-        if not given and not follow_up:
+        given, question = parsed
+        if not question:
             return RedirectResponse(f"/runs/{rid}#sharpen", status_code=303)
-        question = "\n".join([f"{a['question']} {a['answer']}" for a in given] + ([follow_up] if follow_up else []))
         job = jobs.start(view.answers_to_facts(v["enquiry"], given, follow_up), question, parent=rid)
         return RedirectResponse(f"/jobs/{job.id}", status_code=303)
+
+    # ------------------------------------------------------------------------------- conversations
+    live = jobs.out_dir
+
+    def _conversation(cid: str) -> dict:
+        conv = chat.load(live, cid)
+        if conv is None:
+            raise HTTPException(404, "unknown conversation")
+        return conv
+
+    def _usable(rid: str | None) -> dict | None:
+        """The current run's view, or None when there is none to ask about (missing, off topic, incomplete)."""
+        if rid is None:
+            return None
+        try:
+            v = store.view(rid)
+        except HTTPException:
+            return None
+        return None if v.get("off_topic") or v.get("incomplete") else v
+
+    def _thread(conv: dict) -> list[dict]:
+        """Display model of each turn: its run view, What changed for a reassess, the checked answer for an ask."""
+        turns, previous, changed_by_run = [], None, {}
+        last_run_turn = max((i for i, t in enumerate(conv.get("turns", [])) if t["kind"] != "ask"), default=None)
+        for i, t in enumerate(conv.get("turns", [])):
+            item = {"n": i, "kind": t["kind"], "question": t.get("question", ""), "p": f"t{i}-", "v": None,
+                    "run_id": t.get("run_id"), "changed": None, "current": False}
+            if t.get("run_id"):
+                try:
+                    item["v"] = store.view(t["run_id"])
+                except HTTPException:
+                    item["missing"] = True
+            if t["kind"] != "ask":
+                if t["kind"] == "reassess" and previous is not None and item["v"] is not None:
+                    item["changed"] = view.compare(previous, item["v"])
+                    changed_by_run[t["run_id"]] = item["changed"]
+                previous = item["v"] or previous
+                item["current"] = i == last_run_turn          # only the latest run takes answers (reassess)
+                if not item["question"] and item["v"] is not None:
+                    item["question"] = item["v"]["enquiry"]
+            else:
+                item["answer"] = t.get("answer") or {}
+                item["changed"] = changed_by_run.get(t.get("run_id"))
+                item["checks"] = t.get("checks") or {}
+            turns.append(item)
+        return turns
+
+    @app.post("/chat")
+    def chat_start(request: Request, enquiry: str = Form("")):
+        text = enquiry.strip()
+        if not text or _too_long(text):
+            return page(request, "start.html", status_code=422, q=text[:MAX_CHARS], examples=list(OFF_TOPIC_EXAMPLES),
+                        error=TOO_LONG if text else "Describe what you want to measure first.")
+        if jobs.running() is not None:
+            raise HTTPException(409, "A question is already being assessed; wait for it or stop it.")
+        conv = chat.new_conversation(live)
+        jobs.start(text, text, kind=chat.route(None, "message"), conversation=conv["id"])
+        return RedirectResponse(f"/chat/{conv['id']}", status_code=303)
+
+    @app.post("/runs/{rid}/chat")
+    def chat_from_run(rid: str):
+        v = store.view(rid)
+        conv = chat.new_conversation(live, seed_run=rid, question=v["enquiry"])
+        return RedirectResponse(f"/chat/{conv['id']}", status_code=303)
+
+    @app.get("/chat/{cid}", response_class=HTMLResponse)
+    def chat_page(request: Request, cid: str):
+        conv = _conversation(cid)
+        busy = jobs.running()
+        mine = busy if busy is not None and busy.conversation == cid else None
+        return page(request, "conversation.html", conv=conv, turns=_thread(conv), cid=cid,
+                    job=mine.snapshot() if mine else None, poll=POLL_SECONDS,
+                    current=_usable(chat.current_run(conv)))
+
+    @app.post("/chat/{cid}/message")
+    def chat_message(request: Request, cid: str, text: str = Form("")):
+        conv = _conversation(cid)
+        text = text.strip()
+        if not text:
+            return RedirectResponse(f"/chat/{cid}", status_code=303)
+        if _too_long(text):
+            return page(request, "error.html", status_code=422, message=TOO_LONG, back=f"/chat/{cid}")
+        rid = chat.current_run(conv)
+        kind = chat.route(conv, "message") if _usable(rid) is not None else "assess"
+        if kind == "ask":
+            jobs.start("", text, parent=rid, kind="ask", conversation=cid)
+        else:                                    # nothing usable to ask about: assess the text as an enquiry
+            jobs.start(text, text, kind="assess", conversation=cid)
+        return RedirectResponse(f"/chat/{cid}", status_code=303)
+
+    @app.post("/chat/{cid}/reassess")
+    async def chat_reassess(request: Request, cid: str):
+        conv = _conversation(cid)
+        rid = chat.current_run(conv)
+        v = _usable(rid)
+        form = await request.form()
+        follow_up = " ".join(str(form.get(k, "")).strip() for k in ("followup", "text")).strip()
+        if v is None or chat.route(conv, "reassess") != "reassess":
+            return RedirectResponse(f"/chat/{cid}", status_code=303)
+        parsed = _clarify_input(v, form, follow_up)
+        if parsed is None:
+            return page(request, "error.html", status_code=422, message=TOO_LONG, back=f"/chat/{cid}")
+        given, question = parsed
+        if not question:
+            return RedirectResponse(f"/chat/{cid}", status_code=303)
+        jobs.start(view.answers_to_facts(v["enquiry"], given, follow_up), question, parent=rid, kind="reassess",
+                   conversation=cid)
+        return RedirectResponse(f"/chat/{cid}", status_code=303)
+
+    @app.get("/chat/{cid}/turns/{n}/cite/{k}", response_class=HTMLResponse)
+    def chat_cite(request: Request, cid: str, n: int, k: str):
+        """Source panel of one citation of an ask answer: claim index and citation index, `<claim>-<cite>`."""
+        conv = _conversation(cid)
+        turns = conv.get("turns", [])
+        ci, _, cj = k.partition("-")
+        try:
+            c = turns[n]["answer"]["claims"][int(ci)]["citations"][int(cj)]
+        except (IndexError, KeyError, ValueError, TypeError):
+            raise HTTPException(404, "unknown citation") from None
+        v = store.view(turns[n]["run_id"])
+        if c["kind"] == "external":
+            ext = next((x for x in v["citations"].values() if x["kind"] == "external" and x["label"] == c["label"]), None)
+            if ext is None:
+                raise HTTPException(404, "unknown citation")
+            return page(request, "cite.html", v=v, c=ext, src=None)
+        src = view.source(c["doc"], c["page"], c["quote"])
+        shown = {"kind": "supplied", "label": c["label"], "verified": bool(src and src["verified"]),
+                 "quote_status": c.get("quote_status", ""), "precedent": c.get("precedent", False),
+                 "quote": c["quote"]}
+        return page(request, "cite.html", v=v, c=shown, src=src)
 
     def _job(jid: str) -> Job:
         job = jobs.jobs.get(jid)
@@ -448,7 +638,7 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
             return HTMLResponse('<p class="flag" id="job-steps">This question is no longer tracked (the assistant '
                                 'was restarted). <a href="/">Start again</a></p>', status_code=286)
         snap = _job(jid).snapshot()
-        target = f"/runs/{snap['result']}" if snap["state"] == "done" else None
+        target = snap["target"]
         htmx = request.headers.get("HX-Request") == "true"
         if target and not htmx:
             return RedirectResponse(target, status_code=303)

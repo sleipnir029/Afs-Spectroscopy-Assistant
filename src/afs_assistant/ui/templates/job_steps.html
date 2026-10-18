@@ -3,7 +3,7 @@
 <section id="job-steps" class="progress" aria-labelledby="progress-title"{% if job.state == 'running' %} hx-get="/jobs/{{ job.id }}" hx-trigger="every {{ poll }}s" hx-swap="outerHTML"{% endif %}>
   <div class="progress-head">
     <h2 id="progress-title" class="kicker kicker-accent">{{ {'running': 'Working on it', 'done': 'Done', 'failed': 'The run failed', 'stopped': 'Stopped'}[job.state] }}</h2>
-    <p class="timer"><span class="mono">{{ job.clock }}</span> <span class="muted">elapsed · usually a few minutes</span></p>
+    <p class="timer"><span class="mono">{{ job.clock }}</span> <span class="muted">elapsed · {{ 'usually under a minute' if job.kind == 'ask' else 'usually a few minutes' }}</span></p>
   </div>
   {% if job.understood %}
   <div class="understood">
@@ -34,8 +34,8 @@
     {% if job.state == 'running' %}
       {% if job.stop_requested %}<p class="muted">Stopping after the current step…</p>
       {% else %}<form method="post" action="/jobs/{{ job.id }}/stop"><button class="btn-quiet" type="submit">Stop</button></form>{% endif %}
-    {% elif job.state == 'done' %}<p>Done. <a href="/runs/{{ job.result }}">Open the answer</a></p>
-    {% else %}<p class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ job.error }}</p><p><a href="{{ '/runs/' ~ job.parent if job.parent else '/' }}">Back</a></p>{% endif %}
+    {% elif job.state == 'done' %}<p>Done. <a href="{{ job.target }}">Open the answer</a></p>
+    {% else %}<p class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ job.error }}</p><p><a href="{{ job.back }}">Back</a></p>{% endif %}
   </div>
 </section>
 {% endblock %}
