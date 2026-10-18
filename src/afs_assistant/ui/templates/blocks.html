@@ -183,11 +183,12 @@
 </dl>
 {%- endmacro %}
 
-{# Suggested follow-ups: generic questions that fill the composer (an enhancement; hidden without script). #}
-{% macro follow_chips() -%}
-{% if not busy %}
+{# Suggested follow-ups built from the current run (view.follow_ups); they fill the composer (an enhancement;
+   hidden without script and while any job runs). #}
+{% macro follow_chips(chips) -%}
+{% if chips and not busy %}
 <div class="chips chips-follow" role="group" aria-label="Suggested follow-ups">
-  {% for s in ['Why this method and not another?', 'What are the main risks?', 'What would the first test look like?', 'Compare the options'] %}
+  {% for s in chips %}
   <button type="button" class="chip" data-ask="{{ s }}">{{ s }}</button>
   {% endfor %}
 </div>

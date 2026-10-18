@@ -576,9 +576,10 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
         conv = _conversation(cid)
         busy = jobs.running()
         mine = busy if busy is not None and busy.conversation == cid else None
+        current = _usable(chat.current_run(conv))
         return page(request, "conversation.html", conv=conv, turns=_thread(conv), cid=cid,
-                    job=mine.snapshot() if mine else None, poll=POLL_SECONDS,
-                    current=_usable(chat.current_run(conv)))
+                    job=mine.snapshot() if mine else None, poll=POLL_SECONDS, current=current,
+                    chips=view.follow_ups(current) if current else [])
 
     @app.post("/chat/{cid}/message")
     def chat_message(request: Request, cid: str, text: str = Form("")):

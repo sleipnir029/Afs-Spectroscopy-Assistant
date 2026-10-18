@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import flag, meter, stamp, question_block %}
+{% from "macros.html" import flag, meter, stamp, question_block, tags %}
 {% import "blocks.html" as blocks with context %}
 {% block title %}{{ current.title if current else 'Conversation' }} · AFS Spectroscopy Assistant{% endblock %}
 {% block body_class %}has-composer{% endblock %}
@@ -15,13 +15,16 @@
 {% endif %}{% endblock %}
 
 {# Pinned strip: the current recommendation, always in view; it follows the latest assessment. #}
-{% block pinned %}{% if current %}{% set rec = current.recommendation %}
+{% block pinned %}{% if current %}{% set rec = current.recommendation %}{% set cur = turns | selectattr('current') | first %}
 <div class="pinned" role="region" aria-label="Current recommendation">
   <p class="pinned-in">
     <span class="pin-v">Current · <span class="pin-n">v{{ turns | rejectattr('kind', 'equalto', 'ask') | list | length }}</span></span>
     <b class="pin-head">{{ rec.headline }}</b>
     {{ stamp(current.status) }}
-    {% if rec.confidence %}<span class="pin-conf">Confidence {{ rec.confidence.level }}{% if rec.confidence.plain %} <span class="muted">· {{ rec.confidence.plain | join('; ') }}</span>{% endif %}</span>{% endif %}
+    {% if rec.confidence %}{% set pin = rec.confidence.pin or [] %}{% set other = pin | rejectattr('open') | map(attribute='text') | list %}
+    <span class="pin-conf">Confidence {{ rec.confidence.level }}{% if other %} <span class="muted">· {{ other | join('; ') }}</span>{% endif %}</span>
+    {% for r in pin | selectattr('open') %}{% if cur and current.top_questions %}<a class="pin-q" href="#{{ cur.p }}sharpen" title="Open questions under Help us sharpen this">{{ r.text }}</a>{% else %}<span class="pin-q">{{ r.text }}</span>{% endif %}{% endfor %}
+    {% endif %}
   </p>
 </div>
 {% endif %}{% endblock %}
@@ -54,19 +57,33 @@
       {% elif v.incomplete %}
         <section class="rec" aria-label="Incomplete run"><h2 class="kicker">Incomplete run</h2><p class="rec-head">{{ v.incomplete }}</p></section>
       {% else %}
+        {# The current assessment is shown in full; an earlier one keeps its headline and What changed, and
+           folds the rest into a closed row, so the thread reads as a conversation, not stacked reports. #}
         {% set rec = v.recommendation %}
         {% set ext = rec.external_support or [] %}
-        <section class="rec" aria-labelledby="{{ t.p }}rec-title">
-          <h2 class="kicker kicker-accent">Our recommendation</h2>
-          <h3 id="{{ t.p }}rec-title" class="verdict">{{ rec.headline }}</h3>
-          <p class="dek">{{ rec.text }} {{ flag(rec.flag) }}{% if rec.cites or ext %}<sup class="refs">{% for cid in rec.cites + ext %}<a class="ref" href="#{{ t.p }}n{{ ns.ref + loop.index }}" data-ref="{{ t.p }}n{{ ns.ref + loop.index }}" aria-label="source {{ ns.ref + loop.index }}">{{ ns.ref + loop.index }}</a>{% endfor %}</sup>{% endif %}</p>
+        {% set status_dl %}
           <dl class="status-dl">
-            <dt>Status</dt><dd>{{ stamp(v.status) }}{{ v.status.label }}{% if v.status.reason %}. {{ v.status.reason }}{% endif %} {{ flag(v.status.flag) }}{% if v.still_open %} <span class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ v.still_open | length }} check(s) still open</span>{% endif %}</dd>
+            <dt>Status</dt><dd>{{ v.status.label }}{% if v.status.reason %}. {{ v.status.reason }}{% endif %} {{ flag(v.status.flag) }}{% if v.still_open %} <span class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ v.still_open | length }} check(s) still open</span>{% endif %}</dd>
             {% if rec.confidence %}<dt>Confidence</dt><dd>{{ meter(rec.confidence.level) }} <strong>{{ rec.confidence.level }}</strong>{% if rec.confidence.plain %}: {{ rec.confidence.plain | join('; ') }}{% endif %}</dd>{% endif %}
             <dt>Next step</dt><dd>{{ v.proposal.next_step }} {{ flag(v.proposal.flags.next) }}</dd>
           </dl>
+        {% endset %}
+        <section class="rec" aria-labelledby="{{ t.p }}rec-title">
+          <h2 class="kicker kicker-accent">{{ 'Our recommendation' if t.current else 'Earlier recommendation' }}</h2>
+          <h3 id="{{ t.p }}rec-title" class="verdict">{{ rec.headline }}</h3>
+          {% if t.current %}
+          <p class="dek">{{ rec.text }} {{ flag(rec.flag) }}{% if rec.cites or ext %}<sup class="refs">{% for cid in rec.cites + ext %}<a class="ref" href="#{{ t.p }}n{{ ns.ref + loop.index }}" data-ref="{{ t.p }}n{{ ns.ref + loop.index }}" aria-label="source {{ ns.ref + loop.index }}">{{ ns.ref + loop.index }}</a>{% endfor %}</sup>{% endif %}</p>
+          {{ status_dl }}
+          {% endif %}
         </section>
         {% if t.changed %}{{ blocks.changed_rows(t.changed, t.p, 'v' ~ (ns.ver - 1), 'v' ~ ns.ver) }}{% endif %}
+        {% if not t.current %}
+        <details class="row turn-full">
+          <summary><span class="row-t">v{{ ns.ver }} in full</span><span class="row-n mono">a later version replaces it</span></summary>
+          <div class="row-body">
+          <p class="dek">{{ rec.text }} {{ flag(rec.flag) }} {{ tags(v, rec.cites + ext) }}</p>
+          {{ status_dl }}
+        {% endif %}
         {% if v.options %}{{ blocks.options_table(v, t.p) }}{{ blocks.setup_block(v, t.p) }}{% endif %}
         {{ blocks.questions(v, ('/chat/' ~ cid ~ '/reassess') if t.current else none, t.p) }}
         <section class="more" aria-label="More detail">
@@ -82,16 +99,17 @@
             <div class="row-body">{{ blocks.status(v) }}</div></details>
         </section>
         <p class="full-link"><a href="/runs/{{ v.key }}">Open the full answer</a> <span class="muted">(literature, how it was made, technical detail, downloads)</span></p>
-        {% if last and current %}{{ blocks.follow_chips() }}{% endif %}
+        {% if not t.current %}</div></details>{% endif %}
+        {% if last and current %}{{ blocks.follow_chips(chips) }}{% endif %}
       {% endif %}
       </div>
-      {% if v and not v.off_topic and not v.incomplete %}
+      {% if v and not v.off_topic and not v.incomplete and t.current %}
       <aside class="t-side" aria-label="Sources beside this answer">
         {% for cid in rec.cites + ext %}{% set c = v.citations[cid] %}{% set k = ns.ref + loop.index %}
         <div class="mnote{{ ' mnote-sec' if c.kind == 'external' }}" id="{{ t.p }}n{{ k }}">
-          <p class="mnote-src"><b>{{ k }}</b><a href="/runs/{{ v.key }}/cite/{{ cid }}" hx-get="/runs/{{ v.key }}/cite/{{ cid }}" hx-target="#{{ t.p }}n{{ k }}-ctx" hx-swap="innerHTML" data-note aria-expanded="false" aria-controls="{{ t.p }}n{{ k }}-ctx" title="Show the quote in its page and the check result">{{ c.label }}</a>{% if c.kind == 'external' %} <span class="ext-note">external, not AFS material</span>{% endif %}</p>
+          <p class="mnote-src"><b>{{ k }}</b><a href="/runs/{{ v.key }}/cite/{{ cid }}" hx-get="/runs/{{ v.key }}/cite/{{ cid }}" hx-target="#{{ t.p }}n{{ k }}-ctx" hx-swap="innerHTML" data-note aria-expanded="false" aria-controls="{{ t.p }}n{{ k }}-ctx" title="{{ 'Not verified: show' if c.kind == 'supplied' and not c.verified else 'Show' }} the quote in its page and the check result">{{ c.label }}</a>{% if c.kind == 'external' %} <span class="ext-note">external, not AFS material</span>{% endif %}{% if c.kind == 'supplied' and not c.verified %} <span class="mnote-mark flag">not verified</span>{% endif %}{% if c.precedent %} <span class="mnote-mark precedent">precedent only</span>{% endif %}</p>
           {% if c.kind == 'table' %}<span>{{ v.cost_note }}</span>{% else %}<q>{{ c.quote }}</q>{% endif %}
-          <div class="mnote-ctx" id="{{ t.p }}n{{ k }}-ctx"></div>
+          <div class="mnote-ctx" id="{{ t.p }}n{{ k }}-ctx" aria-live="polite"></div>
         </div>
         {% endfor %}
         {% set best = v.options | selectattr('is_best') | first %}
@@ -137,15 +155,15 @@
           {% endif %}
           {% endif %}
         </section>
-        {% if last and current %}{{ blocks.follow_chips() }}{% endif %}
+        {% if last and current %}{{ blocks.follow_chips(chips) }}{% endif %}
       </div>
       {% set cn = namespace(k=ns.ref) %}
       <aside class="t-side" aria-label="Sources beside this answer">
         {% for c in t.answer.claims %}{% set ci = loop.index0 %}{% for x in c.citations %}{% set cn.k = cn.k + 1 %}{% set url = '/chat/' ~ cid ~ '/turns/' ~ t.n ~ '/cite/' ~ ci ~ '-' ~ loop.index0 %}
         <div class="mnote{{ ' mnote-sec' if x.kind == 'external' }}" id="{{ t.p }}n{{ cn.k }}">
-          <p class="mnote-src"><b>{{ cn.k }}</b><a href="{{ url }}" hx-get="{{ url }}" hx-target="#{{ t.p }}n{{ cn.k }}-ctx" hx-swap="innerHTML" data-note aria-expanded="false" aria-controls="{{ t.p }}n{{ cn.k }}-ctx" title="Show the quote in its page and the check result">{{ x.label }}</a>{% if x.kind == 'external' %} <span class="ext-note">external, not AFS material</span>{% endif %}</p>
+          <p class="mnote-src"><b>{{ cn.k }}</b><a href="{{ url }}" hx-get="{{ url }}" hx-target="#{{ t.p }}n{{ cn.k }}-ctx" hx-swap="innerHTML" data-note aria-expanded="false" aria-controls="{{ t.p }}n{{ cn.k }}-ctx" title="Show the quote in its page and the check result">{{ x.label }}</a>{% if x.kind == 'external' %} <span class="ext-note">external, not AFS material</span>{% endif %}{% if x.precedent %} <span class="mnote-mark precedent">precedent only</span>{% endif %}</p>
           <q>{{ x.quote }}</q>
-          <div class="mnote-ctx" id="{{ t.p }}n{{ cn.k }}-ctx"></div>
+          <div class="mnote-ctx" id="{{ t.p }}n{{ cn.k }}-ctx" aria-live="polite"></div>
         </div>
         {% endfor %}{% endfor %}
       </aside>
@@ -175,11 +193,11 @@
   <div class="composer-grid">
     <form class="composer-in" method="post" action="/chat/{{ cid }}/message">
       <label for="ask" class="sr-only">{{ 'Ask a follow-up question' if current else 'Describe what you want to measure' }}</label>
-      <input id="ask" name="text" type="text" autocomplete="off" maxlength="{{ MAX_CHARS }}" placeholder="{{ 'Ask a follow-up, or add what the customer told you' if current else 'Describe what you want to measure' }}"{% if busy or job %} disabled{% endif %}>
+      <input id="ask" name="text" type="text" autocomplete="off" maxlength="{{ MAX_CHARS }}" aria-describedby="composer-hint" placeholder="{{ 'Ask a follow-up, or add what the customer told you' if current else 'Describe what you want to measure' }}"{% if busy or job %} disabled{% endif %}>
       <button class="btn" type="submit"{% if busy or job %} disabled{% endif %}>Send</button>
       {% if current %}<button class="btn-quiet" type="submit" formaction="/chat/{{ cid }}/reassess" title="Run the full assessment again with this detail added"{% if busy or job %} disabled{% endif %}>Re-assess</button>{% endif %}
     </form>
-    <p class="composer-hint">{% if current %}Send asks about the assessment. Re-assess runs it again with the new detail (v{{ turns | rejectattr('kind', 'equalto', 'ask') | list | length + 1 }}).{% else %}Send starts an assessment.{% endif %}</p>
+    <p class="composer-hint" id="composer-hint" aria-live="polite">{% if busy and not job %}Another question is being assessed. <a href="/jobs/{{ busy.id }}">Follow it</a>; you can send when it is done.{% elif job %}Working on this question; you can send when it is done.{% elif current %}<span class="hint-long">Send asks about the assessment. Re-assess runs it again with the new detail (v{{ turns | rejectattr('kind', 'equalto', 'ask') | list | length + 1 }}).</span><span class="hint-short">Send asks · Re-assess runs v{{ turns | rejectattr('kind', 'equalto', 'ask') | list | length + 1 }}</span>{% else %}Send starts an assessment.{% endif %}</p>
   </div>
 </div>
 {% endblock %}

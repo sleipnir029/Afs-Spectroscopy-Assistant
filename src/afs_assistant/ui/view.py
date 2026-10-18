@@ -126,6 +126,41 @@ def plain_reasons(reasons: list[str], top_ids: list[str]) -> list[str]:
     return out
 
 
+def pin_reasons(reasons: list[str], top_ids: list[str]) -> list[dict]:
+    """The pinned strip's short form of the confidence reasons: an open question reads 'Q1 open' (`open`: the
+    strip links it to the current turn's questions); other reasons stay as they are."""
+    out = []
+    for r in reasons:
+        m = _OPEN_Q.match(r)
+        if not m:
+            out.append({"text": r, "open": False})
+            continue
+        nums = [f"Q{top_ids.index(q) + 1}" if q in top_ids else q for q in m.group("ids").split(", ")]
+        out.append({"text": ", ".join(nums) + " open", "open": True})
+    return out
+
+
+FOLLOW_DEFAULTS = ("What are the main risks?", "What would the first test look like?")
+
+
+def follow_ups(v: dict, limit: int = 4) -> list[str]:
+    """Suggested follow-up questions built from the run's own options and questions (generic wording)."""
+    opts = v.get("options") or []
+    best = next((o for o in opts if o["is_best"]), None)
+    others = [o for o in opts if o is not best]
+    out = []
+    differing = [o for o in others if best and o["short"] != best["short"]]
+    disjoint = [o for o in differing if not set(o["short"].split(" + ")) & set(best["short"].split(" + "))]
+    alt = (disjoint or differing or [None])[0]
+    if alt:
+        out.append(f"Why {best['short']} and not {alt['short']}?")
+    out += [f"Show the setup for the {o['tab']} option" for o in others]
+    if v.get("top_questions"):
+        out.append("How would the answer to question 1 change the recommendation?")
+    out += [s for s in FOLLOW_DEFAULTS if s not in out]
+    return out[:limit]
+
+
 def headline(a: Assessment, option) -> str:
     """One sentence naming method and probe of the proposed option (code wording, not model text)."""
     if option is None:
@@ -313,9 +348,10 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
         narrow_svg, narrow_notes = diagrams.setup(drawn, o, slots, NARROW)
         options.append({
             "id": o.id, "tier": o.tier, "tier_label": TIER_LABEL[o.tier], "tab": o.tier.capitalize(),
-            "tab_sub": f"{short} · {TAB_SUB.get(o.tier, '')}".rstrip(" ·"), "is_best": o is best,
+            "tab_sub": f"{short} · {TAB_SUB.get(o.tier, '')}".rstrip(" ·"), "is_best": o is best, "short": short,
             "methods": methods, "confidence": {"level": c.get("level", ""), "reasons": c.get("reasons", []),
-                                               "plain": plain_reasons(c.get("reasons", []), top_ids)},
+                                               "plain": plain_reasons(c.get("reasons", []), top_ids),
+                                               "pin": pin_reasons(c.get("reasons", []), top_ids)},
             "cost": {"label": cost.get("label", ""), "class": cost.get("cost_class", ""), "cites": reg.table(cost)},
             "ease": words(o.ease_of_use), "maintenance": words(o.maintenance),
             "performance_fit": words(o.performance_fit), "parameters": list(o.parameter_ids),
