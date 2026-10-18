@@ -1,0 +1,277 @@
+{
+ "decision_status": "insufficient_information",
+ "status_reason": "The customer is exploring an in situ spectroscopy pilot for glucose and lactate in a cell culture but has not yet selected a technique, probe, or calibration strategy, requiring initial clarification and comparative testing.",
+ "premise_checks": [],
+ "requirements_stated": [
+  "In situ spectroscopy pilot for a cell culture process in an aqueous medium",
+  "Measure glucose and lactate to replace delayed laboratory measurements",
+  "Check against existing laboratory measurements",
+  "Account for changing medium and cell population during the run"
+ ],
+ "key_unknowns": [
+  "Target concentration ranges for glucose and lactate",
+  "Process temperature, pressure, and bioreactor port compatibility",
+  "Exact spectroscopic technique and probe geometry",
+  "Calibration strategy and reference measurement frequency",
+  "Presence of fluorescent metabolites or background interferences"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the expected concentration ranges and required detection limits for glucose and lactate in the cell culture medium?",
+   "why_it_matters": "Concentration levels determine the required sensitivity and pathlength or optical configuration for the spectroscopy method.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What are the physical dimensions and port standards of the bioreactor available for probe installation?",
+   "why_it_matters": "Reactor constraints dictate whether immersion probes or flow cells can be physically installed.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Are there existing reference lab methods (such as HPLC or enzymatic assays) available to generate training data for chemometric calibration?",
+   "why_it_matters": "Quantitative in-line spectroscopy requires independent reference measurements to build and validate calibration models.",
+   "affects": [
+    "status",
+    "method"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Does the cell culture exhibit significant autofluorescence or turbidity changes that could interfere with optical measurements?",
+   "why_it_matters": "High fluorescence can swamp weak Raman signals or require specialized optical filtering.",
+   "affects": [
+    "technique",
+    "method"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy is particularly well-suited for aqueous environments because water exhibits low absorbance for water molecules compared to infrared methods, enabling direct metabolite tracking.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR transmission or transflection probes can be deployed for aqueous liquid process streams, providing an alternative vibrational spectroscopy approach.",
+   "conditions": "Applies if the sample turbidity and optical pathlength can be maintained without signal saturation.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion Raman probe or NIR transmission/transflection probe mounted directly into the bioreactor vessel.",
+  "location": "In-line directly in the aqueous cell culture process flow or reactor.",
+  "fiber_link": "Fiber optic cable connecting the bioreactor probe to the spectrometer located safely away from process vibration and moisture.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 3,
+    "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "The use of fiber optics is critical here, as it allows the sensitive spectrometers to be located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman scattering measured using a laser excitation wavelength and Raman shift expressed in cm-1; actual usable range depends on the specific spectrometer and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Raman signals are weak and can be swamped by fluorescence background from the cell culture medium.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "Furthermore, observing Raman bands is often complicated by light scattering from the illuminating laser, and for many organic compounds, by the superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Changes in cell population and medium composition over time can cause physical variations that affect spectral baselines, requiring robust chemometric calibration.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Extracting the information necessary for quantitative and qualitative analysis from optical spectra requires special methods for analyzing multidimensional data, called the above-mentioned term chemometrics.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative sample spectra across the expected range of cell culture states, nutrient levels, and metabolic variations.",
+    "purpose": "Capture the chemical and physical variability of the live process.",
+    "citations": []
+   },
+   {
+    "step": "Acquire independent reference measurements for glucose and lactate using existing laboratory methods for each sampled time point.",
+    "purpose": "Provide ground truth data for calibration model development.",
+    "citations": []
+   },
+   {
+    "step": "Test single-method spectroscopic configurations (Raman vs. NIR) to evaluate signal quality and absence of interferences.",
+    "purpose": "Determine the optimal single method before considering combinations.",
+    "citations": []
+   },
+   {
+    "step": "Build initial partial least-squares (PLS) calibration models and validate them using cross-validation or held-out validation batches.",
+    "purpose": "Assess prediction accuracy against customer-defined criteria.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent laboratory reference measurements of glucose and lactate from extracted samples.",
+  "decision_basis": "Go/no-go based on achieving customer-defined prediction error thresholds and calibration robustness across changing cell populations."
+ },
+ "assumptions": [
+  "The cell culture medium is accessible via standard bioreactor optical ports or immersion probes.",
+  "Laboratory reference measurements for glucose and lactate are sufficiently frequent and accurate to train calibration models."
+ ],
+ "not_in_sources": [
+  "Specific customer bioreactor dimensions, target concentration numerical ranges, and operating temperatures."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Glucose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Core target analyte to monitor nutrient depletion in real time.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Lactate concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Core target analyte to monitor metabolic byproduct accumulation.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Standard immersion Raman probe setup",
+   "maintenance": "Routine optical window cleaning",
+   "performance_fit": "Directly measures metabolites with low water interference",
+   "cost_drivers": "Single Raman spectrometer and laser probe hardware",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Configurable multi-method evaluation setup",
+   "maintenance": "Probe maintenance and chemometric model upkeep",
+   "performance_fit": "Allows comparative testing of Raman and NIR to find the best fit for aqueous cell culture",
+   "cost_drivers": "Spectrometer evaluation package and chemometric software",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "Calibration models using partial least-squares (PLS) regression must be developed using spectra paired with independent reference measurements, and re-validated as the cell population changes.",
+ "realtime_tracking_note": "In-line fiber probes enable real-time tracking of glucose and lactate directly in the bioreactor, bypassing sampling delays.",
+ "future_direction": "Integration of supplementary biomass tracking using UV-Vis turbidity or fluorescence once the primary metabolite models are established.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "Definitive testing results showing clear superiority of one method or specific reactor geometric constraints ruling out probe options.",
+  "next_step": "Conduct multi-method laboratory trials comparing Raman and NIR probes on representative cell culture samples against reference lab assays."
+ },
+ "brief_answer": "To monitor glucose and lactate in your cell culture without sampling delays, start with multi-method laboratory trials testing Raman and NIR spectroscopy. Raman is well-suited for aqueous media due to low water interference. You will need to pair in-line spectral acquisition with independent laboratory reference measurements to build robust chemometric calibration models as the cell population changes."
+}
