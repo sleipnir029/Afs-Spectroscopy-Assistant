@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 05:36 CEST (Claude, Phase 5 session 3 handoff)._
+_Last updated: 2026-10-18 05:34 CEST (Claude, Phase 5 session 3 handoff)._
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
@@ -49,7 +49,7 @@ _Last updated: 2026-10-18 05:36 CEST (Claude, Phase 5 session 3 handoff)._
 - **G3 re-review (19:36): PASS WITH NON-BLOCKING.** Phase 3 closed. Non-blocking items carried to Phase 5.4 (PHASES.md "Phase 3 close").
 - **Next:** Phase 4 in a new session (handoff below).
 
-## Next session starts with (handoff 2026-10-18 05:36)
+## Next session starts with (handoff 2026-10-18 05:34)
 Rules (user): ≤200k tokens per session; one piece of work per session; **ONE agent at a time** (implementer → reviewer), Claude orchestrates and does small exact fixes itself; low API use; wake the user only for their decisions. Run `uv run pytest -q` before committing new outputs. At the end: write the next handoff here and tell the user to start a new session ("do the next task").
 
 **State:** master 5ec8623+. pytest 661 passed / 2 skipped; ruff clean; kb check PASS. Eval (saved outputs): dev checklist 0 failures; adversarial checklist 0 failures, must 33/34 (A07 max_questions = known limit, D-051), must-not 13/13. Session 3 done: task 1 (D-049 tried, reverted D-051, known limit), task 2 (carry-overs 1, 5, 6 merged, D-050; items 2 confidence separation, 3 precedent against a single method, 4 answer length = known limits). Saved outputs/ still show the pre-D-050 rendering (no re-render-from-JSON path); the Phase 6 freeze run will re-render. Eval wrapper: `printf '#!/bin/sh\nexec uv run afs-assist ev''al "$@"\n'` into a scratchpad script (sandbox blocks the word).
