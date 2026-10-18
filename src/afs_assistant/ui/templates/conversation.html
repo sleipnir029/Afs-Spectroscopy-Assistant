@@ -109,6 +109,9 @@
         <section class="chat-answer" aria-label="Answer">
           {% if v %}<p class="chat-answer-head muted small">about the assessment “{{ v.title | truncate(90) }}”{% if t.run_id != (current.key if current else none) %} (an earlier version){% endif %}</p>{% endif %}
           {% set cn = namespace(k=ns.ref) %}
+          {% if t.failed %}
+          <p class="flag">This question was not answered ({{ t.error }}). You can ask it again.</p>
+          {% else %}
           <ul class="claims">
             {% for c in t.answer.claims %}
             <li class="claim claim-{{ c.basis }}" id="{{ t.p }}c{{ loop.index0 }}">{{ c.text }}{% if c.citations %}<sup class="refs">{% for x in c.citations %}{% set cn.k = cn.k + 1 %}<a class="ref" href="#{{ t.p }}n{{ cn.k }}" data-ref="{{ t.p }}n{{ cn.k }}" aria-label="source {{ cn.k }}">{{ cn.k }}</a>{% endfor %}</sup>{% endif %}
@@ -117,6 +120,9 @@
             {% endfor %}
             {% for r in t.answer.removed %}<li class="removed">{{ r.line }}</li>{% endfor %}
           </ul>
+          {% if v and t.answer.claims | selectattr('basis', 'equalto', 'not_in_sources') | list and not (v.external and v.external.count) %}
+          <p class="muted small lit-gap">The supplied sources and this assessment's literature do not cover this. Re-assessing searches literature only for gaps found in the assessment.</p>
+          {% endif %}
           <p class="next-step"><span class="muted">Proposed next step:</span> {{ t.answer.next_step }}</p>
           {% if v %}
           {% for b in t.answer.blocks %}<div class="chat-block">{{ blocks.block(v, b, t.p ~ 'b' ~ loop.index0 ~ '-', t.changed) }}</div>{% endfor %}
@@ -128,6 +134,7 @@
             <div class="form-row"><button class="btn" type="submit"{% if busy %} disabled{% endif %}>Re-assess with these facts</button>
               <span class="muted small">Runs the full assessment again with these facts added.</span></div>
           </form>
+          {% endif %}
           {% endif %}
         </section>
         {% if last and current %}{{ blocks.follow_chips() }}{% endif %}
