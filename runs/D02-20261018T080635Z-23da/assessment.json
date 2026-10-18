@@ -1,0 +1,288 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "NIR diffuse reflection and MIR ATR are suitable candidate methods for concentrated dairy streams, but exact installation interfaces and temperature compensation require experimental verification.",
+ "premise_checks": [],
+ "requirements_stated": [
+  "In-line monitoring of fat and protein in an opaque, concentrated milk product",
+  "Handling product temperature and texture variations during production",
+  "Initial spectroscopy concept and practical comparison experiment",
+  "Retaining laboratory reference checks"
+ ],
+ "key_unknowns": [
+  "Required accuracy and precision for fat and protein",
+  "Pipe dimensions and optical probe installation interface",
+  "Cleaning and fouling regime in the processing line",
+  "Exact temperature and pressure ranges"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the required accuracy and precision levels for fat and protein determination?",
+   "why_it_matters": "Determines whether single-method NIR or a combined approach is needed to meet analytical targets.",
+   "affects": [
+    "method",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What are the inner dimensions and material of the process pipe where the probe will be installed?",
+   "why_it_matters": "Determines the mechanical mounting and probe immersion depth.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the expected range of temperature and texture/viscosity variations during production?",
+   "why_it_matters": "Affects scatter-correction requirements and chemometric model robustness.",
+   "affects": [
+    "technique",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What cleaning-in-place (CIP) and sterilization regimes will the probe encounter?",
+   "why_it_matters": "Ensures optical window material and sealing compatibility with harsh cleaning chemicals and temperatures.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the standard approach for opaque, concentrated dairy products, penetrating surface layers to measure major components like fat and protein.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "MIR ATR provides high selectivity through fundamental molecular vibrations, serving as a comparison method to evaluate against NIR.",
+   "conditions": "If higher chemical specificity is needed or surface layer analysis is preferred.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Flush-mounted NIR diffuse reflection fiber probe or MIR ATR immersion probe interacting directly with the flowing medium.",
+  "location": "Installed directly into a pipe or vat in the processing line.",
+  "fiber_link": "Remote fiber-optic cable linking the process probe to spectrometers located safely away from the processing floor.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "Experimentally, the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "The nominal NIR range is 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "The nominal Mid-IR range is 4000-400 cm-1; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Physical variations such as temperature and fat globule size changes can mimic composition changes in NIR diffuse reflection.",
+   "rule_ids": [
+    "R-GEO-6",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Fouling or deposits on the probe window over time can degrade signal quality.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative process samples across the full expected range of fat, protein, temperature, and texture variations.",
+    "purpose": "Ensure samples capture process variability.",
+    "citations": []
+   },
+   {
+    "step": "Perform laboratory benchtop spectroscopic measurements using NIR diffuse reflection and MIR ATR.",
+    "purpose": "Evaluate spectral response for both methods.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference laboratory measurements for fat and protein for each sample.",
+    "purpose": "Provide ground truth for calibration.",
+    "citations": []
+   },
+   {
+    "step": "Build initial chemometric calibration models with scatter correction and evaluate prediction errors.",
+    "purpose": "Test quantitative prediction performance.",
+    "citations": []
+   },
+   {
+    "step": "Validate models on held-out sample runs against customer-defined accuracy criteria.",
+    "purpose": "Determine go/no-go readiness.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Standard laboratory reference methods for fat and protein analysis.",
+  "decision_basis": "Go/no-go based on achieving customer-defined target accuracy for fat and protein prediction across varying temperature and texture conditions."
+ },
+ "assumptions": [
+  "The concentrated milk product allows sufficient light interaction for diffuse reflection or ATR measurements.",
+  "Laboratory reference methods are available for calibration."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Fat concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Core target component for product quality control.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Protein concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Core target component for product quality control.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Product temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature varies during production and can affect spectral response.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "Temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "High with automated calibration",
+   "maintenance": "Periodic window cleaning",
+   "performance_fit": "Suitable for bulk fat and protein monitoring via NIR reflection.",
+   "cost_drivers": "Single NIR spectrometer and diffuse reflection probe",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Moderate with dual method calibration",
+   "maintenance": "Window cleaning and optical alignment",
+   "performance_fit": "Provides robust comparison and verification using complementary NIR and MIR spectral features.",
+   "cost_drivers": "Spectrometers and probes for both NIR and MIR",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "Multivariate calibration combined with scatter correction preprocessing is required to handle physical variations like scattering and particle size changes.",
+ "realtime_tracking_note": "In-line probe installation enables continuous, real-time tracking of fat and protein changes directly in the processing line.",
+ "future_direction": "Integration of automated temperature compensation and alarm systems linked to process control.",
+ "proposal": {
+  "best_current_option": "O1",
+  "basis": "supplied",
+  "what_would_change_it": "Results from feasibility trials showing insufficient precision with NIR alone, or severe fouling issues requiring MIR ATR.",
+  "next_step": "Conduct multi-method laboratory trials on representative samples spanning expected temperature and texture variations."
+ },
+ "brief_answer": "For monitoring fat and protein in an opaque, concentrated milk product, NIR diffuse reflection is recommended as the primary method due to its effectiveness with concentrated dairy products. MIR ATR can serve as a comparison method. A feasibility experiment using representative process samples, scatter-corrected chemometric modeling, and laboratory reference checks is proposed to validate accuracy across varying temperature and texture conditions."
+}
