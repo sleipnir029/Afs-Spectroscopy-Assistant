@@ -1,0 +1,274 @@
+{
+ "decision_status": "outside_supported_scope",
+ "status_reason": "The customer's request to measure mechanical line pressure and flow rate of a slurry goes beyond the scope of optical spectroscopy, which is designed for chemical and compositional analysis rather than direct physical pressure or flow measurement.",
+ "premise_checks": [
+  {
+   "premise": "Fiber optic products can be used to measure line pressure, flow rate, and pipe blockages directly.",
+   "verdict": "not_covered",
+   "explanation": "The supplied sources cover optical spectroscopy methods for chemical composition, concentration, and material identification, but do not address optical measurement of mechanical line pressure or flow rate.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 2,
+     "quote": "Optical spectral analysis occupies a special place among physicochemical methods for studying substances and materials. It is based on measuring the result of the interaction of electromagnetic radiation with a sample over a wide range of wavelengths",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Measure line pressure of slurry in a transfer pipe",
+  "Measure flow rate of slurry in a transfer pipe",
+  "Provide early warning when the pipe starts to block"
+ ],
+ "key_unknowns": [
+  "Whether the customer requires optical/spectroscopic monitoring of slurry composition changes preceding blockage rather than direct mechanical pressure and flow measurement",
+  "Slurry composition, solids concentration, and particle size",
+  "Pipe dimensions, material, and optical accessibility"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Are you looking to measure pressure and flow via standard electromechanical sensors, or do you intend to detect chemical composition changes and turbidity variations that precede pipe blockage using optical spectroscopy?",
+   "why_it_matters": "Direct pressure and flow measurement are mechanical variables outside optical spectroscopy scope, whereas blockage warning can potentially be addressed via optical turbidity or composition monitoring.",
+   "affects": [
+    "method",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What are the physical and chemical characteristics of the slurry (e.g., solids loading, particle size distribution, and optical transparency)?",
+   "why_it_matters": "Optical probing depends heavily on whether the slurry is scattering, opaque, or transparent.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What specific pipe interface or port availability exists for installing probes?",
+   "why_it_matters": "Determines whether immersion probes or flush-mounted window installations are feasible.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Near-infrared diffuse reflection can monitor concentrated or scattering slurries and suspensions to track compositional or physical consistency changes if blockage is related to solids settling or concentration spikes.",
+   "conditions": "Applies only if the customer redefines the blockage warning goal around optical monitoring of slurry composition and scattering rather than direct mechanical pressure and flow measurement.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Transmission and transflection are unsuitable for thick or opaque slurries because light cannot penetrate high-solids media.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too 'thick' or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Not applicable for direct pressure and flow measurement; if adapted for optical turbidity/composition monitoring related to blockage, a flush-mounted diffuse reflection probe would be used.",
+  "location": "Transfer pipe wall insertion or process line interface.",
+  "fiber_link": "Standard silica fiber cables connecting process probes to remote spectrometers.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+    "claim_kind": "application_precedent"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; usable range depends on the selected instrument, fiber, and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Attempting to measure mechanical pressure and flow rate using optical spectroscopy, which only measures chemical and physical interaction with light.",
+   "rule_ids": [
+    "R-EVI-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 2,
+     "quote": "Optical spectral analysis occupies a special place among physicochemical methods for studying substances and materials.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Severe optical scattering or clogging in a high-solids slurry blocking light transmission to optical probes.",
+   "rule_ids": [
+    "R-GEO-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too 'thick' or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Clarify monitoring objectives",
+    "purpose": "Determine whether the customer requires standard mechanical sensors for pressure/flow or optical monitoring for blockage precursors.",
+    "citations": []
+   },
+   {
+    "step": "Sample optical evaluation",
+    "purpose": "Test representative slurry samples in a laboratory setup to check optical penetration and scattering.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Standard industrial pressure transducers and flow meters for pressure and flow rate verification.",
+  "decision_basis": "Customer-defined thresholds for pressure drops, flow reductions, and optical turbidity changes indicating impending blockage."
+ },
+ "assumptions": [
+  "The customer's primary engineering concern is monitoring slurry transfer status and preventing line blockage.",
+  "Direct measurement of pressure and flow rate requires conventional pressure transmitters and flow meters rather than optical spectroscopy."
+ ],
+ "not_in_sources": [
+  "Direct fiber-optic or spectroscopic measurement of mechanical line pressure",
+  "Direct measurement of fluid flow rate in pipes"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Line Pressure",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Stated as a primary customer measurement target.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "Standard electromechanical pressure transmitter"
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Flow Rate",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Stated as a primary customer measurement target.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "Standard flow meter (e.g., magnetic or Coriolis flow meter)"
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Slurry Consistency and Blockage Precursors",
+   "kind": "qualitative",
+   "necessity": "optional",
+   "why": "Enables optical early warning detection if slurry solids concentration or scattering changes before blockage.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Standard industrial instrumentation",
+   "maintenance": "Standard calibration of pressure and flow sensors",
+   "performance_fit": "Addresses stated pressure and flow targets using standard industrial hardware.",
+   "cost_drivers": "Standard pressure and flow meter hardware",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P3"
+   ],
+   "ease_of_use": "Requires chemometric model maintenance",
+   "maintenance": "Periodic optical window cleaning and calibration",
+   "performance_fit": "Adds optical monitoring capabilities for slurry consistency if blockage precursors are of interest.",
+   "cost_drivers": "Spectrometer, NIR diffuse reflection probe, and chemometric software",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "If optical monitoring is used to detect slurry consistency changes leading to blockage, multivariate calibration (such as PLS) is required to correlate optical scatter spectra with process state variations.",
+ "realtime_tracking_note": "In-line optical probes can track scattering and compositional changes continuously if optical access is maintained.",
+ "future_direction": "Combining optical turbidity monitoring with standard pressure telemetry for comprehensive blockage prediction.",
+ "proposal": {
+  "best_current_option": "O1",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "Confirmation from the customer that optical detection of slurry composition changes or turbidity is desired for early blockage warning.",
+  "next_step": "Use standard pressure transmitters and flow meters for pressure and flow measurements, and clarify if optical slurry monitoring is required."
+ },
+ "brief_answer": "Direct measurement of line pressure and flow rate requires standard electromechanical pressure and flow sensors rather than fiber-optic spectroscopy, which is designed for chemical and compositional analysis. However, optical sensors can be considered if you wish to monitor slurry consistency or scattering changes to detect early pipe blockage precursors."
+}
