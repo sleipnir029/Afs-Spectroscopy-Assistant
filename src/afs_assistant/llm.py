@@ -214,16 +214,30 @@ class OpenRouterClient:
         else:
             response_format = {"type": "json_object"}
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        routing = {"require_parameters": True, **cfg.get("provider_routing", {}).get(model, {})}
-        extra = {"provider": routing, "usage": {"include": True}}
-        if "reasoning" in role_cfg:          # e.g. {effort: low}: bounds the hidden reasoning of a small step
-            extra["reasoning"] = role_cfg["reasoning"]
-        # Not sent at all when the model omits them: with require_parameters a sent `temperature` leaves no
-        # endpoint for a model that does not accept it.
-        params = {"temperature": cfg.get("temperature", 0), "max_tokens": role_cfg.get("max_tokens", 8000),
-                  "response_format": response_format}
-        for name in omitted_params(model):
-            params.pop(name)
+
+        def request(model: str) -> tuple[dict, dict]:
+            routing = {"require_parameters": True, **cfg.get("provider_routing", {}).get(model, {})}
+            extra = {"provider": routing, "usage": {"include": True}}
+            if "reasoning" in role_cfg:      # e.g. {effort: low}: bounds the hidden reasoning of a small step
+                extra["reasoning"] = role_cfg["reasoning"]
+            # Not sent at all when the model omits them: with require_parameters a sent `temperature` leaves no
+            # endpoint for a model that does not accept it.
+            params = {"temperature": cfg.get("temperature", 0), "max_tokens": role_cfg.get("max_tokens", 8000),
+                      "response_format": response_format}
+            for name in omitted_params(model):
+                params.pop(name)
+            return params, extra
+
+        params, extra = request(model)
+        # After a discarded or timed-out reply the retry goes to `fallback_model` when the role names one: at
+        # temperature 0 the same model tends to repeat a runaway reply (D-059).
+        fallback = role_cfg.get("fallback_model")
+
+        def switch() -> None:
+            nonlocal model, params, extra
+            if fallback and model != fallback:
+                model = fallback
+                params, extra = request(model)
 
         last_error: Exception | None = None
         timeouts = 0
@@ -247,6 +261,7 @@ class OpenRouterClient:
                     if timeouts >= self.MAX_TIMEOUTS:
                         raise RuntimeError(f"LLM call timed out {timeouts} times ({timeout_s(role):.0f} s each, "
                                            f"role {role})") from exc
+                    switch()
                 time.sleep(2 * (attempt + 1))
                 continue
             # Cost every reply, including the ones discarded below (truncated or invalid JSON).
@@ -263,6 +278,7 @@ class OpenRouterClient:
                 self.tracker.add(role + ":discarded", result)
                 last_error = RuntimeError(f"invalid JSON from provider {result.provider or '?'} "
                                           f"(finish={finish}, {len(content)} chars): {exc}")
+                switch()
                 continue
             result.data = data
             self.tracker.add(role, result)

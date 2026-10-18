@@ -171,3 +171,30 @@ def test_an_arm_without_temperature_sends_none(fresh_config, monkeypatch):
     assert sent["model"] == "openai/gpt-6-luna" and "temperature" not in sent
     assert sent["extra_body"]["provider"] == {"require_parameters": True, **cfg["provider_routing"][sent["model"]]}
     assert sent["extra_body"]["reasoning"] == {"effort": "medium"}
+
+
+# ----------------------------------------------------------------- D-059 cross-model retry
+def _with_fallback(monkeypatch, fallback: str | None, omit: list[str] | None = None) -> dict:
+    cfg = copy.deepcopy(llm.config())
+    if fallback:
+        cfg["roles"]["assess"]["fallback_model"] = fallback
+        cfg["model_params"] = {fallback: {"omit": omit or []}}
+    monkeypatch.setattr(llm, "config", lambda: cfg)
+    return cfg
+
+
+def test_a_discarded_reply_is_retried_on_the_fallback_model(monkeypatch):
+    cfg = _with_fallback(monkeypatch, "other/model", omit=["temperature"])
+    client = _client([_response('{"a": 1', finish="length"), _response('{"a": 2}')])
+    result = client.complete_json("assess", "sys", "user", "assessment", SCHEMA)
+    first, second = client.client.kwargs
+    assert first["model"] == cfg["roles"]["assess"]["model"] and "temperature" in first
+    assert second["model"] == "other/model" and "temperature" not in second     # its own params
+    assert result.data == {"a": 2}
+
+
+def test_without_a_fallback_the_retry_keeps_the_model(monkeypatch):
+    cfg = _with_fallback(monkeypatch, None)
+    client = _client([_response('{"a": 1', finish="length"), _response('{"a": 2}')])
+    client.complete_json("assess", "sys", "user", "assessment", SCHEMA)
+    assert [k["model"] for k in client.client.kwargs] == [cfg["roles"]["assess"]["model"]] * 2
