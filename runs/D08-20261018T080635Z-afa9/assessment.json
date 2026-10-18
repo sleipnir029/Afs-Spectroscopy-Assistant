@@ -1,0 +1,396 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Supplied sources detail the use of combined MIR-ATR and fluorescence spectroscopy with a multispectral fiber probe for classifying model biological tissues such as muscle, fat, and liver, supporting a provisional experimental design.",
+ "premise_checks": [
+  {
+   "premise": "A first comparison experiment and a clear statement of what its results would demonstrate can be provided.",
+   "verdict": "supported",
+   "explanation": "Published studies and technical notes in the sources demonstrate how to combine MIR-ATR and fluorescence for tissue classification and evaluate the synergy.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The developed multispectral probe was tested in the practical analysis of biological tissue samples using different organs and parts of the chicken: breast, fat, and liver.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Sequential measurements may not sample the same location on heterogeneous material.",
+   "verdict": "supported",
+   "explanation": "Sources explicitly state that for heterogeneous samples, simultaneous measurement with a combined probe avoids the limitations of sequential probing.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 2,
+     "quote": "The main challenge of such local multispectral analysis is related to the necessity to perform different spectroscopic measurements at the same point simultaneously.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Compare MIR ATR and fluorescence information using model biological tissues (chicken muscle, fat, liver)",
+  "Address material heterogeneity where sequential measurements may not sample the same location",
+  "Provide a first comparison experiment design and a clear statement of what results demonstrate for classification"
+ ],
+ "key_unknowns": [
+  "Specific instrument hardware and spectrometer models for MIR and fluorescence acquisition",
+  "Exact optical and fluorescence properties of the specific model tissue batches",
+  "Required quantitative classification accuracy thresholds"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Will measurements be performed using a single combined multispectral probe or sequential individual probes?",
+   "why_it_matters": "A combined probe ensures identical sampling spots on heterogeneous tissue, whereas sequential probes may introduce spatial mismatch.",
+   "affects": [
+    "technique",
+    "installation",
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the target classification error rate or accuracy required to distinguish muscle, fat, and liver samples?",
+   "why_it_matters": "Defines the success criteria for the go/no-go feasibility decision.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What specific excitation wavelength is intended for the fluorescence channel in your laboratory setup?",
+   "why_it_matters": "Affects the fluorophore excitation efficiency and spectral background overlap.",
+   "affects": [
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Mid-IR ATR provides chemical fingerprint information from the sample surface, capturing lipid carbonyl and protein amide bands characteristic of tissue types.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns, providing information on molecular composition and biochemical changes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The discriminative power of mid-IR spectroscopy (Figure 2a and Figure S-4) toward rich in lipids fat samples is related to the stretching vibration band of the ester carbonyl C=O at about 1740 cm-1, which is characteristic of saturated triglycerides.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "comparison",
+   "combined_with": [
+    "MIR"
+   ],
+   "rationale": "Fluorescence provides complementary emission data sensitive to intrinsic fluorophores like porphyrins, enhancing tissue classification when fused with MIR-ATR.",
+   "conditions": "Applied in a combined multispectral approach to resolve tissue classes that single methods fail to separate fully.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The most selective peak at 613 nm, which can be assigned to porphyrins, has sufficient specificity to distinguish the liver from other measured samples.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "At the same time, the PCA model built on the concatenated IR and fluorescence data revealed three distinct groups of samples corresponding to tissue types",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Combined multispectral probe featuring an ATR crystal head (such as ZrO2 frustum) with integrated chalcogenide infrared (CIR) fibers for MIR-ATR and silica fibers for orthogonal fluorescence illumination and collection.",
+  "location": "Direct contact with the surface of model biological tissue samples (chicken muscle, fat, liver).",
+  "fiber_link": "Chalcogenide As-S IR fibers (CIR) for MIR and silica fibers for fluorescence.",
+  "citations": [
+   {
+    "doc": "S04",
+    "page": 2,
+    "quote": "The proposed solution (Figure 1) is based on a precise determination of the optical configuration of the ATR crystal head, which, in this case, plays the role of a common measurement interface for both methods.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S04",
+    "page": 2,
+    "quote": "ZrO2 crystal was chosen due to its high (close to the diamond) refractive index, high transparency in the working spectral regions of both chalcogenide infrared (CIR) and UV silica fibers, as well as small intrinsic fluorescence.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal method range is 4000-400 cm-1; actual usable range depends on the instrument, fiber, and ATR crystal configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Fluorescence",
+   "statement": "Emission range depends on the fluorescent species and excitation wavelength; not a product specification.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "Fluorimetry is based on measuring the broad emission signal observed upon irradiation of certain samples in the UV and visible regions.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Fouling or deposition of soft tissue residues on the ATR crystal interface can degrade the MIR signal quality.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Spatial misalignment or separate probing of heterogeneous tissue regions can prevent effective data fusion.",
+   "rule_ids": [
+    "R-CMB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample. This is difficult to achieve by using two probes alternately for measurements.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "High background or overlapping emission bands can obscure weaker fluorescence features.",
+   "rule_ids": [
+    "R-FLU-2"
+   ],
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "This possible distortion, however, does not play any significant role in the sample classification.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Prepare representative sample sets of chicken muscle (breast), fat, and liver, ensuring multiple measurement points per tissue type to capture heterogeneity.",
+    "purpose": "To establish a representative dataset spanning the physical and chemical variation of model tissues.",
+    "citations": [
+     {
+      "doc": "S04",
+      "page": 3,
+      "quote": "To provide the necessary statistical representativeness of the data, three samples of each tissue type were prepared. The samples were large enough to reflect the possible heterogeneity of the tissue. Each sample was represented by five distributed points.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "step": "Obtain independent reference categorization for each sample and measurement point based on anatomical and histological type.",
+    "purpose": "To provide ground-truth class labels for classification modeling.",
+    "citations": []
+   },
+   {
+    "step": "Acquire single-method baseline spectra (MIR-ATR and fluorescence separately) across all sample points.",
+    "purpose": "To evaluate individual method performance and identify limitations of single-modality classification.",
+    "citations": [
+     {
+      "doc": "S04",
+      "page": 4,
+      "quote": "PCA models for individual data blocks confirmed the above conclusions based on the spectral interpretation that IR spectroscopy works better for the discrimination of fat (Figure 3a), whereas fluorescence is well suited for the recognition of liver tissue (Figure 3b).",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Acquire simultaneous multispectral data using a combined probe or strictly aligned measurement points, and apply low-level data fusion (concatenation with scaling).",
+    "purpose": "To test the hypothesis that combining heterogeneous information overcomes single-method classification limits.",
+    "citations": [
+     {
+      "doc": "S04",
+      "page": 4,
+      "quote": "At the same time, the PCA model built on the concatenated IR and fluorescence data revealed three distinct groups of samples corresponding to tissue types",
+      "claim_kind": "method_gain"
+     }
+    ]
+   },
+   {
+    "step": "Build and compare multivariate classification models (e.g., PCA) to validate whether the fused multispectral approach achieves complete separation of muscle, fat, and liver classes.",
+    "purpose": "To establish a go/no-go basis for the multispectral measurement interface.",
+    "citations": [
+     {
+      "doc": "S04",
+      "page": 4,
+      "quote": "This simple example illustrates the gain that can be obtained using the proposed multispectral probe in the qualitative analysis of biological tissue.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Independent anatomical and visual tissue classification (chicken muscle/breast, fat, liver).",
+  "decision_basis": "Successful clustering and separation of chicken muscle, fat, and liver tissue classes in PCA score plots, demonstrating superior classification performance for the combined multispectral approach compared to single methods."
+ },
+ "assumptions": [
+  "Model biological tissues (chicken muscle, fat, liver) adequately simulate the chemical and physical heterogeneity required for the study.",
+  "A combined ATR/fluorescence probe is available or can be constructed for simultaneous point measurement.",
+  "The optical regime and presence of intrinsic fluorophores in the model tissues support simultaneous ATR and fluorescence interrogation."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Tissue Category",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "Defines the target class labels (muscle, fat, liver) for classification.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "Anatomical and visual inspection",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Lipid Carbonyl and Protein Amide Spectral Bands",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Captures molecular vibrational features via MIR-ATR.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The discriminative power of mid-IR spectroscopy (Figure 2a and Figure S-4) toward rich in lipids fat samples is related to the stretching vibration band of the ester carbonyl C=O at about 1740 cm-1, which is characteristic of saturated triglycerides.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Intrinsic Fluorescence Emission",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Provides complementary emission data sensitive to specific tissue fluorophores.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Fluorescence",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The most selective peak at 613 nm, which can be assigned to porphyrins, has sufficient specificity to distinguish the liver from other measured samples.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Straightforward single-method ATR setup",
+   "maintenance": "Routine cleaning of ATR crystal",
+   "performance_fit": "Good for surface lipid and protein identification but insufficient for full tissue separation",
+   "cost_drivers": "Single FTIR spectrometer and ATR probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "none of the individual techniques was sufficient to completely separate the three sample classes on the PCA score plots",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Combined multispectral probe simplifies dual-method contact",
+   "maintenance": "Dual instrument calibration and probe maintenance",
+   "performance_fit": "Optimal separation of heterogeneous tissues by combining complementary chemical and fluorescence data from the same spot",
+   "cost_drivers": "Combined multispectral probe and two spectrometers",
+   "fusion_note": "Data fusion is performed by low-level concatenation of normalized MIR-ATR and fluorescence spectra into an augmented matrix. Measurements must be collected simultaneously from the exact same spot using a combined ATR/fluorescence probe to overcome tissue heterogeneity. Each spectral block requires independent calibration and diagnostics, and the fused model must demonstrate improved class separation over single-method models.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "At the same time, the PCA model built on the concatenated IR and fluorescence data revealed three distinct groups of samples corresponding to tissue types",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Multivariate exploratory analysis using Principal Component Analysis (PCA) on mean-centered and normalized spectral blocks without complex preprocessing demonstrates clear class separation upon data fusion.",
+ "realtime_tracking_note": null,
+ "future_direction": "Extension of the multispectral probe design to include diffuse reflectance or NIR/Raman techniques for broader biomedical and process applications.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If single-method MIR-ATR achieves complete classification separation on its own, the extended multi-method option would be unnecessary.",
+  "next_step": "Conduct a laboratory comparison experiment using model chicken tissues and evaluate data fusion of MIR-ATR and fluorescence spectra via PCA."
+ },
+ "brief_answer": "To classify heterogeneous model biological tissues (chicken muscle, fat, and liver), we recommend evaluating MIR-ATR and fluorescence spectroscopy. Because sequential measurements risk sampling different locations on heterogeneous samples, a combined multispectral probe capturing both signals simultaneously is ideal. A feasibility experiment comparing single-method performance against low-level data fusion using PCA will demonstrate whether the combined approach successfully separates all tissue classes."
+}
