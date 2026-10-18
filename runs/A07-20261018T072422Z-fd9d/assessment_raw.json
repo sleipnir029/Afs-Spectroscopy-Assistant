@@ -1,0 +1,439 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A provisional assessment is justified because NIR transmission and transflection spectroscopy are technically well suited for clear liquids and compatible with a 10 m silica fiber link. Feasibility testing is required to verify that the required ±0.3 % w/w tolerance can be achieved against the reference refractometer and that probe materials withstand daily hot caustic CIP.",
+ "premise_checks": [
+  {
+   "premise": "An accuracy tolerance of ±0.3 % w/w is achievable in-line for aqueous sucrose using optical spectroscopy.",
+   "verdict": "not_covered",
+   "explanation": "The sources discuss quantitative NIR and Raman spectroscopy for bioprocesses and dairy streams, but provide no specific accuracy figures or detection limits for aqueous sucrose solutions. Meeting ±0.3 % w/w must be established experimentally.",
+   "citations": []
+  },
+  {
+   "premise": "Low-OH silica fiber optic cables can reliably transmit optical signals over a 10 m distance between the pipe and the safe room.",
+   "verdict": "supported",
+   "explanation": "Low-OH silica fibers are documented to support cable lengths of 100 to 300 m for remote industrial process control in Vis-NIR spectroscopy.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Standard in-line optical probes can withstand daily cleaning-in-place (CIP) with hot caustic.",
+   "verdict": "not_covered",
+   "explanation": "The sources do not specify caustic chemical resistance limits or maximum allowable CIP temperatures for fiber probe optical windows, housings, and sealing materials.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [
+  "Aqueous sucrose solution at 5 to 15 % w/w concentration",
+  "Liquid is clear and colourless",
+  "Flow in a 50 mm stainless steel pipe at 20 to 30 °C and normal pressure",
+  "Target accuracy tolerance of ±0.3 % w/w",
+  "Laboratory refractometer serves as the continuing reference method",
+  "Analyser located in a dry, safe room 10 m away from the sampling point",
+  "Daily cleaning in place (CIP) using hot caustic",
+  "Measurement response rate of at least one reading per minute"
+ ],
+ "key_unknowns": [
+  "Exact CIP cleaning parameters (caustic concentration, peak temperature, and cycle duration)",
+  "Available mechanical port or flange specification on the 50 mm pipe (e.g. Tri-Clamp, flange, flow cell)",
+  "Flow velocity and potential presence of entrained gas bubbles in the line",
+  "Achievable RMSEP accuracy of NIR transmission models for sucrose across 20 to 30 °C",
+  "Presence of any trace additives, minerals, or interfering dissolved compounds"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the specific concentration, chemical formulation, and maximum temperature of the caustic solution used during daily CIP?",
+   "why_it_matters": "Ensures the selected probe body, window material, and seals are chemically compatible and will not fail during cleaning.",
+   "affects": [
+    "installation",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What port connection or mounting interface exists on the 50 mm pipe (for example, Tri-Clamp ferrule, weld socket, or bypass line)?",
+   "why_it_matters": "Determines whether an insertion transflection probe or a dedicated in-line flow cell should be used.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Are any other solutes, buffers, or flavour compounds present in the water besides sucrose?",
+   "why_it_matters": "Additional dissolved species could introduce overlapping absorption bands that degrade calibration accuracy.",
+   "affects": [
+    "method",
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What is the typical liquid velocity and could cavitation or entrained bubbles pass the measurement zone?",
+   "why_it_matters": "Bubbles cause baseline scattering shifts that interfere with transmission path measurements.",
+   "affects": [
+    "technique",
+    "M1"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR transmission or transflection is the established standard technique for clear, non-scattering liquids. It allows remote measurement over 10 m using standard low-OH silica optical fibers.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy provides distinct fundamental vibrational bands with minimal spectral background from water. It uses standard silica fibers compatible with a 10 m run and avoids tight pathlength matching.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Sucrose and water do not possess native fluorophores, making direct optical fluorimetry non-viable. Fluorescence is restricted to species exhibiting intrinsic emission.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Only a defined fluorescent species or a justified indicator.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "In-line transmission flow cell or immersion transflection probe with a controlled optical pathlength (typically 1 to 5 mm) to sample the clear fluid volume without saturating water absorption bands.",
+  "location": "Directly mounted in the 50 mm stainless steel process pipe in a flooded vertical or inclined section to prevent entrained gas bubble entrapment.",
+  "fiber_link": "Low-OH silica optical fiber cables spanning the 10 m distance between the in-line optical probe and the spectrometer located in the dry room.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer of the sample to a detector on the opposite side.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780 to 2500 nm (12820 to 4000 cm-1); the usable spectral range depends on spectrometer detector cut-offs, probe optics, and silica fiber OH attenuation.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman measurements typically use 785 nm laser excitation with the Raman shift measured in wavenumbers (cm-1); usable range depends on spectrometer filter cut-offs and detector sensitivity.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1).",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Intense water absorption bands in the near-infrared can saturate the spectral signal if the probe transmission gap is too wide.",
+   "rule_ids": [
+    "R-GEN-3",
+    "R-GEN-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Process temperature fluctuations between 20 and 30 °C shift water vibrational bands and can degrade calibration accuracy beyond ±0.3 % w/w.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Daily hot caustic CIP cycles could degrade internal probe seals, optical adhesives, or window mountings over time.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Entrained gas bubbles or liquid turbulence in the 50 mm pipe can introduce baseline scattering offsets that distort transmission measurements.",
+   "rule_ids": [
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Prepare a representative set of aqueous sucrose calibration standards spanning 4 to 16 % w/w across the 20 to 30 °C temperature range.",
+    "purpose": "Cover the customer target concentration band and full operational temperature variation.",
+    "citations": []
+   },
+   {
+    "step": "Measure each calibration sample using the laboratory refractometer to establish primary reference values.",
+    "purpose": "Provide reference analytical data for chemometric model training and cross-validation.",
+    "citations": []
+   },
+   {
+    "step": "Acquire NIR transmission spectra over varied pathlengths (1 to 5 mm) across a 10 m silica fiber link.",
+    "purpose": "Identify an optical pathlength that avoids water band saturation while preserving adequate sucrose signal-to-noise.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Develop a PLS calibration model incorporating temperature compensation and validate on independent test samples.",
+    "purpose": "Quantify prediction accuracy (RMSEP) and confirm robustness against thermal shifts.",
+    "citations": []
+   },
+   {
+    "step": "Assess independent prediction errors against the target ±0.3 % w/w tolerance for go/no-go determination.",
+    "purpose": "Establish whether the optical configuration meets the client process quality limit.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory refractometer measuring Brix / sucrose concentration across all calibration and validation runs.",
+  "decision_basis": "Go if independent validation demonstrates an RMSEP within ±0.3 % w/w across 20 to 30 °C; no-go if prediction error exceeds ±0.3 % w/w or water band saturation cannot be resolved."
+ },
+ "assumptions": [
+  "The sucrose stream remains completely transparent and free of particulate matter or precipitation.",
+  "Process flow and pressure in the 50 mm line do not generate optical path displacement or excessive gas entrainment.",
+  "The 10 m cable conduit between the pipe and the dry room allows standard low-OH silica fiber routing."
+ ],
+ "not_in_sources": [
+  "Published quantitative limits of detection and RMSEP figures specifically for aqueous sucrose in-line monitoring.",
+  "Caustic concentration and temperature tolerance ratings for standard AFS optical probe seals and bonding materials."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Sucrose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Primary process control parameter required to monitor quality within 5 to 15 % w/w and ±0.3 % w/w.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Process fluid temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature variations between 20 and 30 °C shift water absorption bands and must be tracked for calibration compensation.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "In-line PT100 RTD sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Reference sucrose content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Required as the independent reference method to calibrate and validate multivariate spectroscopic models.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "Laboratory refractometer",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Direct in-line transmission flow measurement",
+   "maintenance": "Automated cleaning during line CIP",
+   "performance_fit": "Optimal transmission signal for clear liquids",
+   "cost_drivers": "NIR spectrometer, transmission flow cell, 10 m silica fiber",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P3"
+   ],
+   "ease_of_use": "Single immersion probe without pathlength gap",
+   "maintenance": "Periodic window inspection during CIP",
+   "performance_fit": "Low water background avoids pathlength balancing",
+   "cost_drivers": "Narrowband laser, Raman spectrometer, filtered immersion probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A Partial Least Squares (PLS) regression calibration is necessary to quantify sucrose overtone bands against the strong background water absorption. Temperature variations across 20 to 30 °C should be included in the calibration design to prevent baseline drift.",
+ "realtime_tracking_note": "A measurement interval of one reading per minute is easily satisfied by standard NIR or Raman acquisition times, providing robust trending and real-time process monitoring in the pipe.",
+ "future_direction": null,
+ "proposal": {
+  "best_current_option": "O1",
+  "basis": "supplied",
+  "what_would_change_it": "If the daily hot caustic CIP degrades transmission probe window seals, or if water absorption saturation cannot be resolved across the pathlength, option O2 (Raman immersion probe) would become the preferred method.",
+  "next_step": "Obtain caustic CIP temperature and line flange specifications, then conduct laboratory NIR transmission trials on 5 to 15 % w/w sucrose standards to establish calibration accuracy."
+ },
+ "brief_answer": "We provisionally recommend in-line NIR transmission spectroscopy as the primary method to test first, routed via a 10 m low-OH silica fiber cable to the remote analyser. Raman spectroscopy serves as a secondary comparison option due to its low water background. Feasibility testing against your laboratory refractometer is required to verify whether the ±0.3 % w/w tolerance can be achieved, and probe seal compatibility with daily hot caustic cleaning must be confirmed."
+}
