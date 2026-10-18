@@ -958,7 +958,7 @@ def test_role_reasoning_setting_is_sent_only_for_roles_that_set_it(monkeypatch):
     for role in ("external_evidence", "assess"):
         client.complete_json(role, "s", "u", "x", {"type": "object", "properties": {}})
     assert sent[0]["reasoning"] == llm.config()["roles"]["external_evidence"]["reasoning"]
-    assert "reasoning" not in sent[1]
+    assert sent[1].get("reasoning") == llm.config()["roles"]["assess"].get("reasoning")   # absent when unset
 
 
 def test_a_cancel_during_the_external_step_stops_the_case(tmp_path):           # 5.0.R review

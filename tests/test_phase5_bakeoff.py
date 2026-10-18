@@ -179,6 +179,8 @@ def _with_fallback(monkeypatch, fallback: str | None, omit: list[str] | None = N
     if fallback:
         cfg["roles"]["assess"]["fallback_model"] = fallback
         cfg["model_params"] = {fallback: {"omit": omit or []}}
+    else:
+        cfg["roles"]["assess"].pop("fallback_model", None)
     monkeypatch.setattr(llm, "config", lambda: cfg)
     return cfg
 
