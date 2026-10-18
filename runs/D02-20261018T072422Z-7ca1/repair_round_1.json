@@ -1,0 +1,361 @@
+{
+ "round": 1,
+ "hard_failures_before": 4,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "Sufficient source evidence supports NIR diffuse reflection and MIR ATR for in-line measurement of concentrated dairy products, allowing a provisional shortlist to be tested.",
+  "premise_checks": [
+   {
+    "premise": "An initial spectroscopy concept and a practical comparison experiment will fulfill measurement needs for an opaque, concentrated milk product while retaining lab checks.",
+    "verdict": "supported",
+    "explanation": "Sources confirm that NIR reflection and ATR methods are well-suited for concentrated dairy products and comparative trials.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Opaque, concentrated milk product flowing through a processing line",
+   "Fat and protein analysis",
+   "Product temperature and texture vary during production",
+   "Initial spectroscopy concept and practical comparison experiment while retaining lab checks"
+  ],
+  "key_unknowns": [
+   "Exact pipe dimensions and optical path constraints",
+   "Required accuracy and detection limits for fat and protein",
+   "Details of the laboratory reference method"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What are the exact flow rate, temperature range, and pressure conditions in the processing line?",
+    "why_it_matters": "Process conditions determine probe mechanical and thermal compatibility.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What target accuracy and precision are required for fat and protein quantification?",
+    "why_it_matters": "Required precision dictates whether single-method calibration or multi-method fusion is necessary.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What is the standard laboratory reference method used for current fat and protein sample analyses?",
+    "why_it_matters": "Reference method accuracy directly limits chemometric calibration performance.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "NIR diffuse reflection is established for opaque and concentrated dairy products like whole milk concentrates and butter.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "MIR ATR provides high molecular specificity for functional groups via the fingerprint region, serving as a robust single-method comparison.",
+    "conditions": "Requires flush-mounting and cleanable ATR crystal interface to handle varying texture and fouling.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "ATR-platform absorption liquid,paste, soft 1-6 mu average high high",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "NIR diffuse reflection fiber probe flush-mounted into the processing line wall or pipe.",
+   "location": "Directly in the processing line flow for the opaque, concentrated milk product.",
+   "fiber_link": "Robust Vis-NIR silica fiber cable connecting the probe to the spectrometer safely away from process vibration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "Nominal range 780-2500 nm; usable range depends on instrument, fiber, and probe selection.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "MIR",
+    "statement": "Nominal range 4000-400 cm-1; usable range depends on crystal and fiber configuration.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Physical variations in texture and fat globule size can alter scattering and mimic concentration changes in NIR reflection spectra.",
+    "rule_ids": [
+     "R-GEO-6"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Temperature variations during production can shift spectral baselines and calibration models if not compensated.",
+    "rule_ids": [
+     "R-CAL-1"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "physical variation; calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Fouling or coating on the probe tip can compromise optical contact and signal stability.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative samples covering the full expected range of fat, protein, temperature, and texture variations.",
+     "purpose": "Collect representative samples covering the full expected range of fat, protein, temperature, and texture variations.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Perform independent laboratory reference measurements for fat and protein on all trial samples.",
+     "purpose": "Perform independent laboratory reference measurements for fat and protein on all trial samples.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Test single-method NIR diffuse reflection and MIR ATR probes against the sample set.",
+     "purpose": "Test single-method NIR diffuse reflection and MIR ATR probes against the sample set.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Build chemometric calibration models using scatter correction preprocessing to handle textural variability.",
+     "purpose": "Build chemometric calibration models using scatter correction preprocessing to handle textural variability.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 17,
+       "quote": "Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+       "claim_kind": "application_precedent"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "Standard laboratory reference methods used by the customer for fat and protein quantification.",
+   "decision_basis": "Go/no-go based on customer-defined accuracy and precision targets for fat and protein prediction."
+  },
+  "assumptions": [
+   "The concentrated milk product is pumpable and can accommodate a flush-mounted fiber probe in the processing line.",
+   "Laboratory reference values are available for model calibration."
+  ],
+  "not_in_sources": [
+   "Exact fat and protein concentration ranges of the customer's specific concentrated milk product.",
+   "Specific pipe diameter and flow velocity."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Fat Concentration",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Core target component requested for in-line monitoring.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "quantify fat and protein.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Protein Concentration",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Core target component requested for in-line monitoring.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "quantify fat and protein.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P3",
+    "name": "Product Temperature",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Temperature varies during production and affects spectral response.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "Industrial temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2"
+    ],
+    "ease_of_use": "Flush-mounted NIR reflection probe",
+    "maintenance": "Regular window cleaning",
+    "performance_fit": "Directly suited for concentrated dairy scattering",
+    "cost_drivers": "Single NIR spectrometer and reflection probe",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "ATR probe installation",
+    "maintenance": "Crystal cleaning against fouling",
+    "performance_fit": "High chemical specificity via fingerprint region",
+    "cost_drivers": "MIR FTIR spectrometer and ATR probe",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "ATR-platform absorption liquid,paste, soft 1-6 mu average high high",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "Partial least squares (PLS) regression combined with scatter correction (such as SNV or MSC) is required to remove physical interference from variable texture and fat globule size.",
+  "realtime_tracking_note": "In-line probe installation provides real-time tracking of fat and protein changes directly in the processing line without sampling delays.",
+  "future_direction": "Potential integration of temperature compensation variables or multi-method fusion if texture variations cause severe spectral baseline shifts.",
+  "proposal": {
+   "best_current_option": "O1",
+   "basis": "supplied",
+   "what_would_change_it": "If NIR scattering models fail due to extreme textural changes, switch to MIR ATR comparison.",
+   "next_step": "Conduct multi-method lab trials using representative samples across the expected temperature and texture range."
+  },
+  "brief_answer": "For your opaque, concentrated milk product, we recommend starting feasibility trials with NIR diffuse reflection, which is established for concentrated dairy products like whole milk concentrates. MIR ATR can be tested as a comparison option. A practical experiment with representative samples and scatter correction is necessary to handle temperature and texture variations."
+ }
+}
