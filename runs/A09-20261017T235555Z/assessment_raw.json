@@ -1,0 +1,445 @@
+{
+ "decision_status": "outside_supported_scope",
+ "status_reason": "The enquiry asks for regulatory approval and for measurements on patients next month; the supplied material describes research-stage feasibility work on excised tissue and does not cover approval, clinical validation, sterility, biocompatibility or deployment timelines. A conditional shortlist for bench feasibility testing can still be given.",
+ "premise_checks": [
+  {
+   "premise": "A fiber Raman probe can be used intraoperatively to distinguish tumour from healthy tissue in real time.",
+   "verdict": "precedent_only",
+   "explanation": "The sources report research feasibility of malignant-versus-healthy differentiation by molecular spectroscopic techniques including Raman scattering, but on excised samples and as feasibility work; this is a reason to test, not proof for intraoperative use.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 2,
+     "quote": "Recent research results have confirmed the feasibility of differentiation between malignant and healthy tissues using fluorimetry and molecular spectroscopic techniques, that is, Raman scattering and infrared absorption or diffuse reflection",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "The team can start using the probe on patients next month.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source covers regulatory approval, clinical validation, patient safety, sterility or deployment timelines for patient use.",
+   "citations": []
+  },
+  {
+   "premise": "There is an approved probe for this clinical application.",
+   "verdict": "not_covered",
+   "explanation": "The supplied material describes fiber probes and their research and industrial applications, but states no regulatory approval and names no probe approved for intraoperative tissue classification.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Tumour type, organ and whether the first measurements are on excised tissue or on tissue in the operating field.",
+  "Independent reference standard and the required sensitivity, specificity or accuracy for a go decision.",
+  "Required response time and the number of measurement points per operation.",
+  "Fiber link length, probe sterility, disinfection and biocompatibility constraints in the operating field.",
+  "Tissue fluorescence background at the Raman excitation wavelength.",
+  "Regulatory and ethics pathway for any patient use."
+ ],
+ "clarification_questions": [],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Mid-IR band spectra contain well-defined peaks, and the mid-IR range (4000-400 cm-1) is described as one of the most informative methods of chemical analysis. ATR suits liquids and soft solids that can be brought into tight contact with the crystal, and in the supplied tumour-margin concept the MIR-ATR channel captures the tissue's surface chemical fingerprint.",
+   "conditions": "Applies if the tissue surface layer (a few micrometres) is representative of the tumour margin and a probe can contact the tissue.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Mid-IR band spectra contain well-defined peaks (absorption bands), while NIR, UV, and fluorescence spectra contain broad, highly overlapping signals",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman scattering is among the molecular techniques whose reported feasibility covers differentiation between malignant and healthy tissue, and it is well suited to aqueous media. It can use silica fibers, for which long remote cables are stated, which supports keeping the spectrometer away from the measurement point.",
+   "conditions": "Applies if the tissue's fluorescence background at the chosen excitation does not swamp the Raman bands.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 2,
+     "quote": "Recent research results have confirmed the feasibility of differentiation between malignant and healthy tissues using fluorimetry and molecular spectroscopic techniques, that is, Raman scattering and infrared absorption or diffuse reflection",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [
+    "Raman",
+    "Raman"
+   ],
+   "rationale": "Mid-IR and Raman spectra are complementary, and a combined probe coupling MIR-ATR with a second optical method has been demonstrated, while combining methods is described as a possible need for complex samples. Any gain over the best single method remains a hypothesis to test.",
+   "conditions": "Test only after the single-method tests, if neither MIR-ATR nor Raman alone reaches the agreed discrimination.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 16,
+     "quote": "Combi probe with 2 IR-fibers coupled to FTIR-spectrometer and 2 Silica fibers coupled to Fluo or Raman spectrometers to work with 680nm & 785nm laser excitation Raman & MIR spectra for refined rapeseed oil",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "compare with the best single method.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "A fluorescence channel only measures species that fluoresce, and no fluorescent species or marker was stated in the enquiry for this tissue, so it cannot be part of the first tests. The supplied tissue work pairs fluorescence with MIR-ATR, so this can be revisited if a fluorescent species is confirmed.",
+   "conditions": "Reconsider only if a fluorescent species or a justified indicator is confirmed for this tissue.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "it is limited to the samples containing at least one fluorescent component",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Contact probe at the tissue surface: MIR-ATR crystal or Raman probe head, with the spectrometer connected by fiber.",
+  "location": "Tissue surface at the suspected tumour margin; the first work on excised samples, not in the operating field.",
+  "fiber_link": "Silica fibers are stated for Raman (long cables); no source states an achievable MIR link length.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 13,
+    "quote": "The experimental procedure involves the direct contact of the probe tip with the tissue during an operation, such as for kidney, colon, or rectal cancer.",
+    "claim_kind": "application_precedent"
+   }
+  ]
+ },
+ "spectral_ranges": [],
+ "risks": [
+  {
+   "risk": "Tissue autofluorescence can swamp the Raman bands, so the Raman route may fail at the chosen excitation wavelength.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "ATR sees only a few micrometres into the tissue, so a probe spot may not represent a heterogeneous tumour margin, and deposits on the crystal can change the signal.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "The MIR-ATR component captures the \"chemical fingerprint\" of the tissue's surface layer, typically at a depth of few microns",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "risk": "No supplied source states an achievable MIR fiber length, so remote placement of the MIR spectrometer away from the measurement point is unverified.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "Calibration is specific to the tissue matrix and tumour type, so a model built on one tissue set must be rebuilt and re-validated for another.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative tissue samples covering the expected variation: both classes, several patients and the tumour types, grades and other factors expected in the surgical population.",
+    "purpose": "Representativeness before any model building.",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 10,
+      "quote": "The representative set is expected to include all the main potential variability factors, such as the cancer type, grade and staging; and the age, gender, life-style, presence of others kidney diseases, and other patient-related factors.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure each single method separately (MIR-ATR first, then Raman) on the same marked positions, with an independent reference measurement of every sample.",
+    "purpose": "Independent reference and a defined comparison.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build one classification model per single method and validate it on held-out samples or patients, keeping repeated measurements of the same sample together.",
+    "purpose": "Avoid overfitting on few samples.",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 13,
+      "quote": "Repeated measurements in the same sample position produced similar spectra or sensor data; therefore, these should always be simultaneously excluded for every CV iteration.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Compare each single method with the reference on the agreed numbers; only if neither reaches them, build a fused MIR-ATR + Raman model on the same spots and test whether it beats the best single method.",
+    "purpose": "Decide whether a second method adds anything.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Go / no-go: the team's own required sensitivity, specificity or accuracy figures on held-out patients decide; this bench work does not by itself support any patient use.",
+    "purpose": "Numerical criteria come from the customer.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Histology of the same samples as the independent reference.",
+  "decision_basis": "Agreed sensitivity, specificity or accuracy figures supplied by the surgical team."
+ },
+ "assumptions": [],
+ "not_in_sources": [
+  "Regulatory approval or clearance status of any probe for clinical use.",
+  "Clinical validation, sterility, biocompatibility and disinfection requirements for intraoperative use.",
+  "Any timeline or pathway for starting measurements on patients."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "tissue class label (tumour versus healthy)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "The classification target: without an independent label for each sample no discrimination model or go/no-go decision is possible.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "histopathology of the same sample (for example WHO criteria)",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 3,
+     "quote": "Histological classification was performed in accordance with the World Health Organization (WHO) criteria.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "fluorescence background of the tissue at the Raman excitation wavelength",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It decides whether Raman bands can be read at all, because fluorescence can be much stronger than the Raman signal.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "single probe and spectrometer",
+   "maintenance": "probe cleaning, laser and fiber checks",
+   "performance_fit": "tests the team's Raman proposal first",
+   "cost_drivers": "Raman spectrometer, laser, fiber probe, chemometrics",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "contact probe, single instrument",
+   "maintenance": "ATR crystal cleaning and instrument checks",
+   "performance_fit": "selective fingerprint bands for tissue",
+   "cost_drivers": "FTIR spectrometer, MIR fibers, ATR probe",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "two instruments, one combined probe",
+   "maintenance": "separate calibration and checks per method",
+   "performance_fit": "adds complementary information on hard margins",
+   "cost_drivers": "two spectrometers, MIR fibers, combined probe",
+   "fusion_note": "Both methods must look at the same small tissue area and their data must be aligned to a common time step, because alternating separate probes cannot guarantee the same spot and the acquisition rates differ. Start from one classification model per method with block scaling or per-method scores, keep a separate calibration and diagnostic check for each instrument, and validate the fused model on held-out samples or patients. The fused model must beat the better single method, otherwise the second instrument is not justified.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Variables obtained from different spectral methods are not equivalent.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "compare with the best single method.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Tissue classification needs calibration or classification models (for example PCA or PLS-DA) built on labelled samples and validated on held-out samples or patients; a model is specific to the tissue matrix and tumour type and must be rebuilt when either changes.",
+ "realtime_tracking_note": "Real-time use needs fast acquisition and a fiber link that keeps the spectrometer away from the measurement point; if two methods are combined, their different acquisition rates must be aligned to a common time step.",
+ "future_direction": "If the bench work identifies the most informative spectral regions, a compact multisensor or LED-based sensor could be a later development step, following the described sequence of lab trials, then a chemometric model or a customised system.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If the tissue fluoresces strongly at the Raman excitation, or if the MIR fiber link from the measurement point cannot be realised, the balance shifts toward Raman or toward the combined MIR-ATR + Raman option; the team's go/no-go numbers would also change the choice.",
+  "next_step": "Run the bench feasibility test on representative tumour and healthy tissue samples against histology before any patient use is considered."
+ },
+ "brief_answer": "Nothing supplied covers regulatory approval or clinical readiness, so starting on patients next month is not supported by this material. Technically, the sources give the strongest tissue-classification precedent for MIR-ATR, with Raman (the team's proposal) also worth testing and a combined MIR-ATR + Raman option as a later hypothesis. Next step: a bench feasibility test on representative tumour and healthy tissue against histology, with go/no-go numbers agreed with the team."
+}
