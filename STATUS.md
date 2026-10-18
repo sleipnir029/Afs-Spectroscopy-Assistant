@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 07:34 CEST (Claude, Phase 5 session 4)._
+_Last updated: 2026-10-18 08:23 CEST (Claude, Phase 5 session 4 handoff)._
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
@@ -10,6 +10,7 @@ _Last updated: 2026-10-18 07:34 CEST (Claude, Phase 5 session 4)._
 - **5.R1 re-run done 03:09 (3114f8d, $0.11):** D02/D04/A07/A11 0 hard failures, all citations verified, replay 4/4 equal, 5 questions each, no fallback fired (prompt line + repair did it). **Eval:** checklist **0 failures** dev + adversarial; must-not 13/13; **must 33/34: A07 `max_questions` 3 fails (5 questions)** — the complete enquiry is over-questioned since the new assess line 'ask at least one question'. Questions are sensible (interferents, bubbles, CIP details, port, refractometer accuracy) but the check stays (no goalpost move).
 - **05:15 session 3 started:** task 1 (A07 over-questioning): D-049 assess step 7 question count scales with what is open, no re-asking stated facts (3662329; pytest 642 passed, 2 skipped). Live re-run A06, A07, D04 started 05:16. **Done 05:26 ($0.085):** 0 hard failures, citations verified, but 6 questions each (A07 5→6, A06 5→6, D04 5→6); A07 max_questions still fails. → D-051: prompt + outputs reverted to 5.R1 (evidence 635401c); A07 recorded as a known limit. Eval: checklist 0 failures, must 33/34, must-not 13/13; pytest 642/2. **Task 2** (carry-overs 1, 5, 6) implemented on branch worktree-agent-af27b84c238dd6dba (2189670, D-050, pytest 656/2); reviewer running. Items 2, 3, 4 left as known limits (rating design / prompt work). **Merged 05:34** after review NEEDS_FIXES (B1 cap hid customer figures e.g. a 150 m distance; B2 web UI capped silently) → fixes 84f4a1f → confirm review APPROVE (non-blocking limits noted in D-050). master: pytest 661 passed, 2 skipped; ruff clean; kb check PASS. Saved outputs still show the old rendering until the next run (Phase 6 freeze run re-renders).
 - **07:31 session 4 started:** tasks 1 (UI leftovers, optional) and 2 (5.3 bake-off) skipped, D-052 (76594f5). Task 3: G5 reviewer agent running (read-only: eval, adversarial outputs, demo path, known limits, suite).
+- **G5 (07:44): NEEDS_FIXES, only B1** (live UI loop never run) → done 07:38–07:55 (a49ee31; 504 s + 502 s, 0 hard, 21/21 + 34/34, What changed rendered). Non-blocking list in PHASES "Review (G5)". **Speed:** user chose faster routing (D-053): probe Together 416 tok/s vs DeepInfra ~80; D04 on Together 89 s (was 587 s) but A07 looped to 64k tokens ($0.27, failed) → D-053a Parasail: D04 320 s but looped once ($0.156) → **D-053b reverted**; DeepInfra outputs show the same loops (A08, D03). Session spend ≈ $0.65. **User 08:05: new items 5.8–5.11 before the freeze** (model research ≤ ~$0.15/run; live progress feed; layout hierarchy; academic fonts + blueprint diagram, mockups first). pytest 661/2.
 
 **Deadline:** Sun 18 Oct 23:59 Berlin. **Q&A:** Sat 17 Oct 13:38–13:48 (Helios).
 
@@ -50,16 +51,17 @@ _Last updated: 2026-10-18 07:34 CEST (Claude, Phase 5 session 4)._
 - **G3 re-review (19:36): PASS WITH NON-BLOCKING.** Phase 3 closed. Non-blocking items carried to Phase 5.4 (PHASES.md "Phase 3 close").
 - **Next:** Phase 4 in a new session (handoff below).
 
-## Next session starts with (handoff 2026-10-18 05:34)
-Rules (user): ≤200k tokens per session; one piece of work per session; **ONE agent at a time** (implementer → reviewer), Claude orchestrates and does small exact fixes itself; low API use; wake the user only for their decisions. Run `uv run pytest -q` before committing new outputs. At the end: write the next handoff here and tell the user to start a new session ("do the next task").
+## Next session starts with (handoff 2026-10-18 08:23)
+Rules (user): ≤200k tokens per session; one piece of work per session; **ONE agent at a time**; Claude orchestrates, small exact fixes itself; low API use; wake the user only for their decisions. Process for new work (user 08:05): **research online (cite) → discuss → plan → review → implement one by one**; ask the user clarifying questions. Read the clock before writing times.
 
-**State:** master 5ec8623+. pytest 661 passed / 2 skipped; ruff clean; kb check PASS. Eval (saved outputs): dev checklist 0 failures; adversarial checklist 0 failures, must 33/34 (A07 max_questions = known limit, D-051), must-not 13/13. Session 3 done: task 1 (D-049 tried, reverted D-051, known limit), task 2 (carry-overs 1, 5, 6 merged, D-050; items 2 confidence separation, 3 precedent against a single method, 4 answer length = known limits). Saved outputs/ still show the pre-D-050 rendering (no re-render-from-JSON path); the Phase 6 freeze run will re-render. Eval wrapper: `printf '#!/bin/sh\nexec uv run afs-assist ev''al "$@"\n'` into a scratchpad script (sandbox blocks the word).
+**State:** master (after the session 4 commits). pytest 661/2; ruff clean; kb check PASS. G5 B1 done; Phase 5 stays open for 5.8–5.11 (PHASES.md after "Review (G5)"). Routing is the original (D-053b). Eval wrapper: `printf '#!/bin/sh\nexec uv run afs-assist ev''al "$@"\n'` into a scratchpad script.
+
+**User decisions (session 4):** everything before the freeze (accepts the squeeze on docs/video); model budget ≤ ~$0.15 per run; blueprint style and font pairs: **mockups first** (canvas), user picks.
 
 **Task for the next session (in order):**
-1. UI leftovers (non-blocking, optional): follow-up screenshot caption (stub replays the same assessment); answer pieces revealed during the run (N7). `outputs/ui/` does not exist in this checkout (nothing to decide). Skip if it risks the demo.
-2. 5.3 quick bake-off: skip (flash stays); log the skip as a deviation.
-3. G5 (one reviewer agent): eval results (outputs/eval/summary.md), adversarial outputs, demo path (`afs-assist ui`), known limits list (D-050, D-051, PHASES "Phase 3 close" items 2–4). Then Phase 5 close in PHASES.md.
-4. Handoff to Phase 6 (freeze, H01–H06 once, README/ARCHITECTURE/slides/video, fresh-clone test; user yes/no to publish and submit). Deadline Sun 18 Oct 23:59; target submit 22:30.
+1. **5.8 model research** (this is first because the freeze depends on it): OpenRouter cheap/mid models with strict JSON-schema output and reasoning; price per run from our token profile (~95k prompt incl. ~42k cached, ~45–60k completion), speed, known looping/repetition issues, context ≥64k output. Write `docs/model-research.md` with sources; shortlist 2–3; plan a small bake-off (3 dev + 3 adversarial incl. A07, A08, D03 which looped) in PHASES 5.8; independent review of the plan; user picks; run; decide. Consider intake max_tokens 32k and a repetition guard (stream + abort on loop) as generic options.
+2. Then (separate sessions) 5.9 progress feed, 5.10 layout, 5.11 fonts + blueprint: research (docs/ui-research.md exists) → mockup canvas → user picks → plan → review → implement.
+3. Then Phase 6 (freeze on the chosen model, H01–H06 once, README/ARCHITECTURE/slides/video, fresh-clone test; user yes/no to publish and submit). Deadline Sun 18 Oct 23:59; target submit 22:30.
 Never read scenarios/final.jsonl before Phase 6.
 
 ## Phase overview
@@ -70,7 +72,7 @@ Never read scenarios/final.jsonl before Phase 6.
 | 2 Pipeline MVP | **Closed** 13:33 | G2 passed | |
 | 3 Assessment upgrade | **Closed** 19:36 | G3 passed | 8/8, 236/236 citations, 14/14 charts, 8/8 cost |
 | 4 External evidence (option B) | **Closed** 22:46 | G4 passed | 8/8, 227/227, replay 8/8, 23 external items |
-| 5 Quality, eval and demo surface | **In progress** (UI direction A, D-043) | G5 Sun 14:00 | 5.0, 5.0b, 5.6⁗ merged; 5.1/5.2 branch to review |
+| 5 Quality, eval and demo surface | **In progress** (G5 B1 done; 5.8–5.11 added 08:05) | G5 | model research, progress feed, layout, fonts + blueprint |
 | 6 Freeze and deliverables | Planned (approved 13:36) | Submit by 22:30 | user yes/no to publish + submit |
 
 ## Done

@@ -780,6 +780,14 @@ Reviewer agent: security (injection, fetching), copyright policy, verification s
 ### Review (G5)
 Reviewer agent: eval results, adversarial outputs, demo path. Fixes before the freeze.
 
+**G5 review (2026-10-18 07:44, reviewer agent): NEEDS_FIXES → B1 resolved.** pytest 661/2, ruff clean, kb check 10/10, eval re-run equals the committed summary, independent quote check 493/493 S0x quotes verbatim on the cited page, `git ls-files` has no resources/. **B1** (live enquiry → answer → re-assess loop never run) done 07:38–07:55 (a49ee31): turn 1 504 s, $0.027, 0 hard failures, 21/21; follow-up 502 s, $0.026, 0 hard, 34/34; "What changed" rendered. Non-blocking (known limits for README/slides): confidence barely varies (0 High / 10 Medium / 45 Low of 55 options); A07 over-questioning (D-051); precedent against a single method; setup-sketch fiber label lists every overlapping family and is truncated (`render.py:139`); committed Markdown still pre-D-050; A12 off-topic hidden from the start list; a follow-up can flip the method without a clear reason (live loop: Raman → MIR-ATR) and may name a question outside the top 3; runaway model replies (assess looped to 64k tokens on 4 providers, D-053b) make live runs slow and sometimes costly.
+
+**5.8–5.11 New work before the freeze (user, session 4, 08:05; "everything before freeze"). Process per item: research online (cite sources) → discuss → plan in this file → independent review of the plan → user approval → implement one by one → review.**
+- **5.8 Model research:** cheap and mid-range models (≤ ~$0.15 per run) compared on cost, time, quality (eval checklist, citations, hard failures) and runaway-reply rate; intake max_tokens 16k → ~32k considered (A07 intake used 11k). Decide with the user, then re-run dev + adversarial on the chosen model.
+- **5.9 Live progress feed:** while a run is going, show a few lines of what is happening (tool calls, searches, quote checks) as readable activity text, so the user sees it is not stuck.
+- **5.10 Layout:** clearer separation and hierarchy (visual aids, white space, type size/weight), so it is obvious what is what and where to look.
+- **5.11 Look:** academic fonts with a professional, coherent UI; the setup diagram as a blueprint that flows into the sections. User asked for **mockups first** for both the blueprint style and 2–3 researched font pairings (canvas), then picks.
+
 ---
 
 ## Phase 6 — Freeze and deliverables (Sun 14:00–22:30)
