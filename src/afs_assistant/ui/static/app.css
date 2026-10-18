@@ -154,6 +154,7 @@ a:hover { text-decoration-thickness: 2px; }
   :root:not([data-theme="light"]) .tt-light { display: none; }
   :root:not([data-theme="light"]) .tt-dark { display: inline; }
 }
+.show-sm { display: none; }
 .present-toggle { display: none; }
 .js .present-toggle { display: inline-flex; }
 
@@ -193,7 +194,7 @@ input:disabled { opacity: 0.6; }
 .start-side ol li { margin-bottom: var(--space-2); }
 .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-4); }
 .chip { display: inline-flex; align-items: center; min-height: 36px; font: 500 0.875rem/1.25 var(--font-sans); color: var(--color-ink); text-decoration: none;
-  padding: 7px 14px; border: 1px solid var(--color-rule-strong); border-radius: 999px; max-width: 100%; background: var(--color-paper); cursor: pointer; text-align: left; }
+  padding: 7px 14px; border: 1px solid var(--color-rule-strong); border-radius: 18px; max-width: 100%; background: var(--color-paper); cursor: pointer; text-align: left; }
 .chip:hover { border-color: var(--color-ink); background: var(--color-paper-2); }
 .chip-q { border-color: var(--color-accent); }
 .chip-q b { color: var(--color-accent); font: 600 var(--text-xs)/1 var(--font-mono); margin-right: 6px; }
@@ -217,7 +218,8 @@ input:disabled { opacity: 0.6; }
   padding: var(--space-6) 0; border-top: var(--rule); }
 .brief > .chat-turn:first-child > .t-row:first-child { border-top: 0; padding-top: var(--space-2); }
 .t-main, .t-side { min-width: 0; }
-.t-main > * + * { margin-top: var(--space-5); }
+.chat-turn, .mnote, .sharpen, .t-main [id] { scroll-margin-top: 96px; scroll-margin-bottom: 120px; }
+.t-main > * + *, .chat-answer > .chat-block { margin-top: var(--space-6); }
 .t-main > .who + * { margin-top: 0; }
 .thread > * + * { margin-top: var(--space-6); }
 .turn > * + * { margin-top: 36px; }
@@ -258,7 +260,6 @@ sup.ref, .refs { font: 600 var(--text-xs)/1 var(--font-mono); vertical-align: su
 .dek.is-active { border-left: 2px solid var(--color-accent); padding-left: 12px; margin-left: -14px; }
 
 /* ---------------------------------------------------------------- blocks */
-.block, .changed, .setup, .sharpen, .opts-block, .setup-block { margin: 0; }
 .bh, .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2) var(--space-4);
   border-bottom: var(--rule-ink); padding-bottom: 6px; margin-bottom: var(--space-3); }
 .bh .muted, .sec-head .muted { font-size: var(--text-sm); }
@@ -273,6 +274,7 @@ table.opts, table.diff { width: 100%; border-collapse: collapse; font-size: 0.93
 .diff { border: var(--rule-ink); }
 .diff th, .diff td { padding: 10px var(--space-4); }
 .diff th[scope="row"] { width: 140px; }
+.diff thead th + th { text-transform: none; font-weight: 600; color: var(--color-ink); }
 .diff del { color: var(--color-muted); text-decoration-thickness: 1px; }
 .diff ins { text-decoration: none; background: var(--color-accent-wash); padding: 0 2px; }
 .diff .same { color: var(--color-muted); }
@@ -521,7 +523,7 @@ svg.fig .sp-value { font-size: 12px; fill: var(--color-muted); }
 /* ---------------------------------------------------------------- present mode (projector): larger type and blocks */
 @media (min-width: 900px) {
   :root[data-present="on"] .frame, :root[data-present="on"] .pinned, :root[data-present="on"] .composer { zoom: 1.22; }
-  :root[data-present="on"] .t-side { display: none; }
+  :root[data-present="on"] .t-side, :root[data-present="on"] .composer-hint { display: none; }
   :root[data-present="on"] .t-row, :root[data-present="on"] .composer-grid { grid-template-columns: minmax(0, 860px); }
 }
 
@@ -533,11 +535,17 @@ svg.fig .sp-value { font-size: 12px; fill: var(--color-muted); }
   .t-row, .composer-grid, .start-grid { grid-template-columns: minmax(0, 1fr); }
   .t-side:not(:empty) { margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px dashed var(--color-rule); }
   .t-side:empty { display: none; }
+  /* the margin folds under the text it supports: right after the recommendation or the answer, before the blocks */
+  .t-ai { display: flex; flex-direction: column; }
+  .t-ai > .t-main { display: contents; }
+  .t-ai > .t-main > * { order: 3; }
+  .t-ai > .t-main > .who, .t-ai > .t-main > .rec, .t-ai > .t-main > .chat-answer, .t-ai > .t-main > .progress { order: 1; }
+  .t-ai > .t-side { order: 2; }
   .mnote q { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .mnote.is-open q { display: inline; -webkit-line-clamp: unset; }
   .composer-hint { display: none; }
   .start-side { padding-top: var(--space-5); }
-  .mast-meta { display: none; }
+  .mast-meta, .js .present-toggle { display: none; }
 }
 @media (max-width: 640px) {
   .mast { padding: var(--space-2) var(--space-4); }
@@ -557,7 +565,9 @@ svg.fig .sp-value { font-size: 12px; fill: var(--color-muted); }
   .composer { padding: var(--space-2) var(--space-3); }
   .composer-grid .composer-in { flex-wrap: wrap; }
   .composer-grid .composer-in input { flex-basis: 100%; }
-  .composer-grid .composer-in .btn, .composer-grid .composer-in .btn-quiet { flex: 1 1 0; }
+  .composer-grid .composer-in .btn, .composer-grid .composer-in .btn-quiet { flex: 1 1 0; min-height: 44px; }
+  .hide-sm { display: none; }
+  .show-sm { display: inline; }
   .seg-s { display: none; }
   .seg [role="tab"] { padding: var(--space-2) 2px; min-height: 48px; }
   .seg-t { font-size: var(--text-sm); }

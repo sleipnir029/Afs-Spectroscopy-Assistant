@@ -132,7 +132,7 @@
       if (!t || !t.classList || !t.classList.contains("mnote-ctx")) return;
       setNote(noteOf(t), true);
       var box = t.querySelector(".source-text"), mark = box && box.querySelector("mark");
-      if (mark) box.scrollTop = Math.max(0, mark.offsetTop - box.offsetTop - 48);   // the quote in view, with context
+      if (mark) box.scrollTop = Math.max(0, mark.offsetTop - 48);   // the quote in view, with context (box is the offset parent)
     });
     document.addEventListener("click", function (ev) {
       var ref = ev.target.closest && ev.target.closest("a.ref[data-ref]");
