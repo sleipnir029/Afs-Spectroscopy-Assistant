@@ -1,0 +1,315 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A provisional shortlist of MIR-ATR and Raman spectroscopy can be formed for hot polymer extrusion based on industrial precedents, but exact feasibility depends on polymer-API optical properties, temperature limits, and fouling behavior.",
+ "premise_checks": [
+  {
+   "premise": "An optical measurement can successfully detect composition changes in the extrusion melt.",
+   "verdict": "precedent_only",
+   "explanation": "Source material demonstrates polymer extrusion monitoring using MIR-ATR spectroscopy, establishing a strong precedent for testing but not a guaranteed outcome for a new formulation.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Hot polymer extrusion process incorporating an active pharmaceutical ingredient",
+  "Detect composition changes while the melt is being processed",
+  "Offline assays available",
+  "Process interface is hot and may be exposed to material build-up"
+ ],
+ "key_unknowns": [
+  "Specific polymer and API types and target concentration ranges",
+  "Exact process temperature and melt optical properties",
+  "Fouling tendency and cleaning mechanisms for the probe interface"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the specific polymer and active pharmaceutical ingredient types, and what is the required concentration detection range?",
+   "why_it_matters": "Determines specific absorption bands and method suitability.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the operating temperature and pressure of the extrusion melt at the measurement location?",
+   "why_it_matters": "Ensures the selected probe, optics, and fiber materials stay within thermal and mechanical ratings.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the expected severity of material build-up or fouling on the probe interface, and is a purging or wiping mechanism required?",
+   "why_it_matters": "Fouling directly impairs ATR and optical contact measurements over time.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Do you need surface-layer monitoring (a few micrometres via ATR) or bulk melt penetration?",
+   "why_it_matters": "Defines the required optical technique and probe geometry.",
+   "affects": [
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Mid-IR ATR spectroscopy provides high molecular selectivity and has proven industrial precedent for monitoring active pharmaceutical ingredients in hot polymer extrusion using diamond cone ATR probes.",
+   "conditions": "Melt must maintain good contact with the ATR crystal, and process temperature must remain within probe and fiber limits.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy provides complementary vibrational information on molecular backbones and is well-suited for polymer systems where water interference is minimal.",
+   "conditions": "Polymer or additive fluorescence must not swamp the weak Raman scattering signal.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Mid-IR Diamond ATR immersion probe mounted flush in the extruder barrel or die adapter.",
+  "location": "Hot polymer extrusion process (extruder barrel or die adapter).",
+  "fiber_link": "Chalcogenide (CIR) or polycrystalline infrared (PIR) fiber cables connecting the ATR probe to the FTIR spectrometer.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 10,
+    "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 14,
+    "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe",
+    "claim_kind": "application_precedent"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal range 4000-400 cm-1 (2.5-25 µm); usable range depends on the instrument, chalcogenide or polycrystalline fiber, and ATR crystal actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift expressed in wavenumbers (cm-1) with laser excitation wavelength stated separately; usable range depends on the spectrometer, laser, and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy, while the vertical axis shows the absolute intensity",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Material build-up or fouling on the ATR crystal can obscure the optical measurement and mimic composition changes.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "High processing temperatures can exceed fiber or probe seal thermal ratings.",
+   "rule_ids": [
+    "R-GEN-1"
+   ],
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "High temperature resistance - Increased durability, high strength, hermetically sealed",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Overlapping spectral bands of the bulk polymer matrix and the API may complicate quantitative chemometric calibration.",
+   "rule_ids": [
+    "R-NIR-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Prepare representative polymer-API blend samples across the expected concentration range.",
+    "purpose": "Cover anticipated chemical variation.",
+    "citations": []
+   },
+   {
+    "step": "Record offline reference assays for each sample using standard laboratory methods.",
+    "purpose": "Provide independent reference measurements.",
+    "citations": []
+   },
+   {
+    "step": "Acquire initial spectra using MIR-ATR and Raman probes under simulated or actual melt conditions.",
+    "purpose": "Test single methods first.",
+    "citations": []
+   },
+   {
+    "step": "Build and cross-validate initial chemometric regression models (PLS) to predict composition.",
+    "purpose": "Establish predictive performance.",
+    "citations": []
+   },
+   {
+    "step": "Validate the model on held-out test batches against customer-defined accuracy criteria.",
+    "purpose": "Verify robustness.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Offline reference assays (e.g., HPLC or gravimetric reference methods).",
+  "decision_basis": "Go/no-go based on whether the cross-validated prediction error meets the customer's required concentration accuracy threshold."
+ },
+ "assumptions": [
+  "The polymer melt flows adequately past the probe interface to maintain representative sampling.",
+  "Process temperatures are within standard optical fiber and probe sealing limits."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "API Concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "To quantify the active pharmaceutical ingredient in the polymer melt.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "HPLC assay",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Melt Temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "To ensure process conditions stay within probe and fiber operating limits.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "Thermocouple",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Moderate optical alignment",
+   "maintenance": "Requires laser safety and clean optics",
+   "performance_fit": "Provides complementary vibrational spectra with minimal water interference",
+   "cost_drivers": "Raman spectrometer, laser source, and standard probe hardware",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "Measurement of the Raman scattering (RS) effect, is also a type of vibrational spectroscopy.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "High for in-line extruder mount",
+   "maintenance": "Periodic crystal cleaning to prevent fouling",
+   "performance_fit": "High molecular selectivity and established industrial precedent for API monitoring in polymer extrusion",
+   "cost_drivers": "FTIR spectrometer and CIR/PIR fiber ATR probe system",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Partial Least Squares (PLS) regression models must be built on reference spectra to correlate spectral absorbance with offline assay concentrations.",
+ "realtime_tracking_note": "In-line continuous tracking enables real-time detection of composition changes in the extruder barrel or die adapter.",
+ "future_direction": "Integration of automated probe purging mechanisms or multi-method data fusion if single-method calibration proves insufficient.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If material build-up on the ATR crystal proves insurmountable or if fluorescence background swamps Raman, evaluation of transmission or alternative cleaning purge designs would be required.",
+  "next_step": "Conduct multi-method laboratory trials using representative polymer-API samples to establish initial calibration models."
+ },
+ "brief_answer": "To monitor active pharmaceutical ingredient composition in hot polymer extrusion, Mid-IR ATR spectroscopy using a robust immersion probe is recommended as the primary approach based on industrial extrusion precedents. Raman spectroscopy offers a viable alternative if polymer fluorescence permits. Initial feasibility trials with representative polymer-API blends and offline reference assays should be conducted to establish chemometric calibration robustness and evaluate potential fouling behavior at the process interface."
+}
