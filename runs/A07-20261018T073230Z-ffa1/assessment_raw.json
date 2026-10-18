@@ -1,0 +1,326 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The clear, colourless aqueous sucrose stream provides a well-defined analytical target allowing a provisional method shortlist, while specific probe wetted materials for daily hot caustic cleaning and the exact 10 m fiber routing remain to be confirmed.",
+ "premise_checks": [
+  {
+   "premise": "NIR transmission is suitable for clear or semi-transparent liquid streams.",
+   "verdict": "supported",
+   "explanation": "The supplied sources explicitly identify transmission as the preferred method for transparent or semi-transparent liquid streams.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Remote measurements via fiber optic probes over meters of distance are feasible in industrial process environments.",
+   "verdict": "supported",
+   "explanation": "Low-OH silica fiber cables enable remote industrial process control over distances up to 300 m.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Monitor sucrose concentration in-line for a clear, colourless aqueous solution",
+  "Process conditions: 50 mm stainless steel pipe, 20 to 30 °C, normal pressure",
+  "Expected concentration range: 5 to 15 % w/w with a quality limit of plus or minus 0.3 % w/w",
+  "Analyzer located in a dry, safe room 10 m from the pipe",
+  "Daily clean-in-place (CIP) with hot caustic",
+  "Measurement frequency: one reading every minute",
+  "Reference method: laboratory refractometer remaining in use"
+ ],
+ "key_unknowns": [
+  "Specific process connection type on the 50 mm pipe",
+  "Exact concentration and temperature of the hot caustic used during daily CIP",
+  "Material compatibility of probe wetted parts and seals with hot caustic",
+  "Detailed optical attenuation across the 10 m fiber link"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the exact chemical concentration and temperature of the hot caustic solution used during daily CIP?",
+   "why_it_matters": "It determines the chemical compatibility and material selection for probe wetted parts and optical seals.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What specific process connection standard (e.g., Tri-Clamp, flanged, or threaded) is fitted on the 50 mm pipe?",
+   "why_it_matters": "It dictates the mechanical mounting design of the immersion probe.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Can representative aqueous sucrose samples across the 5 to 15 % w/w range be supplied for baseline laboratory feasibility testing?",
+   "why_it_matters": "It enables empirical calibration model development and verification against the target precision limit.",
+   "affects": [
+    "method"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Near-infrared transmission/transflection spectroscopy is well suited for clear aqueous solution analysis and allows remote spectrometer placement via robust silica fiber cables.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Mid-infrared ATR spectroscopy provides high chemical specificity for carbohydrate fingerprint bands if higher molecular selectivity is required.",
+   "conditions": "Evaluated if NIR transmission calibration precision requires additional carbohydrate specificity.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR transmission or transflection insertion probe with a defined optical pathlength",
+  "location": "Flush-mounted in the 50 mm stainless steel process pipe",
+  "fiber_link": "Low-OH Vis-NIR silica fiber cable spanning the 10 m distance between the process line and the safe analyzer room",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer of the sample to a detector on the opposite side.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal method range is 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal method range is 4000-400 cm-1; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Daily hot caustic CIP cleaning may degrade probe optical window seals or housing materials if chemical compatibility is inadequate.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Temperature fluctuations between 20 and 30 °C may induce spectral shifts requiring proper temperature compensation in the chemometric calibration.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Sample preparation",
+    "purpose": "Prepare representative aqueous sucrose solutions across the expected 5 to 15 % w/w range.",
+    "citations": []
+   },
+   {
+    "step": "Reference measurement",
+    "purpose": "Analyze all trial samples using the customer's laboratory refractometer as the independent reference method.",
+    "citations": []
+   },
+   {
+    "step": "Benchtop trials",
+    "purpose": "Record NIR transmission/transflection spectra of the reference solutions using fiber-coupled laboratory equipment.",
+    "citations": []
+   },
+   {
+    "step": "Model calibration",
+    "purpose": "Build partial least squares (PLS) regression models correlating spectral data to sucrose concentration.",
+    "citations": []
+   },
+   {
+    "step": "Validation",
+    "purpose": "Evaluate prediction accuracy against held-out test samples against the ±0.3 % w/w quality limit.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory refractometer",
+  "decision_basis": "Go/no-go based on achieving the customer's specified ±0.3 % w/w precision limit in cross-validation."
+ },
+ "assumptions": [
+  "The 50 mm process pipe can accommodate an insertion transmission or transflection probe.",
+  "Low-OH Vis-NIR silica fibers can span the 10 m distance without excessive signal attenuation."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Sucrose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the primary process target variable to be monitored in-line.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Process temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature variations between 20 and 30 °C affect aqueous solution properties and require compensation.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "Temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Simple online monitoring",
+   "maintenance": "Routine optical check and CIP cleaning",
+   "performance_fit": "Direct transmission measurement fits clear aqueous solutions",
+   "cost_drivers": "NIR spectrometer and transmission/transflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Robust fiber-optic link to safe room",
+   "maintenance": "Scheduled calibration and caustic cleaning verification",
+   "performance_fit": "Optimal balance of analytical precision and remote installation",
+   "cost_drivers": "Vis-NIR spectrometer, transmission/transflection probe, and low-OH silica fiber cable",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Partial least squares (PLS) calibration models must be constructed using spectra acquired across the 5 to 15 % w/w sucrose range, incorporating scatter correction and temperature compensation.",
+ "realtime_tracking_note": "Continuous 1-minute interval spectral acquisitions can be logged and processed in real time to monitor sucrose concentration trends.",
+ "future_direction": "Integration of automated temperature compensation or expansion to multi-component monitoring if additional solutes are introduced.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "Incompatibility of probe seals with hot caustic CIP or excessive signal attenuation across the 10 m fiber run.",
+  "next_step": "Perform benchtop multi-method trials using representative aqueous sucrose samples referenced against your laboratory refractometer."
+ },
+ "brief_answer": "For monitoring your clear aqueous sucrose solution, we recommend starting with NIR spectroscopy using a transmission or transflection probe connected via Vis-NIR silica fibers to the analyzer 10 m away. A feasibility trial with representative 5 to 15 % w/w samples referenced against your laboratory refractometer will establish the chemometric calibration model. Material compatibility with daily hot caustic CIP remains to be confirmed."
+}
