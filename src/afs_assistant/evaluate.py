@@ -23,11 +23,12 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from afs_assistant import paths, scenarios
-from afs_assistant.options import option_citations, option_methods, option_parts
+from afs_assistant.options import option_citations, option_parts
 from afs_assistant.schema import Assessment
 from afs_assistant.verify import (
     AFFECTS_WORDS,
     ANSWER_QUESTIONS,
+    FALLBACK_FLAGS,
     MAX_ANSWER_WORDS,
     MAX_OPTIONS,
     MAX_QUESTIONS,
@@ -36,6 +37,7 @@ from afs_assistant.verify import (
     PLACEHOLDERS,
     _all_text,
     answer_texts,
+    extended_methods,
     forbidden_hits,
     request_text,
 )
@@ -165,10 +167,12 @@ def no_open_failures(run: Run) -> Result:
 
 
 def no_flagged_figures(run: Run) -> Result:
-    """Nothing finalize had to flag (unsupported figure, lost citation) and no open number check."""
+    """Nothing finalize had to flag (unsupported figure, lost citation) and no open number check.
+    Flags of the 5.R1 fallbacks (an added question or method) are not counted here."""
     if run.a is None:
         return _OFF
-    problems = [f"flagged {path}: {why}" for path, why in run.data["flagged"].items()]
+    problems = [f"flagged {path}: {why}" for path, why in run.data["flagged"].items()
+                if why not in FALLBACK_FLAGS]      # fallback flags are shown by the question/option checks
     problems += [f"open {c['name']} at {c['location']}" for c in run.data["still_open"]
                  if c["name"].startswith("numbers_")]
     return _ok(problems)
@@ -227,7 +231,7 @@ def options_rules(run: Run) -> Result:
             problems.append(f"{o.id} uses no valid recommendation {bad}")
         if o.tier == "extended" and _empty(o.fusion_note):
             problems.append(f"extended {o.id} has no fusion note")
-        if o.tier == "extended" and len(option_methods(o, recs)) < 2:
+        if o.tier == "extended" and len(extended_methods(o, recs)) < 2:
             problems.append(f"extended {o.id} combines fewer than two methods")
     return _ok(problems)
 
@@ -549,7 +553,7 @@ def predicate(run: Run, spec: dict) -> tuple[bool, str]:
     if kind == "extended_fusion":
         recs = run.recs
         ext = [o for o in a.solution_options if o.tier == "extended"]
-        good = [o.id for o in ext if not _empty(o.fusion_note) and len(option_methods(o, recs)) >= 2]
+        good = [o.id for o in ext if not _empty(o.fusion_note) and len(extended_methods(o, recs)) >= 2]
         return bool(good), (f"extended {good} with fusion note" if good else
                             f"extended options {[o.id for o in ext]}, none with a fusion note and two methods")
     if kind == "primary_fused":

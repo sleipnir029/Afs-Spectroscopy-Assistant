@@ -30,8 +30,13 @@ from afs_assistant.methods import named_methods
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
 from afs_assistant.verify import (
+    METHOD_ADDED_FLAG,
+    QUESTION_ADDED_FLAG,
+    RECOMMENDED_ROLES,
     Report,
+    check_questions,
     check_status,
+    extended_methods,
     intake_problems,
     normalize_affects,
     normalized_combined_with,
@@ -42,6 +47,10 @@ from afs_assistant.verify import (
 )
 
 MAX_REPAIR_ROUNDS = 2
+# Finalize fallbacks (5.R1, D-047) for two structure failures a repair may leave open.
+FALLBACK_CHECKS = ("questions_for_unknowns", "extended_two_methods")
+FALLBACK_QUESTIONS = 3
+FALLBACK_WHY = "Listed as a key unknown in this assessment; the answer may change the status."
 MAX_INTAKE_ATTEMPTS = 2      # a collapsed intake is retried once, then the case fails (3.R3 B1)
 # Highest role first: a duplicate method+technique (+combination) keeps the entry with the best role.
 ROLE_RANK = {"primary": 0, "comparison": 1, "conditional": 2, "not_recommended": 3}
@@ -204,6 +213,8 @@ def finalize(a: Assessment, report: Report,
     5. Status inconsistent with premises -> premise_not_supported; with recommendations
        -> insufficient_information (re-checked on the result of steps 1-4).
     6. Question `affects` items are normalised to the fixed vocabulary; other words are dropped (logged).
+    Deterministic fallbacks (5.R1): before step 1, a second method for a one-method extended option
+    (`_fallback_extended`); after step 5, questions from the key unknowns (`_fallback_questions`).
     Locations in the change log use the numbering of `a`. Returns the assessment, the
     change log and the flagged items (path in the returned assessment -> reason) that
     render marks with a warning: items that lost a citation or failed a number check.
@@ -212,6 +223,7 @@ def finalize(a: Assessment, report: Report,
     removed: list[dict] = []
     flagged: dict[str, str] = {}
     data = json.loads(a.model_dump_json())
+    _fallback_extended(a, data, candidates, removed, flagged)
 
     def strip(container: dict, loc: str) -> None:
         kept = []
@@ -323,7 +335,72 @@ def finalize(a: Assessment, report: Report,
     if (demoted_contradiction and data["decision_status"] == "premise_not_supported"
             and not any(p["verdict"] == "contradicted" for p in data["premise_checks"])):
         flagged.setdefault("status_reason", "the contradiction behind this status failed verification")
+    _fallback_questions(data, report, removed, flagged)
     return Assessment.model_validate(data), removed, flagged
+
+
+def _question_text(unknown: str) -> str:
+    """A fallback question from a key unknown: its first letter lower-cased unless the first word is an
+    acronym (two or more capitals), its end punctuation replaced by a question mark."""
+    text = unknown.strip().rstrip(".;:!? ")
+    first = text.split()[0] if text else ""
+    if sum(ch.isupper() for ch in first) < 2:
+        text = text[:1].lower() + text[1:]
+    return f"Could you tell us more about this open point: {text}?"
+
+
+def _fallback_questions(data: dict, report: Report, removed: list[dict], flagged: dict[str, str]) -> None:
+    """Fallback (5.R1 a), on the final data after the status step: no clarification question while key
+    unknowns are open or the status is not provisional -> up to FALLBACK_QUESTIONS questions from the
+    first key unknowns (skipping one with an unsupported figure), `affects` ["status"]. Logged in
+    `removed` (`corrects`: questions_for_unknowns) and flagged. Without a usable unknown nothing changes."""
+    probe = Report()
+    check_questions(Assessment.model_validate(data), probe)
+    if not probe.hard_failures:
+        return
+    bad = {c.location for c in report.hard_failures if c.name == "numbers_uncited_text"}
+    usable = [(i, t) for i, t in enumerate(data["key_unknowns"])
+              if t.strip() and f"key_unknowns[{i}]" not in bad][:FALLBACK_QUESTIONS]
+    for n, (i, text) in enumerate(usable):
+        q = {"id": f"Q{n + 1}", "question": _question_text(text), "why_it_matters": FALLBACK_WHY,
+             "affects": ["status"]}
+        data["clarification_questions"].append(q)
+        removed.append({"location": f"clarification_questions[{n}]", "item": q,
+                        "reason": f"no clarification question while key unknowns are open or the status is not "
+                                  f"provisional; question added from key_unknowns[{i}]",
+                        "corrects": "questions_for_unknowns"})
+        flagged[f"clarification_questions[{n}]"] = QUESTION_ADDED_FLAG
+
+
+def _fallback_extended(a: Assessment, data: dict, candidates: list[Candidate], removed: list[dict],
+                       flagged: dict[str, str]) -> None:
+    """Fallback (5.R1 b), before any removal: an extended option with fewer than two different methods
+    gets the first recommendation, in role order (primary, comparison, conditional), that survives the
+    screen, brings a method the option does not use yet, and keeps the option's set of recommendations
+    distinct from the other options'. Otherwise nothing changes. Logged (`corrects`:
+    extended_two_methods) and flagged; finalize's later steps treat the added reference like the model's."""
+    status = {(c.method, c.technique): c.status for c in candidates}
+    # Entries that finalize keeps recommended (the screen step demotes a failed candidate).
+    kept = {r.id: r for r in a.recommendations
+            if r.role in RECOMMENDED_ROLES and status.get((r.method, r.technique)) != "fail"}
+    ordered = sorted(kept.values(), key=lambda r: ROLE_RANK[r.role])     # stable: list order within a role
+    others = [frozenset(o.recommendation_ids) for o in a.solution_options]
+    for i, o in enumerate(a.solution_options):
+        if o.tier != "extended":
+            continue
+        methods = extended_methods(o, kept)
+        if len(methods) >= 2:
+            continue
+        pick = next((r for r in ordered if r.method not in methods and r.id not in o.recommendation_ids
+                     and frozenset([*o.recommendation_ids, r.id]) not in others[:i] + others[i + 1:]), None)
+        if pick is None:
+            continue
+        refs = [*o.recommendation_ids, pick.id]
+        data["solution_options"][i]["recommendation_ids"] = refs
+        removed.append({"location": f"solution_options[{i}].recommendation_ids", "item": list(o.recommendation_ids),
+                        "reason": f"extended option {o.id} used {methods} only; {pick.role} {pick.id} "
+                                  f"({pick.method}) added as a second method", "corrects": "extended_two_methods"})
+        flagged[f"solution_options[{i}]"] = METHOD_ADDED_FLAG
 
 
 def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], flagged: dict[str, str],
@@ -484,6 +561,8 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     timings["wall"] = round(time.monotonic() - wall, 3)
     calls = tracker.run_calls[first_call:] if tracker is not None else []
     manifest = _manifest(run_id, calls, attempt, problems, repairs, best_round, timings, best_report)
+    manifest["finalize_fallbacks"] = list(dict.fromkeys(x["corrects"] for x in removed
+                                                        if x.get("corrects") in FALLBACK_CHECKS))
     if ext is not None:
         manifest["prompt_sha256"].update(ext["prompt_sha256"])
         manifest["external_mode"] = external

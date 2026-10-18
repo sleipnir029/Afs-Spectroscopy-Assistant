@@ -14,5 +14,7 @@ Fix ONLY the failing items and return the complete corrected assessment JSON.
 - **proposal / brief answer failures:** fill the empty fields; `best_current_option` must be one of the option ids.
 - **single primary:** keep exactly one `primary`; make the others `comparison` or `conditional`.
 - **premise-status failures:** `premise_not_supported` needs a `contradicted` premise check; otherwise choose another status.
+- **questions for unknowns:** add the deciding clarification questions for the open key unknowns, Q1 first, each with `affects`.
+- **extended with two methods:** give the `extended` option a second, different method (another recommendation, or the primary); a recommendation's own method in its `combined_with` does not count.
 
 Do not change items that passed. Do not add new claims without exact citations.
