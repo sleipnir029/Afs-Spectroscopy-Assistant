@@ -174,10 +174,11 @@ An earlier 6-case bake-off is in `outputs/bakeoff/compare.md`. In it, two arms (
 
 ### Reproducibility
 
-Fresh-clone test, 2026-10-18 about 12:35:
-- A fresh `git clone` + `uv sync`, with no `resources/` folder, passes `uv run pytest -q` (758 passed, 2 skipped).
-- It also passes `uv run afs-assist kb check`: all PASS. The S02 PDF text-layer comparison is skipped without the PDF.
-- One live `afs-assist assess --text ... --external off` in the clone took 92 s and $0.031, with 0 hard failures and 25/25 citations verified.
+Fresh-clone test, 2026-10-18 14:38 (after `knowledge/pages.jsonl` left the repository):
+- A fresh `git clone` + `uv sync`, with no `resources/` folder and no `pages.jsonl`: `uv run pytest -q` gives 357 passed, 432 skipped (the page-text tests, each with the `kb build` hint), 0 failed. `uv run afs-assist kb check` reports `pages_present` FAIL with that hint; the other 7 checks PASS.
+- The same clone with `pages.jsonl` added: 787 passed, 2 skipped, and `kb check` 13/13 PASS (the S02 PDF text-layer comparison is skipped without the PDF).
+- `afs-assist kb build` in a fresh clone with the organiser materials in `resources/` recreates `pages.jsonl` byte-identically (sha256 `7e23c2ae…` = `pages_sha256` in the run manifests) and leaves every committed knowledge file unchanged.
+- Earlier (12:35, pages still committed): one live `afs-assist assess --text ... --external off` in a fresh clone took 92 s and $0.031, with 0 hard failures and 25/25 citations verified.
 
 Replay in a fresh clone:
 - `afs-assist external replay outputs/final/<H>.json` re-checks the items from the curated library.

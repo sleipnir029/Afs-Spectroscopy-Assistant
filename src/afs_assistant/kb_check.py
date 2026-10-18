@@ -34,7 +34,7 @@ def run() -> list[Finding]:
     # The supplied page text is rebuilt locally (`kb build`); without it the page checks cannot run.
     pages = kb.pages() if kb.pages_available() else None
     if pages is None:
-        findings.append(Finding("pages_present", False, f"knowledge/pages.jsonl missing; {kb.PAGES_MISSING_HINT}"))
+        findings.append(Finding("pages_present", False, kb.PAGES_MISSING_HINT))
     else:
         findings.append(Finding("pages_present", True, f"{len(pages)} page records"))
         counts: dict[str, int] = {}
