@@ -61,7 +61,7 @@ Prices are USD per 1M tokens: standard tier, cheapest endpoint that is strict-JS
 | Model id | $/M in | $/M out | Cache read | Ctx | Max out | Strict JSON | Temp | Reasoning control | Providers (quant) | tok/s (OR p50) | Est. $/case (40k/64k/100k out) | Est. wall/case at 64k |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **deepseek/deepseek-v4.1-flash** (baseline) | 0.14 (30% off; list 0.20) | 0.42 (list 0.60) | 0.0042 | 1.05M | 131k on DeepInfra | y (28 of 34 endpoints) | y | effort | DeepInfra fp8, AtlasCloud fp8, CoreWeave fp8; 34 endpoints | DeepInfra 68, AtlasCloud 50, CoreWeave 221 | 0.019 / 0.029 / 0.044 (list 0.027 / 0.041 / 0.063) | 491 s (measured) |
-| deepseek/deepseek-v4.1-flash-1017 | 0.098 (51% off; list 0.20) | 0.294 (list 0.60) | 0.0029 | 1.05M | 131k (DeepInfra), 943k (Fireworks/Parasail) | y (9 of 11) | y | effort | DeepInfra fp8, DeepSeek (first party, peak-hour prices 2×), Baseten/Fireworks/Parasail at 0.30/1.20 | DeepInfra 105, Baseten 296, Fireworks 153, DeepSeek 51 | 0.013 / 0.020 / 0.031 (DeepInfra); 0.052 / 0.081 / 0.124 (Baseten/Fireworks) | ~320 s (DeepInfra), ~220 s (Fireworks) |
+| deepseek/deepseek-v4.1-flash-1017 (Baseten not usable: its endpoint lists no structured_outputs/response_format, reviewer check 08:53) | 0.098 (51% off; list 0.20) | 0.294 (list 0.60) | 0.0029 | 1.05M | 131k (DeepInfra), 943k (Fireworks/Parasail) | y (9 of 11) | y | effort | DeepInfra fp8, DeepSeek (first party, peak-hour prices 2×), Baseten/Fireworks/Parasail at 0.30/1.20 | DeepInfra 105, Baseten 296, Fireworks 153, DeepSeek 51 | 0.013 / 0.020 / 0.031 (DeepInfra); 0.052 / 0.081 / 0.124 (Baseten/Fireworks) | ~320 s (DeepInfra), ~220 s (Fireworks) |
 | deepseek/deepseek-v4-pro-0813 | 0.133 (Baidu); 1.31 (others) | 0.40 (Baidu); 3.96 (others) | 0.0042 | 1.02M | 393k | y | y | effort | Baidu fp8 cheap but without penalty params; CoreWeave/Parasail/AtlasCloud fp8 at 10× | ~85 | 0.018 / 0.027 / 0.042 (Baidu only); 0.18 / 0.27 / 0.42 (others) | ~390 s |
 | **anthropic/claude-haiku-5.5** | 0.10 (0.50 above 100k prompt) | 0.50 (2.50 above 100k) | 0.01 (write 0.125) | 1M | 128k | y on Anthropic, Vertex, Azure; **n on Bedrock / Claude Platform on AWS** | **n** | effort (low…max, adaptive) | Anthropic, Google Vertex, Azure | 166–171 (Vertex) | 0.029 / 0.042 / 0.059 without cache_control; about +30% for the tokenizer | ~200 s |
 | **openai/gpt-6-luna** | 0.10 (flex 0.05; priority 0.20) | 0.50 (flex 0.25; priority 1.00) | 0.01 | 1.05M | 128k | y | **n** | effort (none…max) | OpenAI, Azure, Bedrock | OpenAI 69, OpenAI priority 112, Bedrock 80 | 0.024 / 0.036 / 0.054 (std); 0.048 / 0.072 / 0.108 (priority) | ~480 s std, ~300 s priority |
@@ -171,6 +171,8 @@ These apply whatever model is chosen. They are ordered by how directly they addr
 6. **Provider pinning with `quantizations: ["fp8","bf16"]`** avoids fp4 serving differences (OpenRouter provider-routing docs). D-053b showed this does not fix v4.1-flash's loops.
 
 ## 6. Shortlist
+
+`openai/gpt-6-luna-pro` (same $0.10/$0.50) is excluded: the same model in a pro mode that spends far more tokens. `nvidia/nemotron-3.5-super-vl` was fetched but not assessed.
 
 | Rank | Model | Why it fits our constraints | Main risk |
 |---|---|---|---|
