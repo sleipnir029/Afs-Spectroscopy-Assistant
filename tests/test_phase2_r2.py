@@ -484,6 +484,7 @@ def test_assess_prompt_states_caps_and_single_method_primary():
 
 
 # ----------------------------------------------------------------- 7. CLI set run and scenario parser
+@pytest.mark.needs_pages
 def test_run_set_continues_after_a_failing_scenario_and_exits_nonzero(monkeypatch, capsys):
     class StubClient:
         def __init__(self):

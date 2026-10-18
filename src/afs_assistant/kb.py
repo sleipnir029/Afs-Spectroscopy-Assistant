@@ -9,9 +9,23 @@ import yaml
 
 from afs_assistant import paths
 
+# The full page text of the supplied materials is not distributed with the repository: it is rebuilt locally.
+PAGES_MISSING_HINT = ("needs knowledge/pages.jsonl: run `uv run afs-assist kb build` with the organiser "
+                      "materials in resources/materials/ (the supplied page text is not distributed)")
+
+
+class PagesMissing(FileNotFoundError):
+    """knowledge/pages.jsonl is absent (a fresh clone before `afs-assist kb build`)."""
+
+
+def pages_available() -> bool:
+    return paths.PAGES_FILE.exists()
+
 
 @lru_cache(maxsize=1)
 def pages() -> dict[tuple[str, int], dict]:
+    if not pages_available():
+        raise PagesMissing(PAGES_MISSING_HINT)
     with paths.PAGES_FILE.open(encoding="utf-8") as fh:
         records = [json.loads(line) for line in fh if line.strip()]
     return {(r["doc"], r["page"]): r for r in records}

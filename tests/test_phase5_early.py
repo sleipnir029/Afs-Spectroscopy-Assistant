@@ -264,6 +264,7 @@ def set_env(monkeypatch, tmp_path):
     return state
 
 
+@pytest.mark.needs_pages
 def test_parallel_run_order_and_per_run_cap(set_env, capsys, tmp_path, monkeypatch):
     # All four runs in flight at once (barrier). Case k's assess waits until case k+1's line was printed,
     # so the cases finish 4, 3, 2, 1 (events, no sleeps).
@@ -293,6 +294,7 @@ def test_parallel_run_order_and_per_run_cap(set_env, capsys, tmp_path, monkeypat
     assert sorted(r.split("-")[0] for r in set_env["records"]) == ["C1", "C2", "C3", "C4"]
 
 
+@pytest.mark.needs_pages
 def test_session_cap_stops_submitting_new_cases(set_env, capsys):
     set_env["client"] = _ThreadedClient(session_cap=1.0)     # case 1 costs 0.8; case 2's assess hits the cap
     with pytest.raises(SpendCapExceeded):
@@ -590,6 +592,7 @@ class _BlockingClient:
         raise AssertionError("not cancelled")
 
 
+@pytest.mark.needs_pages
 def test_ctrl_c_cancels_queued_and_running_cases(set_env, monkeypatch, capsys):
     import concurrent.futures
 

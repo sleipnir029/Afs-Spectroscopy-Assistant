@@ -657,6 +657,7 @@ def test_replay_of_a_library_source(tmp_path):
     assert rows and all(r["equal"] for r in rows)
 
 
+@pytest.mark.needs_pages
 def test_cli_external_flag_defaults_to_live(monkeypatch):
     seen = {}
 

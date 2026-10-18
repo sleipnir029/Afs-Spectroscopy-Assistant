@@ -178,6 +178,7 @@ def test_scope_unknown_claim_kind_raises():
 
 
 # --------------------------------------------------------------------- knowledge base
+@pytest.mark.needs_pages
 def test_kb_check_all_pass():
     failed = [f for f in kb_check.run() if not f.ok]
     assert not failed, failed

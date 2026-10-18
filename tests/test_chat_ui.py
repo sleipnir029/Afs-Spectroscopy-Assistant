@@ -51,6 +51,7 @@ def seeded(client, rid=f"dev-{SAVED}") -> str:
 
 
 # --------------------------------------------------------------------------------- full loop (plan item 11, 7)
+@pytest.mark.needs_pages
 def test_assess_ask_reassess_through_the_web_app(outputs, no_provenance):  # noqa: F811
     client, app = app_client(outputs, chat_factory())
     cid = conv_id(post(client, "/chat", {"enquiry": ENQUIRY}))
@@ -185,6 +186,7 @@ def test_every_block_renders_for_every_saved_run(tmp_path, stem):
 
 
 # --------------------------------------------------------------------------------- routing, guards
+@pytest.mark.needs_pages
 def test_message_after_an_off_topic_run_assesses_again(outputs, no_provenance):  # noqa: F811
     client, app = app_client(outputs, chat_factory())
     cid = seeded(client, "dev-X90")

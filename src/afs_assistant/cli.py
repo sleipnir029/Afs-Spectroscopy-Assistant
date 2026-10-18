@@ -22,6 +22,13 @@ def _kb_build(_: argparse.Namespace) -> int:
     return 0
 
 
+def _require_pages() -> None:
+    """Fail before any model call when the supplied page text has not been rebuilt (fresh clone)."""
+    from afs_assistant import kb
+
+    kb.pages()
+
+
 def _kb_check(_: argparse.Namespace) -> int:
     from afs_assistant import kb_check
 
@@ -70,6 +77,7 @@ def _assess(args: argparse.Namespace) -> int:
 
     from afs_assistant.llm import OpenRouterClient
 
+    _require_pages()
     enquiry = args.text if args.text else Path(args.file).read_text(encoding="utf-8")
     out = _assess_one(enquiry.strip(), None, OpenRouterClient(), Path(args.out) if args.out else None,
                       external=args.external)
@@ -95,6 +103,7 @@ def _run_set(args: argparse.Namespace) -> int:
     if args.set == "final" and not args.final_ok:
         print("The final set is held out. Pass --i-know-this-is-the-final-run to generate it (Phase 5 only).")
         return 2
+    _require_pages()
     if args.workers < 1:
         print("--workers must be at least 1.")
         return 2
@@ -207,6 +216,8 @@ def _eval(args: argparse.Namespace) -> int:
 def _ui(args: argparse.Namespace) -> int:
     from afs_assistant.ui import server
 
+    _require_pages()
+
     print(f"AFS Spectroscopy Assistant: http://{args.host}:{args.port}/  (Ctrl+C to stop)")
     server.serve(args.host, args.port, args.external)
     return 0
@@ -264,7 +275,13 @@ def main(argv: list[str] | None = None) -> int:
     u.add_argument("--external", choices=["live", "cache", "off"], default="live", help=EXTERNAL_HELP)
     u.set_defaults(func=_ui)
     args = parser.parse_args(argv)
-    return args.func(args)
+    from afs_assistant import kb
+
+    try:
+        return args.func(args)
+    except kb.PagesMissing as exc:
+        print(f"afs-assist: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

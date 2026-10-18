@@ -122,10 +122,12 @@ def _run_set_out_dirs(monkeypatch, argv: list[str]) -> list:
     return seen
 
 
+@pytest.mark.needs_pages
 def test_run_writes_to_outputs_set_by_default(monkeypatch):
     assert _run_set_out_dirs(monkeypatch, ["run", "--set", "dev"]) == [paths.OUTPUTS / "dev"]
 
 
+@pytest.mark.needs_pages
 def test_run_outputs_flag_sets_the_directory(monkeypatch, tmp_path):
     out = tmp_path / "bakeoff" / "arm" / "dev"
     assert _run_set_out_dirs(monkeypatch, ["run", "--set", "dev", "--outputs", str(out)]) == [out]

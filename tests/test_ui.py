@@ -262,6 +262,7 @@ def test_same_origin_post_is_accepted(outputs, no_provenance):
 
 
 # --------------------------------------------------------------------------------- live path (stubbed)
+@pytest.mark.needs_pages
 def test_assess_runs_in_background_with_progress(outputs, no_provenance):
     client, _ = app_client(outputs)
     jid = start_job(client, {"enquiry": ENQUIRY})
@@ -278,6 +279,7 @@ def test_assess_runs_in_background_with_progress(outputs, no_provenance):
     assert client.get(f"/runs/{rid}").status_code == 200
 
 
+@pytest.mark.needs_pages
 def test_running_page_polls_and_can_be_stopped(outputs, no_provenance):
     gate = threading.Event()
 
@@ -307,6 +309,7 @@ def test_running_page_polls_and_can_be_stopped(outputs, no_provenance):
     assert client.get(f"/jobs/{jid}", headers=HX).status_code == 286
 
 
+@pytest.mark.needs_pages
 def test_activity_feed_tells_what_happened(outputs, no_provenance):
     client, app = app_client(outputs)
     jid = start_job(client, {"enquiry": ENQUIRY})
@@ -477,6 +480,7 @@ def test_headline_wording():
     assert text.endswith(".") and text.split()[0] in ("Start", "Test")
 
 
+@pytest.mark.needs_pages
 def test_cli_has_ui_command(monkeypatch):
     called = {}
     monkeypatch.setattr(server, "serve", lambda host, port, external: called.update(host=host, port=port, ext=external))

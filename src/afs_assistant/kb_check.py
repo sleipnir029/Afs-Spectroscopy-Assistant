@@ -4,13 +4,18 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import get_args
 
-from afs_assistant import kb, paths, quotes
+from afs_assistant import kb, paths, quotes, schema, screen
 
 EXPECTED_PAGES = {"S01": 19, "S02": 20, "S03": 17, "S04": 6, "S05": 2, "S06": 1, "REF": 2}
 SCOPE_TAGS = {"method", "concept", "component_spec", "lab_example", "process_example", "literature_map",
               "research_study", "clinical_aspiration", "business", "guidance"}
 EFFECTS = {"exclude", "require", "warn", "scope_limit", "guidance"}
+# Effects the screening applies to candidates (screen.py); their `when` must use the screening vocabulary.
+SCREENING_EFFECTS = {"exclude", "require", "warn"}
+# `when` keys of evidence rules, read by scope.py (not by the screening).
+EVIDENCE_KEYS = {"claim", "evidence_scope"}
 # Scenario ids must never appear in knowledge, skills, prompts or code (no case-specific content).
 CASE_ID = re.compile(r"\b[DH]0[1-8]\b")
 LINT_DIRS = ("knowledge", "skills", "src", "prompts", ".pi")
@@ -26,16 +31,21 @@ class Finding:
 
 def run() -> list[Finding]:
     findings: list[Finding] = []
-    pages = kb.pages()
+    # The supplied page text is rebuilt locally (`kb build`); without it the page checks cannot run.
+    pages = kb.pages() if kb.pages_available() else None
+    if pages is None:
+        findings.append(Finding("pages_present", False, f"knowledge/pages.jsonl missing; {kb.PAGES_MISSING_HINT}"))
+    else:
+        findings.append(Finding("pages_present", True, f"{len(pages)} page records"))
+        counts: dict[str, int] = {}
+        for doc, _ in pages:
+            counts[doc] = counts.get(doc, 0) + 1
+        findings.append(Finding("page_counts", counts == EXPECTED_PAGES, f"{counts}"))
 
-    counts: dict[str, int] = {}
-    for doc, _ in pages:
-        counts[doc] = counts.get(doc, 0) + 1
-    findings.append(Finding("page_counts", counts == EXPECTED_PAGES, f"{counts}"))
-
-    bad_scope = [kb.citation_label(*k) for k, r in pages.items()
-                 if not r["scope"] or set(r["scope"]) - SCOPE_TAGS]
-    findings.append(Finding("page_scopes", not bad_scope, f"missing/unknown scope: {bad_scope}"))
+        bad_scope = [kb.citation_label(*k) for k, r in pages.items()
+                     if not r["scope"] or set(r["scope"]) - SCOPE_TAGS]
+        findings.append(Finding("page_scopes", not bad_scope, f"missing/unknown scope: {bad_scope}"))
+        findings.append(doc_ids_in_schema(pages))
 
     rules = kb.rules()
     ids = [r["id"] for r in rules]
@@ -54,19 +64,9 @@ def run() -> list[Finding]:
         return False
     bool_rules = [r["id"] for r in rules if _has_bool(r.get("when", {})) or _has_bool(r.get("target", {}))]
     findings.append(Finding("rule_values_are_strings", not bool_rules, f"boolean slot values in: {bool_rules}"))
-
-    not_exact = []
-    total = 0
-    for owner, sources in [(r["id"], r["sources"]) for r in rules] + \
-                          [(f["id"], f["sources"]) for f in kb.fibers()]:
-        if not sources:
-            not_exact.append(f"{owner}: no sources")
-        for s in sources:
-            total += 1
-            c = quotes.verify(s["doc"], s["page"], s["quote"])
-            if c.status != "exact":
-                not_exact.append(f"{owner} {kb.citation_label(s['doc'], s['page'])}: {c.status}")
-    findings.append(Finding("source_quotes_exact", not not_exact, f"{total} quotes; problems: {not_exact}"))
+    findings.append(rule_when_vocabulary(rules))
+    if pages is not None:
+        findings.append(_source_quotes(rules))
 
     hits = []
     for d in LINT_DIRS:
@@ -81,9 +81,53 @@ def run() -> list[Finding]:
     findings.append(Finding("no_case_ids", not hits, f"scenario ids found at: {hits}"))
 
     findings.append(_external_library())
-    findings.append(_s02_guard(pages))
+    if pages is not None:
+        findings.append(_s02_guard(pages))
     findings.append(Finding("graph_present", paths.GRAPH_FILE.exists(), str(paths.GRAPH_FILE.name)))
     return findings
+
+
+def _source_quotes(rules: list[dict]) -> Finding:
+    not_exact = []
+    total = 0
+    for owner, sources in [(r["id"], r["sources"]) for r in rules] + \
+                          [(f["id"], f["sources"]) for f in kb.fibers()]:
+        if not sources:
+            not_exact.append(f"{owner}: no sources")
+        for s in sources:
+            total += 1
+            c = quotes.verify(s["doc"], s["page"], s["quote"])
+            if c.status != "exact":
+                not_exact.append(f"{owner} {kb.citation_label(s['doc'], s['page'])}: {c.status}")
+    return Finding("source_quotes_exact", not not_exact, f"{total} quotes; problems: {not_exact}")
+
+
+def doc_ids_in_schema(pages: dict) -> Finding:
+    """Every document in pages.jsonl must be citable: a doc id missing from `schema.Doc` can never be cited."""
+    docs = {doc for doc, _ in pages}
+    allowed = set(get_args(schema.Doc))
+    return Finding("doc_ids_in_schema", docs == allowed,
+                   f"not in schema.Doc: {sorted(docs - allowed)}; in schema.Doc without pages: {sorted(allowed - docs)}")
+
+
+def rule_when_vocabulary(rules: list[dict]) -> Finding:
+    """Every `when` key and value must be in the screening vocabulary. An unknown key reads as an unknown
+    slot in `screen._when_state`, so a typo would silently turn candidates "unknown" instead of failing."""
+    methods = set(get_args(schema.Method))
+    allowed = {"method": methods, "technique": set(screen.TECHNIQUE_FAMILY), **screen.SLOT_VALUES}
+    problems = []
+    for r in rules:
+        for key, value in (r.get("when") or {}).items():
+            if key in EVIDENCE_KEYS and r["effect"] not in SCREENING_EFFECTS:
+                continue
+            if key not in allowed:
+                problems.append(f"{r['id']}: unknown key {key!r}")
+                continue
+            values = value if isinstance(value, list) else [value]
+            bad = [v for v in values if v not in allowed[key]]
+            if bad:
+                problems.append(f"{r['id']}: {key}={bad} not allowed")
+    return Finding("rule_when_vocabulary", not problems, f"{len(rules)} rules; problems: {problems}")
 
 
 def _external_library() -> Finding:
