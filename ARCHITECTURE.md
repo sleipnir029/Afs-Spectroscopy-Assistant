@@ -13,7 +13,7 @@ flowchart TD
     I --> S["Screening (code): rules + S01 Table 1 + fibers"]
     S --> A["Assess (LLM, strict JSON)"]
     A --> V["Verify (code): quotes, scope, numbers, wording, structure"]
-    V -->|hard failures| RP["Repair (stronger model)"]
+    V -->|hard failures| RP["Repair (LLM; a stronger model in production)"]
     RP --> V
     V --> F["Finalize (code): remove failing citations, flag, fallbacks"]
     F --> G{"Gaps in the AFS sources?"}
@@ -25,12 +25,12 @@ flowchart TD
     OUT --> UI["Web chat: blocks rendered from the verified run"]
     UI -->|follow-up question| C["Ask (LLM) + per-claim checks"]
     UI -->|new facts| I
-    KB[("knowledge/: pages, scopes, rules, Table 1, graph")] --> S
+    KB[("knowledge/: pages, scopes, rules, Table 1, fibers")] --> S
     KB --> A
     KB --> V
 ```
 
-## Pipeline steps (`pipeline.py`)
+## Pipeline steps (`pipeline.py`; steps 8–9 run in `cli._assess_one`)
 
 1. **Intake** (role `intake`, `prompts/intake.md`, schema `Intake`). The model extracts:
    - routes (`in_scope`, `needs_clarification`, `premise_to_check`, `certainty_or_approval_requested`, `clinical_context`, `out_of_scope`);
@@ -70,7 +70,7 @@ flowchart TD
      - the extended option names at least two methods and has a fusion note;
      - questions exist while unknowns are open;
      - the status agrees with the premise checks.
-5. **Repair** (role `repair`, `prompts/repair.md`). This runs only on hard failures. It makes at most 2 rounds, and the round with the fewest hard failures is kept. The repair model is a different, stronger model than the assess model: an escalating cascade.
+5. **Repair** (role `repair`, `prompts/repair.md`). This runs only on hard failures. It makes at most 2 rounds, and the round with the fewest hard failures is kept. In the production config (mix-a) the repair model is a different, stronger model than the assess model: an escalating cascade. Other configs may use the same model for both (e.g. `config/bakeoff/baseline-v4.1-flash.yaml`).
 6. **Finalize** (code). Failing citations are removed. Items that lost a citation or failed a number check are flagged, and duplicates are merged. Deterministic fallbacks close structural failures a repair left open, and each one is logged in `finalize_changes`:
    - questions built from the key unknowns;
    - a second method for the extended option;
@@ -88,13 +88,13 @@ flowchart TD
      - first the curated library (`knowledge/external/library.jsonl`, 9 open-access entries);
      - then the keyless APIs: Europe PMC (search + full-text XML), OpenAlex, and Unpaywall for open-access copies.
 
-     Results are deduplicated by DOI. A failing API is skipped for the run, and if every API fails the step uses the library only. A time budget caps the whole step.
+     Results are deduplicated by DOI. A failing API is skipped for the run, and if every API fails the step uses the library only. A 60 s budget (`STEP_BUDGET_S`) caps searching and fetching; the two model calls have their own per-role timeouts.
    - **Evidence** (role `external_evidence`): the model picks quotes from the fetched paragraphs. An abstract-only source enters only if it shares content words with the enquiry's sample and target terms.
    - **Checks:** each item is checked by code. The quote must be verbatim in the cited ¶ (at most 400 characters and 2 sentences), its numbers must come only from its own quote, and forbidden wording is not allowed. Failing items are dropped with their reasons and never repaired.
    - **Outcome:** every gap ends with a verified item or "no usable external source found". External items are shown apart from the main answer, as secondary ("literature, not AFS material"), each with its quote, URL or DOI and licence.
    - **Storage and replay:** the full fetched text is cached locally only (`runs/external_cache/`, gitignored). The run JSON keeps metadata, verified quotes and sha256. `--external cache` replays the recorded HTTP responses. `afs-assist external replay RUN.json` re-checks every item offline.
-8. **Render** (`render.py`). The JSON holds the full run: intake, screening, assessment, raw assessment, verification report, removed citations, finalize changes, model calls, timings and manifest. The Markdown has the Answer layer first, then the expert detail.
-9. **Provenance** (`provenance.py`). Each run is one commit on `refs/heads/provenance`, plus a ref `refs/tags/run/<run_id>`. The commits are written straight into the git object store with dulwich, so the working tree, index and branch are never touched. A thread lock and an `fcntl` file lock serialise parallel runs. The manifest records:
+8. **Render** (`render.py`, called by `cli._assess_one` after `pipeline.run`; the web UI uses the same function). The JSON holds the full run: intake, screening, assessment, raw assessment, verification report, removed citations, finalize changes, model calls, timings and manifest. The Markdown has the Answer layer first, then the expert detail.
+9. **Provenance** (`provenance.py`, also in `cli._assess_one`, which adds the code sha and dirty flag to the manifest; a library caller of `pipeline.run` gets neither). Each run is one commit on `refs/heads/provenance`, plus a ref `refs/tags/run/<run_id>`. The commits are written straight into the git object store with dulwich, so the working tree, index and branch are never touched. A thread lock and an `fcntl` file lock serialise parallel runs. The manifest records:
    - the code sha and a dirty flag;
    - the models config path and sha256;
    - the prompt, skill, knowledge, pages and rules sha256;
@@ -129,12 +129,12 @@ flowchart TD
 
 | File | Content |
 |---|---|
-| `pages.jsonl` | 67 page records from the supplied materials: S01 19, S02 20 (slides; image text transcribed and noted), S03 17, S04 6, S05 2, S06 1, REF 2. Each has a title, scope tags, extraction method and sha256. |
+| `pages.jsonl` | 67 page records from the supplied materials: S01 19, S02 20 (slides; image text transcribed and noted), S03 17, S04 6, S05 2, S06 1, REF 2. Each has a title, scope tags, extraction method and sha256. **Not distributed** (full text of the organiser material, gitignored): `kb build` recreates it byte-identically from `resources/materials/`. |
 | `page_scopes.yaml` | What each page can support (business, research_study, guidance, …). Used by `scope.py`. |
 | `rules.yaml` | 44 generic rules (exclude / require / evidence), each with a verbatim source quote. `kb check` verifies every quote. |
 | `table1_methods.json` | S01 Table 1 (p.6): methods × techniques, sample types, qualitative cost, ease and maintenance. |
 | `fibers.json` | Fiber families and their transmission ranges. |
-| `graph.json` | A networkx graph (161 nodes, 245 edges) over methods, techniques, sample types, fibers, rules and pages. Used for lookup and explanations; the checks live in code. |
+| `graph.json` | A networkx graph (161 nodes, 245 edges) over methods, techniques, sample types, fibers, rules and pages. Built by `kb build` and checked for presence; not read at runtime (the checks live in code). |
 | `s02_slide_notes.md` | Our notes on the S02 slides. |
 | `external/library.jsonl` | The curated open-access library (9 entries, short passages). |
 
@@ -160,3 +160,21 @@ A lint check keeps scenario ids out of the knowledge base, skills, code and prom
 - **Blind judging:** four judge agents saw anonymised arms and scored them against the AFS eval data (`outputs/bakeoff-dev/blind/summary.md`).
 - **Other checks:** `check_cost_class.py`, `check_mermaid.py` and `chat_live_check.py`.
 - **Held-out set:** H01–H06 is the held-out test set. Development used D01–D08 and the adversarial set. H was run once, on tag `freeze-1`.
+
+## Extending
+
+After any change: `uv run afs-assist kb check` (when `knowledge/` or the vocabulary changed), `uv run pytest -q` and `uv run ruff check`. `tests/test_frozen_inputs.py` pins the prompts, skill, knowledge block, rules, library, models config and strict schemas to the held-out run's manifest. A change to any of them fails that test on purpose: update the pins and log the change in DEVIATIONS.md.
+
+- **New source document (PDF):**
+  1. `paths.py` `SOURCE_PDFS` (id → file name in `resources/materials/`);
+  2. `kb_build.py` `build_pages` (the doc tuple and the `order` dict);
+  3. `schema.py` `Doc`. **Trap:** a document missing here can never be cited (the strict JSON enum rejects it), and nothing else fails. `kb check` `doc_ids_in_schema` now catches it;
+  4. `kb_check.py` `EXPECTED_PAGES`;
+  5. `knowledge/page_scopes.yaml`: a title and scope tags for every page.
+
+  Then `uv run afs-assist kb build` and `kb check`. The knowledge block changes, so outputs change.
+- **New rule:** `knowledge/rules.yaml` only (its header lists the fields and the slot vocabulary). **Trap:** a `when` key or value outside the screening vocabulary (`screen.SLOT_VALUES`, `schema.Method`, `screen.TECHNIQUE_FAMILY`) reads as an unknown slot, so the rule silently turns candidates "unknown". `kb check` `rule_when_vocabulary` now catches it. `kb check` also verifies every source quote verbatim on its page. A rule that needs a new slot also touches `schema.py` (Intake/Sample), `pipeline.py` (`_SAMPLE_SLOTS`, `slots_from_intake`), `screen.py` `SLOT_VALUES` and `prompts/intake.md`.
+- **New spectroscopy method:** `schema.py` `Method` (and the `for_method` literal), `screen.py` `METHOD_IDS` (plus `TECHNIQUES` / `TECHNIQUE_FAMILY` for a new technique), `fibers.py` `METHOD_RANGES_UM`, `methods.py` `METHOD_PATTERNS`, `ui/diagrams.py` `RANGES` / `BAND`, `options.py` labels, the S01 Table 1 rows (`kb build`) and the `rules.yaml` header. A Table 1 method missing from `METHOD_IDS` fails fast (KeyError).
+- **New external literature API:** a search function and parser in `external/clients.py`; in `external/step.py` the `searches` list, the per-API dispatch, `API_NAMES` and `fetch()` for a full-text path; a polite interval in `external/http.py`; recorded-response tests. A new curated-library entry needs only `scripts/external_library_spec.yaml`, then `scripts/build_external_library.py` and `kb check`.
+- **New model or models config:** `config/models.yaml`, or a new `config/bakeoff/<arm>.yaml` selected with `AFS_MODELS_CONFIG`. Per role: `model`, `fallback_model`, `max_tokens`, reasoning, timeout. Per model: `provider_routing.<model>.only` (endpoints that support strict JSON; load-bearing), `prices` (fallback when the reply has no `usage.cost`; without either, cost reads 0 and the spend cap is blind) and optional `model_params.<model>.omit`. Smoke-test one case first (`docs/model-research.md`).
+- **New chat block:** `chat.py` `BLOCK_TYPES` (and `block_ids` if it takes an id), a branch and macro in `ui/templates/blocks.html`, the block list in `prompts/chat_answer.md`, and `ui/view.py` `build()` if it needs new data. Chat only: the frozen pipeline inputs do not change.
