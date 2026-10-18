@@ -1,0 +1,439 @@
+{
+ "decision_status": "premise_not_supported",
+ "status_reason": "The enquiry asks whether a published ex vivo study can be quoted as proof that a sensor is ready for live surgical use; the sources explicitly frame that study as a proof-of-concept with no in vivo validation, so this central premise is contradicted.",
+ "premise_checks": [
+  {
+   "premise": "The published LED NIR kidney study can be quoted as proof that the proposed sensor is ready for tumor boundary decisions in live surgery.",
+   "verdict": "contradicted",
+   "explanation": "The study itself is an ex vivo proof-of-concept on a limited patient set and states that much work remains; a laboratory study cannot be cited as proof of clinical readiness.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 14,
+     "quote": "This study provides a proof-of-concept demonstration of the LED-based sensor for tumor discrimination.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S03",
+     "page": 3,
+     "quote": "Although the spectra of frozen/thawed biopsies can differ from real-life in vivo measurements",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Using the study's concept is sufficient without new in vivo data or validation on the customer's own setup.",
+   "verdict": "contradicted",
+   "explanation": "The study authors themselves call for further dedicated studies, optimized wavelengths and a representative patient set before any practical diagnostic model; none of this exists for the customer's setup.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 14,
+     "quote": "Further dedicated studies are needed to yield the next sensor prototype.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "NIR diffuse-reflection sensing can discriminate tumor from healthy tissue.",
+   "verdict": "precedent_only",
+   "explanation": "The supplied study shows this ex vivo on kidney biopsies; it is a reason to test the concept on the customer's own samples, not proof for their application.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 14,
+     "quote": "the LED-based sensing approach developed in the present work is capable of discriminating between tumor and healthy tissues.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Target: guidance of tumor boundary decisions during live surgery.",
+  "Constraint: no new in vivo data and no validation on the customer's own setup exist."
+ ],
+ "key_unknowns": [
+  "Organ and tumor type the customer targets (the study is kidney-specific).",
+  "Availability of excised tissue samples with histopathology reference.",
+  "Whether the first phase is intended as ex vivo research or in vivo clinical use.",
+  "Customer's required sensitivity/specificity and acceptable false-negative rate.",
+  "Sensor configuration the customer has or plans (full spectrometer vs LED channels)."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which organ and tumor type is targeted, and how do the optical properties differ from kidney tissue?",
+   "why_it_matters": "The study's LED wavelengths and discriminative bands are tissue-specific, so the whole channel selection may need to be redone.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Can you obtain excised tissue samples (tumor and healthy) with an independent histopathology classification?",
+   "why_it_matters": "Without a reference diagnosis on your own samples no calibration or validation is possible.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Is the intended first phase ex vivo laboratory research, or is the goal a device used for surgical decisions in patients?",
+   "why_it_matters": "A clinical decision role implies regulatory and validation requirements far beyond a feasibility study, which changes the whole plan.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What sensitivity, specificity and maximum acceptable false-negative rate would you require for boundary guidance?",
+   "why_it_matters": "These numbers are needed as the go/no-go criteria for any feasibility experiment.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the geometry used in the supplied kidney study and NIR penetrates tissue up to several millimetres, capturing both molecular and morphological information. It is the single method to test first on the customer's own excised samples.",
+   "conditions": "Tested ex vivo on the customer's own tissue with histopathology reference; not as evidence of surgical readiness.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 4,
+     "quote": "The measurements were performed in the diffuse reflectance mode.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S03",
+     "page": 2,
+     "quote": "Delivering a mixture of the scatter and absorbance information on the light-to-tissue interaction enables the detection of both molecular (related to the functional group vibrations) and morphological (due to the cell transformation) tissue changes",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "MIR-ATR provides direct fundamental vibrational fingerprints of tissue surface biochemistry. It serves as a benchmark single-method comparison to NIR on excised tissue.",
+   "conditions": "Tested ex vivo on excised tissue in direct contact with ATR crystal.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [
+    "Fluorescence"
+   ],
+   "rationale": "A combined MIR-ATR and fluorescence probe allows simultaneous acquisition of surface vibrational and deeper fluorescence emission from the same spot. It serves as a multi-method hypothesis if single-method spectroscopy lacks diagnostic accuracy.",
+   "conditions": "Applies only if the tissue contains active fluorophores and single-method NIR or MIR discrimination is insufficient.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 1,
+     "quote": "optical diagnostics using a combination of fluorimetry with diffuse reflectance NIR16 or ATR IR15 spectroscopy results in much better accuracy of the tumor margin detection than each of the methods individually.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Transmission requires light passing through a defined sample layer, which does not fit contact measurement of solid tissue at a boundary during a procedure.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Fiber-optic NIR diffuse-reflection probe in light contact with the tissue surface (as in the supplied study, with a fixed probe-to-sample distance); later optionally a combined MIR-ATR/fluorescence probe.",
+  "location": "First: excised tissue samples in the laboratory. In-vivo surgical use is a later, separately regulated step.",
+  "fiber_link": "Vis-NIR silica fibers cover the NIR range; the usable range depends on the spectrometer, fiber and probe actually selected.",
+  "citations": [
+   {
+    "doc": "S03",
+    "page": 4,
+    "quote": "The head of the probe was equipped with a cylindrical stainless steel spacer to maintain a constant distance of 2 mm from the entrance of the optical fiber to the studied sample",
+    "claim_kind": "application_precedent"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; usable range depends on the instrument, fiber, and probe selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 µm); ATR probes sample a surface layer of a few micrometres. Usable range depends on the CIR/PIR fiber and crystal selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Ex vivo frozen/thawed tissue spectra can differ from real in vivo measurements, so ex vivo results may not transfer to surgery.",
+   "rule_ids": [
+    "R-EVI-3"
+   ],
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 3,
+     "quote": "Although the spectra of frozen/thawed biopsies can differ from real-life in vivo measurements",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The published model rests on very few patients and exploratory validation, so its statistics may not reproduce on new tissue.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 10,
+     "quote": "The present discrimination modeling on the basis of poor experimental data including only a few patients was exploratory",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "LED wavelengths optimized for kidney tissue may carry no discriminative information for a different organ or tumor type.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "In tumor oncology, false negatives are unacceptable, and the study prototype showed high measurement variance in tumor samples.",
+   "rule_ids": [],
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 14,
+     "quote": "The main disadvantage of the LED-based sensor in its present form is a very high measurement variance in cancer tissue samples",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect excised tumor and healthy tissue samples spanning the expected biological variation (patient, grade, tissue region), with histopathology as the independent reference classification.",
+    "purpose": "Representative samples and reference truth.",
+    "citations": []
+   },
+   {
+    "step": "Measure all samples with a benchtop NIR spectrometer and diffuse-reflection fiber probe under controlled, fixed geometry; record full spectra before any LED reduction.",
+    "purpose": "Establish which spectral regions discriminate on the customer's tissue.",
+    "citations": []
+   },
+   {
+    "step": "Build and validate classification models (e.g. PCA/PLS-DA) with held-out validation by patient/sample, not by repeated measurement.",
+    "purpose": "Avoid overfitting on limited material.",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 14,
+      "quote": "A thorough validation, including full, segmented and random-subset CVs, as well as randomization tests, are recommended in any cases for which important conclusions depend on calibration or discrimination models built on limited experimental material.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Only if discriminative regions are found, simulate and then build an LED channel set for those wavelengths and compare it against the full-spectrum result.",
+    "purpose": "Test the reduced-sensor concept against the best single-method baseline.",
+    "citations": []
+   },
+   {
+    "step": "Define go/no-go with the customer: minimum sensitivity/specificity on held-out samples (customer-supplied numbers), with false negatives weighted per clinical relevance; any in vivo step is a separate, later decision.",
+    "purpose": "Objective basis for proceeding or stopping.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Histopathological classification of each sample (tumor vs healthy, grade) as independent reference.",
+  "decision_basis": "Customer-defined sensitivity/specificity thresholds on held-out samples; no go/no-go numbers exist in the sources."
+ },
+ "assumptions": [
+  "The customer's target tissue is soft solid biological tissue comparable to the study's samples.",
+  "The first realistic phase is ex vivo laboratory work; no in vivo or clinical use is assumed."
+ ],
+ "not_in_sources": [
+  "Any in vivo or clinical performance data for LED NIR boundary guidance.",
+  "Regulatory or approval requirements for surgical decision-support devices.",
+  "The customer's target organ, tumor type and required accuracy."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Tissue class (tumor vs healthy, with grade where available)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It is the classification target and the independent reference against which any spectral model must be validated.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "histopathology (WHO-criteria classification of excised tissue)",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 3,
+     "quote": "Histological classification was performed in accordance with the World Health Organization (WHO) criteria.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Discriminative NIR wavelengths/regions for the target tissue",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "LED channel selection for the reduced sensor depends entirely on which regions carry tumor-related information in the customer's tissue.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 7,
+     "quote": "the whole regions of 1100-1220 nm and 1350-1470 nm look very promising for cancer discrimination purposes.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Direct ATR crystal contact on tissue",
+   "maintenance": "Low; crystal cleaning between samples",
+   "performance_fit": "Evaluates surface fingerprint on excised tissue",
+   "cost_drivers": "Excised tissue handling, reference pathology, ATR probe",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Non-contact diffuse reflection probe measurement",
+   "maintenance": "Low; fiber probe with fixed spacer",
+   "performance_fit": "Directly tests the customer's NIR concept ex vivo",
+   "cost_drivers": "Tissue sample set, histopathology reference, benchtop NIR spectrometer",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M1",
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Multi-modal setup requiring synchronized spectrometers",
+   "maintenance": "High; multiple spectrometers and probe alignment",
+   "performance_fit": "Fuses deeper NIR scattering with superficial MIR/fluorescence",
+   "cost_drivers": "Multispectral probe, multiple spectrometers, data fusion modeling",
+   "fusion_note": "Low-level data fusion combining normalized NIR diffuse reflection with synchronized MIR-ATR and fluorescence data from the same sampling spot. Variables must be autoscaled to balance block weights. Each spectral system requires separate calibration and validation, and the fused model must demonstrate superior classification accuracy over the best single-method baseline.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "the PCA model built on the concatenated IR and fluorescence data revealed three distinct groups of samples corresponding to tissue types",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Any classification model must be built and validated on the customer's own samples with patient-level held-out validation and permutation testing, as the supplied study recommends for limited datasets; the published model itself cannot be reused.",
+ "realtime_tracking_note": "Real-time boundary guidance during surgery is a much later goal; the sources show only ex vivo feasibility and note that alternating or sequential measurements cannot guarantee the same measurement point, which is why combined probes were developed.",
+ "future_direction": "If ex vivo feasibility is shown, a dedicated in vivo study design with ethics approval and a representative patient set would be the next stage, as the study authors themselves outline.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the target tissue does not show discriminative NIR spectral bands, or if histopathology-referenced samples cannot be obtained, the method choice would change. If live surgical use is insisted upon immediately without ex vivo validation, the assessment would shift to outside supported scope.",
+  "next_step": "Obtain histopathologically confirmed ex vivo tissue specimens and perform benchtop NIR diffuse-reflection spectroscopy across the expected biological variability."
+ },
+ "brief_answer": "No: the supplied study is an ex vivo proof-of-concept on a small group of patients and cannot be quoted as proof that a sensor is ready for live surgical boundary decisions. The appropriate next step is an ex vivo feasibility study using NIR diffuse reflection on your own tumor and healthy tissue samples with histopathology reference. An LED sensor configuration or multi-method combinations should only be considered after single-method NIR proves feasible on your tissue."
+}
