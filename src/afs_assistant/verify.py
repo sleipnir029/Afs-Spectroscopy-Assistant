@@ -395,6 +395,13 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
     ids = [o.id for o in a.solution_options]
     report.add("proposal_option_exists", p.best_current_option in ids, "hard", "proposal.best_current_option",
                f"best_current_option {p.best_current_option!r} is not an option id {ids}")
+    # A missing option is proposal_option_exists; no recommended tier is option_recommended_tier.
+    recommended = [o.id for o in a.solution_options if o.tier == "recommended"]
+    report.add("proposal_is_recommended",
+               p.best_current_option not in ids or not recommended or p.best_current_option in recommended,
+               "hard", "proposal.best_current_option",
+               f"best_current_option {p.best_current_option!r} is not the recommended option {recommended}; "
+               f"propose the option with tier recommended")
 
     for key in ("recommendations", "solution_options", "parameters"):
         item_ids = [x.id for x in getattr(a, key)]
@@ -484,11 +491,13 @@ def check_questions(a: Assessment, report: Report) -> None:
 # Flags written by the finalize fallbacks (5.R1); not about figures or citations.
 QUESTION_ADDED_FLAG = "question added by verification from a key unknown"
 METHOD_ADDED_FLAG = "second method added by verification"
-FALLBACK_FLAGS = frozenset({QUESTION_ADDED_FLAG, METHOD_ADDED_FLAG})
+PROPOSAL_CHANGED_FLAG = "proposal changed by verification to the recommended option"
+FALLBACK_FLAGS = frozenset({QUESTION_ADDED_FLAG, METHOD_ADDED_FLAG, PROPOSAL_CHANGED_FLAG})
 
 
 # Hard checks that are re-run on the finalized assessment; their open state comes from that re-run.
-RECHECK_NAMES = frozenset({"brief_answer_present", "proposal_present", "proposal_option_exists", "option_count",
+RECHECK_NAMES = frozenset({"brief_answer_present", "proposal_present", "proposal_option_exists",
+                           "proposal_is_recommended", "option_count",
                            "option_tiers_distinct", "option_recommended_tier", "option_has_methods",
                            "option_recommendation_refs", "option_screen", "extended_fusion_note",
                            "parameter_method_in_option", "single_primary", "status_needs_contradiction",

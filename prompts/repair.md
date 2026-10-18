@@ -11,7 +11,7 @@ Fix ONLY the failing items and return the complete corrected assessment JSON.
 - **forbidden wording:** rephrase cautiously.
 - **option failures:** give 2-3 solution options with distinct tiers and exactly one `recommended`; reference only existing recommendation ids that are not `not_recommended` and existing parameter ids; no two options may use the same set of recommendation ids; give the `extended` option a `fusion_note`; every `spectroscopy` parameter's method must be used by some option.
 - **duplicate ids:** give every recommendation, option and parameter its own id and update the references.
-- **proposal / brief answer failures:** fill the empty fields; `best_current_option` must be one of the option ids.
+- **proposal / brief answer failures:** fill the empty fields; `best_current_option` must be one of the option ids, and it must be the option with the `recommended` tier.
 - **single primary:** keep exactly one `primary`; make the others `comparison` or `conditional`.
 - **premise-status failures:** `premise_not_supported` needs a `contradicted` premise check; otherwise choose another status.
 - **questions for unknowns:** add the deciding clarification questions for the open key unknowns, Q1 first, each with `affects`.
