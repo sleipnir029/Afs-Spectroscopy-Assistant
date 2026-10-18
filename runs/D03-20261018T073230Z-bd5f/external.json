@@ -1,0 +1,220 @@
+{
+ "mode": "cache",
+ "gaps": [
+  {
+   "id": "G1",
+   "kind": "auxiliary_sensor",
+   "text": "In-line measurement of Turbidity / optical density of the stream with turbidity sensor",
+   "location": "parameters[1]",
+   "option_id": "O2"
+  },
+  {
+   "id": "G2",
+   "kind": "auxiliary_sensor",
+   "text": "In-line measurement of Process temperature with temperature sensor",
+   "location": "parameters[2]",
+   "option_id": "O2"
+  },
+  {
+   "id": "G3",
+   "kind": "multi_method",
+   "text": "Combining several spectroscopy methods (data fusion) (Low-level fusion of synchronized NIR and MIR-ATR spectra from the same sampling spot, with per-method calibration and block scaling before joining. Data from the two methods must be normalized to a common time step, and variables from different methods are not equivalent and need normalization such as autoscaling. The fused model must beat the best single method on independent batches, otherwise the extra instrument should be dropped.)",
+   "location": "solution_options[2]",
+   "option_id": "O3"
+  },
+  {
+   "id": "G4",
+   "kind": "not_in_sources",
+   "text": "Protein concentration range, required accuracy and response time for this whey stream.",
+   "location": "not_in_sources[0]",
+   "option_id": null
+  }
+ ],
+ "queries": [
+  {
+   "gap_id": "G3",
+   "query": "data fusion NIR MIR ATR spectroscopy process analytics"
+  },
+  {
+   "gap_id": "G3",
+   "query": "low level data fusion near infrared mid infrared spectroscopy"
+  }
+ ],
+ "dropped_queries": [],
+ "search_log": [
+  {
+   "api": "europepmc",
+   "query": "data fusion NIR MIR ATR spectroscopy process analytics",
+   "hits": 0,
+   "status": "cache miss; europepmc skipped for the rest of the run"
+  },
+  {
+   "api": "openalex",
+   "query": "data fusion NIR MIR ATR spectroscopy process analytics",
+   "hits": 0,
+   "status": "cache miss; openalex skipped for the rest of the run"
+  },
+  {
+   "api": "europepmc, openalex",
+   "query": "",
+   "hits": 0,
+   "status": "fallback to library only: cache miss (europepmc); cache miss (openalex)"
+  }
+ ],
+ "fallback": "library only: cache miss (europepmc); cache miss (openalex)",
+ "sources": [
+  {
+   "id": "E01",
+   "url": "https://europepmc.org/article/PMC/PMC7072065",
+   "doi": "10.1007/s00216-020-02407-z",
+   "title": "A critical review of recent trends, and a future perspective of optical spectroscopy as PAT in biopharmaceutical downstream processing.",
+   "authors": [
+    "Rolinger L",
+    "Rüdt M",
+    "Hubbuch J"
+   ],
+   "year": 2020,
+   "venue": "Analytical and bioanalytical chemistry",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:05+00:00",
+   "retrieval_query": "data fusion NIR MIR ATR spectroscopy process analytics",
+   "api": "library",
+   "http_status": null,
+   "sha256": "c12bb98ce60add4c525ef48a5ffe17aa5452fa21fd9135162d9aa1069fe6cf77",
+   "library_id": "optical-spectroscopy-pat-trends",
+   "paragraph_count": 3
+  },
+  {
+   "id": "E02",
+   "url": "https://europepmc.org/article/PMC/PMC9369811",
+   "doi": "10.3390/molecules27154846",
+   "title": "Challenges and Opportunities of Implementing Data Fusion in Process Analytical Technology-A Review.",
+   "authors": [
+    "Casian T",
+    "Nagy B",
+    "Kovács B",
+    "Galata DL",
+    "Hirsch E",
+    "Farkas A"
+   ],
+   "year": 2022,
+   "venue": "Molecules (Basel, Switzerland)",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:03+00:00",
+   "retrieval_query": "low level data fusion near infrared mid infrared spectroscopy",
+   "api": "library",
+   "http_status": null,
+   "sha256": "9f1de821c160e56272c801796c416efba068e2f29ff362b71a354ed6f0af1215",
+   "library_id": "pat-data-fusion-review",
+   "paragraph_count": 4
+  },
+  {
+   "id": "E03",
+   "url": "https://europepmc.org/article/PMC/PMC8234957",
+   "doi": "10.3390/pharmaceutics13060919",
+   "title": "Process Analytical Technology Tools for Monitoring Pharmaceutical Unit Operations: A Control Strategy for Continuous Process Verification.",
+   "authors": [
+    "Kim EJ",
+    "Kim JH",
+    "Kim MS",
+    "Jeong SH",
+    "Choi DH"
+   ],
+   "year": 2021,
+   "venue": "Pharmaceutics",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:07+00:00",
+   "retrieval_query": "data fusion NIR MIR ATR spectroscopy process analytics",
+   "api": "library",
+   "http_status": null,
+   "sha256": "4b30bb8e47adae3a7754eb33113fd3f84d3f46a3b3864fe1c9608ef32f959a7d",
+   "library_id": "pat-tools-nir-in-line",
+   "paragraph_count": 3
+  }
+ ],
+ "items": [
+  {
+   "gap_id": "G2",
+   "finding": "The text notes that temperature sensitivity of certain bands is a drawback for measuring aqueous solutions in NIR and MIR, requiring tempered sample holders.",
+   "how_it_applies": "This suggests that monitoring and controlling process temperature should be tested or accounted for during spectral collection to minimize temperature-induced spectral variations in the whey stream.",
+   "limits_and_transfer_risks": "The source discusses general aqueous solutions in laboratory or review contexts, and the exact thermal sensitivity may differ for a dynamic dairy whey matrix at industrial scale.",
+   "option_id": "O2",
+   "citation": {
+    "source_id": "E01",
+    "para": 12,
+    "cited_para": 12,
+    "quote": "Additionally, the temperature sensitivity of the OH bands is a severe drawback for measuring aqueous solution in NIR and MIR, which makes tempered sample holders necessary [29].",
+    "label": "E01 ¶12",
+    "url": "https://europepmc.org/article/PMC/PMC7072065",
+    "doi": "10.1007/s00216-020-02407-z"
+   },
+   "quote_status": "exact",
+   "paragraph_sha256": "1f55116786254cd9eea1a7abf707f24a34edff98ef5eb41d709e2529e847cf46",
+   "notes": []
+  },
+  {
+   "gap_id": "G3",
+   "finding": "Low-level data fusion is described as the simplest method for combining inputs by rearranging data into a new matrix where variables from different sources are placed sequentially.",
+   "how_it_applies": "This approach can be evaluated if multiple spectroscopic methods are deployed, ensuring that the combined dataset structure aligns with low-level fusion strategies.",
+   "limits_and_transfer_risks": "Data fusion outcomes depend heavily on the specific instrument combination and sample matrix, so findings from general reviews may not directly transfer to a specific dairy whey processing line.",
+   "option_id": "O3",
+   "citation": {
+    "source_id": "E02",
+    "para": 31,
+    "cited_para": 31,
+    "quote": "Low-level data fusion (LLDF) is considered the simplest method to achieve a combination of inputs. In this case, the data is rearranged into a new data matrix, where the variables coming from different sources are placed one after the other.",
+    "label": "E02 ¶31",
+    "url": "https://europepmc.org/article/PMC/PMC9369811",
+    "doi": "10.3390/molecules27154846"
+   },
+   "quote_status": "exact",
+   "paragraph_sha256": "fc0fbd874a791b88374a9bd41456699cfceded3a9c0d4a23259281ad30b5076b",
+   "notes": []
+  }
+ ],
+ "dropped": [],
+ "no_usable_source_claimed": [
+  "G1",
+  "G4"
+ ],
+ "gap_results": [
+  {
+   "gap_id": "G1",
+   "items": [],
+   "result": "no usable external source found"
+  },
+  {
+   "gap_id": "G2",
+   "items": [
+    "E01 ¶12"
+   ],
+   "result": "verified external evidence"
+  },
+  {
+   "gap_id": "G3",
+   "items": [
+    "E02 ¶31"
+   ],
+   "result": "verified external evidence"
+  },
+  {
+   "gap_id": "G4",
+   "items": [],
+   "result": "no usable external source found"
+  }
+ ],
+ "proposal_support": [],
+ "error": null,
+ "library_sha256": "c3156319e2bfb1b63855f942f99bf3665b73467de35034448da0911c2eb8f4cf",
+ "library_entries": 9,
+ "prompt_sha256": {
+  "external_queries": "27e6a43756d7ef0643f68aa8b8fd7207b827e92a84cdf7917252069cb81d9ca5",
+  "external_evidence": "286f92a9c8e08bc53d613c534792fed8189232f5bb5582355a95cedbd2912fd1"
+ },
+ "calls": 2,
+ "cost_usd": 0.000916,
+ "seconds": 2.638
+}
