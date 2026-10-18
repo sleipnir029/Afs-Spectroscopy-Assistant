@@ -801,6 +801,7 @@ Reviewer agent: eval results, adversarial outputs, demo path. Fixes before the f
     3. `ui/server.py` `Job`: keeps the last 40 notes with a time offset; snapshot exposes the last 8; `job_steps.html` renders them as a small log (newest last, `aria-live=polite`); a "waiting for the model · m:ss" line while a call is running so the page always moves. No streaming, no llm.py change.
     4. Tests: activity no-op without a sink; notes reach a Job through a fake-client run; the job page renders the feed. pytest + ruff; Playwright screenshot of a fake run.
 - **5.10 Layout:** clearer separation and hierarchy (visual aids, white space, type size/weight), so it is obvious what is what and where to look.
+- **5.10/5.11 restart (user 09:46): "none of them looks good, total revamp, think from the beginning, forget what you already had".** Rounds 1–2 (docs/mockups/) kept as history, not used. A fresh, unanchored design agent researches and makes 4 new concepts in docs/fresh-ui/ (start, running, answer screens, phone, dark), with a UX check; then independent review → user picks → plan → review → build.
 - **5.11 Look:** academic fonts with a professional, coherent UI; the setup diagram as a blueprint that flows into the sections. User asked for **mockups first** for both the blueprint style and 2–3 researched font pairings (canvas), then picks.
 
 ---
