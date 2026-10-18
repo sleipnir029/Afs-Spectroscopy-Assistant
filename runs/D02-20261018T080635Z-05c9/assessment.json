@@ -1,0 +1,437 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Sourced precedent supports in-line NIR diffuse reflection for fat and protein determination in opaque, concentrated dairy products, but optical attenuation, texture variations, and probe fouling must be verified experimentally on the customer line.",
+ "premise_checks": [],
+ "requirements_stated": [
+  "In-line optical monitoring of an opaque, concentrated milk product flowing through a processing line",
+  "Earlier detection of composition changes for fat and protein than current manual sampling allows",
+  "Accommodation of product temperature and texture variations during production",
+  "Definition of an initial spectroscopy concept and practical comparison experiment while maintaining routine laboratory checks"
+ ],
+ "key_unknowns": [
+  "Expected concentration ranges and target accuracy or precision for fat and protein",
+  "Line operating temperature, pressure ranges, and flow rates during production",
+  "Pipe geometry, line dimensions, and available mounting port options",
+  "Cleaning-in-place (CIP/SIP) procedures, cleaning agents, and maximum cleaning temperatures",
+  "Specific analytical methods and repeatability of current laboratory reference tests"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the target concentration ranges and required measurement accuracy or precision for fat and protein?",
+   "why_it_matters": "These values establish the quantitative calibration target and the go/no-go criteria for the feasibility assessment.",
+   "affects": [
+    "status",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What are the line operating temperatures, pressures, and flow velocities at the candidate measurement point?",
+   "why_it_matters": "Operating conditions define probe pressure ratings, seal selection, and the required scope of spectral temperature compensation.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What CIP/SIP cleaning cycles, chemical agents, and peak temperatures are applied to the pipeline?",
+   "why_it_matters": "Cleaning regimens govern probe optical window materials, hygienic seals, and window maintenance schedules.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Which analytical methods are currently used in the laboratory for fat and protein analysis, and what is their turnaround time?",
+   "why_it_matters": "The reference analytical error directly sets the benchmark and upper accuracy limit for multivariate calibration models.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the established technique for opaque or concentrated dairy streams such as yogurt, butter, and whole milk concentrates to determine fat and protein. A flush-mounted probe collects backscattered light directly from the flowing stream without obstructing the line.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Inline NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Data processing may involve converting the reflectance values to absorbance and applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Transflection probes can serve across variable fat levels in some dairy products. However, transmission setups can fail if the sample is excessively opaque or concentrated, so this technique applies only if sufficient light returns without complete signal attenuation.",
+   "conditions": "Applicable only if optical penetration in the concentrated milk matrix allows adequate signal return across the transflection gap.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Mid-IR ATR provides sharp fundamental vibrational peaks and high molecular specificity for detailed dairy analysis. It is evaluated as a secondary comparison if severe texture or scatter variations undermine NIR overtone modeling, though its micrometer penetration depth is vulnerable to surface deposits.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "While NIR is the workhorse of the dairy industry, advanced labs often incorporate Fluorescence, Raman, and Mid-Infrared (MIR) ATR fiber optic techniques to capture specific chemical or structural information that NIR might miss.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "An in-line diffuse reflection fiber optic probe with a sapphire optical window, flush-mounted into the pipe wall to collect backscattered light from the flowing concentrated product without creating dead legs.",
+  "location": "Flush-mounted directly into a representative, fully flooded pipe section of the processing line or an automated sample bypass loop.",
+  "fiber_link": "Standard low-OH silica optical fibers in protective industrial armored conduit routing light between the probe head and a remotely stationed NIR spectrometer.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "The main equipment includes a fiber optic probe where one set of fibers delivers light to the sample and the other collects the \"backscattered\" light. Experimentally, the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+    "claim_kind": "application_precedent"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "performance_figure"
+   },
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal method range is 780 to 2500 nm. Actual usable coverage depends on the specific spectrometer detector, silica fiber solarization limits, and reflection probe window materials.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal method range is 4000 to 400 cm-1 (2.5 to 25 µm). Actual transmission in-line is restricted by the infrared fiber type (CIR or PIR) and the ATR crystal optical cutoff.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Physical texture shifts and fat globule size changes alter light scattering, which can mimic composition changes if multivariate scatter correction is neglected.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Temperature variations during processing alter water absorption bands and broad overtones, necessitating explicit temperature compensation in the calibration model.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Product deposits or protein fouling on the probe window can distort optical reflection signals over continuous runs.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Chemometric calibrations are matrix-specific and must be re-validated if product formulation or homogenization regimes change.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "physical variation; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative concentrated milk samples spanning the expected operating ranges of fat, protein, temperature, and physical texture.",
+    "purpose": "Assemble a calibration and validation sample set reflecting real process variability.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Perform benchtop diffuse reflection NIR measurements across all samples at multiple controlled temperatures matching plant variations.",
+    "purpose": "Evaluate optical signal-to-noise ratio, spectral reproducibility, and temperature sensitivity on the target matrix.",
+    "citations": []
+   },
+   {
+    "step": "Conduct parallel laboratory reference analyses for fat and protein on split aliquots of each collected sample.",
+    "purpose": "Establish independent reference values for chemometric training and prediction assessment.",
+    "citations": []
+   },
+   {
+    "step": "Develop PLS regression models incorporating scatter corrections (SNV or MSC) and test primary NIR reflection against conditional transflection and MIR ATR datasets.",
+    "purpose": "Compare single-method predictive performance and determine model robustness against physical matrix changes.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "Data processing may involve converting the reflectance values to absorbance and applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Validate models on independent held-out production batches to establish real prediction errors under dynamic line conditions.",
+    "purpose": "Provide statistical proof of calibration stability before moving to permanent in-line installation.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Certified laboratory methods currently used by the customer for fat and protein determination (such as Gerber, Rose-Gottlieb, or Kjeldahl testing).",
+  "decision_basis": "Customer-defined numerical targets for prediction error (e.g. root mean square error of prediction) and correlation relative to laboratory reference accuracy."
+ },
+ "assumptions": [
+  "The concentrated milk product provides sufficient backscattering for diffuse reflectance detection without complete light absorption.",
+  "Routine laboratory reference checks offer adequate precision and repeatability to serve as training targets for multivariate calibration.",
+  "The process pipeline permits flush-mounted hygienic probe installation at a location with continuous, fully flooded product flow."
+ ],
+ "not_in_sources": [
+  "Specific spectral calibration equations and prediction error limits for the customer's proprietary concentrated milk product.",
+  "Mechanical pressure limits and CIP chemical compatibility ratings for specific commercial probe housings."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Fat concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Primary composition parameter needed to standardize product quality and detect formulation drifts in-line.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Data processing may involve converting the reflectance values to absorbance and applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Protein concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Key nutritional and functional constituent required to maintain batch consistency and process control.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Data processing may involve converting the reflectance values to absorbance and applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Process temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature variations alter water absorption bands and spectral baselines, requiring input for calibration compensation.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "In-line resistance temperature detector (RTD)",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Laboratory reference values",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Essential reference analytical data needed to build, validate, and periodically calibrate in-line optical models.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "Customer standard laboratory testing methods",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Direct probe immersion into pipe port",
+   "maintenance": "Periodic gap cleaning and visual inspection",
+   "performance_fit": "Evaluates transflection across variable dairy solids",
+   "cost_drivers": "Standard NIR spectrometer and transflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Flush installation avoids obstructing fluid stream",
+   "maintenance": "Standard CIP wash and window checks",
+   "performance_fit": "Optimal backscattering geometry for opaque dairy",
+   "cost_drivers": "Standard NIR spectrometer and reflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Inline NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A multivariate Partial Least Squares (PLS) regression model is required to resolve overlapping NIR overtone and combination bands for fat and protein. Preprocessing algorithms such as Standard Normal Variate (SNV) or Multiplicative Scatter Correction (MSC) must be applied to separate physical light-scattering changes caused by texture and fat globule size from true chemical absorption changes. Temperature variations should be incorporated directly into the model calibration space.",
+ "realtime_tracking_note": "In-line diffuse reflection measurements can capture spectra at short intervals directly in the flowing pipe, providing rapid trend detection for fat and protein shifts well before laboratory sampling results return.",
+ "future_direction": "Once an in-line full-spectrum NIR reflection calibration is established, dedicated optical multisensor systems (OMS) utilizing selected discrete wavelengths could be considered for lower-cost distributed monitoring across secondary line locations.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If feasibility trials reveal that high optical density prevents reliable reflectance modeling, or conversely that the product remains sufficiently transparent across a defined gap without saturation, the technique choice would shift toward transflection or mid-IR ATR.",
+  "next_step": "Perform initial multi-method laboratory trials on representative concentrated milk samples spanning operating temperature and texture ranges to calibrate and evaluate NIR diffuse reflection."
+ },
+ "brief_answer": "We recommend testing in-line Near-Infrared (NIR) diffuse reflection spectroscopy first, using a flush-mounted probe to track fat and protein composition changes directly in your concentrated milk line. Multivariate PLS calibration with scatter correction will be needed to handle varying product texture and temperature. Key open questions include your target measurement ranges and accuracy, line operating conditions, and cleaning-in-place protocols, which will be verified in initial laboratory trials alongside your existing reference checks."
+}
