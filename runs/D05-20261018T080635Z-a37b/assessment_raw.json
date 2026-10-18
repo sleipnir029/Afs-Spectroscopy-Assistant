@@ -1,0 +1,491 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A provisional assessment is justified based on established bioprocess precedents for Raman metabolite fingerprinting and UV-Vis ATR biomass tracking. Definitive configuration depends on clarifying the specific target analytes and selecting offline reference methods.",
+ "premise_checks": [],
+ "requirements_stated": [
+  "Follow yeast growth and notice process changes earlier during fermentation.",
+  "Address both a biomass signal and a metabolic signal, which are currently undefined as separate targets.",
+  "Accommodate fermentation broth that increases in optical density as the run develops.",
+  "Formulate an initial feasibility study protocol with useful reference measurements."
+ ],
+ "key_unknowns": [
+  "Specific metabolic analytes of interest (e.g., glucose, ethanol, glycerol, organic acids) and their expected concentration profiles.",
+  "Quantitative biomass metric and primary reference method (e.g., dry cell weight, OD600, or viable cell count).",
+  "Fermenter vessel volume, port dimensions (e.g., 12 mm or 25 mm Ingold), and available insertion points.",
+  "Aeration and agitation conditions that may generate interfering gas bubbles at the optical probe interface.",
+  "Vessel cleaning and sterilization requirements (e.g., CIP, SIP, or autoclaving).",
+  "Fouling characteristics and biofilm adhesion of the yeast broth on optical probe surfaces during late-stage fermentation."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which specific dissolved metabolites (such as glucose, ethanol, acetate, or glycerol) do you need to monitor, and what are their target concentration ranges?",
+   "why_it_matters": "The specific chemical targets and their concentrations dictate whether Raman spectroscopy provides adequate sensitivity and selectivity.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What primary offline analytical methods (such as dry cell weight or OD600 for biomass, and HPLC or enzymatic kits for metabolites) will be used to calibrate the optical data?",
+   "why_it_matters": "Accurate, independent reference assays are required to build and validate chemometric calibration models.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What port type (e.g., standard Ingold port or PG 13.5 thread) and hygiene protocols (such as SIP or autoclaving) must the in-line probe support?",
+   "why_it_matters": "Mechanical dimensions, seal materials, and temperature/pressure ratings define probe design and fermenter mounting.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What are the typical agitation speeds and sparging rates, and does the broth form deposits or films on immersed surfaces?",
+   "why_it_matters": "Entrained gas bubbles and surface fouling can distort optical paths and evanescent wave coupling.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy provides a direct molecular fingerprint for specific dissolved metabolites such as sugars and acids with minimal interference from water. An immersion probe operates directly in aqueous fermentation broth without requiring sample dilution.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "UV-Vis ATR utilizes evanescent wave attenuation across a very short penetration depth, preventing signal saturation in highly turbid broths. It serves as a robust and low-cost indicator to track cell suspension turbidity as a growth proxy.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "conditional",
+   "combined_with": [
+    "UV-Vis"
+   ],
+   "rationale": "Coupling Raman spectroscopy with UV-Vis ATR allows simultaneous monitoring of chemical metabolite kinetics and overall biomass growth. This multi-method configuration is treated as a later hypothesis to test against the best single method.",
+   "conditions": "Applies if single-method evaluations show that neither Raman nor UV-Vis ATR alone can resolve both growth and metabolic targets.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Sampling location and timing must be aligned; a gain is a hypothesis to test.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion probe configuration utilizing an immersion Raman probe with filtered optics for inelastic scattering, or a UV-Vis ATR probe utilizing internal reflection at a crystal interface to sample a superficial liquid layer.",
+  "location": "Directly inserted into the fermenter vessel through a dedicated side port below minimum broth level, oriented away from direct aeration sparger streams to minimize bubble interference.",
+  "fiber_link": "Low-OH silica fibers housed in ruggedized, metal- or polymer-sheathed industrial cables connecting the in-tank optical probe to spectrometers positioned safely away from process washdown areas.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "performance_figure"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Nominal Raman shift covers 200-3500 cm-1, recorded with a dedicated laser excitation source (e.g., 785 nm); usable range and resolution depend on the specific spectrometer, laser line, and probe chosen.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "UV-Vis",
+   "statement": "Nominal UV-Vis range covers 190-800 nm (specifically 190-360 nm in the UV); usable bandwidth is constrained by the light source, detector array, and fiber transmission limits.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Fluorescence background from complex media components or extracellular yeast secretions may superimpose and obscure weak Raman vibrational bands.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Cellular adhesion or biofilm formation on the optical window or ATR crystal face could degrade spectral quality over extended fermentation cycles.",
+   "rule_ids": [
+    "R-MIR-3",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Agitation and vigorous aeration can cause air bubbles to pass across the probe window, causing severe optical scattering noise.",
+   "rule_ids": [
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Broth turbidity measured by UV-Vis correlates with light attenuation rather than direct cell counts, which can decouple from viable biomass if cell morphology changes.",
+   "rule_ids": [
+    "R-UV-2"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "optical density is not a viable cell count.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative broth samples at multiple time points across the fermentation profile (lag, exponential growth, and stationary phases) covering the full turbidity and nutrient concentration range.",
+    "purpose": "Provide a comprehensive calibration sample set reflecting realistic chemical and optical variability.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Perform independent offline reference assays on all samples, analyzing biomass (spectrophotometric OD600 and gravimetric dry cell weight) and dissolved metabolites (HPLC or enzymatic kits).",
+    "purpose": "Generate definitive primary analytical data to calibrate and assess optical spectral responses.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Conduct single-method at-line bench trials testing Raman spectroscopy and UV-Vis ATR individually on the collected broth samples.",
+    "purpose": "Evaluate optical signal-to-noise, water interference, and fluorescence background for each candidate technique separately.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 20,
+      "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Develop chemometric regression models (e.g., PLS) for each method and validate predictions using independent, held-out fermentation batches.",
+    "purpose": "Verify model robustness against batch-to-batch variation and avoid statistical overfitting.",
+    "citations": []
+   },
+   {
+    "step": "Evaluate dual-method data fusion combining Raman and UV-Vis ATR spectra, testing whether the fused model statistically outperforms the single best method.",
+    "purpose": "Establish whether the added instrumental complexity of running two analytical systems is justified by performance gains.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Independent laboratory analysis including HPLC or enzymatic assay kits for specific dissolved sugars, ethanol, and organic acids, alongside gravimetric dry cell weight (DCW) and spectrophotometric OD600 for biomass tracking.",
+  "decision_basis": "Quantitative go/no-go criteria based on customer-specified limits for prediction error (e.g., RMSEP relative to reference HPLC) and tracking correlation; numerical thresholds must be finalized with the customer prior to trials."
+ },
+ "assumptions": [
+  "The fermentation vessel provides a standard port below liquid level suitable for immersion probe installation.",
+  "Broth media ingredients and yeast metabolites produce manageable fluorescence background at the selected Raman laser wavelength.",
+  "Broth optical density and turbidity changes correlate consistently with offline biomass reference measurements.",
+  "Wetted probe materials (such as stainless steel, sapphire, or fused silica) satisfy sanitary bioprocess standards."
+ ],
+ "not_in_sources": [
+  "Quantitative limits of detection, precision, and accuracy for specific yeast broth metabolites.",
+  "Long-term fouling rates, biofilm persistence, and cleanability cycles for optical probe faces in continuous yeast fermentation."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Dissolved metabolite concentrations (e.g., glucose, ethanol, organic acids)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Quantifying carbon source depletion and product formation reveals metabolic state changes across the fermentation cycle.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Biomass density (cell suspension turbidity / optical density)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Monitoring cell suspension light attenuation provides a continuous proxy for yeast biomass accumulation.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Offline reference metabolite concentrations",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Independent chromatographic or enzymatic measurements are required to calibrate and validate in-line Raman models.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "HPLC or enzymatic assay kits",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Offline reference biomass (dry cell weight)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Gravimetric dry cell weight provides an absolute primary reference to calibrate optical turbidity measurements.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "Gravimetric filtration and drying (DCW)",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P2",
+    "P4"
+   ],
+   "ease_of_use": "Simple single probe immersion setup",
+   "maintenance": "Periodic optical face cleaning required",
+   "performance_fit": "Directly tracks turbidity growth trends",
+   "cost_drivers": "Standard UV-Vis spectrometer, UV-ATR immersion probe, and silica fiber patch cords",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P3"
+   ],
+   "ease_of_use": "Straightforward single Raman probe operation",
+   "maintenance": "Periodic laser verification and cleaning",
+   "performance_fit": "Resolves chemical fingerprints despite water",
+   "cost_drivers": "Stabilized laser source, high-resolution Raman spectrometer, and Raman immersion probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M1",
+    "M2",
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Complex multi-sensor alignment required",
+   "maintenance": "Dual instrument maintenance and calibration",
+   "performance_fit": "Simultaneously resolves growth and chemistry",
+   "cost_drivers": "Dual spectrometers, separate laser and UV-Vis light sources, dual probes, and data fusion software",
+   "fusion_note": "Spectral data from both the Raman and UV-Vis instruments must be collected from equivalent sample locations and synchronized to a common time step. Preprocessing requires block autoscaling to normalize different signal scales, with independent calibration models maintained for each hardware block. Fused regression models must demonstrate a statistically significant accuracy improvement over the best single method on held-out validation batches before justifying two operational instruments.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "two or more probes, belonging to different methods, can be used for measurements, but the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "compare with the best single method.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Chemometric multivariate regression (such as PLS) will be necessary to resolve overlapping Raman peaks and map spectra to offline HPLC and biomass values. Preprocessing routines including baseline correction and scatter normalization must be developed on representative fermentation runs and validated on independent batches.",
+ "realtime_tracking_note": "In-line optical measurement enables continuous, real-time observation of fermentation kinetics, allowing operators to detect substrate exhaustion, diauxic shifts, or growth slowdown far earlier than discrete offline grab sampling.",
+ "future_direction": "If monitoring trace cofactors or extracellular vitamins (such as NADH or riboflavin) becomes a priority in subsequent project phases, integrating a high-sensitivity fluorescence channel could be investigated.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the customer requires only general growth tracking rather than molecular speciation, the simpler UV-Vis option (O1) would be preferred; if neither method individually resolves both growth and metabolites, the fused option (O3) will be evaluated.",
+  "next_step": "Define the target metabolite species and offline reference methods, and supply representative broth samples for preliminary laboratory testing."
+ },
+ "brief_answer": "We recommend testing Raman spectroscopy first with an immersion probe to capture molecular fingerprints of dissolved metabolites without water interference. For biomass growth tracking across increasing optical density, UV-Vis ATR should be evaluated as a low-cost comparison. Combining both methods remains a secondary hypothesis if a single technique cannot resolve both targets. Next, please specify your target metabolites and reference methods to finalize the feasibility protocol."
+}
