@@ -1,0 +1,302 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The customer enquiry outlines monitoring yeast fermentation for biomass growth and metabolic changes with increasing optical density, but specific chemical definitions and optical parameters require initial laboratory testing and clarification.",
+ "premise_checks": [],
+ "requirements_stated": [
+  "Follow yeast growth via a biomass signal",
+  "Notice metabolic changes earlier via a metabolic signal",
+  "Adapt to increasing optical density of the broth"
+ ],
+ "key_unknowns": [
+  "Exact chemical or physical definitions of the biomass and metabolic targets",
+  "Process temperature and pressure",
+  "Reactor scale and installation point",
+  "Cleaning and fouling requirements",
+  "Required accuracy, detection limits, and response times",
+  "Reference methods to be used"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What specific metabolites (e.g., glucose, acetate, lactate, ethanol) or metabolic classes should the metabolic signal target?",
+   "why_it_matters": "Defines the required spectroscopic specificity and confirms whether Raman or fluorescence is most appropriate.",
+   "affects": [
+    "method",
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Is a fluorescent indicator or intrinsic fluorophore (such as NADH, tryptophan, or riboflavin) available for fluorescence tracking?",
+   "why_it_matters": "Determines if fluorescence spectroscopy is viable since most chemicals do not exhibit fluorescence naturally.",
+   "affects": [
+    "method",
+    "Fluorescence"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the expected range of optical density or solids loading during the fermentation run?",
+   "why_it_matters": "Governs the choice between transmission and ATR probe geometries to prevent signal saturation.",
+   "affects": [
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What offline reference methods will be used to calibrate and validate biomass and metabolite concentrations?",
+   "why_it_matters": "Ensures that reference data matches the requirements for multivariate chemometric model building.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "UV-Vis turbidity in cell suspensions correlates well with cell density to track biomass growth in real time.",
+   "conditions": "For low to moderate optical density; high optical density requires short-path ATR.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy provides a molecular fingerprint for direct detection of specific metabolites in aqueous environments.",
+   "conditions": "When specific chemical identification of metabolites beside biomass is required.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "conditional",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "Fluorescence offers high-sensitivity detection of critical intracellular cofactors and amino acids.",
+   "conditions": "Applies only if specific fluorescent markers or cofactors such as NADH or riboflavin are targeted.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Fluorescence spectroscopy can be used for high-sensitivity detection (down to the nM-μM range) of critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "UV-Vis transmission or transflection probe for biomass turbidity, and Raman probe or UV-ATR probe for high optical density phases.",
+  "location": "In-line immersion directly in the bioreactor or process flow.",
+  "fiber_link": "Silica fiber cables connecting probes to spectrometers safely away from process disturbances.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 16,
+    "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring, as cell suspension turbidity correlates well with cell density.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "UV-Vis",
+   "statement": "Nominal range in UV-Vis region (190-360 nm and visible); actual usable range depends on instrument, fiber, and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1 with laser excitation wavelength stated separately; usable range depends on spectrometer and optical filters.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Increasing optical density and turbidity during fermentation can saturate standard transmission signals.",
+   "rule_ids": [
+    "R-UV-2",
+    "R-GEN-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman signals are extremely weak and can be affected by fluorescence background or scattering.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Spectroscopic calibration models are specific to the matrix and require re-validation upon process changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative broth samples across various growth phases and optical densities.",
+    "purpose": "Capture expected chemical and physical variation of the fermentation process.",
+    "citations": []
+   },
+   {
+    "step": "Perform independent reference measurements for biomass and key metabolites.",
+    "purpose": "Establish reliable baseline reference data for model calibration.",
+    "citations": []
+   },
+   {
+    "step": "Test single-method setups (UV-Vis for biomass turbidity and Raman for metabolites) independently.",
+    "purpose": "Evaluate individual method performance against process changes.",
+    "citations": []
+   },
+   {
+    "step": "Validate calibration models on independent batches or held-out fermentation runs.",
+    "purpose": "Ensure model robustness and predictive accuracy.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent offline reference measurements such as dry cell weight or optical density for biomass, and HPLC or enzymatic assays for key metabolites.",
+  "decision_basis": "Go/no-go based on customer-defined numerical accuracy and detection limits for biomass and metabolic concentration tracking."
+ },
+ "assumptions": [
+  "Yeast fermentation broth is aqueous.",
+  "Independent reference laboratory methods are available for calibration."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Biomass Concentration / Turbidity",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Tracks yeast growth and cell density during fermentation.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Metabolite Concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Provides early indication of metabolic changes or stress during the run.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "High ease of use for biomass",
+   "maintenance": "Low maintenance optical probes",
+   "performance_fit": "Tracks biomass turbidity simply and effectively",
+   "cost_drivers": "Single UV-Vis spectrometer and transmission/transflection probe",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Moderate setup complexity",
+   "maintenance": "Standard probe cleaning and calibration",
+   "performance_fit": "Covers both biomass growth and specific metabolic signals",
+   "cost_drivers": "UV-Vis and Raman spectrometers with dedicated probes",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "Multivariate calibration (such as PLS) is required to extract biomass and metabolite concentrations from overlapping spectra and changing optical density.",
+ "realtime_tracking_note": "In-line fiber-optic probes enable real-time monitoring of fermentation dynamics without sampling.",
+ "future_direction": "Explore advanced multi-method data fusion if single-method models require higher specificity for complex metabolic states.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "Customer defining specific metabolic targets or optical density limits.",
+  "next_step": "Conduct multi-method laboratory trials using representative fermentation broth samples."
+ },
+ "brief_answer": "To follow yeast growth and metabolic changes during fermentation, start with UV-Vis spectroscopy for biomass turbidity and Raman spectroscopy for direct metabolite detection. Because broth optical density increases over time, test both transmission and immersion probe configurations in initial laboratory trials against independent reference measurements."
+}
