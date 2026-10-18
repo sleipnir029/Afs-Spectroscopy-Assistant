@@ -1,0 +1,494 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Raman and NIR are both plausible in-line methods for crystallisation monitoring and their combination has published precedent, but the sample's optical regime, the reference methods and the actual fusion benefit are open, so the assessment is conditional on the answers below.",
+ "premise_checks": [
+  {
+   "premise": "A Raman and an NIR probe can be combined at the same point in the line and fused into one model.",
+   "verdict": "precedent_only",
+   "explanation": "A published pharmaceutical example runs NIR reflection and Raman probes in the same process point (tablet press feed frame) and fuses the spectra; this is a reason to test, not proof for this crystallisation line.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "The combination of these techniques is particularly effective because it captures complementary chemical information",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Fusing the two data streams is worth the effort.",
+   "verdict": "precedent_only",
+   "explanation": "The published example reports higher accuracy and robustness from fused NIR+Raman models than from single-method models, but any gain here is a hypothesis that must be shown against the best single method on this process.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Continuous crystallisation process, in-line measurement at one point in the line.",
+  "Targets: solute concentration and crystal form.",
+  "Customer proposes a Raman probe plus an NIR probe at the same point, with fused data into one model."
+ ],
+ "key_unknowns": [
+  "Slurry optical regime: solids content, turbidity and whether NIR transmission is feasible or diffuse reflection is needed",
+  "Target solute identity and concentration range, including whether any component is at trace level",
+  "Independent reference methods for concentration and crystal form available for calibration and validation",
+  "Installation constraints: probe-to-spectrometer distance, window fouling, process temperature",
+  "Raman laser excitation wavelength and expected fluorescence background of the slurry"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the slurry's optical properties at the measurement point - solids content, crystal size and turbidity - and does the medium stay transparent enough for a transmission path?",
+   "why_it_matters": "It decides between NIR transmission/transflection and NIR diffuse reflection, since transmission fails when light cannot penetrate the sample.",
+   "affects": [
+    "technique",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Which independent reference methods can you provide for solute concentration (e.g. HPLC, gravimetry) and crystal form (e.g. XRPD, off-line Raman), and how many representative samples or batches?",
+   "why_it_matters": "Calibration and the go/no-go comparison of fused versus single-method models depend entirely on reference data.",
+   "affects": [
+    "status",
+    "M1",
+    "M2",
+    "M3"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Which solute and concentration range must be tracked, and is any component at trace level?",
+   "why_it_matters": "NIR may lack sensitivity for trace components, which would shift the load onto Raman or change the method choice.",
+   "affects": [
+    "method",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What are the installation constraints: distance from probe to spectrometers, risk of window fouling by crystals, and process temperature?",
+   "why_it_matters": "Fiber families and achievable link lengths differ per method, and fouling or temperature shifts directly affect probe design and model validity.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Which Raman excitation wavelength is planned, and does the slurry or solute fluoresce?",
+   "why_it_matters": "Raman signals are weak and can be swamped by fluorescence, so the excitation choice and background must be checked on real samples.",
+   "affects": [
+    "technique",
+    "M1"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman probes pass screening and suit aqueous crystallisation media, with molecular specificity well suited to distinguishing crystal forms. Its weak signal and possible fluorescence background must be checked on real slurry samples.",
+   "conditions": "Excitation wavelength and fluorescence background confirmed on representative slurry (Q5).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "A crystallisation slurry scatters light, so NIR diffuse reflection is the geometry to test first; it suits opaque or highly concentrated samples and reaches several millimetres. Transmission/transflection stays open only if the medium is clear enough.",
+   "conditions": "Tested against the slurry's actual turbidity and solids content (Q1); transmission/transflection is the alternative if the liquor is transparent.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "conditional",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "Fused Raman+NIR models are the customer's proposal and have published precedent with reported accuracy gains over single-method models, but the gain is a hypothesis. It should be built only after the single-method models and compared against the best of them on held-out batches.",
+   "conditions": "Only pursued if the single Raman and NIR models each leave part of the target (concentration or crystal form) unresolved and the fused model demonstrably beats the best single method.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Raman immersion probe plus an NIR probe at the same line location; NIR geometry (diffuse reflection vs transmission/transflection) decided by slurry turbidity. If the fusion hypothesis proceeds, either two synchronised probes at one port or a combined multispectral probe should be considered.",
+  "location": "Same point in the crystallisation line, chosen to be representative of the slurry and accessible for cleaning.",
+  "fiber_link": "Silica fibers serve both Raman and NIR; metal-coated, low-OH silica cables avoid polymer-jacket fluorescence and are stated for long remote runs, but the actual achievable length depends on the selected configuration.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S01",
+    "page": 8,
+    "quote": "The use of a combined probe facilitates measurements and allows for the analysis of a smaller sample volume.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1, with the laser excitation wavelength (e.g. 785 nm in the published pharma example) stated separately; the usable range depends on the selected spectrometer, laser and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "If the slurry is too turbid or the crystals too large, NIR transmission fails and even reflection may see mostly surface, biasing both concentration and form.",
+   "rule_ids": [
+    "R-GEO-2",
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Fluorescence background or weak Raman signal in the real slurry could make the Raman channel unusable at the planned excitation wavelength.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The published fusion gain is from a pharmaceutical powder feed frame, not a crystallisation slurry, so the benefit here is unproven and may not justify a second instrument.",
+   "rule_ids": [
+    "R-EVI-2",
+    "R-CMB-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "risk": "Calibrations are matrix-specific, so changes in solute formulation, seed policy or crystal size distribution can invalidate the models and require re-validation.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative slurry samples across the expected variation: solute concentration range, both (or all) relevant crystal forms, temperature range and solids-content range.",
+    "purpose": "Cover the chemical and physical variation the models must handle.",
+    "citations": []
+   },
+   {
+    "step": "Measure independent references for each sample: a lab method for solute concentration and a lab method for crystal form (e.g. XRPD or off-line Raman, per customer's available methods).",
+    "purpose": "Provide the calibration and validation targets.",
+    "citations": []
+   },
+   {
+    "step": "Build single-method models first: one Raman model and one NIR model on the same samples, with the NIR geometry chosen from the slurry's optical regime.",
+    "purpose": "Establish the baseline each method achieves alone before any fusion.",
+    "citations": []
+   },
+   {
+    "step": "Only then build the fused Raman+NIR model (synchronised acquisition, block-scaled or concatenated data) and validate it on held-out runs or batches against the best single-method model.",
+    "purpose": "Test the fusion hypothesis fairly and detect overfitting.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "If the variables have different units of measurement, the data should be normalized in some way, for example, using an autoscaling algorithm.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Apply the customer's go/no-go criteria (e.g. required concentration accuracy and crystal-form classification rate, agreed with the customer in advance) to decide whether the fused system is worth installing.",
+    "purpose": "Make the decision objective and owned by the customer.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent lab reference methods for concentration and crystal form, supplied or confirmed by the customer (Q2).",
+  "decision_basis": "Customer-defined numerical criteria for prediction accuracy and classification performance on held-out batches."
+ },
+ "assumptions": [
+  "The stream at the measurement point is a crystallisation slurry (solids suspended in mother liquor), so scattering dominates the optical regime.",
+  "Both targets (solute concentration and crystal form) must be measured at the same point; if one target can move to another location, the setup simplifies."
+ ],
+ "not_in_sources": [
+  "Achievable fiber link length for this specific installation (long cables are stated only for low-OH silica fibers; mid-IR fiber examples in the sources are short laboratory lengths).",
+  "Any demonstrated Raman+NIR fused application in crystallisation specifically; the published precedent is a tablet press feed frame."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Solute concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is one of the two stated targets and defines the calibration range the models must cover.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Crystal form (polymorph)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It is the second stated target and drives the choice of Raman as the primary method.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Process temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature shifts solubility and spectral band positions, so it must be recorded to separate composition effects from thermal effects.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Slurry turbidity / solids content",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It should be available because it decides the NIR geometry and explains scatter-driven spectral variation; it should be logged alongside the spectra.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "turbidity sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Single probe, single spectrometer, straightforward installation",
+   "maintenance": "One probe window to keep clean",
+   "performance_fit": "Raman alone may cover crystal form and concentration in aqueous slurry",
+   "cost_drivers": "One Raman spectrometer and probe, calibration samples and reference analyses",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Two probes at one point, moderate integration effort",
+   "maintenance": "Two probe windows and two instruments to maintain",
+   "performance_fit": "Tests both methods on the real slurry before committing to fusion",
+   "cost_drivers": "Two spectrometers and probes, doubled calibration and reference workload",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "The ability to test various optical spectroscopy approaches is crucial for solving complex analytical problems",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Most complex: two instruments plus fusion software",
+   "maintenance": "Each block needs its own calibration and drift diagnostics",
+   "performance_fit": "Fits only if fusion demonstrably beats the best single method",
+   "cost_drivers": "Second instrument, synchronisation and data-fusion software, larger reference dataset",
+   "fusion_note": "Low-level fusion: synchronised Raman and NIR spectra merged into one augmented matrix, as in the published feed-frame example. Both probes must sample the same slurry volume at one port, or a combined multispectral probe should be considered; data must be normalised to a common time step and block-scaled so neither method dominates. Each instrument keeps its own calibration, and the fused model must beat the best single-method model on held-out batches or the extra instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Data processing for pharmaceutical tasks relies on \"low-level data fusion,\" where the synchronized NIR and Raman spectra are merged into a single augmented matrix.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "two or more probes, belonging to different methods, can be used for measurements, but the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Both single-method and fused models need reference data across the full concentration and polymorph range; NIR and Raman calibrations are matrix-specific and must be re-validated after any change in formulation or crystal size distribution. Validation should include held-out batches, and for the fused model a comparison against the best single-method model is the decisive test.",
+ "realtime_tracking_note": "Continuous crystallisation requires acquisition fast enough relative to the process dynamics; acquisition rates of different methods can vary greatly and must be normalised to a common time step if fused.",
+ "future_direction": "If the fused Raman+NIR system proves itself, a later step could be a compact customised multispectral sensor or IoT-style fiber sensor dedicated to this crystallisation control task.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the slurry proves transparent enough for NIR transmission, or if Raman alone meets the customer's accuracy criteria for both targets, the simpler options O1 or a transmission-based variant take over; if Raman or NIR alone fails on one target, O3 becomes the path.",
+  "next_step": "Run the multi-method lab trial on representative slurry samples with independent references, building the Raman and NIR single-method models first and only then testing the fused model against them."
+ },
+ "brief_answer": "Test Raman first as the single method - it suits aqueous crystallisation and is strong for crystal form - alongside an NIR probe at the same point, choosing NIR diffuse reflection or transmission based on your slurry's turbidity. Build single-method models before any fusion. Fusing Raman and NIR has published precedent with reported accuracy gains, but that gain is a hypothesis here: keep it only if the fused model beats the best single method on held-out batches. We still need your slurry's optical properties, concentration ranges and available reference methods."
+}
