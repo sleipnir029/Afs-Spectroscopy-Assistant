@@ -1,0 +1,3275 @@
+{
+ "run_id": "A08-20261018T072422Z-448b",
+ "enquiry": "Before we order, please confirm in writing that your NIR system will measure the moisture of our granulate to plus or minus 0.1 % and guarantee that our regulator will approve it for release testing. Please also include the price of the complete system.",
+ "intake": {
+  "routes": [
+   "in_scope",
+   "needs_clarification",
+   "premise_to_check",
+   "certainty_or_approval_requested"
+  ],
+  "summary": "The customer asks for written confirmation that an NIR system will measure granulate moisture to ±0.1%, a guarantee of regulatory approval for release testing, and pricing for a complete system.",
+  "facts_stated": [
+   {
+    "text": "The customer is evaluating a purchase.",
+    "enquiry_quote": "Before we order"
+   },
+   {
+    "text": "The sample material is a granulate.",
+    "enquiry_quote": "our granulate"
+   }
+  ],
+  "targets": [
+   {
+    "variable": "moisture",
+    "purpose": "release testing",
+    "enquiry_quote": "measure the moisture of our granulate to plus or minus 0.1 % and guarantee that our regulator will approve it for release testing"
+   }
+  ],
+  "sample": {
+   "physical_state": {
+    "value": "powder",
+    "basis": "inferred_from_stated",
+    "enquiry_quote": "granulate"
+   },
+   "optical_regime": {
+    "value": "opaque",
+    "basis": "inferred_from_stated",
+    "enquiry_quote": "granulate"
+   },
+   "aqueous": {
+    "value": "unknown",
+    "basis": "unknown",
+    "enquiry_quote": null
+   },
+   "heterogeneous": {
+    "value": "unknown",
+    "basis": "unknown",
+    "enquiry_quote": null
+   },
+   "fluorophore": {
+    "value": "unknown",
+    "basis": "unknown",
+    "enquiry_quote": null
+   }
+  },
+  "process": [],
+  "customer_premises": [
+   {
+    "claim": "An NIR system can be guaranteed in writing to achieve ±0.1% accuracy for granulate moisture prior to feasibility testing and calibration.",
+    "enquiry_quote": "confirm in writing that your NIR system will measure the moisture of our granulate to plus or minus 0.1 %"
+   },
+   {
+    "claim": "Equipment vendor can guarantee regulatory approval of the method for release testing.",
+    "enquiry_quote": "guarantee that our regulator will approve it for release testing"
+   }
+  ],
+  "proposed_fiber": {
+   "family": "none",
+   "for_method": "none",
+   "enquiry_quote": null
+  },
+  "unknowns": [
+   "Granulate composition, active ingredients, and excipient matrix",
+   "Moisture range and required calibration reference method (e.g., Karl Fischer, loss on drying)",
+   "Particle size, distribution, and surface characteristics",
+   "Installation configuration (in-line, on-line, or at-line) and presentation interface",
+   "Process conditions including temperature, pressure, and ambient humidity",
+   "Applicable regulatory framework and validation requirements"
+  ]
+ },
+ "named_methods": {
+  "NIR": "NIR"
+ },
+ "slots": {
+  "physical_state": "powder",
+  "optical_regime": "opaque",
+  "aqueous": "unknown",
+  "heterogeneous": "unknown",
+  "fluorophore": "unknown"
+ },
+ "screening": [
+  {
+   "method": "MIR",
+   "technique": "ATR",
+   "status": "fail",
+   "reasons": [
+    {
+     "status": "fail",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "Table 1 lists ['liquid', 'paste', 'soft'] for this technique; sample is powder, opaque"
+    },
+    {
+     "status": "fail",
+     "rule": "R-MIR-2",
+     "message": "ATR requires tight contact; it suits liquids, pastes and soft solids."
+    }
+   ],
+   "warnings": [
+    "R-MIR-3"
+   ],
+   "notes": []
+  },
+  {
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "status": "fail",
+   "reasons": [
+    {
+     "status": "fail",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "Table 1 lists ['colloidal', 'liquid'] for this technique; sample is powder, opaque"
+    },
+    {
+     "status": "unknown",
+     "rule": "R-GEO-2",
+     "message": "Transmission fails when the sample is too thick, opaque or fat-rich because light cannot penetrate it. Transflection may still work in some cases (R-GEO-5): test it."
+    }
+   ],
+   "warnings": [
+    "R-NIR-2",
+    "R-NIR-4",
+    "R-CAL-1",
+    "R-GEN-4"
+   ],
+   "notes": []
+  },
+  {
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "status": "pass",
+   "reasons": [],
+   "warnings": [
+    "R-GEO-6",
+    "R-NIR-2",
+    "R-NIR-4",
+    "R-CAL-1"
+   ],
+   "notes": []
+  },
+  {
+   "method": "NIR",
+   "technique": "diffuse_reflection_remote",
+   "status": "pass",
+   "reasons": [],
+   "warnings": [
+    "R-GEO-6",
+    "R-NIR-2",
+    "R-NIR-4",
+    "R-CAL-1"
+   ],
+   "notes": []
+  },
+  {
+   "method": "Raman",
+   "technique": "raman_probe",
+   "status": "pass",
+   "reasons": [],
+   "warnings": [
+    "R-RAM-1",
+    "R-CAL-1"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "status": "fail",
+   "reasons": [
+    {
+     "status": "fail",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "Table 1 lists ['liquid'] for this technique; sample is powder, opaque"
+    },
+    {
+     "status": "fail",
+     "rule": "R-MIR-2",
+     "message": "ATR requires tight contact; it suits liquids, pastes and soft solids."
+    }
+   ],
+   "warnings": [
+    "R-MIR-3",
+    "R-UV-1",
+    "R-UV-2"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "diffuse_reflection",
+   "status": "fail",
+   "reasons": [
+    {
+     "status": "fail",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "Table 1 lists ['pill', 'solid'] for this technique; sample is powder, opaque"
+    }
+   ],
+   "warnings": [
+    "R-GEO-6",
+    "R-UV-1",
+    "R-UV-2"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "status": "fail",
+   "reasons": [
+    {
+     "status": "fail",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "Table 1 lists ['liquid'] for this technique; sample is powder, opaque"
+    },
+    {
+     "status": "fail",
+     "rule": "R-GEO-2",
+     "message": "Transmission fails when the sample is too thick, opaque or fat-rich because light cannot penetrate it."
+    }
+   ],
+   "warnings": [
+    "R-UV-1",
+    "R-UV-2"
+   ],
+   "notes": []
+  },
+  {
+   "method": "UV-Vis",
+   "technique": "emission_probe",
+   "status": "fail",
+   "reasons": [
+    {
+     "status": "fail",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "Table 1 lists ['radiating sample'] for this technique; sample is powder, opaque"
+    }
+   ],
+   "warnings": [
+    "R-UV-1",
+    "R-UV-2"
+   ],
+   "notes": []
+  },
+  {
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "status": "fail",
+   "reasons": [
+    {
+     "status": "fail",
+     "rule": "S01 Table 1 (p.6)",
+     "message": "Table 1 lists ['liquid', 'solid'] for this technique; sample is powder, opaque"
+    },
+    {
+     "status": "unknown",
+     "rule": "R-FLU-1",
+     "message": "no fluorescent species or indicator identified yet"
+    }
+   ],
+   "warnings": [
+    "R-FLU-2"
+   ],
+   "notes": []
+  }
+ ],
+ "assessment": {
+  "decision_status": "premise_not_supported",
+  "status_reason": "Written assurances of quantitative accuracy prior to testing and regulatory commitments are contradicted by engineering principles and reference guidance. An empirical feasibility trial and matrix-specific chemometric calibration are required before accuracy can be evaluated, and regulatory clearance depends on customer validation rather than vendor promises.",
+  "premise_checks": [
+   {
+    "premise": "An NIR system can be confirmed in writing to achieve plus or minus 0.1% moisture accuracy prior to feasibility testing and calibration.",
+    "verdict": "contradicted",
+    "explanation": "Quantitative accuracy cannot be confirmed beforehand; NIR bands overlap and depend on matrix-specific chemometric calibration, sample scattering, and physical variations.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Do not invent measured spectra or experimental results; accuracy, detection limits, response times, fiber lengths or other performance figures that no source supports",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "An equipment vendor can provide binding regulatory clearance for release testing.",
+    "verdict": "contradicted",
+    "explanation": "Vendors cannot promise regulatory clearance; analytical methods require customer-led qualification and formal validation against approved reference methods.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Written confirmation of granulate moisture measurement to plus or minus 0.1%",
+   "Assurance of regulatory acceptance for release testing",
+   "Complete system pricing prior to ordering"
+  ],
+  "key_unknowns": [
+   "Chemical composition and excipient matrix of the granulate",
+   "Target moisture operating range and current reference method (e.g., Karl Fischer titration or Loss on Drying)",
+   "Granulate particle size distribution and surface morphology",
+   "Measurement interface geometry (in-line chute, pipe, bin, or at-line sample presentation)",
+   "Target regulatory framework and formal validation requirements"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the detailed formulation of the granulate, including active substances, binders, and baseline moisture range?",
+    "why_it_matters": "Determines whether matrix absorption bands overlap with water absorption bands and whether calibration is feasible.",
+    "affects": [
+     "method",
+     "status"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What primary laboratory reference method (such as Karl Fischer titration or Loss on Drying) and reference precision will be used for calibration?",
+    "why_it_matters": "Spectroscopic calibration accuracy is mathematically bounded by the error and repeatability of the reference analytical method.",
+    "affects": [
+     "status",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What are the physical granulate properties (particle size, density, flow rate) and intended presentation geometry (direct contact probe vs. non-contact window)?",
+    "why_it_matters": "Determines whether an immersion reflection probe or a stand-off non-contact reflection head is optimal to mitigate scattering variations.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Which regulatory guideline (such as ICH Q2/Q13 or pharmacopeial chapters) governs your release testing validation plan?",
+    "why_it_matters": "Informs the structure of the multivariate method validation protocol required by your quality unit.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Diffuse reflectance NIR is the standard optical technique for measuring moisture in scattering solid materials like granulates and powders. Water exhibits clear absorption bands in the near-infrared overtone region.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "high light scattering by solid and dispersed samples, which enables measurements using diffuse reflectance",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "diffuse_reflection_remote",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Non-contact diffuse reflection measures scattering powders across a distance, avoiding direct probe fouling in moving solid beds. It provides an operational alternative to immersion contact probes.",
+    "conditions": "Applicable if granulate flow tends to coat or abrade direct contact probe windows.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "surface at a distance solid, powder 2-5 mm avera ge",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "enables measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "not_recommended",
+    "combined_with": [],
+    "rationale": "Transmission fails in opaque solids and dense powders because optical penetration is insufficient. Transflection is designed for liquids and colloidal systems rather than dry granulates.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Transmission or transflection probe liquid, colloidal 1-10 mm avera ge",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Diffuse reflection probe in direct contact with flowing granulate, or a stand-off non-contact reflection head directed at the granulate stream through an optical viewport.",
+   "location": "In-line granulator discharge, transfer chute, feed hopper, or tablet press feed frame.",
+   "fiber_link": "Standard or metal-coated Vis-NIR silica fiber-optic cable coupling the process reflection probe to a remote NIR spectrometer.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "the transparency of plain and quartz glass (which allows the use of standard optics and probes)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "The nominal NIR range is 780 to 2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Particle size shifts and surface roughness can induce baseline scatter shifts that distort uncorrected moisture calibrations.",
+    "rule_ids": [
+     "R-GEO-6",
+     "R-NIR-2"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Spectroscopic calibration performance is inherently limited by the uncertainty and reproducibility of the offline primary reference method.",
+    "rule_ids": [
+     "R-CAL-1",
+     "R-GEN-2"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "physical variation; calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Window fouling or material buildup on an immersion probe can distort reflection readings over prolonged processing runs.",
+    "rule_ids": [
+     "R-GEN-5"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative granulate samples across the expected manufacturing moisture range and particle size distributions.",
+     "purpose": "Capture total physical and chemical matrix variance required for a robust calibration model.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Perform duplicate primary reference laboratory measurements (e.g., Karl Fischer titration) for each calibration sample.",
+     "purpose": "Establish reference values and quantify primary analytical error.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Acquire diffuse reflectance NIR spectra using contact and non-contact probe interfaces under controlled conditions.",
+     "purpose": "Evaluate optical signal-to-noise ratio and baseline stability across different measurement geometries.",
+     "citations": [
+      {
+       "doc": "S02",
+       "page": 20,
+       "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Develop multivariate PLS regression models with scatter pre-processing (SNV or second derivative) and validate on independent batches.",
+     "purpose": "Determine empirical root mean square error of prediction (RMSEP) against the client accuracy goal.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 17,
+       "quote": "applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression",
+       "claim_kind": "general"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "Independent primary analytical laboratory testing, such as Karl Fischer coulometric/volumetric titration or Loss on Drying (LOD).",
+   "decision_basis": "Go/no-go is determined by whether the calibrated PLS model achieves the customer target prediction error of plus or minus 0.1% moisture on independent test sets."
+  },
+  "assumptions": [
+   "The granulate matrix remains chemically consistent with moisture primarily present as free or bound water.",
+   "A validated primary analytical reference method is available to generate reference values for calibration samples."
+  ],
+  "not_in_sources": [
+   "Commercial price lists, quotations, and equipment costs for complete turnkey NIR systems are not contained in the provided technical sources."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Granulate Moisture Content",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Directly required by the customer to monitor granulate drying and satisfy release specifications.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 12,
+      "quote": "Optimal set of wavelengths to see moisture of media in contact",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Reference Water Content",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Required to calibrate and validate the multivariate chemometric model against primary chemical measurements.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "Karl Fischer titration or Loss on Drying",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Granulate Temperature",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "Temperature variations shift water absorption bands and should be tracked to maintain calibration robustness.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "In-line RTD or thermocouple",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1"
+    ],
+    "ease_of_use": "Simple non-contact external optical installation",
+    "maintenance": "Periodic inspection of external window",
+    "performance_fit": "Avoids material contact and fouling",
+    "cost_drivers": "NIR spectrometer, non-contact reflection head, silica fiber cable",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1"
+    ],
+    "ease_of_use": "Direct probe mounting in vessel",
+    "maintenance": "Routine window inspection and cleaning",
+    "performance_fit": "High signal collection in powders",
+    "cost_drivers": "Industrial diffuse reflection immersion probe, process spectrometer, low-OH silica fibers",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "NIR moisture prediction relies on multivariate calibration (e.g., PLS regression) with scatter correction preprocessing such as Standard Normal Variate (SNV) or Multiplicative Scatter Correction (MSC) to suppress physical particle size variations.",
+  "realtime_tracking_note": "Fiber-optic diffuse reflection probes provide continuous, high-speed acquisition suited to tracking dynamic drying trajectories in granulators or fluid bed systems.",
+  "future_direction": null,
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "Severe probe fouling or mechanical abrasion would favor the non-contact standoff configuration (O1).",
+   "next_step": "Conduct feasibility trials on representative granulate samples paired with primary laboratory reference testing to determine true empirical accuracy."
+  },
+  "brief_answer": "Written confirmation of plus or minus 0.1 % accuracy cannot be issued prior to testing, and regulatory approval cannot be promised by an instrument vendor. Diffuse reflectance NIR is the recommended technique to evaluate for granulate moisture, but quantitative performance depends on matrix-specific chemometric calibration against primary laboratory data. Feasibility trials on representative granulate samples are required to determine empirical performance, and commercial pricing will follow separately."
+ },
+ "assessment_raw": {
+  "decision_status": "premise_not_supported",
+  "status_reason": "Written guarantees of quantitative accuracy prior to testing and guarantees of regulatory approval are explicitly contradicted by engineering principles and reference guidance. An empirical feasibility trial and matrix-specific chemometric calibration are required before accuracy can be evaluated, and regulatory approval depends on customer validation rather than vendor guarantees.",
+  "premise_checks": [
+   {
+    "premise": "An NIR system can be confirmed or guaranteed in writing to achieve plus or minus 0.1% moisture accuracy prior to testing.",
+    "verdict": "contradicted",
+    "explanation": "Quantitative accuracy cannot be guaranteed beforehand; NIR bands overlap and depend on matrix-specific chemometric calibration, sample scattering, and physical variations.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Do not invent measured spectra or experimental results; accuracy, detection limits, response times, fiber lengths or other performance figures that no source supports",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The equipment vendor can guarantee that the regulator will approve the system for release testing.",
+    "verdict": "contradicted",
+    "explanation": "Vendors cannot issue regulatory approval guarantees; methods require customer-led qualification and formal validation against approved reference methods.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "guarantees: a published application is a reason to test a method, not proof that it will work for a new customer.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 19,
+      "quote": "Nothing in this document shall be construed as a legally binding offer or commitment.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Written confirmation of granulate moisture measurement to plus or minus 0.1%",
+   "Guarantee that the relevant regulatory body will approve the system for product release testing",
+   "Complete system pricing prior to ordering"
+  ],
+  "key_unknowns": [
+   "Chemical composition and excipient matrix of the granulate",
+   "Target moisture operating range and current reference method (e.g., Karl Fischer titration or Loss on Drying)",
+   "Granulate particle size distribution and surface morphology",
+   "Measurement interface geometry (in-line chute, pipe, bin, or at-line sample presentation)",
+   "Target regulatory framework and formal validation requirements"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the detailed formulation of the granulate, including active substances, binders, and baseline moisture range?",
+    "why_it_matters": "Determines whether matrix absorption bands overlap with water absorption bands and whether calibration is feasible.",
+    "affects": [
+     "method",
+     "status"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What primary laboratory reference method (such as Karl Fischer titration or Loss on Drying) and reference precision will be used for calibration?",
+    "why_it_matters": "Spectroscopic calibration accuracy is mathematically bounded by the error and repeatability of the reference analytical method.",
+    "affects": [
+     "status",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What are the physical granulate properties (particle size, density, flow rate) and intended presentation geometry (direct contact probe vs. non-contact window)?",
+    "why_it_matters": "Determines whether an immersion reflection probe or a stand-off non-contact reflection head is optimal to mitigate scattering variations.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Which regulatory guideline (such as ICH Q2/Q13 or pharmacopeial chapters) governs your release testing validation plan?",
+    "why_it_matters": "Informs the structure of the multivariate method validation protocol required by your quality unit.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Diffuse reflectance NIR is the standard optical technique for measuring moisture in scattering solid materials like granulates and powders. Water exhibits clear absorption bands in the near-infrared overtone region.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "high light scattering by solid and dispersed samples, which enables measurements using diffuse reflectance",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "diffuse_reflection_remote",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Non-contact diffuse reflection measures scattering powders across a distance, avoiding direct probe fouling in moving solid beds. It provides an operational alternative to immersion contact probes.",
+    "conditions": "Applicable if granulate flow tends to coat or abrade direct contact probe windows.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "surface at a distance solid, powder 2-5 mm avera ge",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "enables measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "not_recommended",
+    "combined_with": [],
+    "rationale": "Transmission fails in opaque solids and dense powders because optical penetration is insufficient. Transflection is designed for liquids and colloidal systems rather than dry granulates.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Transmission or transflection probe liquid, colloidal 1-10 mm avera ge",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Diffuse reflection probe in direct contact with flowing granulate, or a stand-off non-contact reflection head directed at the granulate stream through an optical viewport.",
+   "location": "In-line granulator discharge, transfer chute, feed hopper, or tablet press feed frame.",
+   "fiber_link": "Standard or metal-coated Vis-NIR silica fiber-optic cable coupling the process reflection probe to a remote NIR spectrometer.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "the transparency of plain and quartz glass (which allows the use of standard optics and probes)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "The nominal NIR range is 780 to 2500 nm (approximately 12820 to 4000 cm-1); usable range depends on the spectrometer detector, source, and selected optical fibers.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Particle size shifts and surface roughness can induce baseline scatter shifts that distort uncorrected moisture calibrations.",
+    "rule_ids": [
+     "R-GEO-6",
+     "R-NIR-2"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Spectroscopic calibration performance is inherently limited by the uncertainty and reproducibility of the offline primary reference method.",
+    "rule_ids": [
+     "R-CAL-1",
+     "R-GEN-2"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "physical variation; calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Window fouling or material buildup on an immersion probe can distort reflection readings over prolonged processing runs.",
+    "rule_ids": [
+     "R-GEN-5"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative granulate samples across the expected manufacturing moisture range and particle size distributions.",
+     "purpose": "Capture total physical and chemical matrix variance required for a robust calibration model.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Perform duplicate primary reference laboratory measurements (e.g., Karl Fischer titration) for each calibration sample.",
+     "purpose": "Establish reference values and quantify primary analytical error.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Acquire diffuse reflectance NIR spectra using contact and non-contact probe interfaces under controlled conditions.",
+     "purpose": "Evaluate optical signal-to-noise ratio and baseline stability across different measurement geometries.",
+     "citations": [
+      {
+       "doc": "S02",
+       "page": 20,
+       "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Develop multivariate PLS regression models with scatter pre-processing (SNV or second derivative) and validate on independent batches.",
+     "purpose": "Determine empirical root mean square error of prediction (RMSEP) against the client accuracy goal.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 17,
+       "quote": "applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression",
+       "claim_kind": "general"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "Independent primary analytical laboratory testing, such as validated Karl Fischer coulometric/volumetric titration or Loss on Drying (LOD).",
+   "decision_basis": "Go/no-go is determined by whether the validated PLS model achieves the customer target prediction error of plus or minus 0.1% moisture on independent test sets."
+  },
+  "assumptions": [
+   "The granulate matrix remains chemically consistent with moisture primarily present as free or bound water.",
+   "A validated primary analytical reference method is available to generate reference values for calibration samples."
+  ],
+  "not_in_sources": [
+   "Commercial price lists, quotations, and equipment costs for complete turnkey NIR systems are not contained in the provided technical sources."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Granulate Moisture Content",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Directly required by the customer to monitor granulate drying and satisfy release specifications.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 12,
+      "quote": "Optimal set of wavelengths to see moisture of media in contact",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Reference Water Content",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Required to calibrate and validate the multivariate chemometric model against primary chemical measurements.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "Karl Fischer titration or Loss on Drying",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Granulate Temperature",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "Temperature variations shift water absorption bands and should be tracked to maintain calibration robustness.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "In-line RTD or thermocouple",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1"
+    ],
+    "ease_of_use": "Simple non-contact external optical installation",
+    "maintenance": "Periodic inspection of external window",
+    "performance_fit": "Avoids material contact and fouling",
+    "cost_drivers": "NIR spectrometer, non-contact reflection head, silica fiber cable",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1"
+    ],
+    "ease_of_use": "Direct probe mounting in vessel",
+    "maintenance": "Routine window inspection and cleaning",
+    "performance_fit": "High signal collection in powders",
+    "cost_drivers": "Industrial diffuse reflection immersion probe, process spectrometer, low-OH silica fibers",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "NIR moisture prediction relies on multivariate calibration (e.g., PLS regression) with scatter correction preprocessing such as Standard Normal Variate (SNV) or Multiplicative Scatter Correction (MSC) to suppress physical particle size variations.",
+  "realtime_tracking_note": "Fiber-optic diffuse reflection probes provide continuous, high-speed acquisition suited to tracking dynamic drying trajectories in granulators or fluid bed systems.",
+  "future_direction": null,
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "Severe probe fouling or mechanical abrasion would favor the non-contact standoff configuration (O1).",
+   "next_step": "Conduct feasibility trials on representative granulate samples paired with primary laboratory reference testing to determine true empirical accuracy."
+  },
+  "brief_answer": "We cannot guarantee plus or minus 0.1 % accuracy in writing prior to testing, nor can any equipment vendor guarantee regulatory approval for release testing. Diffuse reflectance NIR is the recommended technique for granulate moisture, but quantitative performance depends on matrix-specific chemometric calibration against primary laboratory data. Feasibility testing on your representative granulate is required to establish true predictive accuracy, and commercial pricing will be provided separately by our sales team."
+ },
+ "verification": {
+  "summary": {
+   "passed": true,
+   "hard_failures": 0,
+   "soft_failures": 0,
+   "checks": 141,
+   "citations_total": 26,
+   "citations_verified": 26
+  },
+  "checks": [
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0].citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept.citations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0].citations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[2].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[3].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[3].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "parameters[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "parameters[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[0].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "quote_verified",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "citation_scope",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[1].citations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "premise_checks[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "measurement_concept",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "risks[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[3]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "parameters[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "parameters[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "parameters[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_claim_local",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "status_reason",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.decision_basis",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.reference_measurements",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions[3]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "assumptions[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "assumptions[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "requirements_stated[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "requirements_stated[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "requirements_stated[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "key_unknowns[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "key_unknowns[1]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "key_unknowns[2]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "key_unknowns[3]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "key_unknowns[4]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "not_in_sources[0]",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "brief_answer",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "proposal.what_would_change_it",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "proposal.next_step",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "chemometrics_note",
+    "message": "ok"
+   },
+   {
+    "name": "numbers_uncited_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "realtime_tracking_note",
+    "message": "ok"
+   },
+   {
+    "name": "respects_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[0]",
+    "message": "ok"
+   },
+   {
+    "name": "respects_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[1]",
+    "message": "ok"
+   },
+   {
+    "name": "respects_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations[2]",
+    "message": "ok"
+   },
+   {
+    "name": "status_vs_premises",
+    "passed": true,
+    "severity": "hard",
+    "location": "decision_status",
+    "message": "ok"
+   },
+   {
+    "name": "status_vs_recommendations",
+    "passed": true,
+    "severity": "hard",
+    "location": "decision_status",
+    "message": "ok"
+   },
+   {
+    "name": "status_needs_contradiction",
+    "passed": true,
+    "severity": "hard",
+    "location": "decision_status",
+    "message": "ok"
+   },
+   {
+    "name": "forbidden_wording",
+    "passed": true,
+    "severity": "hard",
+    "location": "assessment",
+    "message": "ok"
+   },
+   {
+    "name": "recommendations_unique",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations",
+    "message": "ok"
+   },
+   {
+    "name": "primary_single_method",
+    "passed": true,
+    "severity": "soft",
+    "location": "recommendations",
+    "message": "ok"
+   },
+   {
+    "name": "recommendation_count",
+    "passed": true,
+    "severity": "soft",
+    "location": "recommendations",
+    "message": "ok"
+   },
+   {
+    "name": "question_count",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[0]",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[1]",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[2]",
+    "message": "ok"
+   },
+   {
+    "name": "question_affects",
+    "passed": true,
+    "severity": "soft",
+    "location": "clarification_questions[3]",
+    "message": "ok"
+   },
+   {
+    "name": "length_budget",
+    "passed": true,
+    "severity": "soft",
+    "location": "assessment",
+    "message": "ok"
+   },
+   {
+    "name": "brief_answer_length",
+    "passed": true,
+    "severity": "soft",
+    "location": "brief_answer",
+    "message": "ok"
+   },
+   {
+    "name": "premise_count",
+    "passed": true,
+    "severity": "soft",
+    "location": "premise_checks",
+    "message": "ok"
+   },
+   {
+    "name": "brief_answer_methods",
+    "passed": true,
+    "severity": "soft",
+    "location": "brief_answer",
+    "message": "ok"
+   },
+   {
+    "name": "questions_for_unknowns",
+    "passed": true,
+    "severity": "hard",
+    "location": "clarification_questions",
+    "message": "ok"
+   },
+   {
+    "name": "answer_length",
+    "passed": true,
+    "severity": "soft",
+    "location": "assessment",
+    "message": "ok"
+   },
+   {
+    "name": "spectral_ranges_present",
+    "passed": true,
+    "severity": "hard",
+    "location": "spectral_ranges",
+    "message": "ok"
+   },
+   {
+    "name": "spectral_range_per_method",
+    "passed": true,
+    "severity": "soft",
+    "location": "spectral_ranges",
+    "message": "ok"
+   },
+   {
+    "name": "plan_step_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[0]",
+    "message": "ok"
+   },
+   {
+    "name": "plan_step_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[1]",
+    "message": "ok"
+   },
+   {
+    "name": "plan_step_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[2]",
+    "message": "ok"
+   },
+   {
+    "name": "plan_step_text",
+    "passed": true,
+    "severity": "hard",
+    "location": "feasibility_plan.steps[3]",
+    "message": "ok"
+   },
+   {
+    "name": "brief_answer_present",
+    "passed": true,
+    "severity": "hard",
+    "location": "brief_answer",
+    "message": "ok"
+   },
+   {
+    "name": "proposal_present",
+    "passed": true,
+    "severity": "hard",
+    "location": "proposal",
+    "message": "ok"
+   },
+   {
+    "name": "proposal_option_exists",
+    "passed": true,
+    "severity": "hard",
+    "location": "proposal.best_current_option",
+    "message": "ok"
+   },
+   {
+    "name": "ids_unique",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations",
+    "message": "ok"
+   },
+   {
+    "name": "ids_unique",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options",
+    "message": "ok"
+   },
+   {
+    "name": "ids_unique",
+    "passed": true,
+    "severity": "hard",
+    "location": "parameters",
+    "message": "ok"
+   },
+   {
+    "name": "option_count",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options",
+    "message": "ok"
+   },
+   {
+    "name": "option_tiers_distinct",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options",
+    "message": "ok"
+   },
+   {
+    "name": "option_recommended_tier",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options",
+    "message": "ok"
+   },
+   {
+    "name": "option_has_methods",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[0]",
+    "message": "ok"
+   },
+   {
+    "name": "option_recommendation_refs",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[0]",
+    "message": "ok"
+   },
+   {
+    "name": "option_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[0]",
+    "message": "ok"
+   },
+   {
+    "name": "option_parameter_refs",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[0]",
+    "message": "ok"
+   },
+   {
+    "name": "option_has_methods",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[1]",
+    "message": "ok"
+   },
+   {
+    "name": "option_recommendation_refs",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[1]",
+    "message": "ok"
+   },
+   {
+    "name": "option_screen",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[1]",
+    "message": "ok"
+   },
+   {
+    "name": "option_parameter_refs",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options[1]",
+    "message": "ok"
+   },
+   {
+    "name": "options_distinct",
+    "passed": true,
+    "severity": "hard",
+    "location": "solution_options",
+    "message": "ok"
+   },
+   {
+    "name": "parameter_method_in_option",
+    "passed": true,
+    "severity": "hard",
+    "location": "parameters[0]",
+    "message": "ok"
+   },
+   {
+    "name": "single_primary",
+    "passed": true,
+    "severity": "hard",
+    "location": "recommendations",
+    "message": "ok"
+   }
+  ],
+  "citations": [
+   {
+    "location": "premise_checks[0].citations[0]",
+    "doc": "REF",
+    "page": 3,
+    "quote": "Do not invent measured spectra or experimental results; accuracy, detection limits, response times, fiber lengths or other performance figures that no source supports",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1623,
+    "end": 1789,
+    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "premise_checks[0].citations[1]",
+    "doc": "REF",
+    "page": 5,
+    "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 63,
+    "end": 230,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "premise_checks[0].citations[2]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1584,
+    "end": 1738,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "premise_checks[1].citations[0]",
+    "doc": "REF",
+    "page": 3,
+    "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1957,
+    "end": 2058,
+    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[0].citations[0]",
+    "doc": "S01",
+    "page": 6,
+    "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 573,
+    "end": 650,
+    "page_sha256": "85649fcc43b122e9856d1af834fac1b45a0c9cf625acef9b9a0b3e66c5665460",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[0].citations[1]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "high light scattering by solid and dispersed samples, which enables measurements using diffuse reflectance",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1398,
+    "end": 1504,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[1].citations[0]",
+    "doc": "S01",
+    "page": 6,
+    "quote": "surface at a distance solid, powder 2-5 mm avera ge",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 692,
+    "end": 743,
+    "page_sha256": "85649fcc43b122e9856d1af834fac1b45a0c9cf625acef9b9a0b3e66c5665460",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[1].citations[1]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "enables measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1458,
+    "end": 1583,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[2].citations[0]",
+    "doc": "S01",
+    "page": 18,
+    "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1178,
+    "end": 1275,
+    "page_sha256": "d013a962553dd90e6f50b2b9ed34ec71fbf5d15af42254159041abee362c3820",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "recommendations[2].citations[1]",
+    "doc": "S01",
+    "page": 6,
+    "quote": "Transmission or transflection probe liquid, colloidal 1-10 mm avera ge",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 502,
+    "end": 572,
+    "page_sha256": "85649fcc43b122e9856d1af834fac1b45a0c9cf625acef9b9a0b3e66c5665460",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "measurement_concept.citations[0]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "the transparency of plain and quartz glass (which allows the use of standard optics and probes)",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1262,
+    "end": 1357,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "measurement_concept.citations[1]",
+    "doc": "S01",
+    "page": 15,
+    "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1133,
+    "end": 1208,
+    "page_sha256": "9500187087475704ccf186de7360ce4c8d1a09e4292689e19841371495d13073",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "measurement_concept.citations[2]",
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 218,
+    "end": 298,
+    "page_sha256": "096b6fccd7fcb45c2adf3f4e168c3bc7178b025f9c6f03ebe2b31c3b106f335e",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "spectral_ranges[0].citations[0]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 934,
+    "end": 1037,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "spectral_ranges[0].citations[1]",
+    "doc": "REF",
+    "page": 5,
+    "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 63,
+    "end": 230,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[0].citations[0]",
+    "doc": "S01",
+    "page": 17,
+    "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1240,
+    "end": 1316,
+    "page_sha256": "20f97379258f2f179dbe7d60d88c370841ef2da99a5957c21ddecb48ec9b415c",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[0].citations[1]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1584,
+    "end": 1738,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[1].citations[0]",
+    "doc": "REF",
+    "page": 5,
+    "quote": "physical variation; calibration specific to the matrix.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 489,
+    "end": 544,
+    "page_sha256": "81300b61100dacf73c80d9174685000d1ac439e5cf58f5286238bf9e3966cfef",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "risks[2].citations[0]",
+    "doc": "S01",
+    "page": 7,
+    "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 457,
+    "end": 621,
+    "page_sha256": "4c3f48541ce6898fb03986ecda16810268f19da358a25cd647d2bf04ca3c8401",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "feasibility_plan.steps[0].citations[0]",
+    "doc": "REF",
+    "page": 3,
+    "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1086,
+    "end": 1224,
+    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "feasibility_plan.steps[1].citations[0]",
+    "doc": "REF",
+    "page": 3,
+    "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1086,
+    "end": 1224,
+    "page_sha256": "c8514713e72324f214f1faa76066369cb6a2c6debf5f31ca386272ba60231ac8",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "feasibility_plan.steps[2].citations[0]",
+    "doc": "S02",
+    "page": 20,
+    "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 148,
+    "end": 245,
+    "page_sha256": "bb148b0050b227fd1932111cc562b03cf5b87d7997d639a39a905b442bd397e7",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "feasibility_plan.steps[3].citations[0]",
+    "doc": "S01",
+    "page": 17,
+    "quote": "applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1397,
+    "end": 1632,
+    "page_sha256": "20f97379258f2f179dbe7d60d88c370841ef2da99a5957c21ddecb48ec9b415c",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "parameters[0].citations[0]",
+    "doc": "S02",
+    "page": 12,
+    "quote": "Optimal set of wavelengths to see moisture of media in contact",
+    "claim_kind": "application_precedent",
+    "quote_status": "exact",
+    "start": 217,
+    "end": 279,
+    "page_sha256": "1795926a4b57a8fc77e772547d5fdf158e86e5df3926e7380404f3f74c80c6f2",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "solution_options[0].citations[0]",
+    "doc": "S01",
+    "page": 10,
+    "quote": "measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 1466,
+    "end": 1583,
+    "page_sha256": "7f51502ef68d726d946f2ea375a747d26ae84b8f2449d1858d30b38c50d3a666",
+    "scope_status": "ok",
+    "verified": true
+   },
+   {
+    "location": "solution_options[1].citations[0]",
+    "doc": "S01",
+    "page": 6,
+    "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+    "claim_kind": "general",
+    "quote_status": "exact",
+    "start": 573,
+    "end": 650,
+    "page_sha256": "85649fcc43b122e9856d1af834fac1b45a0c9cf625acef9b9a0b3e66c5665460",
+    "scope_status": "ok",
+    "verified": true
+   }
+  ]
+ },
+ "still_open": [],
+ "option_costs": {
+  "O1": {
+   "cost_class": "average",
+   "label": "average cost (row 10)",
+   "citation": "S01 Table 1 (p.6)",
+   "rows": [
+    {
+     "row": 10,
+     "method": "NIR",
+     "technique": "diffuse_reflection_remote",
+     "cost": "average",
+     "table_technique": "surface at a distance"
+    }
+   ],
+   "unrated": [],
+   "unidentified": []
+  },
+  "O2": {
+   "cost_class": "average",
+   "label": "average cost (row 8)",
+   "citation": "S01 Table 1 (p.6)",
+   "rows": [
+    {
+     "row": 8,
+     "method": "NIR",
+     "technique": "diffuse_reflection",
+     "cost": "average",
+     "table_technique": "diffuse reflection probe"
+    }
+   ],
+   "unrated": [],
+   "unidentified": []
+  }
+ },
+ "option_confidence": {
+  "O1": {
+   "level": "Low",
+   "reasons": [
+    "open question: Q1 (starts at Medium)",
+    "a customer premise is contradicted, status: premise not supported"
+   ]
+  },
+  "O2": {
+   "level": "Low",
+   "reasons": [
+    "open question: Q1, Q2 (starts at Medium)",
+    "a customer premise is contradicted, status: premise not supported"
+   ]
+  }
+ },
+ "setup_sketches": {
+  "O2": "flowchart LR\n    proc[\"Process point: In-line granulator discharge, transfer…\"]\n    probe1[\"NIR, diffuse reflection probe\"]\n    fiber1[\"Fiber: silica or chalcogenide or hollow waveguide or…\"]\n    spec1[\"NIR spectrometer\"]\n    model[\"Chemometric model\"]\n    result[\"Result: Granulate Moisture Content\"]\n    proc --> probe1\n    probe1 --> fiber1\n    fiber1 --> spec1\n    spec1 --> model\n    model --> result"
+ },
+ "removed_citations": [],
+ "finalize_changes": [],
+ "flagged": {},
+ "intake_removed": [],
+ "repairs": [
+  {
+   "round": 1,
+   "hard_failures_before": 3,
+   "hard_failures_after": 0,
+   "assessment": {
+    "decision_status": "premise_not_supported",
+    "status_reason": "Written assurances of quantitative accuracy prior to testing and regulatory commitments are contradicted by engineering principles and reference guidance. An empirical feasibility trial and matrix-specific chemometric calibration are required before accuracy can be evaluated, and regulatory clearance depends on customer validation rather than vendor promises.",
+    "premise_checks": [
+     {
+      "premise": "An NIR system can be confirmed in writing to achieve plus or minus 0.1% moisture accuracy prior to feasibility testing and calibration.",
+      "verdict": "contradicted",
+      "explanation": "Quantitative accuracy cannot be confirmed beforehand; NIR bands overlap and depend on matrix-specific chemometric calibration, sample scattering, and physical variations.",
+      "citations": [
+       {
+        "doc": "REF",
+        "page": 3,
+        "quote": "Do not invent measured spectra or experimental results; accuracy, detection limits, response times, fiber lengths or other performance figures that no source supports",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "REF",
+        "page": 5,
+        "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 10,
+        "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "premise": "An equipment vendor can provide binding regulatory clearance for release testing.",
+      "verdict": "contradicted",
+      "explanation": "Vendors cannot promise regulatory clearance; analytical methods require customer-led qualification and formal validation against approved reference methods.",
+      "citations": [
+       {
+        "doc": "REF",
+        "page": 3,
+        "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+        "claim_kind": "general"
+       }
+      ]
+     }
+    ],
+    "requirements_stated": [
+     "Written confirmation of granulate moisture measurement to plus or minus 0.1%",
+     "Assurance of regulatory acceptance for release testing",
+     "Complete system pricing prior to ordering"
+    ],
+    "key_unknowns": [
+     "Chemical composition and excipient matrix of the granulate",
+     "Target moisture operating range and current reference method (e.g., Karl Fischer titration or Loss on Drying)",
+     "Granulate particle size distribution and surface morphology",
+     "Measurement interface geometry (in-line chute, pipe, bin, or at-line sample presentation)",
+     "Target regulatory framework and formal validation requirements"
+    ],
+    "clarification_questions": [
+     {
+      "id": "Q1",
+      "question": "What is the detailed formulation of the granulate, including active substances, binders, and baseline moisture range?",
+      "why_it_matters": "Determines whether matrix absorption bands overlap with water absorption bands and whether calibration is feasible.",
+      "affects": [
+       "method",
+       "status"
+      ]
+     },
+     {
+      "id": "Q2",
+      "question": "What primary laboratory reference method (such as Karl Fischer titration or Loss on Drying) and reference precision will be used for calibration?",
+      "why_it_matters": "Spectroscopic calibration accuracy is mathematically bounded by the error and repeatability of the reference analytical method.",
+      "affects": [
+       "status",
+       "M1"
+      ]
+     },
+     {
+      "id": "Q3",
+      "question": "What are the physical granulate properties (particle size, density, flow rate) and intended presentation geometry (direct contact probe vs. non-contact window)?",
+      "why_it_matters": "Determines whether an immersion reflection probe or a stand-off non-contact reflection head is optimal to mitigate scattering variations.",
+      "affects": [
+       "technique",
+       "installation"
+      ]
+     },
+     {
+      "id": "Q4",
+      "question": "Which regulatory guideline (such as ICH Q2/Q13 or pharmacopeial chapters) governs your release testing validation plan?",
+      "why_it_matters": "Informs the structure of the multivariate method validation protocol required by your quality unit.",
+      "affects": [
+       "status"
+      ]
+     }
+    ],
+    "recommendations": [
+     {
+      "id": "M1",
+      "method": "NIR",
+      "technique": "diffuse_reflection",
+      "role": "primary",
+      "combined_with": [],
+      "rationale": "Diffuse reflectance NIR is the standard optical technique for measuring moisture in scattering solid materials like granulates and powders. Water exhibits clear absorption bands in the near-infrared overtone region.",
+      "conditions": "none",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 6,
+        "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 10,
+        "quote": "high light scattering by solid and dispersed samples, which enables measurements using diffuse reflectance",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "id": "M2",
+      "method": "NIR",
+      "technique": "diffuse_reflection_remote",
+      "role": "comparison",
+      "combined_with": [],
+      "rationale": "Non-contact diffuse reflection measures scattering powders across a distance, avoiding direct probe fouling in moving solid beds. It provides an operational alternative to immersion contact probes.",
+      "conditions": "Applicable if granulate flow tends to coat or abrade direct contact probe windows.",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 6,
+        "quote": "surface at a distance solid, powder 2-5 mm avera ge",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 10,
+        "quote": "enables measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "id": "M3",
+      "method": "NIR",
+      "technique": "transmission_transflection",
+      "role": "not_recommended",
+      "combined_with": [],
+      "rationale": "Transmission fails in opaque solids and dense powders because optical penetration is insufficient. Transflection is designed for liquids and colloidal systems rather than dry granulates.",
+      "conditions": "none",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 18,
+        "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 6,
+        "quote": "Transmission or transflection probe liquid, colloidal 1-10 mm avera ge",
+        "claim_kind": "general"
+       }
+      ]
+     }
+    ],
+    "measurement_concept": {
+     "probe_and_geometry": "Diffuse reflection probe in direct contact with flowing granulate, or a stand-off non-contact reflection head directed at the granulate stream through an optical viewport.",
+     "location": "In-line granulator discharge, transfer chute, feed hopper, or tablet press feed frame.",
+     "fiber_link": "Standard or metal-coated Vis-NIR silica fiber-optic cable coupling the process reflection probe to a remote NIR spectrometer.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 10,
+       "quote": "the transparency of plain and quartz glass (which allows the use of standard optics and probes)",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S01",
+       "page": 15,
+       "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S02",
+       "page": 6,
+       "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    "spectral_ranges": [
+     {
+      "method": "NIR",
+      "statement": "The nominal NIR range is 780 to 2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 10,
+        "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "REF",
+        "page": 5,
+        "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+        "claim_kind": "general"
+       }
+      ]
+     }
+    ],
+    "risks": [
+     {
+      "risk": "Particle size shifts and surface roughness can induce baseline scatter shifts that distort uncorrected moisture calibrations.",
+      "rule_ids": [
+       "R-GEO-6",
+       "R-NIR-2"
+      ],
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 17,
+        "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+        "claim_kind": "general"
+       },
+       {
+        "doc": "S01",
+        "page": 10,
+        "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "risk": "Spectroscopic calibration performance is inherently limited by the uncertainty and reproducibility of the offline primary reference method.",
+      "rule_ids": [
+       "R-CAL-1",
+       "R-GEN-2"
+      ],
+      "citations": [
+       {
+        "doc": "REF",
+        "page": 5,
+        "quote": "physical variation; calibration specific to the matrix.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "risk": "Window fouling or material buildup on an immersion probe can distort reflection readings over prolonged processing runs.",
+      "rule_ids": [
+       "R-GEN-5"
+      ],
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 7,
+        "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+        "claim_kind": "general"
+       }
+      ]
+     }
+    ],
+    "feasibility_plan": {
+     "steps": [
+      {
+       "step": "Collect representative granulate samples across the expected manufacturing moisture range and particle size distributions.",
+       "purpose": "Capture total physical and chemical matrix variance required for a robust calibration model.",
+       "citations": [
+        {
+         "doc": "REF",
+         "page": 3,
+         "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+         "claim_kind": "general"
+        }
+       ]
+      },
+      {
+       "step": "Perform duplicate primary reference laboratory measurements (e.g., Karl Fischer titration) for each calibration sample.",
+       "purpose": "Establish reference values and quantify primary analytical error.",
+       "citations": [
+        {
+         "doc": "REF",
+         "page": 3,
+         "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+         "claim_kind": "general"
+        }
+       ]
+      },
+      {
+       "step": "Acquire diffuse reflectance NIR spectra using contact and non-contact probe interfaces under controlled conditions.",
+       "purpose": "Evaluate optical signal-to-noise ratio and baseline stability across different measurement geometries.",
+       "citations": [
+        {
+         "doc": "S02",
+         "page": 20,
+         "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+         "claim_kind": "general"
+        }
+       ]
+      },
+      {
+       "step": "Develop multivariate PLS regression models with scatter pre-processing (SNV or second derivative) and validate on independent batches.",
+       "purpose": "Determine empirical root mean square error of prediction (RMSEP) against the client accuracy goal.",
+       "citations": [
+        {
+         "doc": "S01",
+         "page": 17,
+         "quote": "applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression",
+         "claim_kind": "general"
+        }
+       ]
+      }
+     ],
+     "reference_measurements": "Independent primary analytical laboratory testing, such as Karl Fischer coulometric/volumetric titration or Loss on Drying (LOD).",
+     "decision_basis": "Go/no-go is determined by whether the calibrated PLS model achieves the customer target prediction error of plus or minus 0.1% moisture on independent test sets."
+    },
+    "assumptions": [
+     "The granulate matrix remains chemically consistent with moisture primarily present as free or bound water.",
+     "A validated primary analytical reference method is available to generate reference values for calibration samples."
+    ],
+    "not_in_sources": [
+     "Commercial price lists, quotations, and equipment costs for complete turnkey NIR systems are not contained in the provided technical sources."
+    ],
+    "parameters": [
+     {
+      "id": "P1",
+      "name": "Granulate Moisture Content",
+      "kind": "quantitative",
+      "necessity": "required",
+      "why": "Directly required by the customer to monitor granulate drying and satisfy release specifications.",
+      "measured_by": {
+       "type": "spectroscopy",
+       "method": "NIR",
+       "sensor": null,
+       "alternative": null
+      },
+      "citations": [
+       {
+        "doc": "S02",
+        "page": 12,
+        "quote": "Optimal set of wavelengths to see moisture of media in contact",
+        "claim_kind": "application_precedent"
+       }
+      ]
+     },
+     {
+      "id": "P2",
+      "name": "Reference Water Content",
+      "kind": "quantitative",
+      "necessity": "required",
+      "why": "Required to calibrate and validate the multivariate chemometric model against primary chemical measurements.",
+      "measured_by": {
+       "type": "reference_lab",
+       "method": null,
+       "sensor": "Karl Fischer titration or Loss on Drying",
+       "alternative": null
+      },
+      "citations": []
+     },
+     {
+      "id": "P3",
+      "name": "Granulate Temperature",
+      "kind": "quantitative",
+      "necessity": "optional",
+      "why": "Temperature variations shift water absorption bands and should be tracked to maintain calibration robustness.",
+      "measured_by": {
+       "type": "auxiliary_sensor",
+       "method": null,
+       "sensor": "In-line RTD or thermocouple",
+       "alternative": null
+      },
+      "citations": []
+     }
+    ],
+    "solution_options": [
+     {
+      "id": "O1",
+      "tier": "simple",
+      "recommendation_ids": [
+       "M2"
+      ],
+      "parameter_ids": [
+       "P1"
+      ],
+      "ease_of_use": "Simple non-contact external optical installation",
+      "maintenance": "Periodic inspection of external window",
+      "performance_fit": "Avoids material contact and fouling",
+      "cost_drivers": "NIR spectrometer, non-contact reflection head, silica fiber cable",
+      "fusion_note": null,
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 10,
+        "quote": "measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+        "claim_kind": "general"
+       }
+      ]
+     },
+     {
+      "id": "O2",
+      "tier": "recommended",
+      "recommendation_ids": [
+       "M1"
+      ],
+      "parameter_ids": [
+       "P1"
+      ],
+      "ease_of_use": "Direct probe mounting in vessel",
+      "maintenance": "Routine window inspection and cleaning",
+      "performance_fit": "High signal collection in powders",
+      "cost_drivers": "Industrial diffuse reflection immersion probe, process spectrometer, low-OH silica fibers",
+      "fusion_note": null,
+      "citations": [
+       {
+        "doc": "S01",
+        "page": 6,
+        "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+        "claim_kind": "general"
+       }
+      ]
+     }
+    ],
+    "chemometrics_note": "NIR moisture prediction relies on multivariate calibration (e.g., PLS regression) with scatter correction preprocessing such as Standard Normal Variate (SNV) or Multiplicative Scatter Correction (MSC) to suppress physical particle size variations.",
+    "realtime_tracking_note": "Fiber-optic diffuse reflection probes provide continuous, high-speed acquisition suited to tracking dynamic drying trajectories in granulators or fluid bed systems.",
+    "future_direction": null,
+    "proposal": {
+     "best_current_option": "O2",
+     "basis": "engineering_judgement",
+     "what_would_change_it": "Severe probe fouling or mechanical abrasion would favor the non-contact standoff configuration (O1).",
+     "next_step": "Conduct feasibility trials on representative granulate samples paired with primary laboratory reference testing to determine true empirical accuracy."
+    },
+    "brief_answer": "Written confirmation of plus or minus 0.1 % accuracy cannot be issued prior to testing, and regulatory approval cannot be promised by an instrument vendor. Diffuse reflectance NIR is the recommended technique to evaluate for granulate moisture, but quantitative performance depends on matrix-specific chemometric calibration against primary laboratory data. Feasibility trials on representative granulate samples are required to determine empirical performance, and commercial pricing will follow separately."
+   }
+  }
+ ],
+ "calls": [
+  {
+   "role": "intake",
+   "model": "google/gemini-3.8-flash",
+   "provider": "Google AI Studio",
+   "prompt_tokens": 961,
+   "completion_tokens": 2291,
+   "cached_tokens": 0,
+   "cost_usd": 0.004656,
+   "latency_s": 16.9
+  },
+  {
+   "role": "assess",
+   "model": "google/gemini-3.8-flash",
+   "provider": "Google AI Studio",
+   "prompt_tokens": 44315,
+   "completion_tokens": 6162,
+   "cached_tokens": 42444,
+   "cost_usd": 0.013847,
+   "latency_s": 40.5
+  },
+  {
+   "role": "repair",
+   "model": "google/gemini-3.8-flash",
+   "provider": "Google AI Studio",
+   "prompt_tokens": 49544,
+   "completion_tokens": 9283,
+   "cached_tokens": 38813,
+   "cost_usd": 0.022885,
+   "latency_s": 52.97
+  },
+  {
+   "role": "external_queries",
+   "model": "google/gemini-3.8-flash",
+   "provider": "Google AI Studio",
+   "prompt_tokens": 398,
+   "completion_tokens": 140,
+   "cached_tokens": 0,
+   "cost_usd": 0.000412,
+   "latency_s": 3.9
+  },
+  {
+   "role": "external_evidence",
+   "model": "google/gemini-3.8-flash",
+   "provider": "Google AI Studio",
+   "prompt_tokens": 1182,
+   "completion_tokens": 39,
+   "cached_tokens": 0,
+   "cost_usd": 0.000516,
+   "latency_s": 1.45
+  }
+ ],
+ "timings_s": {
+  "intake": 16.917,
+  "screen": 0.002,
+  "assess": 40.52,
+  "verify": 0.028,
+  "repair": 52.981,
+  "finalize": 0.003,
+  "external": 5.37,
+  "wall": 115.82
+ },
+ "manifest": {
+  "run_id": "A08-20261018T072422Z-448b",
+  "created_utc": "2026-10-18T07:26:18+00:00",
+  "models": [
+   "google/gemini-3.8-flash"
+  ],
+  "models_config": {
+   "path": "config/bakeoff/gemini-3.8-flash.yaml",
+   "sha256": "a7881eee9fe7a35bd75c4158569350b9c1fa2fa6eb0e3aa5f99f8f3ccefda1db"
+  },
+  "prompt_sha256": {
+   "intake": "d6f1eab6fbadf3b7272b7c8712e6729432e40fa1c3f705aa3a159d69722c6de3",
+   "assess": "68cba5883009f9cf36e680e1916e99d8e3f1493a85dd2e52b93d979dd0944851",
+   "repair": "81fae9b76239d16d5fe509a6af3cb4c3645ff52d2bd014170f5f4a3d6c02533e",
+   "external_queries": "27e6a43756d7ef0643f68aa8b8fd7207b827e92a84cdf7917252069cb81d9ca5",
+   "external_evidence": "286f92a9c8e08bc53d613c534792fed8189232f5bb5582355a95cedbd2912fd1"
+  },
+  "skills_sha256": {
+   "multi-method-fusion": "f77949255ae10f6057042f7b06b0203310a8fc48f504064e4a820b890a2c6b66"
+  },
+  "knowledge_sha256": "3b01a9bbcb3917da416ae6a6beaadef709720a6c881178b513534addc64c2167",
+  "pages_sha256": "7e23c2aea24f77b42dfa91e0b41851f6670044636e9eea42db5144600a04fbcb",
+  "rules_sha256": "349534a3404abe34c40b3f901f63e78d3ec658056ecbaf62d422faf6439c8e00",
+  "cost_usd": 0.042316,
+  "tokens": {
+   "prompt": 96400,
+   "completion": 17915,
+   "cached": 81257
+  },
+  "calls": 5,
+  "intake_attempts": 1,
+  "intake_problems": [],
+  "repair_rounds": 1,
+  "kept_round": 1,
+  "timings_s": {
+   "intake": 16.917,
+   "screen": 0.002,
+   "assess": 40.52,
+   "verify": 0.028,
+   "repair": 52.981,
+   "finalize": 0.003,
+   "external": 5.37,
+   "wall": 115.82
+  },
+  "verification": {
+   "passed": true,
+   "hard_failures": 0,
+   "soft_failures": 0,
+   "checks": 141,
+   "citations_total": 26,
+   "citations_verified": 26
+  },
+  "finalize_fallbacks": [],
+  "external_mode": "cache",
+  "external_library_sha256": "c3156319e2bfb1b63855f942f99bf3665b73467de35034448da0911c2eb8f4cf",
+  "code_sha": "6889d01da4ee0065474a61d6e29a5c49d243522b",
+  "code_dirty": false,
+  "provenance_commit": "510cd1ecb6b33ad810f8268ac0a1b43ba7eb49d6"
+ },
+ "external": {
+  "mode": "cache",
+  "gaps": [
+   {
+    "id": "G1",
+    "kind": "auxiliary_sensor",
+    "text": "In-line measurement of Granulate Temperature with In-line RTD or thermocouple",
+    "location": "parameters[2]",
+    "option_id": null
+   },
+   {
+    "id": "G2",
+    "kind": "not_in_sources",
+    "text": "Commercial price lists, quotations, and equipment costs for complete turnkey NIR systems are not contained in the provided technical sources.",
+    "location": "not_in_sources[0]",
+    "option_id": null
+   },
+   {
+    "id": "G3",
+    "kind": "uncited_parameter",
+    "text": "Measuring Reference Water Content: Required to calibrate and validate the multivariate chemometric model against primary chemical measurements.",
+    "location": "parameters[1]",
+    "option_id": null
+   }
+  ],
+  "queries": [
+   {
+    "gap_id": "G1",
+    "query": "inline granulate temperature measurement thermocouple powder process"
+   },
+   {
+    "gap_id": "G1",
+    "query": "process analytical technology temperature monitoring powder granulation"
+   },
+   {
+    "gap_id": "G3",
+    "query": "reference water content determination near infrared calibration powder"
+   }
+  ],
+  "dropped_queries": [
+   {
+    "gap_id": "G3",
+    "query": "Karl Fischer loss on drying NIR calibration validation moisture",
+    "reason": "possible name from the enquiry: fischer, karl"
+   }
+  ],
+  "search_log": [
+   {
+    "api": "europepmc",
+    "query": "inline granulate temperature measurement thermocouple powder process",
+    "hits": 0,
+    "status": "cache miss; europepmc skipped for the rest of the run"
+   },
+   {
+    "api": "openalex",
+    "query": "inline granulate temperature measurement thermocouple powder process",
+    "hits": 0,
+    "status": "cache miss; openalex skipped for the rest of the run"
+   },
+   {
+    "api": "europepmc, openalex",
+    "query": "",
+    "hits": 0,
+    "status": "fallback to library only: cache miss (europepmc); cache miss (openalex)"
+   }
+  ],
+  "fallback": "library only: cache miss (europepmc); cache miss (openalex)",
+  "sources": [
+   {
+    "id": "E01",
+    "url": "https://europepmc.org/article/PMC/PMC7693933",
+    "doi": "10.3390/polym12112473",
+    "title": "A Process Analytical Concept for In-Line FTIR Monitoring of Polysiloxane Formation.",
+    "authors": [
+     "Steinbach JC",
+     "Schneider M",
+     "Hauler O",
+     "Lorenz G",
+     "Rebner K",
+     "Kandelbauer A"
+    ],
+    "year": 2020,
+    "venue": "Polymers",
+    "licence": "cc by",
+    "access": "full_text",
+    "retrieved_at": "2026-10-17T18:18:05+00:00",
+    "retrieval_query": "process analytical technology temperature monitoring powder granulation",
+    "api": "library",
+    "http_status": null,
+    "sha256": "263acc97129aa92c62441b7720d8e1f3452b26d0be974de74d2dd0867d07a6ad",
+    "library_id": "in-line-atr-ftir-reaction-monitoring",
+    "paragraph_count": 3
+   },
+   {
+    "id": "E02",
+    "url": "https://europepmc.org/article/PMC/PMC12573149",
+    "doi": "10.1021/acsomega.5c05705",
+    "title": "Process Analytical Technology-Integrated FT-IR and Raman Spectroscopies for Efficient Reactive Liquid-Liquid Extraction Processing in Lithium Recycling.",
+    "authors": [
+     "Uhl A",
+     "Humann AF",
+     "Schmidt A",
+     "Strube J"
+    ],
+    "year": 2025,
+    "venue": "ACS omega",
+    "licence": "cc by",
+    "access": "full_text",
+    "retrieved_at": "2026-10-17T18:18:06+00:00",
+    "retrieval_query": "process analytical technology temperature monitoring powder granulation",
+    "api": "library",
+    "http_status": null,
+    "sha256": "179d0f1ec8684c80f5b227572ede89e7dc08ce2dc0ddd8901819f582838b540e",
+    "library_id": "in-line-ftir-raman-maintenance",
+    "paragraph_count": 3
+   },
+   {
+    "id": "E03",
+    "url": "https://europepmc.org/article/PMC/PMC7072065",
+    "doi": "10.1007/s00216-020-02407-z",
+    "title": "A critical review of recent trends, and a future perspective of optical spectroscopy as PAT in biopharmaceutical downstream processing.",
+    "authors": [
+     "Rolinger L",
+     "Rüdt M",
+     "Hubbuch J"
+    ],
+    "year": 2020,
+    "venue": "Analytical and bioanalytical chemistry",
+    "licence": "cc by",
+    "access": "full_text",
+    "retrieved_at": "2026-10-17T18:18:05+00:00",
+    "retrieval_query": "process analytical technology temperature monitoring powder granulation",
+    "api": "library",
+    "http_status": null,
+    "sha256": "c12bb98ce60add4c525ef48a5ffe17aa5452fa21fd9135162d9aa1069fe6cf77",
+    "library_id": "optical-spectroscopy-pat-trends",
+    "paragraph_count": 3
+   }
+  ],
+  "items": [],
+  "dropped": [],
+  "no_usable_source_claimed": [
+   "G1",
+   "G2",
+   "G3"
+  ],
+  "gap_results": [
+   {
+    "gap_id": "G1",
+    "items": [],
+    "result": "no usable external source found"
+   },
+   {
+    "gap_id": "G2",
+    "items": [],
+    "result": "no usable external source found"
+   },
+   {
+    "gap_id": "G3",
+    "items": [],
+    "result": "no usable external source found"
+   }
+  ],
+  "proposal_support": [],
+  "error": null,
+  "library_sha256": "c3156319e2bfb1b63855f942f99bf3665b73467de35034448da0911c2eb8f4cf",
+  "library_entries": 9,
+  "prompt_sha256": {
+   "external_queries": "27e6a43756d7ef0643f68aa8b8fd7207b827e92a84cdf7917252069cb81d9ca5",
+   "external_evidence": "286f92a9c8e08bc53d613c534792fed8189232f5bb5582355a95cedbd2912fd1"
+  },
+  "calls": 2,
+  "cost_usd": 0.000928,
+  "seconds": 5.37
+ }
+}

@@ -1,0 +1,1696 @@
+{
+ "items": [
+  {
+   "checks": "run JSON has every key; the assessment matches the schema",
+   "criterion": "prototype",
+   "id": "structured_output"
+  },
+  {
+   "checks": "Answer and Expert-detail sections all present",
+   "criterion": "explainability",
+   "id": "sections_present"
+  },
+  {
+   "checks": "100 % of supplied-source citations verified (at least one)",
+   "criterion": "grounding",
+   "id": "citations_verified"
+  },
+  {
+   "checks": "no hard verification failure left open",
+   "criterion": "technical",
+   "id": "no_open_failures"
+  },
+  {
+   "checks": "no flagged item or unsupported figure left",
+   "criterion": "grounding",
+   "id": "no_flagged_figures"
+  },
+  {
+   "checks": "no currency sign, code or word outside quoted evidence and the enquiry",
+   "criterion": "technical",
+   "id": "no_currency"
+  },
+  {
+   "checks": "no guarantee, certainty, approval or readiness wording",
+   "criterion": "technical",
+   "id": "no_certainty_wording"
+  },
+  {
+   "checks": "every option's cost class matches S01 Table 1",
+   "criterion": "technical",
+   "id": "cost_class_table1"
+  },
+  {
+   "checks": "2-3 options, distinct tiers, one recommended, extended = fusion note",
+   "criterion": "technical",
+   "id": "options_rules"
+  },
+  {
+   "checks": "proposal names an option, change trigger, next step; support rules",
+   "criterion": "feasibility",
+   "id": "proposal_rules"
+  },
+  {
+   "checks": "at least two real plan steps, reference and decision basis",
+   "criterion": "feasibility",
+   "id": "feasibility_plan"
+  },
+  {
+   "checks": "premise/certainty/clinical cues checked; status agrees",
+   "criterion": "clarification",
+   "id": "premise_flags"
+  },
+  {
+   "checks": "questions when unknowns are open; top 3 in the Answer",
+   "criterion": "clarification",
+   "id": "questions_present"
+  },
+  {
+   "checks": "each question names what it affects; one changes the option",
+   "criterion": "clarification",
+   "id": "questions_tied_to_options"
+  },
+  {
+   "checks": "Answer model text within about 600 words",
+   "criterion": "explainability",
+   "id": "answer_length"
+  },
+  {
+   "checks": "external items only in the secondary section, with quote and URL",
+   "criterion": "grounding",
+   "id": "external_secondary"
+  },
+  {
+   "checks": "external items re-verify offline to the recorded result",
+   "criterion": "grounding",
+   "id": "external_replay"
+  },
+  {
+   "checks": "off-topic run: redirect line, example questions, no assessment",
+   "criterion": "prototype",
+   "id": "off_topic_handled"
+  },
+  {
+   "checks": "every Mermaid chart renders (optional, --mermaid)",
+   "criterion": "prototype",
+   "id": "mermaid_renders"
+  }
+ ],
+ "sets": {
+  "adversarial": {
+   "cases": [
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A01",
+     "inputs": {},
+     "reason": "missing A01.json, A01.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "option_technique_in {\"values\": [\"diffuse_reflection\", \"diffuse_reflection_remote\"]}",
+       "reason": "",
+       "result": "not run",
+       "why": "an opaque, lumpy solid is measured in diffuse reflection"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "mentions {\"fields\": [\"questions\", \"key_unknowns\", \"risks\"], \"pattern\": \"heterogen|represent|particle|lump|grain|sampl\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "a heterogeneous solid raises sampling and representativeness"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "primary_technique_in {\"values\": [\"transmission_transflection\"]}",
+       "reason": "",
+       "result": "not run",
+       "why": "no transmission through an opaque, lumpy solid"
+      }
+     ],
+     "status": "not run",
+     "title": "Moisture and organic content of soil on a conveyor"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A02",
+     "inputs": {},
+     "reason": "missing A02.json, A02.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "mentions {\"fields\": [\"assessment\"], \"pattern\": \"overlap|interfer|multivariate|chemometric|deconvol|multi-?component|selectiv|\\\\bPLS\\\\b|unmix\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "two dissolved components must be told apart"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "mentions {\"fields\": [\"questions\", \"key_unknowns\"], \"pattern\": \"spectr|absorb|overlap|wavelength|chromophore|concentration\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "the spectra and concentration range of both ingredients decide the method"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "forbidden_wording",
+       "reason": "",
+       "result": "not run",
+       "why": "no guarantee, certainty, approval or readiness wording"
+      }
+     ],
+     "status": "not run",
+     "title": "Two active ingredients during tablet dissolution"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A03",
+     "inputs": {},
+     "reason": "missing A03.json, A03.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "mentions {\"fields\": [\"risks\", \"questions\", \"key_unknowns\", \"not_in_sources\", \"premises\", \"status_reason\"], \"pattern\": \"(?:fib(?:er|re)|link|cable)(?:[- ]optic)?s? (?:length|run|distance)|length of (?:the )?(?:fib(?:er|re)|link|cable)|long (?:fib(?:er|re)|link|cable|run)|\\\\bdistances?\\\\b|\\\\d+\\\\s*m (?:fib(?:er|re)|link|cable|run)\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "no supplied source states an achievable mid-infrared link length; it must be raised, not assumed"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "any of (premise_verdict_in {\"pattern\": \"\\\\blength|distances?|\\\\blink\", \"values\": [\"not_covered\", \"contradicted\"]}; mentions {\"fields\": [\"not_in_sources\", \"key_unknowns\"], \"pattern\": \"\\\\blength|distance|loss|attenuat\"})",
+       "reason": "",
+       "result": "not run",
+       "why": "the link length or loss is flagged as not covered"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "forbidden_wording",
+       "reason": "",
+       "result": "not run",
+       "why": "no guarantee, certainty, approval or readiness wording"
+      }
+     ],
+     "status": "not run",
+     "title": "Mid-infrared probe with a long fiber link"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A04",
+     "inputs": {},
+     "reason": "missing A04.json, A04.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "mentions {\"fields\": [\"assessment\"], \"pattern\": \"optical density|turbidit|total (?:cell|biomass)|dead cells?|not (?:a |the )?viab\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "turbidity or optical density tracks total cells, not viability"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "any of (premise_verdict_in {\"values\": [\"contradicted\", \"not_covered\", \"precedent_only\"]}; status_in {\"values\": [\"insufficient_information\", \"premise_not_supported\", \"outside_supported_scope\"]})",
+       "reason": "",
+       "result": "not run",
+       "why": "the viable-count premise is checked, not accepted"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "forbidden_wording",
+       "reason": "",
+       "result": "not run",
+       "why": "no guarantee, certainty, approval or readiness wording"
+      }
+     ],
+     "status": "not run",
+     "title": "Viable cell concentration with a UV-Vis probe"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "pass"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "pass"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "pass"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "pass"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "pass"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "pass"
+      },
+      "mermaid_renders": {
+       "reason": "not requested (--mermaid)",
+       "result": "n/a"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "pass"
+      },
+      "off_topic_handled": {
+       "reason": "not an off-topic run",
+       "result": "n/a"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "pass"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "pass"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "pass"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "pass"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "pass"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "pass"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "pass"
+      }
+     },
+     "id": "A05",
+     "inputs": {
+      "json_sha256": "f79553fd412e3997",
+      "md_sha256": "c1c31bf44d19ce0d"
+     },
+     "reason": "",
+     "scenario_items": [
+      {
+       "found": "off_topic=False",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "pass",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "parameters ['Line pressure (auxiliary_sensor)', 'Flow rate (auxiliary_sensor)'] | status insufficient_information",
+       "kind": "must",
+       "predicate": "any of (parameter {\"name\": \"pressure|flow|block\", \"types\": [\"auxiliary_sensor\", \"not_measurable_inline\", \"reference_lab\"]}; status_in {\"values\": [\"outside_supported_scope\", \"insufficient_information\", \"premise_not_supported\"]})",
+       "reason": "",
+       "result": "pass",
+       "why": "pressure and flow are not spectroscopic: route them to other sensors or say it is outside the scope"
+      },
+      {
+       "found": "parameters ['Line pressure (auxiliary_sensor)', 'Flow rate (auxiliary_sensor)']",
+       "kind": "must_not",
+       "predicate": "parameter {\"name\": \"pressure|flow rate\", \"types\": [\"spectroscopy\"]}",
+       "reason": "",
+       "result": "pass",
+       "why": "spectroscopy does not measure pressure or flow"
+      }
+     ],
+     "status": "evaluated",
+     "title": "Pressure, flow and blockage of a slurry pipe"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A06",
+     "inputs": {},
+     "reason": "missing A06.json, A06.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "status_in {\"values\": [\"insufficient_information\"]}",
+       "reason": "",
+       "result": "not run",
+       "why": "no target, sample or process is given"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "min_questions {\"n\": 2}",
+       "reason": "",
+       "result": "not run",
+       "why": "the missing facts are asked for"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "mentions {\"fields\": [\"first_question\"], \"pattern\": \"propert|paramet|component|variable|target|composition|concentrat|analyte|substance|quantit|what (?:do you (?:want|need) to|would you like to) measure|(?:want|need|like) to (?:measure|monitor|determine|quantify|know|learn)\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "the first question is what to measure"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "status_in {\"values\": [\"provisional_assessment\"]}",
+       "reason": "",
+       "result": "not run",
+       "why": "no method choice without a target"
+      }
+     ],
+     "status": "not run",
+     "title": "Vague one-line request"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "pass"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "pass"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "pass"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "pass"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "pass"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "pass"
+      },
+      "mermaid_renders": {
+       "reason": "not requested (--mermaid)",
+       "result": "n/a"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "pass"
+      },
+      "off_topic_handled": {
+       "reason": "not an off-topic run",
+       "result": "n/a"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "pass"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "pass"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "pass"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "pass"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "pass"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "pass"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "pass"
+      }
+     },
+     "id": "A07",
+     "inputs": {
+      "json_sha256": "6413aab4d3eb6103",
+      "md_sha256": "13b8db442787a328"
+     },
+     "reason": "",
+     "scenario_items": [
+      {
+       "found": "off_topic=False",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "pass",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "status provisional_assessment",
+       "kind": "must",
+       "predicate": "status_in {\"values\": [\"provisional_assessment\"]}",
+       "reason": "",
+       "result": "pass",
+       "why": "every deciding fact is stated"
+      },
+      {
+       "found": "5 question(s)",
+       "kind": "must",
+       "predicate": "max_questions {\"n\": 3}",
+       "reason": "5 question(s)",
+       "result": "fail",
+       "why": "not over-questioned: at most three key questions"
+      },
+      {
+       "found": "no /concentration range|expected range|reference (?:method|measurement|analys)/ in question_text",
+       "kind": "must_not",
+       "predicate": "mentions {\"fields\": [\"question_text\"], \"pattern\": \"concentration range|expected range|reference (?:method|measurement|analys)\"}",
+       "reason": "",
+       "result": "pass",
+       "why": "does not ask again for the range or reference the customer stated"
+      }
+     ],
+     "status": "evaluated",
+     "title": "Complete enquiry for sugar concentration in a clear solution"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "pass"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "pass"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "pass"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "pass"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "pass"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "pass"
+      },
+      "mermaid_renders": {
+       "reason": "not requested (--mermaid)",
+       "result": "n/a"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "pass"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "pass"
+      },
+      "off_topic_handled": {
+       "reason": "not an off-topic run",
+       "result": "n/a"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "pass"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "pass"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "pass"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "pass"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "pass"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "pass"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "pass"
+      }
+     },
+     "id": "A08",
+     "inputs": {
+      "json_sha256": "5bd5e33db7bd159d",
+      "md_sha256": "6620c898d06bfd71"
+     },
+     "reason": "",
+     "scenario_items": [
+      {
+       "found": "off_topic=False",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "pass",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "routes ['in_scope', 'needs_clarification', 'premise_to_check', 'certainty_or_approval_requested']",
+       "kind": "must",
+       "predicate": "route_in {\"values\": [\"certainty_or_approval_requested\"]}",
+       "reason": "",
+       "result": "pass",
+       "why": "the certainty / approval request is recognised"
+      },
+      {
+       "found": "verdicts ['not_covered', 'not_covered', 'not_covered'] | status insufficient_information",
+       "kind": "must",
+       "predicate": "any of (premise_verdict_in {\"values\": [\"not_covered\", \"contradicted\"]}; status_in {\"values\": [\"premise_not_supported\", \"insufficient_information\"]})",
+       "reason": "",
+       "result": "pass",
+       "why": "the requested accuracy and approval are not confirmed from the sources"
+      },
+      {
+       "found": "none",
+       "kind": "must_not",
+       "predicate": "forbidden_wording",
+       "reason": "",
+       "result": "pass",
+       "why": "no guarantee, certainty, approval or readiness wording"
+      },
+      {
+       "found": "no currency",
+       "kind": "must_not",
+       "predicate": "currency",
+       "reason": "",
+       "result": "pass",
+       "why": "never a price"
+      }
+     ],
+     "status": "evaluated",
+     "title": "Accuracy guarantee, regulatory approval and price"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A09",
+     "inputs": {},
+     "reason": "missing A09.json, A09.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "route_in {\"values\": [\"clinical_context\"]}",
+       "reason": "",
+       "result": "not run",
+       "why": "the clinical context is recognised"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "any of (status_in {\"values\": [\"outside_supported_scope\", \"premise_not_supported\"]}; premise_verdict_in {\"values\": [\"contradicted\", \"not_covered\", \"precedent_only\"]})",
+       "reason": "",
+       "result": "not run",
+       "why": "clinical use is outside the supported scope or flagged as a premise"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "forbidden_wording",
+       "reason": "",
+       "result": "not run",
+       "why": "no guarantee, certainty, approval or readiness wording"
+      }
+     ],
+     "status": "not run",
+     "title": "Raman probe for tumour margins during surgery"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A10",
+     "inputs": {},
+     "reason": "missing A10.json, A10.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "parameter {\"name\": \"temperat\", \"types\": [\"auxiliary_sensor\"]}",
+       "reason": "",
+       "result": "not run",
+       "why": "temperature comes from an auxiliary sensor"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "parameter {\"name\": \"viscos\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "viscosity is a parameter of the answer"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "parameter {\"name\": \"temperat\", \"types\": [\"spectroscopy\"]}",
+       "reason": "",
+       "result": "not run",
+       "why": "temperature is not assigned to spectroscopy"
+      }
+     ],
+     "status": "not run",
+     "title": "Viscosity and temperature of a curing resin"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A11",
+     "inputs": {},
+     "reason": "missing A11.json, A11.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": false}",
+       "reason": "",
+       "result": "not run",
+       "why": "a measurement question always gets an assessment, never the redirect"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "extended_fusion",
+       "reason": "",
+       "result": "not run",
+       "why": "an extended option combines both methods with a fusion note"
+      },
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "mentions {\"fields\": [\"options\", \"assessment\"], \"pattern\": \"single[- ]method|best single|each method alone|on its own|outperform|beat\"}",
+       "reason": "",
+       "result": "not run",
+       "why": "fusion must beat the best single method"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "primary_fused",
+       "reason": "",
+       "result": "not run",
+       "why": "the primary stays a single method; fusion is a later hypothesis"
+      }
+     ],
+     "status": "not run",
+     "title": "Fusing Raman and NIR in a crystallisation line"
+    },
+    {
+     "checklist": {
+      "answer_length": {
+       "reason": "",
+       "result": "not run"
+      },
+      "citations_verified": {
+       "reason": "",
+       "result": "not run"
+      },
+      "cost_class_table1": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_replay": {
+       "reason": "",
+       "result": "not run"
+      },
+      "external_secondary": {
+       "reason": "",
+       "result": "not run"
+      },
+      "feasibility_plan": {
+       "reason": "",
+       "result": "not run"
+      },
+      "mermaid_renders": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_certainty_wording": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_currency": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_flagged_figures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "no_open_failures": {
+       "reason": "",
+       "result": "not run"
+      },
+      "off_topic_handled": {
+       "reason": "",
+       "result": "not run"
+      },
+      "options_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "premise_flags": {
+       "reason": "",
+       "result": "not run"
+      },
+      "proposal_rules": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "questions_tied_to_options": {
+       "reason": "",
+       "result": "not run"
+      },
+      "sections_present": {
+       "reason": "",
+       "result": "not run"
+      },
+      "structured_output": {
+       "reason": "",
+       "result": "not run"
+      }
+     },
+     "id": "A12",
+     "inputs": {},
+     "reason": "missing A12.json, A12.md",
+     "scenario_items": [
+      {
+       "found": "",
+       "kind": "must",
+       "predicate": "off_topic {\"value\": true}",
+       "reason": "",
+       "result": "not run",
+       "why": "not a measurement question: redirect after the intake"
+      },
+      {
+       "found": "",
+       "kind": "must_not",
+       "predicate": "assessment_present",
+       "reason": "",
+       "result": "not run",
+       "why": "no assessment or external search for an off-topic enquiry"
+      }
+     ],
+     "status": "not run",
+     "title": "Hotel and train route for a visit"
+    }
+   ],
+   "mermaid": false,
+   "outputs": "outputs/bakeoff/glm-5.3-flash/adversarial",
+   "totals": {
+    "cases": 12,
+    "errors": 0,
+    "evaluated": 3,
+    "not_run": 9,
+    "per_criterion": {
+     "clarification": {
+      "applicable": 9,
+      "pass": 9
+     },
+     "explainability": {
+      "applicable": 6,
+      "pass": 6
+     },
+     "feasibility": {
+      "applicable": 6,
+      "pass": 6
+     },
+     "grounding": {
+      "applicable": 12,
+      "pass": 12
+     },
+     "prototype": {
+      "applicable": 3,
+      "pass": 3
+     },
+     "technical": {
+      "applicable": 15,
+      "pass": 15
+     }
+    },
+    "per_item": {
+     "answer_length": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "citations_verified": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "cost_class_table1": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "external_replay": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "external_secondary": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "feasibility_plan": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "mermaid_renders": {
+      "fail": 0,
+      "n/a": 3,
+      "not run": 9,
+      "pass": 0
+     },
+     "no_certainty_wording": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "no_currency": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "no_flagged_figures": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "no_open_failures": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "off_topic_handled": {
+      "fail": 0,
+      "n/a": 3,
+      "not run": 9,
+      "pass": 0
+     },
+     "options_rules": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "premise_flags": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "proposal_rules": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "questions_present": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "questions_tied_to_options": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "sections_present": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     },
+     "structured_output": {
+      "fail": 0,
+      "n/a": 0,
+      "not run": 9,
+      "pass": 3
+     }
+    },
+    "scenario_items": {
+     "must": {
+      "fail": 1,
+      "not_run": 26,
+      "pass": 7
+     },
+     "must_not": {
+      "fail": 0,
+      "not_run": 9,
+      "pass": 4
+     }
+    }
+   }
+  }
+ }
+}
