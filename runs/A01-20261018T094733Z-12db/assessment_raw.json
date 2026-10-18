@@ -1,0 +1,451 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified from the sources, but no supplied source covers soil on a belt, so the recommendation rests on stated assumptions and must be confirmed by a trial on representative samples.",
+ "premise_checks": [
+  {
+   "premise": "A fiber-optic measurement above or on the belt can give a continuous reading for this material.",
+   "verdict": "precedent_only",
+   "explanation": "Remote fiber-probe online measurement is shown for other media (dairy, process lines), never for soil; it is a reason to test, not proof for this application.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Dark, lumpy, strongly absorbing soil will still return a usable diffuse-reflection signal.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses dark, absorbing granular solids; the screening marks contact diffuse reflection as unknown and this must be tested on real soil.",
+   "citations": []
+  },
+  {
+   "premise": "NIR spectroscopy can track moisture in granular organic-bearing material.",
+   "verdict": "precedent_only",
+   "explanation": "NIR water O-H bands and NIR moisture sensing are documented for other matrices (tissue, starch/flour/sugar), supporting a test on soil but not proving performance on it.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 7,
+     "quote": "the latter is known to include intensive second overtones of O-H bond vibrations in both lipids and water",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 12,
+     "quote": "IoT Concept of NIR-LED Fiber Sensor to control Moisture Level",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Continuous reading of moisture and organic content on excavated soil on a conveyor belt, before the dryer.",
+  "Soil is lumpy, dark, and varies strongly from load to load."
+ ],
+ "key_unknowns": [
+  "Required accuracy and decision thresholds for sorting (go/no-go basis).",
+  "Belt speed, geometry and feasible standoff distance for a non-contact head.",
+  "Available reference methods for moisture and organic content (e.g. oven drying, loss on ignition).",
+  "Particle size distribution and surface wetness of the lumps.",
+  "Whether the organic fraction contains a usable fluorescent indicator."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What accuracy and sorting thresholds do you need for moisture and organic content, and what go/no-go criteria should the trial meet?",
+   "why_it_matters": "The go/no-go criteria and the choice between a single method and a combination depend entirely on the required accuracy.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What are the belt speed, belt width and the possible standoff distance and angle for a measurement head above the belt?",
+   "why_it_matters": "Standoff and speed determine whether a remote reflection head, a near-contact probe or a side-looking geometry is realistic.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Which reference laboratory methods can you run for moisture and organic content (e.g. oven drying, loss on ignition), and at what sampling rate?",
+   "why_it_matters": "Calibration and validation of any spectral model need independent reference values on the same material.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What is the particle size range of the lumps, and how wet or crusted are the lump surfaces when they reach the belt?",
+   "why_it_matters": "Particle size and surface state drive scattering, penetration depth and how representative a surface measurement is of the lump interior.",
+   "affects": [
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection_remote",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the only screened option that passes for a non-contact reading over a moving bed, and NIR water O-H bands plus documented NIR moisture sensing make it the natural first test. Its usable range (nominally 780-2500 nm) depends on the spectrometer, fiber and probe selected, and a chemometric calibration against lab references is mandatory.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S03",
+     "page": 7,
+     "quote": "the latter is known to include intensive second overtones of O-H bond vibrations in both lipids and water",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman gives a molecular fingerprint that can address organic content specifically, and it tolerates water better than infrared methods. Its weak signal and possible fluorescence background must be checked on the dark soil itself.",
+   "conditions": "Test after or alongside M1 on the same samples; expect possible fluorescence interference from organic matter.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "NIR",
+   "technique": "diffuse_reflection_remote",
+   "role": "conditional",
+   "combined_with": [
+    "Raman",
+    "Raman"
+   ],
+   "rationale": "If NIR alone cannot separate moisture from organic-content variation in the calibration, a fused NIR + Raman model is the next hypothesis, since the two methods carry complementary information. Any fusion gain must be demonstrated against the best single method on independent loads.",
+   "conditions": "Only if the single-method NIR calibration misses the required accuracy for organic content (Q1).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "ATR needs tight contact and suits liquids, pastes and soft solids, and it samples only a surface layer of a few micrometres, so it cannot read a moving bed of lumpy soil. A reader might expect MIR-ATR for moisture, but the screening fails it for this sample.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Transmission or transflection through a lumpy, opaque bed fails because light cannot penetrate the sample; the screening fails it for this solid, opaque material.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Non-contact NIR diffuse-reflection head (illumination fibers and collection fibers in one housing) mounted above the belt at a fixed standoff, looking at the top surface of the bed; a Raman probe at the same spot is a later comparison.",
+  "location": "Above the conveyor belt upstream of the dryer.",
+  "fiber_link": "Vis-NIR silica fibers cover the NIR range; for any Raman extension, metal-coated silica fibers avoid polymer-jacket fluorescence. No link length can be stated from the sources for this configuration.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, Vis-NIR silica fiber and probe head actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as Raman shift in cm-1 with the laser excitation wavelength stated separately (e.g. 785 nm in the published feed-frame example); the working range depends on the chosen laser and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Dark, wet, absorbing lumps may reflect too little light for a remote NIR head at practical standoff, which no supplied source rules in or out.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "A surface reflection reading sees only the outer layer of each lump, so surface wetness or crusting may not represent the lump interior.",
+   "rule_ids": [
+    "R-GEO-6",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Load-to-load variation in mineralogy and particle size can shift the calibration, which is matrix-specific and must be re-validated after material changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Raman on dark soil may be swamped by fluorescence from the organic matter, eliminating M2 and M3.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "",
+    "purpose": "",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "",
+  "decision_basis": ""
+ },
+ "assumptions": [
+  "The organic content target means total organic matter, not one specific compound.",
+  "A fixed head above the belt with a stable standoff is mechanically possible (Q2).",
+  "Laboratory reference measurements on grabbed belt samples are available (Q3)."
+ ],
+ "not_in_sources": [
+  "No supplied source describes spectroscopy of excavated or remediation soil; all precedents are dairy, pharma, bioprocess or tissue.",
+  "No source gives achievable accuracy, standoff distance or acquisition rate for reflection measurement of dark granular solids on a belt."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Moisture content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Moisture is one of the two sorting targets and the main driver of dryer load.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 7,
+     "quote": "the latter is known to include intensive second overtones of O-H bond vibrations in both lipids and water",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Organic content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Organic content is the second sorting target and may correlate with NIR and Raman spectral features that must be tested.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Particle size / lumpiness state",
+   "kind": "qualitative",
+   "necessity": "optional",
+   "why": "Lump size and surface state control scattering and surface representativeness, so it should be logged during the trial to explain model errors.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "sieve analysis and visual logging of grabbed samples"
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Simple fixed head, no sample contact",
+   "maintenance": "Occasional window or optics cleaning",
+   "performance_fit": "Fits moisture tracking only, before dryer",
+   "cost_drivers": "One NIR spectrometer, remote reflection probe head, mounting, initial calibration samples",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Two instruments, moderate integration effort",
+   "maintenance": "Per-instrument calibration and diagnostics",
+   "performance_fit": "Covers both targets with tested single methods",
+   "cost_drivers": "NIR and Raman spectrometers with probes, chemometric model building, reference lab sampling campaign",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Most complex, two synchronized channels",
+   "maintenance": "Two calibrations, fused model upkeep",
+   "performance_fit": "Only if fusion beats best single method",
+   "cost_drivers": "Second spectrometer, synchronisation and fusion software, larger validation campaign",
+   "fusion_note": "Low-level fusion: synchronized NIR reflection and Raman spectra merged into one augmented matrix for a PLS-type model. Both probes must view the same belt spot and the data must be normalized to a common time step, with block scaling so neither method dominates. The fused model must beat the best single-method model on independent loads, otherwise the extra instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Data processing for pharmaceutical tasks relies on \"low-level data fusion,\" where the synchronized NIR and Raman spectra are merged into a single augmented matrix.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Both moisture and organic content will require PLS-type calibration models against independent lab references; with strong load-to-load variation, validate on held-out loads and re-validate after any change in soil source, per the matrix-specific calibration limits of NIR and Raman.",
+ "realtime_tracking_note": "The goal is a continuous reading on a moving bed; acquisition rate must match belt speed so each spectrum corresponds to a defined belt section, and scatter-correction preprocessing (e.g. SNV/MSC-type) should be tested because physical variation can mimic composition change.",
+ "future_direction": "If the trial succeeds, a simplified multi-wavelength LED-type sensor in the informative NIR bands could later replace the full spectrometer for routine sorting, following the published LED-sensor simplification approach.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If the remote NIR signal on dark lumpy soil is too weak or the required accuracy for organic content is high, the choice moves to the fused NIR + Raman option (O3) or rules Raman out entirely; belt geometry answers from Q2 may force a near-contact variant.",
+  "next_step": "Run a bench trial on representative soil loads with a remote NIR diffuse-reflection head and parallel lab reference measurements, before any belt installation."
+ },
+ "brief_answer": "Yes in principle: a non-contact NIR diffuse-reflection head above the belt is the first method to test, since NIR reads water O-H bands remotely and suits fiber-probe online use. Raman is the second test for organic content, with a fused NIR + Raman model only if single methods fall short. No supplied source covers soil, so feasibility on dark, lumpy material is unproven; accuracy targets, belt geometry and reference methods are still open."
+}
