@@ -1,0 +1,286 @@
+{
+ "decision_status": "premise_not_supported",
+ "status_reason": "The customer requests binding guarantees of measurement accuracy and regulatory approval, which suppliers cannot provide prior to calibration and validation on representative samples. Furthermore, system pricing depends on configuration and cannot be stated without specification.",
+ "premise_checks": [
+  {
+   "premise": "An NIR system can guarantee an accuracy of plus or minus 0.1% for moisture in granulate.",
+   "verdict": "contradicted",
+   "explanation": "Analytical performance depends on calibration, sample matrix, and measurement configuration; suppliers cannot guarantee specific accuracy figures without experimental feasibility trials.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Suppliers can guarantee that a regulator will approve the system for release testing.",
+   "verdict": "contradicted",
+   "explanation": "Regulatory validation and approval are the responsibility of the end-user based on site-specific validation studies, not something suppliers can guarantee.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "NIR system for moisture measurement",
+  "Granulate sample type",
+  "Requested accuracy of plus or minus 0.1%",
+  "Application for release testing",
+  "System pricing request"
+ ],
+ "key_unknowns": [
+  "Granulate particle size distribution and optical scattering properties",
+  "Reference laboratory method used for moisture determination",
+  "Exact temperature and physical process environment",
+  "Specific regulatory validation protocols required"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What reference laboratory method will be used to generate calibration and validation reference values for moisture?",
+   "why_it_matters": "Spectroscopic calibrations depend entirely on the accuracy and consistency of the reference laboratory method.",
+   "affects": [
+    "method",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the expected particle size range and physical bulk density of the granulate?",
+   "why_it_matters": "Physical variations and scattering properties directly affect diffuse reflection measurement repeatability.",
+   "affects": [
+    "technique",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the exact temperature and installation interface requirements at the measurement point?",
+   "why_it_matters": "Determines probe mechanical design and optical window selection for continuous operation.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the standard approach for measuring moisture and chemical composition in powders and granular solids.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy provides complementary molecular backbone information if NIR calibration encounters matrix interferences.",
+   "conditions": "Applies if initial NIR multivariate calibration shows insufficient specificity.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR diffuse reflection probe with sapphire window for powder contact measurement.",
+  "location": "Inline or at-line sampling point suited for granular flow.",
+  "fiber_link": "Vis-NIR silica fiber cable connecting the spectrometer to the remote probe.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 10,
+    "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm, though the usable range depends on the instrument, fiber, and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Physical variations such as particle size changes can mimic chemical concentration shifts in diffuse reflection.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Calibration models are matrix-specific and require re-validation when granulate composition changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative granulate samples across the expected moisture variation range.",
+    "purpose": "Ensure calibration spans the anticipated operational domain.",
+    "citations": []
+   },
+   {
+    "step": "Perform independent reference laboratory measurements for moisture on all samples.",
+    "purpose": "Provide accurate ground-truth data for chemometric model training.",
+    "citations": []
+   },
+   {
+    "step": "Acquire NIR diffuse reflection spectra using a fiber-coupled spectrometer setup.",
+    "purpose": "Capture raw spectral data corresponding to moisture variations.",
+    "citations": []
+   },
+   {
+    "step": "Develop and cross-validate a partial least squares (PLS) regression calibration model.",
+    "purpose": "Establish the predictive relationship between spectra and moisture content.",
+    "citations": []
+   },
+   {
+    "step": "Validate the model on independent held-out sample batches.",
+    "purpose": "Test prediction accuracy against customer-defined numerical criteria.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Standard laboratory reference method for moisture analysis.",
+  "decision_basis": "Go/no-go decision based on whether validation prediction error meets the customer's specified numerical accuracy threshold."
+ },
+ "assumptions": [
+  "The granulate sample is sufficiently homogeneous for diffuse reflection measurements.",
+  "Reference laboratory measurements are available and accurate."
+ ],
+ "not_in_sources": [
+  "System pricing information",
+  "Specific regulatory approval guarantees for release testing"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Moisture Content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Primary quality attribute required for release testing.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Standard benchtop probe interface",
+   "maintenance": "Routine optical window cleaning",
+   "performance_fit": "Basic diffuse reflection moisture sensing",
+   "cost_drivers": "Standard NIR spectrometer and reflection probe hardware",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Industrial probe mounting and software",
+   "maintenance": "Periodic calibration maintenance",
+   "performance_fit": "Robust diffuse reflection setup for granulate analysis",
+   "cost_drivers": "Process NIR spectrometer with industrial reflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Quantitative moisture prediction requires partial least squares (PLS) regression models built on diffuse reflection spectra with appropriate scatter correction preprocessing.",
+ "realtime_tracking_note": "Continuous online tracking of moisture is feasible using high-speed NIR spectral acquisition.",
+ "future_direction": "Integration of cloud-based IoT sensor architectures for automated remote process control.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "Feasibility trials showing inadequate NIR calibration accuracy or high physical scattering interference.",
+  "next_step": "Conduct multi-method laboratory trials using representative granulate samples and independent reference measurements."
+ },
+ "brief_answer": "AFS does not provide performance guarantees or regulatory approvals prior to testing. We recommend starting with NIR diffuse reflection laboratory trials on representative granulate samples to establish calibration accuracy against reference methods. Please contact us to discuss sample testing."
+}
