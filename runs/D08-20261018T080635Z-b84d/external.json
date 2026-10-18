@@ -1,0 +1,252 @@
+{
+ "mode": "cache",
+ "gaps": [
+  {
+   "id": "G1",
+   "kind": "multi_method",
+   "text": "Combining several spectroscopy methods (data fusion) (Low-level fusion: one calibration model per method as baseline, then the rescaled IR and fluorescence spectra concatenated into one matrix, as in the published chicken-tissue study. Both channels must sample the same spot, which the combined probe provides, and the data must be synchronised to a common time step. The fused model must beat the best single-method model on held-out samples, otherwise the extra channel is dropped.)",
+   "location": "solution_options[2]",
+   "option_id": "O3"
+  },
+  {
+   "id": "G2",
+   "kind": "not_in_sources",
+   "text": "The customer's specific class definitions, reference labelling and required accuracy.",
+   "location": "not_in_sources[0]",
+   "option_id": null
+  },
+  {
+   "id": "G3",
+   "kind": "not_in_sources",
+   "text": "Any quantitative detection limit, accuracy or response time for this interface on the customer's samples.",
+   "location": "not_in_sources[1]",
+   "option_id": null
+  },
+  {
+   "id": "G4",
+   "kind": "uncited_parameter",
+   "text": "Measuring Tissue class label (muscle, fat, liver): The classification models need independent ground-truth labels for training and validation.",
+   "location": "parameters[0]",
+   "option_id": "O2"
+  }
+ ],
+ "queries": [
+  {
+   "gap_id": "G1",
+   "query": "data fusion NIR Raman fluorescence process analytical technology review"
+  },
+  {
+   "gap_id": "G1",
+   "query": "mid-infrared fluorescence spectra concatenation tissue classification"
+  },
+  {
+   "gap_id": "G3",
+   "query": "in-line infrared spectroscopy tissue detection limit response time"
+  },
+  {
+   "gap_id": "G4",
+   "query": "in-line spectroscopy tissue classification muscle fat liver"
+  },
+  {
+   "gap_id": "G4",
+   "query": "Raman spectroscopy meat tissue type discrimination review"
+  }
+ ],
+ "dropped_queries": [],
+ "search_log": [
+  {
+   "api": "europepmc",
+   "query": "data fusion NIR Raman fluorescence process analytical technology review",
+   "hits": 0,
+   "status": "cache miss; europepmc skipped for the rest of the run"
+  },
+  {
+   "api": "openalex",
+   "query": "data fusion NIR Raman fluorescence process analytical technology review",
+   "hits": 0,
+   "status": "cache miss; openalex skipped for the rest of the run"
+  },
+  {
+   "api": "europepmc, openalex",
+   "query": "",
+   "hits": 0,
+   "status": "fallback to library only: cache miss (europepmc); cache miss (openalex)"
+  }
+ ],
+ "fallback": "library only: cache miss (europepmc); cache miss (openalex)",
+ "sources": [
+  {
+   "id": "E01",
+   "url": "https://europepmc.org/article/PMC/PMC7072065",
+   "doi": "10.1007/s00216-020-02407-z",
+   "title": "A critical review of recent trends, and a future perspective of optical spectroscopy as PAT in biopharmaceutical downstream processing.",
+   "authors": [
+    "Rolinger L",
+    "Rüdt M",
+    "Hubbuch J"
+   ],
+   "year": 2020,
+   "venue": "Analytical and bioanalytical chemistry",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:05+00:00",
+   "retrieval_query": "data fusion NIR Raman fluorescence process analytical technology review",
+   "api": "library",
+   "http_status": null,
+   "sha256": "c12bb98ce60add4c525ef48a5ffe17aa5452fa21fd9135162d9aa1069fe6cf77",
+   "library_id": "optical-spectroscopy-pat-trends",
+   "paragraph_count": 3
+  },
+  {
+   "id": "E02",
+   "url": "https://europepmc.org/article/PMC/PMC9369811",
+   "doi": "10.3390/molecules27154846",
+   "title": "Challenges and Opportunities of Implementing Data Fusion in Process Analytical Technology-A Review.",
+   "authors": [
+    "Casian T",
+    "Nagy B",
+    "Kovács B",
+    "Galata DL",
+    "Hirsch E",
+    "Farkas A"
+   ],
+   "year": 2022,
+   "venue": "Molecules (Basel, Switzerland)",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:03+00:00",
+   "retrieval_query": "data fusion NIR Raman fluorescence process analytical technology review",
+   "api": "library",
+   "http_status": null,
+   "sha256": "9f1de821c160e56272c801796c416efba068e2f29ff362b71a354ed6f0af1215",
+   "library_id": "pat-data-fusion-review",
+   "paragraph_count": 4
+  },
+  {
+   "id": "E03",
+   "url": "https://europepmc.org/article/PMC/PMC5233728",
+   "doi": "10.1007/s00216-016-9824-1",
+   "title": "Raman spectroscopy as a process analytical technology for pharmaceutical manufacturing and bioprocessing.",
+   "authors": [
+    "Esmonde-White KA",
+    "Cuellar M",
+    "Uerpmann C",
+    "Lenain B",
+    "Lewis IR"
+   ],
+   "year": 2017,
+   "venue": "Analytical and bioanalytical chemistry",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:04+00:00",
+   "retrieval_query": "data fusion NIR Raman fluorescence process analytical technology review",
+   "api": "library",
+   "http_status": null,
+   "sha256": "302feb4ee7bc7f1bde904c3686de615f5f2fa4516408457d6de732fd524af0f2",
+   "library_id": "raman-as-pat",
+   "paragraph_count": 4
+  }
+ ],
+ "items": [
+  {
+   "gap_id": "G1",
+   "finding": "Low-level data fusion is described as the simplest combination approach, where variables from different sources are concatenated one after the other into a single new data matrix.",
+   "how_it_applies": "This supports the planned baseline-plus-concatenation design: build one model per method first, then concatenate the rescaled IR and fluorescence spectra into one matrix. The fused model should then be compared against those single-method baselines on held-out samples.",
+   "limits_and_transfer_risks": "The review is a general PAT treatment, not the chicken-tissue study itself, and does not state that fusion improves performance for any particular system.",
+   "option_id": "O3",
+   "citation": {
+    "source_id": "E02",
+    "para": 31,
+    "cited_para": 31,
+    "quote": "Low-level data fusion (LLDF) is considered the simplest method to achieve a combination of inputs. In this case, the data is rearranged into a new data matrix, where the variables coming from different sources are placed one after the other.",
+    "label": "E02 ¶31",
+    "url": "https://europepmc.org/article/PMC/PMC9369811",
+    "doi": "10.3390/molecules27154846"
+   },
+   "quote_status": "exact",
+   "paragraph_sha256": "fc0fbd874a791b88374a9bd41456699cfceded3a9c0d4a23259281ad30b5076b",
+   "notes": []
+  },
+  {
+   "gap_id": "G1",
+   "finding": "Before fusing data from multiple sources, the contribution of each dataset and its complementarity should be evaluated.",
+   "how_it_applies": "This justifies the planned step of establishing per-method baseline models before concatenation, so the added value of the fluorescence channel can be judged against the best single method.",
+   "limits_and_transfer_risks": "This is a general methodological recommendation from a PAT review, not evidence that IR and fluorescence are complementary for biological tissue classification.",
+   "option_id": "O3",
+   "citation": {
+    "source_id": "E02",
+    "para": 82,
+    "cited_para": 82,
+    "quote": "Before fusing data from multiple sources, it is essential to evaluate the contribution of each dataset to the model and its complementarity.",
+    "label": "E02 ¶82",
+    "url": "https://europepmc.org/article/PMC/PMC9369811",
+    "doi": "10.3390/molecules27154846"
+   },
+   "quote_status": "exact",
+   "paragraph_sha256": "53919a9d1121ec97f4ad0b704858ae0b4ab6af50aa6146882b93146b29c90408",
+   "notes": []
+  },
+  {
+   "gap_id": "G1",
+   "finding": "A cited Raman and FT-IR food analytical study showed that instrument complementarity was in some situations not sufficient to improve predictive performance for several quality attributes.",
+   "how_it_applies": "This is a reason to test rather than assume: the fused model must demonstrably beat the best single-method model on held-out samples, otherwise the extra fluorescence channel should be dropped, as the plan already specifies.",
+   "limits_and_transfer_risks": "The cited example concerns Raman and FT-IR on food samples, not MIR ATR and fluorescence on chicken muscle, fat and liver, so the outcome may differ for this system.",
+   "option_id": "O3",
+   "citation": {
+    "source_id": "E02",
+    "para": 36,
+    "cited_para": 36,
+    "quote": "In some situations, instrument complementarity (not data complementarity) was not sufficient to improve the performance of predictive several CQAs, as shown by a Raman and FT-IR data based food analytical study [73].",
+    "label": "E02 ¶36",
+    "url": "https://europepmc.org/article/PMC/PMC9369811",
+    "doi": "10.3390/molecules27154846"
+   },
+   "quote_status": "exact",
+   "paragraph_sha256": "ad32c4b0b1bdaa8e03061a596f5c07fa6c786f301e17c0cf7a49a91e6a9853f7",
+   "notes": []
+  }
+ ],
+ "dropped": [],
+ "no_usable_source_claimed": [
+  "G2",
+  "G3",
+  "G4"
+ ],
+ "gap_results": [
+  {
+   "gap_id": "G1",
+   "items": [
+    "E02 ¶31",
+    "E02 ¶82",
+    "E02 ¶36"
+   ],
+   "result": "verified external evidence"
+  },
+  {
+   "gap_id": "G2",
+   "items": [],
+   "result": "no usable external source found"
+  },
+  {
+   "gap_id": "G3",
+   "items": [],
+   "result": "no usable external source found"
+  },
+  {
+   "gap_id": "G4",
+   "items": [],
+   "result": "no usable external source found"
+  }
+ ],
+ "proposal_support": [],
+ "error": null,
+ "library_sha256": "c3156319e2bfb1b63855f942f99bf3665b73467de35034448da0911c2eb8f4cf",
+ "library_entries": 9,
+ "prompt_sha256": {
+  "external_queries": "27e6a43756d7ef0643f68aa8b8fd7207b827e92a84cdf7917252069cb81d9ca5",
+  "external_evidence": "286f92a9c8e08bc53d613c534792fed8189232f5bb5582355a95cedbd2912fd1"
+ },
+ "calls": 2,
+ "cost_usd": 0.000308,
+ "seconds": 21.534
+}
