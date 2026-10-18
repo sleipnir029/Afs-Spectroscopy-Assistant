@@ -1,187 +1,78 @@
 # AFS Spectroscopy Assistant: slides (source text)
 
-Source text of `slides.html` (kept in sync); `slides.pdf` is exported from `slides.html`. Every figure comes from a committed file, named in the slide footer (repeated here as "Sources"). Export, and the placeholder for the repository URL: see `docs/slides/README.md`.
-
-<!-- Re-export (from the repo root): "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --no-pdf-header-footer --print-to-pdf="$PWD/docs/slides/slides.pdf" "file://$PWD/docs/slides/slides.html" -->
+Source text of `slides.html` (kept in sync); `slides.pdf` is exported from `slides.html` (command and placeholder in `docs/slides/README.md`). Screenshots in `img/app-*.png` are crops of the real app showing evaluation case H04 (`outputs/final/H04.json`, unedited), taken 2026-10-18. Deck simplified on user request (D-068 follow-up): one picture or diagram per slide, little text, no judging criteria.
 
 ---
 
 ## 1. AFS Spectroscopy Assistant
 
-Art Fiber Systems challenge · SchubKI National AI Hackathon 2026
-
-*A customer enquiry goes in. A cited first technical assessment comes out.*
-
-Team Helios
-Rakibuzzaman Rahat, Md Mahmud Siddique
-REPO_URL_PENDING
+A customer enquiry goes in. A cited first technical assessment comes out.
+Team Helios: Rakibuzzaman Rahat, Md Mahmud Siddique · REPO_URL_PENDING
 
 ---
 
-## 2. The challenge and our approach: help an AFS expert answer a new customer
+## 2. What we built: Ask in plain words. Get a cited answer.
 
-- A customer describes what they want to measure in their process. **Which method and probe should they test first?**
-- The answer must rest on the **AFS documents**. Nothing invented: no prices, accuracy figures or fiber lengths.
-- It should **ask the right questions** and **propose a first feasibility test**.
+- Recommends the method and probe to test first.
+- Every key claim cites the AFS page it comes from.
+- Asks only the questions that would change the advice.
+- Follow-ups in seconds; new facts update the answer.
 
-How it is judged (weight %, shown as bars):
+Screenshot: `img/app-recommendation.png` (question + recommendation, H04).
 
-| Criterion | Weight |
+---
+
+## 3. System architecture: Models write. Code checks.
+
+Read the enquiry (model: Gemini 3.5 Flash-Lite) → Screen 5 methods (code) → Write the answer (model: GLM-5.3-Flash) → Check every quote (code) → Fix what failed (model: Gemini 3.8 Flash) → Answer with sources (code).
+
+Three models, each on its own job. In a blind test of 7 setups, this mix was 3–6× faster at close to the best quality, about $0.03 per case. (config/models.yaml, outputs/bakeoff-dev/blind/summary.md)
+
+---
+
+## 4. Use of AFS materials: Built on the AFS documents
+
+- 67 AFS pages the model reads.
+- 44 rules from the AFS documents, each tied to a quote.
+- 120/120 quotes found word for word on the cited page, in the six evaluation cases.
+
+Code checks every quote against its page. Anything unsupported is removed or labelled.
+
+---
+
+## 5. Example recommendation (H04, unedited): "Can we reuse our silica cable for mid-IR?"
+
+The agent's answer: not as asked: silica fibers cannot carry mid-IR light. Test MIR ATR with a CIR or PIR fiber.
+Screenshot: `img/app-setup.png` (setup sketch of the recommended option).
+
+---
+
+## 6. Example feasibility-study plan (same case, unedited): It asks, then plans the first test
+
+Screenshots: `img/app-questions.png` (3 questions for the customer) and `img/app-feasibility.png` (5-step first feasibility test, reference measurements, decision basis).
+
+---
+
+## 7. Results: Six evaluation cases, answered by the agent
+
+| Customer asks | Agent's verdict |
 |---|---|
-| Technical quality | 30 |
-| Use of AFS knowledge | 20 |
-| Feasibility-study plan | 15 |
-| Clarification & uncertainty | 15 |
-| Explainability | 10 |
-| Prototype & presentation | 10 |
+| Reuse an NIR calibration on a new blend? | Not supported. Rebuild the calibration. |
+| A clear and an opaque dairy stream? | Provisional. A different NIR probe for each. |
+| Fluorescence for glucose? | Not supported. Test Raman first. |
+| Silica cable for mid-IR? | Not supported. Use a CIR or PIR fiber. |
+| Unknown contaminant, sensor now? | Not enough information. Lab trial first. |
+| A kidney study as proof for surgery? | Not supported. Test on own tissue first. |
 
-**Our approach:** Models write. Code checks every cited claim against the AFS documents.
-
-Sources: AFS challenge brief (organiser PDF): tasks, rules, criteria and weights · Q&A notes: `docs/qa-notes-2026-10-17.md`.
-
----
-
-## 3. System architecture: models write, code checks
-
-Six steps, left to right:
-
-1. **Understand the enquiry** (model): picks out what the customer actually wrote, and what is missing.
-2. **Screen the 5 methods** (code): UV-Vis, NIR, mid-IR, Raman, fluorescence, against 44 AFS rules and fiber limits.
-3. **Write the assessment** (model): reads all 67 AFS pages. Every sourced claim must quote its page.
-4. **Check every claim** (code): 122 to 161 checks per answer: quotes, pages, numbers, wording.
-5. **Fix what failed** (second model): gets the list of failures and rewrites. At most 2 rounds.
-6. **Answer with sources** (code): anything still failing is removed or labelled.
-
-Legend: language model · code (same input, same result).
-
-The model team:
-
-| Role | Model | Job |
-|---|---|---|
-| Reader | Gemini 3.5 Flash-Lite | Understands the enquiry |
-| Writer | GLM-5.3-Flash | Writes the first draft |
-| Fixer | Gemini 3.8 Flash | Rewrites, only when checks fail |
-| Backup | A different model | Retries if a reply breaks |
-
-- **Why this mix:** on the practice cases: quality close to the best (4.06 vs 4.15), **3–6× faster**, about **$0.03** per case.
-- Literature only fills gaps the AFS documents leave open, and is marked **secondary**, not AFS material.
-
-Sources: ARCHITECTURE.md · `pipeline.py` · `config/models.yaml` · `outputs/bakeoff-dev/blind/summary.md` (7 setups, 8 practice cases, 4 AI judges).
-
----
-
-## 4. Use of AFS materials: how we use the AFS materials
-
-The AFS documents:
-- Lab report, slide deck, flyer: PDFs (S01, S02, S05).
-- Two research papers: kidney tissue study (S03), mid-IR + fluorescence (S04).
-- Guidance document: answer structure and method overview (REF).
-- Table 1 spreadsheet: methods compared, with a cost rating.
-- A link to the laboratory website (S06): one line: the web address.
-
-What the code builds:
-- **67** pages of text: read by the model; every quote is checked against them.
-- **44** rules: each tied to an AFS quote, e.g. silica fibers stop near 2.4 µm (S02 p.6).
-- **19** Table 1 rows: cost class: low, average or high (S01 p.6).
-- **7** fiber families: the wavelength range each one carries (S02 p.6).
-
-Same files in, same files out. A check confirms that all 77 quotes behind the rules and fiber ranges are word for word on their page.
-
-Four checks on every cited claim:
-1. The quote is on the page, word for word.
-2. The page is the right kind of source. A study of a similar application counts as precedent, never as proof for this customer.
-3. Numbers come from the quote or the customer.
-4. No prices, no guarantees, no approval wording.
-
-What the reader sees next to each claim:
-- `AFS sources`: the quoted AFS text is on that page, word for word, and the page may support this kind of claim.
-- `precedent only`: a similar published use: a reason to test, not proof.
-- `engineering judgement, no source`: our reasoning, clearly marked as such.
-
-**120/120** quotes found word for word on the cited page (six evaluation answers).
-
-Sources: `kb_build.py`, `verify.py`, `scope.py`, `chat.py` · `knowledge/rules.yaml`, `table1_methods.json`, `fibers.json` · `outputs/final/H0*.json`.
-
----
-
-## 5. Example recommendation (generated by the assistant, not edited)
-
-Title: Reuse of a silica link for petroleum MIR ATR
-
-The customer asks (our summary): *The customer wants to measure water in a petroleum line using MIR ATR with a remote analyzer in another building, reusing an existing silica fiber, and asks for concept approval.*
-
-> **Premise not supported:** the sources do not support the customer's premise as stated; the assessment below is provisional.
->
-> **Proposed now:** the recommended option (basis: supplied AFS sources): MIR, ATR probe as primary candidate [S02 p.13; S01 p.9].
-
-| Option | Methods | Cost class, S01 Table 1 (p.6) | Confidence |
-|---|---|---|---|
-| Simple | NIR, transmission/transflection probe | average | Low |
-| **Recommended (proposed)** | **MIR, ATR probe** | **high** | **Low** |
-| Extended (multi-method) | NIR, transmission/transflection probe; MIR, ATR probe + NIR (combination) | high | Low |
-
-*Confidence rates the basis of the advice, not a predicted accuracy; cost class is relative, not a price.*
-
-Clarification questions:
-1. What is the actual link length and routing between the petroleum line and the analyzer building?
-2. What is the physical state and condition of the petroleum at the measurement point (liquid, viscous, opaque, temperature, fouling)?
-3. What water-content range, accuracy and response time does the investigation require?
-
-Sources: lines copied from `outputs/final/brief/H04.md` (built by code from the saved run) · customer summary: `outputs/final/H04.md`.
-
----
-
-## 6. Example feasibility-study plan (generated by the assistant, not edited): the first test plan for the same customer
-
-> **Next step:** Supply the link length, routing and operating conditions, and run the laboratory MIR ATR feasibility test on representative petroleum samples with Karl Fischer reference values.
-
-First feasibility experiment:
-1. Collect representative petroleum samples spanning the expected water-content range and physical variation (temperature, opacity, phase). (no verified source: engineering judgement)
-2. Measure each sample with a laboratory MIR ATR setup (ZrO2 or diamond ATR tip) using a CIR/PIR fiber probe. [18: S02 p.13]
-3. Obtain independent reference water-content values for every sample by a laboratory method (e.g. Karl Fischer titration). (no verified source: engineering judgement)
-4. Build and validate a chemometric calibration on held-out samples; if MIR ATR alone falls short of the target, test the MIR+NIR combination against the best single method. [19: S01 p.5]
-5. Confirm the achievable MIR fiber link length with AFS before fixing the analyzer location; define go/no-go criteria (accuracy, detection limit, response time) with the customer. (no verified source: engineering judgement)
-
-**Reference measurements:** Karl Fischer titration or an equivalent laboratory water-in-oil method, supplied by the customer.
-
-**Decision basis:** Go/no-go criteria (required accuracy, detection limit, response time) to be defined numerically by the customer; the plan proceeds only if the MIR link length is confirmed feasible.
-
-Sources: copied from `outputs/final/H04.md` "First feasibility experiment" (step headlines and labels) and `outputs/final/brief/H04.md`.
-
----
-
-## 7. Results: the six evaluation cases, answered by the agent
-
-| | The customer asks | What was tricky | The agent's verdict |
-|---|---|---|---|
-| H01 | New powder blend: can we reuse our NIR calibration if we add Raman? | A calibration only fits the mixture it was built on. | **Premise not supported.** Rebuild the NIR calibration on the new blend; test Raman separately. |
-| H02 | Clear whey and opaque milk concentrate: what should we test first? | One clear stream, one opaque stream. | **Provisional.** NIR: transmission/transflection for the whey, diffuse reflection for the concentrate. |
-| H03 | Can our fluorescence spectrometer report glucose and viable biomass? | Glucose is not fluorescent; no marker named. | **Premise not supported.** Test Raman first, NIR as the comparison. |
-| H04 | Reuse a silica cable for MIR ATR on a petroleum line? | Silica fibers cannot carry mid-IR light. | **Premise not supported.** Test MIR ATR, with a CIR or PIR fiber. |
-| H05 | A liquid goes off-spec. Give us the exact sensor now. | Contaminant and quality variable unknown. | **Insufficient information.** Lab trial first: Raman and mid-IR ATR on normal and off-spec samples. |
-| H06 | Does the kidney study prove our sensor is ready for live surgery? | It is an ex vivo proof of concept; no own data. | **Premise not supported.** Ex vivo NIR test on own tissue, with histopathology as reference. |
-
-Run once with the final version; answers not edited. A separate review agent checked all six against the AFS sources: each reaches the right core verdict.
-
-- **6/6** answered.
-- **120/120** quotes verified on the cited page.
-- **0** failed hard checks left in any answer (8 minor warnings across the six).
-- **1.5–3 min** per case · **$0.29** for all six.
-
-Sources: `outputs/final/H0*.json` (checks, 97–184 s, $0.288) · `outputs/final/brief/H0*.md` · `docs/review-final/A-brief-and-outputs.md`.
+120/120 quotes verified · 1.5–3 min per case · $0.29 for all six. (outputs/final/H01–H06, run once, not edited)
 
 ---
 
 ## 8. Limitations and next steps
 
-| Today | Next |
-|---|---|
-| Full answers are about 3,000 words; our short view (slide 5) is 560–698 words; AFS's own worked answers are 300–400. | A customer reply as short as AFS writes them |
-| A quote counts as verified when it is on the cited page. That does not yet prove it supports the sentence. | A second checker: does the quote really support the sentence? |
-| 15 of the 17 options in the six evaluation answers say "Low". | Confidence that moves with what is known |
-| One of our own complete test enquiries still got 4–5 questions. | Fewer questions when the enquiry is already complete |
-| The fixing step takes 46–72 % of each run. | Faster runs |
+- Full answers are long (~3,000 words) → a short customer reply.
+- A quote on the page is not yet proof → a second checker for support.
+- Confidence is mostly "Low" → confidence that tracks the facts.
+- A run takes 1.5–3 minutes → a faster fixing step.
 
-Demo video (3:27): `docs/video/demo.mp4` in the repository
-
-Sources: `outputs/final/H0*.md`, `brief/H0*.md`, `H0*.json` · `scenarios/dev_reference.jsonl` (AFS answers) · README.md "Known limitations".
+Demo video (3:27): docs/video/demo.mp4 · Team Helios
