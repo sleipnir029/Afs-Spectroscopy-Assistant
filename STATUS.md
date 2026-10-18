@@ -100,6 +100,7 @@ Rules (user): ≤200k tokens per session; Claude orchestrates; parallel agents a
 9. **Submission slides PDF:** docs/slides/slides.pdf (10 pages) and docs/SUBMISSION.md: accuracy, clarity, design.
 10. **GitHub repo and local repo sanitize:** `git log --all` / `git ls-files` for resources/, organiser PDFs, .env, keys, emails, personal paths, large files; .gitignore; stray files (.playwright-mcp/, outputs/ui runtime files, runs/); worktree branches (`git worktree list`, `git branch`); the provenance branch; then (only if the user says yes) create the GitHub repo and push.
 Git rules: never remove tracked files without the user's explicit OK per file; stage named paths only; check `git diff --cached --name-status` for D lines before every commit.
+sample edit
 
 ## Phase overview
 | Phase | State | Gate | Notes |
