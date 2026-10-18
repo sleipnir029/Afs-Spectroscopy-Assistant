@@ -1,0 +1,506 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified from the sources, but the biomass and metabolite targets are not yet defined, so the ranking is provisional and rests on the stated assumptions and the answers to the questions above.",
+ "premise_checks": [
+  {
+   "premise": "A single optical signal can serve as the biomass measurement",
+   "verdict": "precedent_only",
+   "explanation": "Turbidity correlates with cell density, but optical density is not a viable cell count, and the enquiry does not state whether the OD rise is due to cells alone; the biomass signal needs definition and reference data.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "One optical measurement can cover both the biomass and the metabolic signal",
+   "verdict": "not_covered",
+   "explanation": "The sources show biomass and metabolite tracking typically addressed by different techniques (e.g. UV/Vis or NIR for turbidity, Raman for metabolites), so one method covering both is a hypothesis to test, not an established fact.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "An initial feasibility study with reference measurements is the right next step",
+   "verdict": "supported",
+   "explanation": "A multi-method lab trial on representative samples followed by chemometric model development is exactly the pathway the sources describe for an undefined process request.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 20,
+     "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Definition of the biomass target: units, range and offline reference method",
+  "Which metabolites define the metabolic signal and their concentration ranges",
+  "Installation point, optical access and sterilisation/cleaning constraints",
+  "Optical-density range over the run and the cause of the turbidity",
+  "Required accuracy, detection limits and response time",
+  "Distance between measurement point and analyser"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "How is biomass defined for you: units (OD, dry weight, cell count), expected concentration range, and which offline reference method (OD meter, dry weight, cell counting) will be used?",
+   "why_it_matters": "The reference method and range determine whether a scattering-based optical signal can be calibrated and what accuracy is achievable.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Which metabolites should the metabolic signal track (e.g. glucose, ethanol, glycerol), at what concentration ranges, and how will they be measured offline?",
+   "why_it_matters": "The metabolite set decides whether NIR chemometrics suffice or whether Raman's molecular specificity is needed.",
+   "affects": [
+    "technique",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Where would the probe sit (in-line in the vessel or a bypass), what optical access and sterilisation/cleaning constraints apply, and how far is the measurement point from where the analyser can be placed?",
+   "why_it_matters": "Installation constraints and fiber distance determine which probe types and methods are practically possible.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "How much does the optical density rise over a typical run, and is the turbidity due to cells alone or also to other particles or bubbles?",
+   "why_it_matters": "A large OD rise can saturate a transmission measurement, and non-cell turbidity would confound a biomass calibration.",
+   "affects": [
+    "M3"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What accuracy, detection limits and response time do you need for the biomass and metabolite signals, and how often can offline reference samples be taken during the feasibility runs?",
+   "why_it_matters": "These set the go/no-go criteria for the feasibility study and the feasible sampling design.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection handles the rising turbidity, captures the scattering-related biomass signal, and with a chemometric calibration can also track major metabolites through overtone bands. It is the standard online fiber-probe method and needs only silica fibers and glass optics.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman gives a molecular fingerprint for direct detection of specific metabolites in aqueous media, complementing the NIR scattering information. The weak signal and possible fluorescence background must be checked on real broth samples.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "A UV-Vis transmission or ATR measurement of turbidity is the lowest-effort biomass-related signal, since cell suspension turbidity correlates with cell density. It is a proxy, not a cell count, and transmission can saturate as the broth becomes opaque.",
+   "conditions": "Applies if the optical-density range over the run stays within what a transmission path (or ATR if it saturates) can handle; the OD range is an open question (Q4).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [
+    "MIR"
+   ],
+   "rationale": "Combining a scattering-based biomass signal with a Raman metabolite fingerprint is a published bioprocess pattern and a plausible way to cover both targets, but the gain is a hypothesis to test against the best single method. It requires the same sampling spot and synchronised data.",
+   "conditions": "Only if the single-method tests show that neither NIR diffuse reflection nor Raman alone covers both targets with the required accuracy.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "A reader might expect fluorescence from bioprocess monitoring, but no fluorescent species or indicator has been defined in this medium, and most chemicals do not fluoresce. It can be revisited if intrinsic fluorophores such as NADH or riboflavin are confirmed as targets.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Primary concept: immersion NIR diffuse-reflection (reflection) fiber probe in the broth, with a Raman fiber probe at the same sampling spot as the second single method to test. A UV-Vis transmission or ATR probe is a low-effort turbidity option. Final geometry depends on the installation answers (Q3).",
+  "location": "To be defined with the customer (Q3): in-line probe in the vessel or a bypass line, at a well-mixed spot.",
+  "fiber_link": "Vis-NIR silica fibers for the NIR diffuse-reflection and Raman options; long cables are stated only for low-OH silica fibers, so the required distance should be checked against the selected fiber (S02 p.7).",
+  "citations": []
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as Raman shift in cm-1 with the laser excitation wavelength (e.g. 785 nm in the published pharma example) stated separately; the exact shift range depends on the selected instrument.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "UV-Vis",
+   "statement": "UV-Vis nominal sensitivity is highest in the UV region (190-360 nm); the working range for turbidity tracking depends on the selected source, probe and pathlength.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The turbidity rise may come from sources other than cells (particles, bubbles, CO2), which would confound a scattering-based biomass calibration.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "NIR metabolite sensitivity may be insufficient for trace components, so the defined metabolite set could force a Raman or combined solution.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Raman signals may be swamped by fluorescence from medium components, which only a measurement on real broth will reveal.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Probe fouling and sterilisation constraints at the installation point may rule out the preferred probe geometry.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "",
+    "purpose": "Collect representative broth samples across the expected chemical and physical variation: several runs, early to late, covering the full optical-density range and including any expected process changes.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Take independent reference measurements on each sample: offline biomass (OD/dry weight) and offline metabolite analysis, at time points matched to the spectra.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Measure each sample with the single candidate methods first: NIR diffuse reflection, Raman probe, and a UV-Vis transmission/ATR turbidity measurement; build one calibration per method per target.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Only after the single-method results, test whether combining NIR and Raman data improves on the best single method, with synchronised data from the same sampling spot.",
+    "citations": []
+   },
+   {
+    "step": "",
+    "purpose": "Validate all models on held-out runs or batches not used in calibration, and compare against the customer's go/no-go criteria.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Offline OD or dry weight for biomass (P1) and offline biochemical analysis for each target metabolite (P2) on every sampled time point; record temperature (P5) alongside each spectrum.",
+  "decision_basis": "Go/no-go agreed with the customer before the trial: e.g. prediction error for biomass and each target metabolite within customer-specified limits on held-out runs, and earlier detection of a defined process change than the current practice allows. The numerical criteria must come from the customer (Q5)."
+ },
+ "assumptions": [],
+ "not_in_sources": [
+  "Required accuracy, detection limits and response time for the customer's specific biomass and metabolite targets are not in the supplied material and must come from the customer."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Biomass / cell density",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the stated growth-tracking target and the reference against which any optical biomass calibration is built.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": null,
+    "alternative": "offline OD, dry weight or cell counting during the feasibility study"
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Target metabolites (e.g. glucose, ethanol)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The metabolic signal must be defined as named analytes with ranges before a spectral calibration for them can be built.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": null,
+    "alternative": "offline biochemical analysis (e.g. HPLC or enzymatic assays) during the feasibility study"
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Optical density / turbidity of the broth over the run",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It defines the physical challenge for the optical method and is itself the simplest biomass-related signal.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Presence of intrinsic fluorescent species in the medium",
+   "kind": "qualitative",
+   "necessity": "optional",
+   "why": "It should be available from medium composition knowledge and decides whether a fluorescence channel could later add metabolic-state information.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "offline fluorimetry or medium knowledge"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P5",
+   "name": "Broth temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature affects both the spectra and the reference measurements and must be recorded to interpret the calibration.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P3",
+    "P5"
+   ],
+   "ease_of_use": "simple probe, minimal calibration effort",
+   "maintenance": "low, occasional window cleaning",
+   "performance_fit": "answers growth tracking only, cheapest start",
+   "cost_drivers": "one UV-Vis probe and spectrometer, simple turbidity calibration, offline OD references",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "ease_of_use": "standard fiber probe, established workflow",
+   "maintenance": "moderate, calibration upkeep per matrix",
+   "performance_fit": "one probe covers biomass and major metabolites",
+   "cost_drivers": "NIR reflection probe and spectrometer, chemometric calibration on reference runs, offline biomass and metabolite references",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M4"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "ease_of_use": "two instruments, more complex operation",
+   "maintenance": "higher, two instruments to calibrate and monitor",
+   "performance_fit": "adds metabolite specificity NIR may lack",
+   "cost_drivers": "two spectrometers and probes, synchronisation and data-fusion software, per-method calibrations, larger reference dataset",
+   "fusion_note": "Low-level fusion: NIR diffuse-reflection and Raman spectra from the same sampling spot, synchronised to a common time step, merged into one augmented matrix with block scaling so neither method dominates. Each method keeps its own calibration and diagnostics. The fused model must beat the best single method on held-out runs, otherwise the second instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Both the biomass and the metabolite targets will need calibration or classification models built on reference data spanning the full run: NIR bands are broad and overlapping, so chemometrics are required (S01 p.10), and the calibration is specific to the medium matrix and must be validated on held-out runs. The feasibility study should therefore collect reference samples across the whole optical-density range, not only at the start and end.",
+ "realtime_tracking_note": "The request is for in-line, time-resolved tracking of growth and process changes; online measurements require high-speed spectral acquisition, and results must be available in near real time to be useful for process decisions (S01 p.5). Acquisition rate and data synchronisation should be fixed during the feasibility trial.",
+ "future_direction": "If the feasibility trial succeeds, a later step could be a compact customized spectral fiber sensor or multisensor system for routine in-line control, following the AFS pathway from lab trial to a tailored process solution (S02 p.20).",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the metabolite targets turn out to need molecular specificity that NIR cannot deliver, or the OD range rules out reflection-based measurement, the ranking between NIR diffuse reflection, Raman and a transmission/ATR turbidity option changes.",
+  "next_step": "Answer the target and installation questions, then run the multi-method lab trial on representative broth samples with matched offline biomass and metabolite references."
+ },
+ "brief_answer": "Start with a multi-method lab trial on representative broth samples: NIR diffuse reflection as the first single method to test, since it can track both the scattering-related biomass signal and, with a chemometric calibration, major metabolites. Raman is the second single method to test for the metabolic fingerprint in the aqueous broth. Still open: the exact biomass and metabolite targets, their reference methods, and the installation point."
+}
