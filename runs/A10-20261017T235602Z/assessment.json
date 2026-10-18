@@ -1,0 +1,522 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Mid-infrared ATR is supported as the first method to test on a dark, thick sample that can make contact with a crystal, and the mid-IR bands are well defined enough to follow a chemical change during cure. Viscosity and temperature are not spectroscopic quantities, and the stop criterion, ranges, accuracy and installation point are unknown, so no exact setup can be fixed yet and the assessment stays provisional.",
+ "premise_checks": [
+  {
+   "premise": "Viscosity can be followed continuously by the in-line fiber-optic measurement setup.",
+   "verdict": "not_covered",
+   "explanation": "No supplied page lists viscosity among the quantities optical spectra deliver; the described information is chemical and morphological, not rheological.",
+   "citations": []
+  },
+  {
+   "premise": "Continuous viscosity and temperature readings are enough to decide when to stop the batch.",
+   "verdict": "not_covered",
+   "explanation": "No supplied page addresses endpoint criteria for a curing resin, so this cannot be confirmed or denied from the sources.",
+   "citations": []
+  },
+  {
+   "premise": "In-line fiber-optic spectroscopy is applicable to a polymer-type process of this kind.",
+   "verdict": "precedent_only",
+   "explanation": "A closely related published example is in-line NIR reflection and MIR-ATR control of polymer extrusion; this is a reason to test the method, not proof that it works for a curing resin in a stirred heated vessel.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 2,
+     "quote": "Fiber optic probes and cells are being integrated into reactors and production lines of ongoing technological processes, enabling on-site online analysis and obtaining results in near real time.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Follow viscosity continuously during cure",
+  "Follow temperature continuously during cure",
+  "Stop the batch at the right point",
+  "Dark, thick resin in a heated vessel that thickens over time"
+ ],
+ "key_unknowns": [
+  "What exactly defines the batch stop point (endpoint criterion)",
+  "Required viscosity range, accuracy, resolution and response time",
+  "Vessel temperature range and required temperature accuracy",
+  "Resin chemistry, fillers and whether the resin fluoresces",
+  "Probe access, installation point, distance to the spectrometer and cleaning",
+  "Available independent reference method for viscosity and cure, and number of batches"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What exactly defines the right point at which the batch is stopped - a viscosity value, a time after mixing, or a chemical conversion?",
+   "why_it_matters": "It decides whether a spectroscopic cure signal can itself serve as the stop criterion or whether a viscometer must lead.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What viscosity range must be covered, and what accuracy, resolution and response time are required?",
+   "why_it_matters": "These numbers set the go/no-go thresholds for any spectroscopic proxy and for the auxiliary viscometer.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What is the resin chemistry (for example epoxy, polyester or polyurethane), and does it contain fillers or a fluorescent component?",
+   "why_it_matters": "It determines which spectral bands are usable and whether Raman or fluorescence could add information.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What are the vessel temperature range and accuracy, how is the batch agitated, and where could a probe be inserted (port, distance to the spectrometer, cleaning between batches)?",
+   "why_it_matters": "Temperature control and probe access decide the installation and the fiber link, which are not free choices.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What independent reference method is available for viscosity and cure, and how many batches can be measured?",
+   "why_it_matters": "Without independent reference values no calibration can be validated, which keeps the assessment provisional.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "ATR suits liquids, pastes and soft solids that make tight contact with the crystal, and it samples only a few micrometres at the crystal surface, so a dark colour does not by itself block the measurement. Mid-IR band spectra have well-defined peaks and are among the most informative for chemical analysis, which is what a cure signal needs.",
+   "conditions": "Applies if the resin keeps tight contact with the crystal and the crystal can be kept clean during the batch.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Mid-IR band spectra contain well-defined peaks (absorption bands), while NIR, UV, and fluorescence spectra contain broad, highly overlapping signals",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR is the most common in-line method with fiber probes and needs only a reflection probe and a compact spectrometer, so it is the cheapest side-by-side test. Whether a dark, strongly absorbing resin returns enough backscattered light to be useful has to be measured on the real material, not assumed.",
+   "conditions": "Worth keeping only if the resin gives a usable diffuse-reflection signal above noise at the expected temperatures.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "Mid-IR and Raman spectra are complementary, and a combined ATR/Raman probe head has been demonstrated, so a fusion could add structural information where mid-IR bands overlap. Any gain from combining is a hypothesis that must beat the best single method on independent batches.",
+   "conditions": "Only if the single-method MIR-ATR trial cannot separate the cure stages well enough for the stop criterion.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 16,
+     "quote": "Combi probe with 2 IR-fibers coupled to FTIR-spectrometer and 2 Silica fibers coupled to Fluo or Raman spectrometers to work with 680nm & 785nm laser excitation",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "In-line ATR fiber probe in contact with the resin; a reflection probe as the side-by-side comparison.",
+  "location": "In the vessel or in a bypass loop where the resin contacts the probe head; the exact point is still open.",
+  "fiber_link": "Spectrometer located away from the vessel; the achievable link length for the chosen fiber is not stated in the sources and must be confirmed for the selected configuration.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 10,
+    "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "performance_figure"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1; the usable range depends on the instrument, fiber and ATR crystal actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as Raman shift in cm-1; the laser excitation wavelength is stated separately and is not fixed by the sources for this case.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Viscosity is not a spectroscopic quantity, so the spectrum only tracks a proxy and the correlation can shift when the formulation or the temperature profile changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 4,
+     "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The dark, strongly absorbing resin may return too little light for NIR diffuse reflection, and in Raman it may add a fluorescence background or absorb laser light.",
+   "rule_ids": [
+    "R-RAM-1",
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "ATR probes only a few micrometres at the crystal, so a deposit or stagnant film can misrepresent the bulk and foul the measurement.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The stop criterion, required ranges, accuracy and response time are unknown, so no final configuration and no go/no-go threshold can be fixed yet.",
+   "rule_ids": [
+    "R-PRO-2"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples or process states across the expected variation: fresh mix through partly cured to the intended end point, at the real vessel temperatures, including the darkest and most viscous states.",
+    "purpose": "Cover the chemical and physical variation the method must handle.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure every state with the single MIR-ATR probe first, and with a NIR reflection probe side by side, recording the sample temperature at each measurement.",
+    "purpose": "Test single methods before any combination.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference values for every state: off-line viscosity and a laboratory measure of cure conversion.",
+    "purpose": "Independent reference measurements for calibration and validation.",
+    "citations": []
+   },
+   {
+    "step": "Build and validate a calibration of the spectra against the reference viscosity, using held-out batches or runs rather than repeated spectra of the same batch.",
+    "purpose": "Show that the spectroscopic proxy predicts the reference quantity on unseen material.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 12,
+      "quote": "Raman spectra (as well as IR absorption spectra) can be used to construct chemometric models-calibration or classification ones.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Go/no-go: compare the validated prediction error and response time against the accuracy, resolution and response time you set; if the spectroscopic proxy does not meet them, the viscometer becomes the primary sensor and the optical method is dropped or changed.",
+    "purpose": "A go/no-go basis with numerical criteria supplied by the customer.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Off-line viscosity and a laboratory cure-conversion measurement on the same states, measured independently of the spectra.",
+  "decision_basis": "Go/no-go against the customer's own accuracy, resolution and response-time figures."
+ },
+ "assumptions": [
+  "The resin can be brought into tight contact with an ATR crystal without blocking the vessel or the probe.",
+  "The resin contains at least one chemical group whose band changes measurably during cure.",
+  "The batch temperature stays within the operating limits of the probe and fiber selected."
+ ],
+ "not_in_sources": [
+  "No supplied page covers viscosity as a measurand of fiber-optic spectroscopy.",
+  "No supplied page covers temperature measurement by fiber-optic spectroscopy.",
+  "No supplied page covers cure monitoring of a thermoset resin; the closest examples are in-line polymer extrusion and pharmaceutical or bioprocess monitoring."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Cure state (chemical conversion during cure)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The batch stop point has to be tied to a chemical change that a spectrum can follow in-line.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Cure rate and viscosity both depend on temperature, and the spectrum needs the temperature to interpret the cure state.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor (for example Pt100 or thermocouple)",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Viscosity",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the customer's stated stop criterion, and optical spectra do not deliver it.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "in-line viscometer, or torque or pressure-drop based viscosity measurement"
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "one probe, compact spectrometer",
+   "maintenance": "clean the probe window between batches",
+   "performance_fit": "cheapest single-probe test; dark resin risk",
+   "cost_drivers": "one NIR spectrometer, reflection probe, calibration effort",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "standard ATR probe in direct contact",
+   "maintenance": "clean ATR crystal; check fouling",
+   "performance_fit": "best fit; contact ATR reads dark paste",
+   "cost_drivers": "MIR spectrometer, ATR fiber probe, chemometric calibration",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "two instruments, one combined probe head",
+   "maintenance": "two calibrations and two diagnostics",
+   "performance_fit": "adds Raman detail where MIR bands overlap",
+   "cost_drivers": "second spectrometer, combined probe, fusion modelling",
+   "fusion_note": "Level: one model per method first, then a fused model on joined spectra with block scaling so that neither method dominates. Both methods must look at the same spot through the combined ATR/Raman probe head and the two streams must be synchronised to a common time step, with its own calibration and diagnostics for each block. The fused model has to beat the best single method on held-out batches, otherwise the second instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Variables obtained from different spectral methods are not equivalent.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "The stop point is a property, not a peak, and the mid-IR and NIR bands of a resin overlap, so a calibration model against reference viscosity is needed and it must be rebuilt or re-validated if the formulation or temperature profile changes.",
+ "realtime_tracking_note": "In-line fiber probes give results without sampling and in near real time, and the acquisition speed must match the cure rate; if a combined option is chosen, the spectra of the two methods have to be brought to a common time step.",
+ "future_direction": "Once the informative bands are known from the laboratory trial, a compact fixed-wavelength or LED-based analyzer could be considered for the plant unit.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the stop point turns out to be defined by viscosity alone, or if the MIR-ATR trial shows no usable cure signal, the viscometer becomes the primary sensor and the optical method shifts to Raman or NIR diffuse reflection. The answers on endpoint criterion, ranges and accuracy would also move the choice between the simple and the recommended option.",
+  "next_step": "Run the single-method MIR-ATR trial on representative resin states from fresh mix to end point, with independent off-line viscosity references, before any in-line installation or multi-method decision."
+ },
+ "brief_answer": "Test mid-infrared ATR first: it reads a thick, dark paste in contact with the crystal and can follow chemical change during cure. Viscosity is not a spectroscopic quantity, so an in-line viscometer and a temperature sensor are needed alongside, with the spectrum calibrated against reference viscosity. Tell us what defines the stop point and the required viscosity accuracy and response time; until then no final setup can be fixed."
+}
