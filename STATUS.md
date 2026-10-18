@@ -1,12 +1,14 @@
 # Status
 
-_Last updated: 2026-10-18 09:11 CEST (Claude, Phase 5 session 5: bake-off running)._
+_Last updated: 2026-10-18 09:45 CEST (Claude, Phase 5 session 5)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
 - **09:11:** 5.8 plan v2 approved 09:00 (all arms). Code merged (D-054 b/c config + `--outputs`; D-056 cross-process provenance lock + run-id suffix). 5.9 activity feed implemented (D-055, 38f778e and earlier; pytest 679/2). Bake-off started 09:10 (D-057: `--external cache`, arms parallel): **Haiku 5.5 and GPT-6 Luna dropped** (schema 400 at the first call; outputs/bakeoff/README.md). Running: baseline, GLM-5.3-Flash, v4.1-flash-1017. Reviewer on the 5.8/5.9/D-056 code; mockup agent on 5.10/5.11 (docs/mockups/).
 
 - **09:12 BLOCKER: OpenRouter credits exhausted.** `/api/v1/credits`: total 20, used 19.978 (~$0.02 left); key limit $5, $4.53 spent ($0.47 left). Bake-off arms got 402 `in_flight_budget_exhausted`; all runs stopped (no outputs written). Needs the user: add credits and raise the key limit. Needed before freeze: bake-off ~$1–1.5, 19-case gate ~$0.6–1.2, H01–H06 ~$0.3, demo runs + buffer → ≥ ~$10.
+
+- **09:45:** credits added by the user (~$15). Bake-off done (6697dbf, outputs/bakeoff/compare.md): 7 arms × 6 cases, 0 hard failures everywhere; checklist saturated. Mean s/case and $/case: baseline 763 s $0.030 (1 runaway, 1 timeout), 1017 257 s $0.015, GLM 332 s $0.006 (1 timeout), Gemini 3.5 FL 34 s $0.020, Gemini 3.8 Flash 159 s $0.066, mix-a 140 s $0.046, mix-b 93 s $0.040. Added on user request: Gemini arms (D-058), cross-model retry (D-059), combined arms (D-060); Jev decision models assessed, not adopted (model-research §10). Reviewer judging quality side by side (D03, A05, A08). UI: round 2 mockups + independent UX review → H3 with circle callouts recommended, awaiting user pick.
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
@@ -168,7 +170,7 @@ Never read scenarios/final.jsonl before Phase 6.
 - Product name: later.
 
 ## Blockers
-- OpenRouter credits exhausted (see the 09:12 entry at the top). User action needed.
+- (resolved 09:20, credits added) OpenRouter credits exhausted (see the 09:12 entry at the top). User action needed.
 
 ## Check results
 **Phase 3 implementation (13:50), code 3c7e881, offline only (no live LLM calls):**
