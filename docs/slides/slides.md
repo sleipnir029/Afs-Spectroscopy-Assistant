@@ -1,6 +1,8 @@
 # AFS Spectroscopy Assistant: slides (source text)
 
-Outline; the final slide text is in `slides.html` / `slides.pdf`. Every figure comes from a committed file, named on the slide.
+Source text of `slides.html` (kept in sync); `slides.pdf` is exported from `slides.html`. Every figure comes from a committed file, named on the slide footer. Export and the repo-URL replacement: see `docs/slides/README.md`.
+
+<!-- Re-export (from the repo root): "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --no-pdf-header-footer --print-to-pdf="$PWD/docs/slides/slides.pdf" "file://$PWD/docs/slides/slides.html" -->
 
 ---
 
@@ -18,24 +20,25 @@ From a customer enquiry to a cited first technical assessment. Team Helios · AI
   - proposes one option to test first;
   - says what is still unknown and what would change the choice.
 - It must be grounded in the AFS materials. It must never invent accuracy, detection limits, response times, fiber lengths or prices, and never promise approval.
-- Judging criteria: technical quality 30, AFS grounding 20, feasibility plan 15, clarification and uncertainty 15, explainability 10, prototype 10.
+- Judging criteria (weight %): Technical quality 30, Use of AFS knowledge 20, Feasibility-study plan 15, Clarification & uncertainty 15, Explainability 10, Prototype & presentation 10.
+- Source: criteria and weights from the AFS challenge brief; mapping to our checklist in `outputs/eval/summary.md`.
 
 ---
 
 ## 3. What it does
 
-Screenshot: `docs/ui/brief-answer-1440.png`.
-- A recommendation headline built by code from the proposed option.
-- Status, confidence and next step.
-- Margin notes with the verified quotes.
-- A composer for follow-ups and re-assessment.
+Screenshot: crop of `docs/video/frames/09_recommendation.png` (status strip, recommendation, brief answer, margin notes, status / confidence / next step; live run in `uv run afs-assist ui`).
+- The recommendation headline is built by code from the proposed option.
+- Status, confidence, next step. Margin notes show each verified quote with its page.
+- Options with a cost class from S01 Table 1 (p.6), never a price.
+- Open questions linked to the option they would change. Follow-ups and re-assessment in the same thread.
 
 ---
 
 ## 4. How it stays grounded
 
 The pipeline:
-- intake (LLM) → screening (code: 44 rules + S01 Table 1 + fibers) → assess (LLM, strict JSON);
+- intake (LLM) → screening (code: 44 rules + S01 Table 1 + fibers) → assess (LLM over 67 pages, strict JSON);
 - → verify (code, about 40 checks) → repair (stronger model) → finalize (code);
 - → literature for gaps only → render + provenance commit.
 
@@ -46,7 +49,7 @@ The checks:
 - no prices, no guarantee or approval wording;
 - cost class comes from S01 Table 1, and confidence is computed by code.
 
-The numbers:
+The numbers (sources: `outputs/final/*.json`, STATUS.md gate 11:52, ARCHITECTURE.md for the 67 pages, `knowledge/rules.yaml` for the 44 rules):
 - H01–H06: 120/120 citations verified, 0 hard failures (`outputs/final`).
 - The 19-case gate run: citations verified 100 % in every case, external replay 19/19 (STATUS.md 11:52).
 
@@ -54,18 +57,20 @@ The numbers:
 
 ## 5. Chat with live result blocks
 
-Screenshots: crops of `docs/ui/brief-thread-full-1440.png` (options table, setup diagram).
+Screenshots: crops of `docs/video/frames/11_options.png` (options table, methods and cost class) and `12_setup.png` (setup diagram).
 - Routing is code: the first message assesses, new facts re-assess ("What changed"), any other text asks.
 - An ask is one model call. Every claim is checked like the pipeline: quote on page, page scope, claim-local numbers, wording. A claim that fails is removed.
 - The server renders the blocks from the verified run. The model picks blocks by name and never writes HTML.
 - Live check (`docs/chat/live-check-20261018.json`): 10 questions, 1.4–6.3 s each, $0.038 in total, 10/11 citations verified (1 dropped by the checks), 0 claims removed.
+- Price question → cost class only and a quotation next step. Prompt injection → no guarantee. A question the sources do not cover (lifetime) → "not in the supplied sources" and a next step.
 
 ---
 
 ## 6. Multi-method and literature
 
 - Single method first. Combine only when one method cannot cover a target or an interference (S01 p.7). Mid-IR and Raman are complementary (S01 p.11).
-- The extended option must carry a fusion note: same spot and volume (S01 p.8), data aligned to a common time step (S01 p.8), and the fusion level.
+- The extended option must carry a fusion note: same spot and volume (S01 p.8), data aligned to a common time step (S01 p.8), one model per method first, then the fusion level.
+- Calibration is specific to the matrix (REF p.5), so accuracy is never promised before a feasibility study.
 - Literature runs only for gaps the AFS sources leave open:
   - a curated open-access library (9 entries), then Europe PMC, OpenAlex and Unpaywall, with no keys;
   - queries are guarded, so no names or numbers from the enquiry are sent;
@@ -88,6 +93,8 @@ D01–D08 × 7 arms, four blind judge agents (LLM) scoring against the AFS eval 
 | mix-b | 3.38 | 69 | 0.030 | 75 % |
 | gemini-3.5-flash-lite | 3.23 | 29 | 0.015 | 65 % |
 
+The top three are close on quality (4.15 / 4.08 / 4.06); mix-a is 3–6× faster than the other two. All arms had 0 hard failures. Four blind judge agents (LLM) saw anonymous letters.
+
 How mix-a is built:
 - Gemini 3.5 Flash-Lite does intake and literature.
 - GLM-5.3-Flash writes the assessment.
@@ -104,11 +111,41 @@ How mix-a is built:
 - External replay 13/13 equal. Cost class matched S01 Table 1 in 6/6 cases.
 - Status: premise_not_supported ×4, provisional ×1, insufficient_information ×1.
 - Rule-compliance review: PASS WITH CAVEATS, no blocking violation (`outputs/final/REVIEW.md`).
-- Dev + adversarial eval: checklist 0 failures; must 33/34, must-not 12/13 (`outputs/eval/summary.md`).
+- Dev + adversarial eval: checklist 0 failures; must 33/34, must-not 12/13 (`outputs/eval/summary.md`). Both misses are A07: 4 questions where at most 3 are allowed, and a must-not pattern that matched a legitimate question about the reference's reproducibility. They are recorded, and the eval was not changed after seeing the outputs.
+- 890 offline tests pass (2 skipped) (`docs/slides/README.md`); a fresh clone with `pages.jsonl` rebuilt passed 787/2 at 14:38 (README "Fresh-clone test").
 
 ---
 
-## 9. Limitations (honest)
+## 9. One held-out answer: H04 (short view, text unchanged)
+
+Excerpt of `outputs/final/brief/H04.md`, copied exactly. The short view is built by code from the saved JSON of the frozen H04 run (`uv run afs-assist brief outputs/final`, no model call). Full answer: `outputs/final/H04.md`.
+
+Title: Reuse of a silica link for petroleum MIR ATR
+
+> **Premise not supported:** the sources do not support the customer's premise as stated; the assessment below is provisional.
+>
+> The concept cannot be approved as stated: silica fibers cannot carry mid-IR light, so MIR ATR needs a CIR or PIR fiber instead of the existing cable. MIR ATR itself is worth testing first, with a published precedent for water in petroleum. Open items: the MIR link length to the other building, the sample state, and the required accuracy.
+>
+> **Proposed now:** the recommended option (basis: supplied AFS sources): MIR, ATR probe as primary candidate [S02 p.13; S01 p.9].
+
+Clarification questions:
+1. What is the actual link length and routing between the petroleum line and the analyzer building?
+2. What is the physical state and condition of the petroleum at the measurement point (liquid, viscous, opaque, temperature, fouling)?
+3. What water-content range, accuracy and response time does the investigation require?
+
+Recommendation:
+
+| Option | Methods | Cost class, S01 Table 1 (p.6) | Confidence |
+|---|---|---|---|
+| Simple | NIR, transmission/transflection probe | average | Low |
+| Recommended (proposed) | MIR, ATR probe | high | Low |
+| Extended (multi-method) | NIR, transmission/transflection probe; MIR, ATR probe + NIR (combination) | high | Low |
+
+Not shown on the slide (in the short view): requirements, measurement concept, spectral range, risks, feasibility plan, sources.
+
+---
+
+## 10. Limitations (honest)
 
 - Answers are long: 3,058–3,455 words per H output vs 303–400 words in the AFS worked answers.
 - "Verified" means the quote is on the page and in scope, not that it supports the claim. No entailment check yet.
@@ -116,14 +153,19 @@ How mix-a is built:
 - A literature item can be tagged to the wrong option or be only weakly relevant.
 - A complete enquiry can still get 4–5 questions (A07).
 - Confidence rarely varies: 45 of 55 options were Low in the G5 review.
+- A follow-up can flip the method without a clear reason.
 - A full assessment takes about 1.5–3 minutes. The flex tier can queue.
 
 ---
 
-## 10. Team Helios · next steps
+## 11. Team Helios · next steps
 
-- An entailment critic: does the quote support the claim?
-- A shorter customer reply that matches AFS's worked answers.
-- Checks on table cells, on inline page references and across fields.
-- Better confidence calibration and fewer questions on complete enquiries.
-- Run it: `uv sync` → `uv run afs-assist ui`. README.md and ARCHITECTURE.md have the details.
+Repository: `REPO_URL_PENDING` (replaced at publish; see `docs/slides/README.md`).
+
+- An entailment critic: does the quote really support the claim?
+- A short customer reply that matches the length of the AFS worked answers.
+- Checks on table cells, inline page references and fields against each other.
+- Calibrated confidence and fewer questions on complete enquiries.
+- Run it: `uv sync`, `uv run afs-assist kb build` (needs the organiser materials in `resources/`), `uv run afs-assist ui`, `uv run afs-assist assess --text "…"`, `uv run afs-assist eval`, `uv run pytest`. README.md, ARCHITECTURE.md and DEVIATIONS.md have the details. Demo video: `docs/video/demo.mp4` (2:53).
+
+Footer: Team Helios.

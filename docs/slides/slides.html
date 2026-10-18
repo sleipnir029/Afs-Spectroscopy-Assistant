@@ -53,6 +53,7 @@ li::marker { color: var(--accent); }
 .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; flex: 1; min-height: 0; }
 .cols.wide-left { grid-template-columns: 1.15fr .85fr; }
 .cols.wide-right { grid-template-columns: .62fr 1.38fr; gap: 36px; }
+.cols.shot3 { grid-template-columns: 300px 1fr; gap: 32px; }
 .shot { border: 1px solid var(--rule); background: #fff; display: block; max-width: 100%; }
 .note { font-size: 17px; color: var(--muted); line-height: 1.4; }
 
@@ -92,6 +93,19 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
 .tag { font-family: var(--mono); font-size: .82em; border: 1px solid var(--accent); color: var(--accent); padding: 0 5px; border-radius: 2px; white-space: nowrap; }
 .small li { font-size: 19.5px; margin-bottom: 8px; }
 
+/* held-out answer excerpt */
+.cols.h04 { grid-template-columns: .9fr 1.1fr; gap: 40px; }
+.excerpt { border-left: 3px solid var(--accent); padding-left: 18px; font-family: var(--serif); }
+.excerpt p { font-size: 20px; line-height: 1.38; margin: 0 0 12px; }
+.xh { font-family: var(--mono); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.excerpt-list { margin: 0 0 16px; padding-left: 1.3em; }
+.excerpt-list li { font-size: 17px; line-height: 1.35; margin-bottom: 5px; }
+.excerpt-list li::marker { color: var(--accent); font-family: var(--mono); }
+table.xt { font-size: 15.5px; }
+table.xt td, table.xt th { padding: 6px 8px; vertical-align: top; }
+table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; vertical-align: bottom; }
+.repo { font-family: var(--mono); font-size: 22px; margin: -12px 0 22px; color: var(--accent); }
+
 @page { size: 1280px 720px; margin: 0; }
 @media print {
   html, body { background: var(--paper); }
@@ -113,7 +127,7 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
 
 <!-- 2 -->
 <section class="slide">
-  <p class="kicker">01 · The problem</p>
+  <p class="kicker">The problem</p>
   <h2>A good first answer is hard to write, and easy to get wrong</h2>
   <div class="cols wide-left">
     <ul>
@@ -123,40 +137,39 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
     </ul>
     <div>
       <table>
-        <tr><th>Judging criterion</th><th class="n">Weight</th></tr>
+        <tr><th>Judging criterion</th><th class="n">Weight %</th></tr>
         <tr><td>Technical quality</td><td class="n">30</td></tr>
-        <tr><td>AFS grounding</td><td class="n">20</td></tr>
-        <tr><td>Feasibility plan</td><td class="n">15</td></tr>
-        <tr><td>Clarification and uncertainty</td><td class="n">15</td></tr>
+        <tr><td>Use of AFS knowledge</td><td class="n">20</td></tr>
+        <tr><td>Feasibility-study plan</td><td class="n">15</td></tr>
+        <tr><td>Clarification &amp; uncertainty</td><td class="n">15</td></tr>
         <tr><td>Explainability</td><td class="n">10</td></tr>
-        <tr><td>Prototype</td><td class="n">10</td></tr>
+        <tr><td>Prototype &amp; presentation</td><td class="n">10</td></tr>
       </table>
       <p class="note">Every item of our eval checklist maps to one of these criteria.</p>
     </div>
   </div>
-  <div class="src"><span>Criteria: outputs/eval/summary.md</span><span>2 / 10</span></div>
+  <div class="src"><span>Criteria and weights: AFS challenge brief · mapping: outputs/eval/summary.md</span><span>2 / 11</span></div>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <p class="kicker">02 · What it does</p>
+  <p class="kicker">What it does</p>
   <h2>A chat that answers like a careful applications engineer</h2>
-  <div class="cols wide-right">
+  <div class="cols shot3">
     <ul class="small">
       <li>The <b>recommendation headline</b> is built by code from the proposed option.</li>
-      <li>Status, confidence and the next step. Margin notes show each verified quote with its page: <span class="tag">S01 p.9</span></li>
-      <li>Two or three options (simple / recommended / extended), each with a cost class from S01 Table 1 (p.6), never a price.</li>
-      <li>Open questions, each linked to the option it would change.</li>
-      <li>Follow-ups and re-assessment in the same thread. Each new turn opens with “What changed”.</li>
+      <li>Status, confidence, next step. Margin notes show each verified quote with its page.</li>
+      <li>Options with a cost class from S01 Table 1 (p.6), never a price.</li>
+      <li>Open questions linked to the option they would change. Follow-ups and re-assessment in the same thread.</li>
     </ul>
-    <img class="shot" src="brief-answer-1440.png" alt="Web chat answer: recommendation, status, verified quotes in the margin, composer">
+    <img class="shot" src="answer-recommendation.png" alt="Web chat answer: status strip, recommendation headline, brief answer with footnotes, verified quotes in the margin, status, confidence and next step" style="width: 100%; height: auto; align-self: start;">
   </div>
-  <div class="src"><span>Screenshot: docs/ui/brief-answer-1440.png (uv run afs-assist ui)</span><span>3 / 10</span></div>
+  <div class="src"><span>Screenshot: crop of docs/video/frames/09_recommendation.png (live run in uv run afs-assist ui)</span><span>3 / 11</span></div>
 </section>
 
 <!-- 4 -->
 <section class="slide">
-  <p class="kicker">03 · How it stays grounded</p>
+  <p class="kicker">How it stays grounded</p>
   <h2>Models write. Code checks every quote, number and word.</h2>
   <div class="flow">
     <div class="step llm"><b>Intake</b>LLM, strict JSON</div><div class="arr">→</div>
@@ -178,12 +191,12 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
     <li>A quote counts only if it is an exact or loose match on the cited page. A fuzzy near match is not verified, and a changed number or negation never matches.</li>
     <li>The page scope must fit the claim kind. Numbers come only from that claim’s own quotes or the enquiry. No prices, no guarantee or approval wording.</li>
   </ul>
-  <div class="src"><span>outputs/final/*.json · STATUS.md (gate 11:52) · src/afs_assistant/verify.py, quotes.py</span><span>4 / 10</span></div>
+  <div class="src"><span>outputs/final/*.json · STATUS.md (gate 11:52) · ARCHITECTURE.md (67 pages) · knowledge/rules.yaml · src/afs_assistant/verify.py</span><span>4 / 11</span></div>
 </section>
 
 <!-- 5 -->
 <section class="slide">
-  <p class="kicker">04 · Chat with live result blocks</p>
+  <p class="kicker">Chat with live result blocks</p>
   <h2>Follow-ups get checked answers, and results arrive as blocks</h2>
   <div class="cols">
     <div>
@@ -200,16 +213,16 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
       <p class="note">Price question → cost class only and a quotation next step. Prompt injection → no guarantee. A question the sources do not cover (lifetime) → “not in the supplied sources” and a next step.</p>
     </div>
     <div style="display:flex; flex-direction:column; gap:10px; min-height:0;">
-      <img class="shot" src="blocks-options.png" alt="Options block: simple, recommended, extended compared" style="height: 250px; width: 100%; object-fit: cover; object-position: top;">
-      <img class="shot" src="blocks-setup.png" alt="Setup block: process point, probe, fiber, spectrometer, chemometric model, result" style="height: 205px; width: 100%; object-fit: cover; object-position: top;">
+      <img class="shot" src="blocks-options-clean.png" alt="Options block: simple, recommended, extended, with methods and cost class from S01 Table 1" style="width: 100%; height: auto;">
+      <img class="shot" src="blocks-setup-clean.png" alt="Setup block: process point, probe, fiber link, spectrometer, chemometric model, result, with an auxiliary sensor" style="width: 100%; height: auto;">
     </div>
   </div>
-  <div class="src"><span>docs/chat/live-check-20261018.json · STATUS.md 11:56 · crops of docs/ui/brief-thread-full-1440.png</span><span>5 / 10</span></div>
+  <div class="src"><span>docs/chat/live-check-20261018.json · STATUS.md 11:56 · crops of docs/video/frames/11_options.png, 12_setup.png</span><span>5 / 11</span></div>
 </section>
 
 <!-- 6 -->
 <section class="slide">
-  <p class="kicker">05 · Multi-method and literature</p>
+  <p class="kicker">Multi-method and literature</p>
   <h2>One method first; combine only when one is not enough</h2>
   <div class="cols">
     <div>
@@ -238,12 +251,12 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
       </div>
     </div>
   </div>
-  <div class="src"><span>skills/multi-method-fusion.md · src/afs_assistant/external/step.py · outputs/final/*.json</span><span>6 / 10</span></div>
+  <div class="src"><span>skills/multi-method-fusion.md · src/afs_assistant/external/step.py · outputs/final/*.json</span><span>6 / 11</span></div>
 </section>
 
 <!-- 7 -->
 <section class="slide">
-  <p class="kicker">06 · Model choice: evidence</p>
+  <p class="kicker">Model choice: evidence</p>
   <h2>7 arms, blind-judged against the AFS data</h2>
   <div class="cols wide-left">
     <table>
@@ -269,12 +282,12 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
       <li>All arms had 0 hard failures. Four blind judge agents (LLM) saw anonymous letters.</li>
     </ul>
   </div>
-  <div class="src"><span>outputs/bakeoff-dev/blind/summary.md · outputs/bakeoff-dev/afs-score.md · DEVIATIONS D-063</span><span>7 / 10</span></div>
+  <div class="src"><span>outputs/bakeoff-dev/blind/summary.md · outputs/bakeoff-dev/afs-score.md · DEVIATIONS D-063</span><span>7 / 11</span></div>
 </section>
 
 <!-- 8 -->
 <section class="slide">
-  <p class="kicker">07 · Results on the held-out set</p>
+  <p class="kicker">Results on the held-out set</p>
   <h2>H01–H06, run once on tag freeze-1</h2>
   <div class="stats">
     <div class="stat"><div class="v">6<small>/6</small></div><div class="l">complete; 0 hard failures, 0 runaways, 0 timeouts</div></div>
@@ -291,15 +304,48 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
     <ul class="small">
       <li>Dev D01–D08 + adversarial A01–A12: checklist <b>0 failures</b>.</li>
       <li>Adversarial must 33/34 and must-not 12/13. Both misses are A07: 4 questions where at most 3 are allowed, and a must-not pattern that matched a legitimate question about the reference's reproducibility. They are recorded, and the eval was not changed after seeing the outputs.</li>
-      <li>763 offline tests pass (2 skipped); the fresh-clone test at 12:35 passed 758/2.</li>
+      <li>890 offline tests pass (2 skipped). A fresh clone with pages.jsonl rebuilt passed 787/2 (14:38).</li>
     </ul>
   </div>
-  <div class="src"><span>outputs/final/*.json, REVIEW.md · outputs/eval/summary.md · STATUS.md 12:33</span><span>8 / 10</span></div>
+  <div class="src"><span>outputs/final/*.json, REVIEW.md · outputs/eval/summary.md · README.md (fresh-clone test) · docs/slides/README.md (pytest)</span><span>8 / 11</span></div>
 </section>
 
 <!-- 9 -->
 <section class="slide">
-  <p class="kicker">08 · Limitations</p>
+  <p class="kicker">One held-out answer · H04, short view, text unchanged</p>
+  <h2>Reuse of a silica link for petroleum MIR ATR</h2>
+  <div class="cols h04">
+    <div>
+      <div class="excerpt">
+        <p><b>Premise not supported:</b> the sources do not support the customer's premise as stated; the assessment below is provisional.</p>
+        <p>The concept cannot be approved as stated: silica fibers cannot carry mid-IR light, so MIR ATR needs a CIR or PIR fiber instead of the existing cable. MIR ATR itself is worth testing first, with a published precedent for water in petroleum. Open items: the MIR link length to the other building, the sample state, and the required accuracy.</p>
+        <p><b>Proposed now:</b> the recommended option (basis: supplied AFS sources): MIR, ATR probe as primary candidate [S02 p.13; S01 p.9].</p>
+      </div>
+      <p class="note">Excerpt. The short view is built by code from the saved JSON of the frozen H04 run (no model call). It also has requirements, measurement concept, spectral range, risks, feasibility plan and sources. Full answer: outputs/final/H04.md</p>
+    </div>
+    <div>
+      <p class="xh">Clarification questions</p>
+      <ol class="excerpt-list">
+        <li>What is the actual link length and routing between the petroleum line and the analyzer building?</li>
+        <li>What is the physical state and condition of the petroleum at the measurement point (liquid, viscous, opaque, temperature, fouling)?</li>
+        <li>What water-content range, accuracy and response time does the investigation require?</li>
+      </ol>
+      <p class="xh">Recommendation</p>
+      <table class="xt">
+        <colgroup><col style="width:22%"><col style="width:38%"><col style="width:24%"><col style="width:16%"></colgroup>
+        <tr><th>Option</th><th>Methods</th><th>Cost class, S01 Table 1 (p.6)</th><th>Confidence</th></tr>
+        <tr><td>Simple</td><td>NIR, transmission/transflection probe</td><td>average</td><td>Low</td></tr>
+        <tr class="pick"><td>Recommended (proposed)</td><td>MIR, ATR probe</td><td>high</td><td>Low</td></tr>
+        <tr><td>Extended (multi-method)</td><td>NIR, transmission/transflection probe; MIR, ATR probe + NIR (combination)</td><td>high</td><td>Low</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="src"><span>outputs/final/brief/H04.md (uv run afs-assist brief outputs/final) · full answer outputs/final/H04.md · tag freeze-1</span><span>9 / 11</span></div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <p class="kicker">Limitations</p>
   <h2>What it does not do yet</h2>
   <div class="cols">
     <ul class="small">
@@ -315,13 +361,14 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
       <li>A full assessment takes about 1.5–3 minutes, and the flex tier can queue.</li>
     </ul>
   </div>
-  <div class="src"><span>outputs/final/REVIEW.md · PHASES.md Review (G5) · DEVIATIONS D-051 · scenarios/dev_reference.jsonl</span><span>9 / 10</span></div>
+  <div class="src"><span>outputs/final/REVIEW.md · PHASES.md Review (G5) · DEVIATIONS D-051 · scenarios/dev_reference.jsonl</span><span>10 / 11</span></div>
 </section>
 
-<!-- 10 -->
+<!-- 11 -->
 <section class="slide">
-  <p class="kicker">09 · Team Helios · next steps</p>
+  <p class="kicker">Team Helios · next steps</p>
   <h2>Next</h2>
+  <p class="repo">REPO_URL_PENDING</p>
   <div class="cols">
     <ul>
       <li>An entailment critic: does the quote really support the claim?</li>
@@ -332,15 +379,16 @@ tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
     <div>
       <p class="note" style="font-family: var(--mono); font-size: 18px; color: var(--ink); line-height: 1.7;">
         uv sync<br>
+        uv run afs-assist kb build<br>
         uv run afs-assist ui<br>
         uv run afs-assist assess --text "…"<br>
         uv run afs-assist eval<br>
         uv run pytest
       </p>
-      <p class="note">README.md · ARCHITECTURE.md · DEVIATIONS.md (every change from plan, logged)</p>
+      <p class="note">README.md · ARCHITECTURE.md · DEVIATIONS.md (every change from plan, logged). kb build needs the organiser materials in resources/. Demo video: docs/video/demo.mp4 (2:53).</p>
     </div>
   </div>
-  <div class="src"><span>Team Helios</span><span>10 / 10</span></div>
+  <div class="src"><span>Team Helios</span><span>11 / 11</span></div>
 </section>
 
 </body>
