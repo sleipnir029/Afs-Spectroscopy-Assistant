@@ -1,0 +1,340 @@
+{
+ "decision_status": "outside_supported_scope",
+ "status_reason": "Line pressure and flow rate are physical process quantities, not chemical composition, and no supplied source describes any fiber-optic spectroscopic method for measuring them; the sources cover molecular spectroscopy of liquids, solids and gases.",
+ "premise_checks": [
+  {
+   "premise": "Fiber-optic spectroscopy products can measure line pressure in a pipe",
+   "verdict": "not_covered",
+   "explanation": "The supplied sources describe spectroscopic measurement of chemical composition and morphology; none mentions pressure measurement.",
+   "citations": []
+  },
+  {
+   "premise": "Fiber-optic spectroscopy products can measure slurry flow rate",
+   "verdict": "not_covered",
+   "explanation": "No supplied source describes flow measurement; the methods covered (NIR, MIR, Raman, UV-Vis, fluorescence) measure spectral signals, not velocity or flow.",
+   "citations": []
+  },
+  {
+   "premise": "An optical in-line signal can give early warning of pipe blockage in a slurry",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses slurries or blockage detection; at most, spectroscopy could track composition or consistency changes if those change before a blockage, which is untested.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [
+  "Measure line pressure in a slurry transfer pipe",
+  "Measure slurry flow rate",
+  "Early warning when the pipe starts to block"
+ ],
+ "key_unknowns": [
+  "Slurry composition, solids content and particle size",
+  "Optical properties of the slurry (opacity, scattering, optical density)",
+  "Whether blockage onset is preceded by a measurable change in slurry consistency or composition",
+  "Required accuracy and response time for pressure and flow",
+  "Pipe access, temperature and installation constraints for any probe"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the slurry made of (solid phase, liquid phase, typical solids content and particle size)?",
+   "why_it_matters": "It decides whether any optical method can see a useful signal and which probe geometry survives the sample.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "How opaque is the slurry, and what temperature and pressure does the pipe see at the possible measurement point?",
+   "why_it_matters": "Optical density decides between transmission and ATR-type geometries, and conditions set the fiber and probe requirements.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What accuracy and response time do you need for line pressure and flow rate?",
+   "why_it_matters": "These targets cannot be met by the spectroscopic methods in the sources, so they define what auxiliary instrumentation is required.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "In past blockages, did the slurry consistency, solids concentration or composition change before the pipe blocked?",
+   "why_it_matters": "Only if a measurable slurry property changes before blockage can an optical in-line signal serve as an early warning.",
+   "affects": [
+    "M1"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "A slurry is a strongly scattering, likely opaque medium, and NIR diffuse reflection is the geometry the sources give for opaque or highly concentrated products, with fiber-probe access suited to in-line use. Whether its signal tracks a consistency change that precedes blockage is a hypothesis that only a trial on your slurry can test.",
+   "conditions": "Only meaningful if the slurry's composition or consistency actually changes in a way that precedes blockage (see Q4).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "If the slurry is so opaque or turbid that a transmission signal saturates, a UV-ATR probe with its very short evanescent path is the geometry the sources give for black or highly scattering fluids. It would be a second single-method trial, compared against M1, not a first choice.",
+   "conditions": "Applies only if Q2 shows the slurry is too optically dense for transmission-style measurement.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion or flush-mounted NIR diffuse-reflection probe at a representative point in the transfer pipe (trial first in the lab); UV-ATR as fallback geometry if the slurry is too optically dense.",
+  "location": "Transfer pipe, at a point with representative flow; exact position to be agreed after Q2 and Q4.",
+  "fiber_link": "Vis-NIR silica fiber family nominally covers 350-2400 nm; the usable range and cable length depend on the selected fiber and probe.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "UV-Vis",
+   "statement": "UV-Vis range depends on the target and setup; the sources give high sensitivity especially in the UV region (190-360 nm).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Pressure and flow rate cannot be measured by the spectroscopic methods in the sources, so the core of the enquiry needs conventional instrumentation regardless of any optical trial.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "A blockage may develop without any change in slurry composition or consistency, in which case no optical method in the sources can give early warning.",
+   "rule_ids": [
+    "R-GEN-5"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Reflection signals are sensitive to surface characteristics and particle size, so physical slurry variation could mimic or mask composition changes.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Any optical model would be calibration-specific to this slurry and would need re-validation if the feed material changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative slurry samples across the expected variation in solids content, particle size and composition.",
+    "purpose": "Cover the chemical and physical variation the in-line probe would see.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample in the lab with an NIR diffuse-reflection probe (and UV-ATR where transmission saturates), alongside independent reference measurements of solids content from the laboratory.",
+    "purpose": "Establish whether the optical signal carries information about the slurry properties.",
+    "citations": []
+   },
+   {
+    "step": "Build a first calibration or classification model per single method and validate it on held-out samples or batches.",
+    "purpose": "Quantify whether the optical signal predicts consistency-related variables reliably.",
+    "citations": []
+   },
+   {
+    "step": "Compare the optical signal against historical or test-rig data on blockage onset, if such data exist.",
+    "purpose": "Test the early-warning hypothesis directly rather than assuming it.",
+    "citations": []
+   },
+   {
+    "step": "Define go/no-go with the customer: agreed numerical criteria for prediction accuracy and for the lead time of any blockage warning.",
+    "purpose": "Decide objectively whether an in-line optical system is worth installing.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory solids-content and composition analysis of each sample, independent of the optical measurements.",
+  "decision_basis": "Customer-defined numerical criteria for model accuracy and warning lead time; these are not set by the sources and must come from the customer."
+ },
+ "assumptions": [
+  "The slurry is a liquid-carried particulate medium that is at least partly optically accessible.",
+  "Blockage onset may be preceded by a change in slurry consistency or solids distribution; this is an assumption to test, not a fact."
+ ],
+ "not_in_sources": [
+  "Measurement of line pressure by any fiber-optic or spectroscopic method",
+  "Measurement of flow rate by any fiber-optic or spectroscopic method",
+  "Early warning of pipe blockage in slurries"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Slurry composition and solids content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It determines whether any optical signal exists and what the probe would actually be measuring.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Optical density / turbidity of the slurry",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It decides between transmission-style and ATR-style geometries.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "the selection of an optical probe is primarily dictated by the sample's optical density (OD) and its ability to attenuate light.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Line pressure",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is a stated customer target, but not a spectroscopic measurand.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "conventional pressure transducer at the pipe"
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Flow rate",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is a stated customer target, but not a spectroscopic measurand.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "conventional flow meter (e.g. magnetic or ultrasonic) on the pipe"
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Simple lab trial, no pipe modification",
+   "maintenance": "None during trial phase",
+   "performance_fit": "Tests feasibility cheaply before any hardware commitment",
+   "cost_drivers": "Lab probe and spectrometer time, sample collection, reference lab analysis",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Standard instrumentation plus one optical probe",
+   "maintenance": "Pressure and flow sensors are routine; optical probe needs window cleaning",
+   "performance_fit": "Covers all three stated targets: pressure, flow and tested blockage indication",
+   "cost_drivers": "Pressure transducer and flow meter, optical probe and spectrometer, calibration effort, pipe integration",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "If the trial shows the optical signal tracks solids content or consistency, a PLS calibration per method would be needed, validated on held-out batches; the sources stress that NIR bands overlap and require chemometrics.",
+ "realtime_tracking_note": "Any in-line optical signal would be continuous and time-resolved, but its value as a blockage warning depends entirely on the outcome of the Q4 correlation check.",
+ "future_direction": null,
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If the slurry turns out to have no measurable optical contrast, or blockages occur with no preceding consistency change, the optical part of O2 should be dropped and only conventional pressure and flow instrumentation remains.",
+  "next_step": "Answer Q1-Q4 and run the lab trial of M1 (with M2 as fallback) on representative slurry samples against independent solids-content references."
+ },
+ "brief_answer": "Line pressure and flow rate are not quantities our spectroscopic fiber products measure; they need conventional pressure and flow sensors. What fiber-optic spectroscopy could offer is a trial of NIR diffuse reflection (or UV-ATR if the slurry is very opaque) to see whether slurry consistency changes measurably before a blockage. That link is unproven and must be tested on your slurry; please share its composition, opacity and past blockage behaviour."
+}
