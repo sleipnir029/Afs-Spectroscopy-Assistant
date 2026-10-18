@@ -1,0 +1,321 @@
+{
+ "round": 1,
+ "hard_failures_before": 1,
+ "hard_failures_after": 1,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "A provisional assessment is possible because mid-infrared attenuated total reflection (MIR-ATR) spectroscopy is a demonstrated method for water determination in petroleum streams, though key operating parameters and stream clarity must be confirmed.",
+  "premise_checks": [],
+  "requirements_stated": [
+   "Fiber-based optical measurement closer to the petroleum process",
+   "Water determination to notice changes sooner",
+   "Analyzer located outside the process area"
+  ],
+  "key_unknowns": [
+   "Water concentration range in the petroleum stream",
+   "Exact temperature, pressure, and flow velocity of the petroleum stream",
+   "Optical clarity, turbidity, and scattering behavior of the petroleum stream",
+   "Exact distance between the insertion point and the remote analyzer location",
+   "Fouling or window coating tendencies of the petroleum stream"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the expected water concentration range (e.g., low ppm to high percentage) in the petroleum stream?",
+    "why_it_matters": "It determines the required sensitivity and path length configuration of the spectroscopic setup.",
+    "affects": [
+     "method",
+     "installation",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What is the exact distance between the measurement insertion point in the process and the remote analyzer location outside the process area?",
+    "why_it_matters": "It dictates fiber cable length requirements and optical attenuation limits.",
+    "affects": [
+     "installation",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What are the temperature, pressure, and optical clarity of the petroleum stream?",
+    "why_it_matters": "It affects probe material compatibility and signal scattering characteristics.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Is there any tendency for suspended solids, heavy fractions, or asphalthenes to foul or coat the probe window?",
+    "why_it_matters": "Window fouling directly impacts the reliability of evanescent wave measurements in ATR setups.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Mid-infrared ATR spectroscopy is directly applicable for measuring water content in petroleum streams using rugged immersion probes with high-refractive-index crystals, providing clear absorbance features for water.",
+    "conditions": "Applicable if the petroleum stream allows sufficient contact with the ATR crystal and water concentration is within the detection range.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Near-infrared spectroscopy can be evaluated as an alternative if transmission-based or transflection monitoring is preferred across larger optical path lengths, provided scattering is managed.",
+    "conditions": "Applicable if the petroleum stream has sufficient optical transmission and water overtone bands are discernible.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Immersion ATR fiber probe with a zirconium dioxide or diamond ATR tip mounted flush in the process stream.",
+   "location": "In-line insertion directly into the petroleum process pipe or reactor, with the spectrometer housed outside the hazardous or process area.",
+   "fiber_link": "Mid-infrared compatible optical fiber link connecting the immersion probe to the remote analyzer.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "MIR",
+    "statement": "The nominal mid-IR vibrational spectroscopy range is 4000-400 cm-1 (2.5-25 #m), though the usable range depends on the selected fiber, crystal, and spectrometer configuration.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Optical fouling or deposition of heavy petroleum fractions on the ATR crystal surface can attenuate the evanescent wave and cause signal drift.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Fiber transmission losses and coupling efficiency over long distances outside the process area may restrict the maximum separation between the probe and the remote analyzer.",
+    "rule_ids": [
+     "R-FIB-2",
+     "R-FIB-3"
+    ],
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 10,
+      "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers, while high NA>0.3 for PIR-fibers provides much better coupling efficiency of PIR-fiber based ATR-probes with FTIR-beams- much better vs Hollow Waveguides",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Temperature and pressure fluctuations in the petroleum stream can alter background absorption and refractive index at the crystal interface.",
+    "rule_ids": [
+     "R-MIR-2"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "1. Sample Collection",
+     "purpose": "Gather representative petroleum samples spanning the expected water concentration range.",
+     "citations": []
+    },
+    {
+     "step": "2. Laboratory Reference Measurement",
+     "purpose": "Determine independent reference water values for all sample batches using established laboratory titration or analytical methods.",
+     "citations": []
+    },
+    {
+     "step": "3. Spectral Bench Testing",
+     "purpose": "Record mid-IR ATR spectra of the samples using an ATR fiber probe and evaluate absorption band intensity near water signature regions.",
+     "citations": [
+      {
+       "doc": "S02",
+       "page": 13,
+       "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+       "claim_kind": "application_precedent"
+      }
+     ]
+    },
+    {
+     "step": "4. Chemometric Calibration",
+     "purpose": "Build and cross-validate a partial least squares calibration model relating spectral absorbance to reference water concentrations.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 2,
+       "quote": "constructing calibration and classification models, as well as methods for in-depth research data analysis.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "5. Validation on Held-Out Samples",
+     "purpose": "Test the predictive accuracy of the model on independent test runs against customer-defined error criteria.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Standard laboratory water determination methods performed on spot samples.",
+   "decision_basis": "Proceed to in-line pilot installation if laboratory feasibility trials achieve a prediction error below the customer's specified maximum allowable water determination tolerance."
+  },
+  "assumptions": [
+   "The petroleum stream is compatible with PEEK-shaft and zirconium dioxide or diamond ATR crystal materials.",
+   "Remote fiber cable routing is feasible between the process insertion point and the remote analyzer housing."
+  ],
+  "not_in_sources": [],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Water concentration",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Direct target of the in-line monitoring system to track changes sooner than laboratory samples.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "MIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Stream temperature",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "Temperature variations can affect background spectral response and should be monitored for calibration stability.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "Temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1"
+    ],
+    "ease_of_use": "High via remote ATR probe",
+    "maintenance": "Periodic crystal cleaning for fouling",
+    "performance_fit": "Direct measurement of water via MIR ATR",
+    "cost_drivers": "MIR spectrometer and remote fiber cable run",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2"
+    ],
+    "ease_of_use": "Automated with temperature compensation",
+    "maintenance": "Robust probe design with fouling checks",
+    "performance_fit": "Alternative near-infrared path configuration for comparison testing",
+    "cost_drivers": "Complete analyzer system with temperature sensor and robust fiber cabling",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "Partial least squares regression models should be trained on spectral data correlated against laboratory reference water measurements to enable continuous quantitative tracking.",
+  "realtime_tracking_note": "Continuous in-line spectral acquisition allows real-time monitoring of water fluctuations in the petroleum stream, significantly reducing response time compared to periodic lab sampling.",
+  "future_direction": "Integration of automated probe cleaning mechanisms or multi-point multiplexing to monitor multiple process lines from a single centralized remote analyzer.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "supplied",
+   "what_would_change_it": "Confirmation that water concentrations are outside the detection limits of mid-IR ATR or severe optical fouling that precludes crystal contact would shift the recommendation.",
+   "next_step": "Conduct a multi-method laboratory trial using representative petroleum samples with varying water concentrations to validate spectral sensitivity."
+  },
+  "brief_answer": "To monitor water in your petroleum stream closer to the process, mid-infrared attenuated total reflection (MIR-ATR) spectroscopy is recommended as the primary approach, using a robust immersion probe connected to an analyzer located outside the process area. A feasibility experiment with representative samples and laboratory reference testing should be performed first to establish calibration accuracy and verify resistance to fouling."
+ }
+}
