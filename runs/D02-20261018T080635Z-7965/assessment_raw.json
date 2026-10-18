@@ -1,0 +1,497 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified from published in-line dairy applications, but the accuracy targets, installation details and product matrix specifics are still open, so the assessment is provisional and the comparison experiment is the deciding step.",
+ "premise_checks": [
+  {
+   "premise": "Spectroscopy can provide earlier in-line information on fat and protein in an opaque, concentrated dairy product.",
+   "verdict": "precedent_only",
+   "explanation": "In-line NIR monitoring of dairy streams for fat and protein is a published application class, which justifies testing it here but is not proof for this specific product.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "The use of Near-Infrared (NIR) spectroscopy for the inline monitoring of milk is a cornerstone of modern dairy \"Process Analytical Technology\" (PAT).",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "A single probe geometry can cover the product across its texture and composition variation.",
+   "verdict": "precedent_only",
+   "explanation": "The source shows transflection working for both low-fat and high-fat dairy in some cases; whether it works for this opaque, concentrated product is exactly what the comparison test must show.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "The existing laboratory checks remain compatible with an in-line spectroscopy method.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses how the customer's laboratory checks integrate with an in-line method; this is assumed compatible and left to the customer.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [
+  "In-line monitoring of fat and protein in an opaque, concentrated milk product",
+  "An initial spectroscopy concept and a practical comparison experiment",
+  "Retention of the existing laboratory checks"
+ ],
+ "key_unknowns": [
+  "Fat and protein concentration ranges and required in-line accuracy",
+  "Temperature range and installation point in the line",
+  "Distance between measurement point and analyser location",
+  "Fouling and cleaning behaviour of the optical window",
+  "Whether texture variation causes scattering changes that must be modelled"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the fat and protein concentration ranges and the accuracy you need in-line?",
+   "why_it_matters": "The concentration range and required accuracy decide whether NIR reflection can meet the target or whether a second method is needed.",
+   "affects": [
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the product temperature range, and where in the line (pipe size, access, cleaning-in-place) could a probe be mounted?",
+   "why_it_matters": "Temperature variation and the installation point determine probe style, window material and how temperature must be handled in the calibration.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "How far is the measurement point from a safe location for the spectrometer?",
+   "why_it_matters": "Silica fibers are stated for 100-300 m cables, but the achievable length for any mid-IR link is unknown and must be confirmed before considering MIR.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "How often can you take samples for laboratory fat and protein reference analysis during the trial?",
+   "why_it_matters": "Calibration and validation need enough reference samples spread over the real process variation.",
+   "affects": [
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "How does the product behave on optical surfaces (fouling, coating, cleaning)?",
+   "why_it_matters": "Fouling of the optical window is a main operational risk for any in-line contact probe.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the documented in-line technique for opaque, concentrated dairy products and suits remote fiber-probe measurement. Its overlapping bands require a chemometric calibration against the lab fat and protein values.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Transflection is reported to work for both low-fat and high-fat dairy in some cases and samples a defined path, but transmission-style geometries fail when the product is too thick or fat-rich, so it must be tested on the real product.",
+   "conditions": "Applies only if the transflection probe gives usable signal on this opaque, concentrated product in the comparison test.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Mid-IR ATR gives well-defined, highly selective absorption bands that complement NIR overtones, and ATR fiber probes are demonstrated for in-line liquid analysis. It requires tight contact and samples only a surface layer a few micrometres deep, so fouling and surface representativeness are risks.",
+   "conditions": "Applies only if the NIR single-method results miss the customer's accuracy targets, and after the MIR fiber link length and probe compatibility are confirmed.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "NIR transmission is the natural choice for clear liquids, but the source states it fails when the product is too thick or fat-rich, which matches the stated opaque, concentrated sample.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Fluorescence only measures species that fluoresce, and no fluorescent species or indicator has been identified in this product; its selectivity for fat and protein is low.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR diffuse reflection fiber probe in contact with the product through a window; an NIR transflection probe is tested on the same product as a comparison.",
+  "location": "Flush-mounted in the process pipe at a representative point of the flowing product.",
+  "fiber_link": "Vis-NIR silica fiber cable from the probe to the spectrometer; the achievable cable length depends on the selected fiber and must be confirmed with AFS.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "Experimentally, the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+    "claim_kind": "application_precedent"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 µm); the usable range is limited by the selected fiber and ATR crystal.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Texture and globule-size variation can change the reflection signal in ways that mimic composition change, so the calibration must cover the real texture range.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "NIR bands are broad and overlapping, so accuracy depends entirely on the quality and spread of the calibration data.",
+   "rule_ids": [
+    "R-NIR-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "If the transflection comparison is pursued, the optical pathlength must be controlled for this concentrated, water-rich product.",
+   "rule_ids": [
+    "R-GEN-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "if the pathlength is too wide, the signal is lost to absorption",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "If mid-IR ATR is added later, fouling of the crystal and its few-micron sampling depth limit what the surface measurement represents.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples across the expected fat, protein, temperature and texture variation of the product.",
+    "purpose": "Cover the expected variation in fat, protein, temperature and texture so the calibration sees the real process spread.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with the existing laboratory fat and protein reference methods.",
+    "purpose": "Provide the independent reference values needed for calibration and validation.",
+    "citations": []
+   },
+   {
+    "step": "Measure the same samples with an NIR diffuse reflection probe and, in parallel, with an NIR transflection probe; compare both against the lab values.",
+    "purpose": "Test the single methods first, on the same samples, before any combination.",
+    "citations": []
+   },
+   {
+    "step": "Build PLS calibrations with scatter correction and validate on held-out samples or production runs not used for calibration.",
+    "purpose": "Estimate real predictive performance rather than calibration fit.",
+    "citations": []
+   },
+   {
+    "step": "Only if the best single NIR technique misses the customer's accuracy targets, test a mid-IR ATR probe on the same samples and evaluate whether combining it with NIR improves on the best single method.",
+    "purpose": "Decide whether the single NIR method is sufficient or a second method must be tested.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Every spectrum is paired with the customer's existing laboratory fat and protein analysis on a sample taken at the same time and location.",
+  "decision_basis": "Go/no-go against the customer's own criteria: the in-line prediction error for fat and protein on held-out runs must meet the accuracy the customer specifies in Q1, with stable performance across the temperature and texture range."
+ },
+ "assumptions": [
+  "The product is treated as an opaque, concentrated dairy-type liquid flowing in a pipe, so transmission-style geometries are expected to struggle and reflection-style geometries are the natural starting point.",
+  "Fat and protein are the calibration targets; the existing laboratory fat/protein analysis serves as the reference method.",
+  "No fluorophore or indicator has been identified, so fluorescence is not assumed to be measurable."
+ ],
+ "not_in_sources": [
+  "Achievable in-line accuracy for fat and protein in this specific concentrated product",
+  "Achievable cable length for a mid-IR fiber link in an industrial installation"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Fat concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Fat is one of the two stated process targets and the main calibration response.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Protein concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Protein is the second stated process target and the second calibration response.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Product temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature varies during production and shifts the spectra, so it must be recorded to be included or compensated in the calibration.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor at the measurement point",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Texture / scattering state of the product",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "Texture variation changes the scattering background and can mimic composition change, so it must be characterised and modelled.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P5",
+   "name": "Laboratory reference fat and protein values",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The existing lab analysis is the independent reference needed to calibrate and validate the spectral models.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "laboratory fat and protein analysis (customer's existing method)",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "straightforward flush-mount probe and standard NIR hardware",
+   "maintenance": "window cleaning and periodic calibration checks",
+   "performance_fit": "fits because reflection is the documented technique for opaque concentrated dairy",
+   "cost_drivers": "one reflection probe, one NIR spectrometer, calibration samples and lab reference analyses",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "two probes to swap or install side by side during the trial",
+   "maintenance": "window cleaning for both probe heads",
+   "performance_fit": "fits because it resolves which geometry survives the product's opacity and texture variation",
+   "cost_drivers": "two NIR probes on one spectrometer, doubled calibration samples, comparison modelling",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M1",
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "two instruments and two calibrations to run and maintain",
+   "maintenance": "ATR crystal fouling plus NIR window cleaning, two calibrations",
+   "performance_fit": "fits only if NIR selectivity alone misses the accuracy target",
+   "cost_drivers": "second spectrometer, mid-IR fiber and ATR probe, per-method calibrations, fusion modelling",
+   "fusion_note": "Fusion level: one PLS model per method first, then low-level fusion of the synchronised NIR and mid-IR spectra into one augmented matrix with block scaling. Both probes must sample the same product at the same pipe location and the data must be normalised to a common time step. The fused model must beat the best single-method model on held-out runs, otherwise the extra instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Fat and protein in an opaque, scattering dairy matrix will require a PLS calibration with scatter correction (e.g. SNV or MSC) and validation on held-out production runs; the calibration is matrix-specific and must be re-validated when the product formulation or texture changes.",
+ "realtime_tracking_note": "The goal is continuous in-line tracking of fat and protein during production; spectra acquisition speed and update rate should be set once the required response time is known, and the data stream synchronised with the lab reference sampling during calibration.",
+ "future_direction": "If the trial shows NIR reflection alone is marginal, a later extension is a combined NIR reflection and mid-IR ATR measurement at the same point, or a compact LED-based NIR sensor once the informative wavelengths are known.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the required accuracy or the concentration ranges turn out to be beyond what NIR reflection delivers on held-out runs, the mid-IR ATR comparison (O3) becomes the focus; a very long fiber link or unsuitable installation point would also change the hardware choice.",
+  "next_step": "Run the multi-method lab trial on representative product samples with paired laboratory fat and protein reference measurements, testing NIR reflection and transflection side by side."
+ },
+ "brief_answer": "Start with in-line NIR diffuse reflection on the flowing product, calibrated against your existing lab fat and protein results, and test an NIR transflection probe on the same product as a comparison. Mid-IR ATR is a later option if NIR selectivity proves insufficient. Open points: required accuracy and concentration ranges, temperature range and installation point, and the fiber distance to the analyser."
+}
