@@ -1,0 +1,554 @@
+{
+ "decision_status": "premise_not_supported",
+ "status_reason": "The customer asks for a concrete fused setup and for confirmation that fusion is worth the effort, but the deciding facts (solute, matrix, solids loading, crystal form, accuracy targets) are unknown, and the supplied material treats a combination as a hypothesis to be tested against the best single method rather than as the default. A conditional shortlist can be given; a ready configuration cannot.",
+ "premise_checks": [
+  {
+   "premise": "A Raman probe and an NIR probe can be combined at one and the same point in the line.",
+   "verdict": "precedent_only",
+   "explanation": "Combined probes that put two methods on one measurement spot have been built and described, including one that combines NIR reflection and Raman in a single shaft used in-line. That is a reason to test the arrangement, not proof for this process.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "combines NIR reflection and Raman optical techniques in a compact shaft that fits in a tablet press feed frame",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "High accuracy can be achieved by using specially developed multispectral probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "A single fused model of the two data streams is the right way to obtain both solute concentration and crystal form.",
+   "verdict": "not_covered",
+   "explanation": "No supplied page addresses crystallisation, crystal-form discrimination or in-line solute concentration, so the sources cannot say whether one fused model is the right route for these two outputs; they treat a combination as a hypothesis to be compared with the best single method.",
+   "citations": []
+  },
+  {
+   "premise": "A concrete setup can be prescribed now, before the deciding facts (matrix, ranges, conditions) are known.",
+   "verdict": "contradicted",
+   "explanation": "The supplied guidance says the opposite for exactly this situation: when the known facts cannot justify a method choice, state that and ask the deciding questions rather than fix a configuration.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "An honest provisional plan is more useful than a final configuration built on missing facts.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Solute identity, concentration range, and the required accuracy, precision and response time.",
+  "What 'crystal form' must distinguish: which polymorphs, hydrates or particle attributes, and at what level.",
+  "Solvent and mother-liquor composition, whether the liquid is aqueous, and interfering or fluorescing species.",
+  "Solids loading, crystal size and turbidity at the intended measurement point.",
+  "Temperature, pressure, fouling and cleaning conditions at that point, and whether a probe port exists there.",
+  "The independent reference method for calibration and validation, and whether one shared port can be used."
+ ],
+ "clarification_questions": [],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "A contact Raman probe measures liquid and solid samples and is comparatively tolerant of water, so one probe can look at mother liquor and crystals at the same spot; its bands are sharper than NIR bands, which matters for form-related information. Its signal is weak and can be swamped by fluorescence, so that must be checked on the real stream, with the laser excitation wavelength reported separately from the Raman shift.",
+   "conditions": "Applies as long as the stream's fluorescence background does not swamp the weak Raman bands.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the usual geometry for opaque, scattering liquids, and NIR is the most common in-line fiber method, so it is the natural single-method competitor for the concentration target. Its bands are broad and overlapping, so a matrix-specific chemometric calibration is required.",
+   "conditions": "Applies if the stream at the probe point is turbid or concentrated; a clear particle-free stream would point to transmission instead.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "conditional",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "NIR and Raman carry complementary chemical information, and a synchronised NIR + Raman model has been demonstrated in-line for a pharmaceutical process, but any gain for this crystallisation is a hypothesis. Test it only after the single-method runs, against the best single method.",
+   "conditions": "Applies only if neither single method reaches the customer's accuracy target for both outputs and both measurements can be taken at the same spot with synchronised acquisition.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "NIR detects hydrogen bonds and asymmetric polar groups, while Raman provides information on the molecular backbone and symmetrical non-polar groups.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "the synchronized NIR and Raman spectra are merged into a single augmented matrix",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "compare with the best single method.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "In a crystallising stream the medium is thick and scattering, and a transmission signal is lost once light cannot penetrate the sample; diffuse reflection is the NIR geometry that suits such a stream. This technique would become a candidate again only if the measurement point were a clear, particle-free filtrate.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "One contact Raman probe and one NIR probe on the same measurement spot, preferably through a shared or combined probe rather than two ports used alternately; NIR in diffuse reflection for the turbid slurry.",
+  "location": "At the single point in the line that the customer named, with the Raman spot and the NIR sampling volume overlapping as closely as the probe allows.",
+  "fiber_link": "Silica fibers cover both methods' working range; metal-coated silica avoids polymer-jacket fluorescence, which matters for Raman. A long-link length figure is stated only for low-OH silica cables, and no MIR link is needed here.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman is described by a Raman shift axis in cm-1 plus a separate laser excitation wavelength; the example probe is specified with 785 nm excitation. The usable shift range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Fluorescence from the stream or from the probe can swamp the weak Raman signal, which is several orders of magnitude weaker than IR absorption peaks, so the background must be checked on the real process stream.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "No supplied source covers crystallisation, crystal-form discrimination or in-line solute concentration, so the whole shortlist is a precedent-based hypothesis rather than a demonstrated fit.",
+   "rule_ids": [
+    "R-EVI-2"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman and NIR sample different volumes and depths, so in a flowing slurry the same point may not be the same material, and solids loading and turbulence add to this.",
+   "rule_ids": [
+    "R-CMB-2",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Fouling or crystallisation on the probe window or crystal can change the signal, and a change of matrix or composition means the calibration has to be re-validated.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples and process states across the expected variation (solute level, solids loading, temperature), including near-boundary and off-spec states.",
+    "purpose": "Representative samples and process states",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 3,
+      "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure each sample at the same point, at process temperature and with repeats, using a contact Raman probe and an NIR probe (diffuse reflection for the slurry; transmission only for clear, particle-free samples), with probe and fiber types that transmit each method's range.",
+    "purpose": "Measure each sample with both methods at the same point, at process temperature, with repeats: contact Raman probe and NIR probe (diffuse reflection for the slurry; transmission only for clear, particle-free samples), with probe and fiber types that transmit each method's range.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 15,
+      "quote": "the probes are inserted directly into the process environment, such as the feed frame of a rotary tablet press",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S02",
+      "page": 7,
+      "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Obtain independent reference values for solute concentration and crystal form for every sample, using the customer's reference methods, so that each model can be calibrated and checked.",
+    "purpose": "Independent reference values for solute concentration and crystal form for every sample, using the customer's reference methods, so that each model can be calibrated and checked.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Build and validate one model per method on held-out runs or batches first; only then test a fused model (one block per method, scaled) and compare it with the best single method.",
+    "purpose": "Build and validate one model per method on held-out runs or batches first; only then test a fused model (one block per method, scaled) and compare it with the best single method.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Apply the customer's numerical criteria (accuracy, precision and response time for both outputs) as the go/no-go basis, and drop a method, or the fusion, if it does not reach them.",
+    "purpose": "Go/no-go on the customer's numerical criteria (accuracy, precision, response time for both outputs); drop a method, or the fusion, if it does not reach them.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent reference values for both outputs are required before any model is built; the customer names the reference methods.",
+  "decision_basis": "The customer's own numbers define the go/no-go criteria."
+ },
+ "assumptions": [
+  "The mother liquor does not fluoresce strongly enough to swamp the Raman bands (to be confirmed on real samples).",
+  "The measurement point carries a turbid, particle-bearing stream, so NIR diffuse reflection rather than transmission is the relevant NIR geometry.",
+  "Both probes can be mounted at, or through, one port so that the two methods see essentially the same spot."
+ ],
+ "not_in_sources": [
+  "Whether Raman, NIR or a fused model can distinguish the crystal forms of interest in a continuous crystalliser; no crystallisation, polymorph or solute-concentration case is supplied.",
+  "Any accuracy, precision, detection-limit or response-time figures for solute concentration or crystal form.",
+  "Probe fouling behaviour and cleaning regimes in a crystalliser stream.",
+  "A ready installation layout for this line (port type, path length, probe-to-process distance)."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "solute concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is one of the two model outputs the customer asks for and it defines the accuracy criterion for the go/no-go decision.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": "Raman probe at the same measurement spot",
+    "alternative": "NIR diffuse reflection is the alternative single-method route for this parameter."
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "crystal form",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It is the second stated output, and the model must separate the forms or attributes the customer cares about, not merely detect crystals.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": "Raman probe at the same measurement spot",
+    "alternative": "NIR diffuse reflection is the alternative single-method route for this parameter."
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "temperature at the measurement point",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Solubility, and therefore the meaning of a concentration reading, depends on the temperature at the probe.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "suspended solids fraction (turbidity)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It sets the optical regime at the probe and decides whether NIR should run in diffuse reflection or transmission.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": "NIR diffuse-reflection probe",
+    "alternative": "An external turbidity or solids measurement can supply this value."
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "one standard in-line NIR setup",
+   "maintenance": "probe cleaning and periodic recalibration",
+   "performance_fit": "least effort; concentration and scattering only",
+   "cost_drivers": "one NIR spectrometer, probe, process port and calibration work",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "one contact probe, chemometric model needed",
+   "maintenance": "fouling checks and matrix-specific recalibration",
+   "performance_fit": "sharp bands suit both stated targets",
+   "cost_drivers": "Raman laser, spectrometer, contact probe and model development",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "two instruments and one shared port",
+   "maintenance": "two calibrations and diagnostics to keep current",
+   "performance_fit": "complementary information if one method falls short",
+   "cost_drivers": "two spectrometers, a shared or combined probe, synchronisation and fusion work",
+   "fusion_note": "Fusion level: start with one model per method, then join the two blocks (block-scaled spectra or extracted scores) so that the block with more variables does not dominate. Both probes must look at the same small spot and the two data streams must be brought to a common time step, with a separate calibration and diagnostic kept for each instrument. Keep the fused model only if it beats the best single method on independent runs.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Variables obtained from different spectral methods are not equivalent.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "methods containing a larger number of variables have a greater impact on the model.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "two or more probes, belonging to different methods, can be used for measurements, but the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Plan one calibration per method first, then a fused model: both NIR and Raman calibrations are specific to the sample matrix and have to be re-validated after a change of matrix or composition (REF §5). NIR bands overlap broadly and need chemometric treatment (S01 p.10); the published in-line NIR + Raman example used low-level data fusion into one augmented matrix with PLS regression (S01 p.15). Reference data volume and validation on independent batches matter more than model complexity.",
+ "realtime_tracking_note": "Both methods would run continuously in-line, so the two data streams must be aligned to a common time step and the dead time between the measurement ports accounted for before any result is used for control (S01 p.8).",
+ "future_direction": "If the fused laboratory model shows a real gain, the later step is a compact multisensor system dedicated to this application rather than a full laboratory spectrometer set (S01 p.9).",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "Answers to the questions on solute and concentration range, on what 'crystal form' must distinguish, and on solvent, solids loading and turbidity decide whether Raman, NIR or the fusion is the better fit; if a single method fails the customer's accuracy criteria in the feasibility test, the fused option (O3) becomes the candidate. A clear, particle-free measurement point would also bring NIR transmission back into consideration.",
+  "next_step": "Run the single-method feasibility test on representative crystalliser samples with independent reference values for both outputs, and build one model per method before any fused model."
+ },
+ "brief_answer": "Test one method at a time. On representative crystalliser samples, run a Raman probe first, with an NIR probe at the same point as the comparison, and independent reference values for solute concentration and crystal form. Fusion is a later hypothesis: worth testing only if a fused model beats the best single method on held-out runs. The deciding facts - solute, range, solvent, accuracy - are still open, so no final configuration can be fixed yet."
+}
