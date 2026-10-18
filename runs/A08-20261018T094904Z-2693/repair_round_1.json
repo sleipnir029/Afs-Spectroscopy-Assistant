@@ -1,0 +1,404 @@
+{
+ "round": 1,
+ "hard_failures_before": 1,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "insufficient_information",
+  "status_reason": "Written confirmation of ±0.1 % accuracy and regulatory approval for release testing cannot be given based on the enquiry or supplied material: no source states any accuracy figure for moisture in granulate, and regulatory approval depends on the customer's validation evidence, not on a vendor statement. A method shortlist can still be proposed once key sample and installation facts are known.",
+  "premise_checks": [
+   {
+    "premise": "The NIR system will measure moisture in the customer's granulate to ±0.1 %.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source states any accuracy figure for moisture measurement; achievable accuracy depends on the configuration and the sample and must be established in a feasibility trial.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The vendor can assure that the customer's regulator will approve the system for release testing.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source addresses regulatory approval; approval for release testing rests on the customer's own validation and regulatory dossier, so it cannot be promised in writing.",
+    "citations": []
+   },
+   {
+    "premise": "NIR spectroscopy can in principle measure moisture in a granulate.",
+    "verdict": "precedent_only",
+    "explanation": "NIR covers O-H bands and a published AFS concept shows NIR moisture sensing, which is a reason to test, not proof of a specified accuracy for this granulate.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
+      "page": 12,
+      "quote": "IoT Concept of NIR-LED Fiber Sensor to control Moisture Level",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Written confirmation of ±0.1 % moisture accuracy",
+   "Written assurance of regulator approval for release testing",
+   "Price of the complete system"
+  ],
+  "key_unknowns": [
+   "Required moisture range and whether ±0.1 % is an absolute or relative figure",
+   "Granulate composition, particle size and heterogeneity",
+   "Reference (lab) method used for moisture and its own accuracy",
+   "Installation point: in-line in process or at-line on samples",
+   "Applicable regulatory framework and validation expectations"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What moisture range must be measured, and is ±0.1 % absolute or relative to that range?",
+    "why_it_matters": "The achievable accuracy and the calibration design depend entirely on the range and the meaning of the tolerance.",
+    "affects": [
+     "status",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What is the granulate made of, and what are its particle size, bulk density variation and heterogeneity?",
+    "why_it_matters": "Scattering and physical variation drive the choice between reflection and transmission geometry and the calibration effort.",
+    "affects": [
+     "method",
+     "M1",
+     "M2"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "Which reference (lab) method do you use for moisture, and what is its own measurement uncertainty?",
+    "why_it_matters": "The reference method defines what the spectroscopic calibration can be validated against and sets the realistic accuracy ceiling.",
+    "affects": [
+     "status",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Where should the measurement sit: in-line in the process, in-line bypass, or at-line on sampled material?",
+    "why_it_matters": "The installation point determines the probe type, fiber link and whether release-representative material is actually measured.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "Which regulatory framework and release-testing requirements apply (e.g. GMP, pharmacopoeial method status)?",
+    "why_it_matters": "Approval depends on the customer's validation dossier against that framework, not on the instrument itself.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "NIR diffuse reflection is the screened pass for a granulate and NIR contains the O-H bands needed for moisture; a published AFS concept shows NIR moisture sensing. Quantitative use will require a chemometric calibration against a reference method.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
+      "page": 12,
+      "quote": "IoT Concept of NIR-LED Fiber Sensor to control Moisture Level",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "A transflection probe could serve as an alternative geometry if the granulate proves too dense or opaque for reflection to be representative, but transmission fails when light cannot penetrate the sample.",
+    "conditions": "Only if the granulate turns out to be sufficiently transparent or semi-transparent in a lab trial; screening status is unknown.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "NIR diffuse-reflection fiber probe contacting or closely viewing the granulate (in-line flush-mounted or at-line cup, per Q4); transflection as a conditional alternative (M2).",
+   "location": "To be defined with the customer (Q4).",
+   "fiber_link": "Vis-NIR silica fibers; the usable NIR range depends on the selected fiber, spectrometer and probe.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR method range 780-2500 nm; the usable range of the actual instrument, fiber and probe must be confirmed at selection. Moisture-relevant O-H bands lie within this nominal range.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "The ±0.1 % target may be unattainable for this granulate; no source supports any accuracy figure and the reference method's own uncertainty sets the ceiling.",
+    "rule_ids": [
+     "R-PRO-3"
+    ],
+    "citations": []
+   },
+   {
+    "risk": "Reflection signals are sensitive to surface characteristics and particle size, so physical variation of the granulate can mimic moisture changes unless corrected and calibrated.",
+    "rule_ids": [
+     "R-GEO-6"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "The calibration is specific to the granulate matrix and must be re-validated if composition or supplier changes.",
+    "rule_ids": [
+     "R-CAL-1"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "physical variation; calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Regulatory approval for release testing depends on the customer's validation evidence and framework, which no vendor statement can substitute.",
+    "rule_ids": [],
+    "citations": []
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative granulate samples spanning the expected moisture range and batch/supplier variation.",
+     "purpose": "Cover the chemical and physical variation the calibration must handle.",
+     "citations": []
+    },
+    {
+     "step": "Measure each sample with the customer's reference lab moisture method under a defined protocol.",
+     "purpose": "Provide independent reference values for calibration and validation.",
+     "citations": []
+    },
+    {
+     "step": "Measure NIR diffuse-reflection spectra (M1) on all samples; add transflection (M2) only if the reflection geometry proves unrepresentative.",
+     "purpose": "Test the primary single method first, the alternative only if needed.",
+     "citations": []
+    },
+    {
+     "step": "Build a chemometric calibration and validate it on held-out batches or runs.",
+     "purpose": "Estimate real prediction accuracy rather than a fitted figure.",
+     "citations": []
+    },
+    {
+     "step": "Compare validated prediction error against the customer's required tolerance as the go/no-go basis.",
+     "purpose": "The numerical go/no-go criteria come from the customer, not from AFS.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "Customer's lab moisture method on every calibration and validation sample (method to be confirmed, Q3).",
+   "decision_basis": "Validated prediction error on held-out samples versus the customer's stated tolerance; the customer supplies the numerical criterion."
+  },
+  "assumptions": [
+   "The granulate is a powder or particulate solid measured at ambient process conditions.",
+   "Moisture is the only target analyte for now."
+  ],
+  "not_in_sources": [
+   "Any accuracy figure for moisture measurement, including whether ±0.1 % is achievable",
+   "Regulatory approval pathways or validation requirements for release testing",
+   "Pricing of any system"
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Moisture content of the granulate",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is the target variable the NIR calibration must predict and validate.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 12,
+      "quote": "IoT Concept of NIR-LED Fiber Sensor to control Moisture Level",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Granulate physical character (particle size, opacity, heterogeneity)",
+    "kind": "qualitative",
+    "necessity": "required",
+    "why": "It decides between reflection and transmission/transflection geometry and drives scatter correction needs.",
+    "measured_by": {
+     "type": "not_measurable_inline",
+     "method": null,
+     "sensor": null,
+     "alternative": "Laboratory characterisation of representative granulate samples before the trial"
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "P3",
+    "name": "Reference moisture value per sample",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Independent reference values are needed to build and validate the calibration and to judge the ±0.1 % target.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "Customer's lab moisture method (to be confirmed, Q3)",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "Simple probe setup, lab-trial scale",
+    "maintenance": "Low; single spectrometer and probe",
+    "performance_fit": "Directly tests whether NIR reflection meets the moisture target",
+    "cost_drivers": "One NIR spectrometer, one diffuse-reflection probe, reference lab analyses, chemometric modelling effort",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 20,
+      "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1",
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "Moderate; validated calibration workflow",
+    "maintenance": "Periodic recalibration and reference checks",
+    "performance_fit": "Covers granulate variation with a fallback geometry for the accuracy target",
+    "cost_drivers": "NIR spectrometer with reflection and transflection probes, larger reference dataset, validation on held-out batches, documentation for the customer's regulatory dossier",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "A quantitative moisture model (e.g. PLS) will need a representative calibration set spanning the moisture range and physical variation, preprocessing for scatter (e.g. derivatives or SNV-type correction), and validation on held-out batches; the reference method's uncertainty bounds the achievable accuracy.",
+  "realtime_tracking_note": "If the measurement is installed in-line, continuous tracking of moisture trends is feasible with fiber-optic NIR, but release-testing use additionally requires the customer's validated procedure and regulatory acceptance.",
+  "future_direction": "Once the calibration is established, a simplified multi-wavelength LED-type NIR sensor could be considered for routine monitoring, following the published concept.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "The answers on moisture range, granulate character and reference method could shift the choice between reflection and transflection geometry, and a failed feasibility trial against the customer's tolerance would end the NIR route.",
+   "next_step": "Run the multi-method lab feasibility trial on representative granulate samples with independent reference moisture values before any order."
+  },
+  "brief_answer": "We cannot confirm in writing a ±0.1 % moisture accuracy or promise your regulator's approval: no accuracy figure is supported by the available material, and approval depends on your own validation dossier. Pricing likewise cannot be quoted before the configuration is defined. What we can propose is a feasibility trial: NIR diffuse-reflection spectra on representative granulate samples, calibrated against your reference moisture method and validated on held-out batches. Please share the moisture range, granulate character, reference method and installation point."
+ }
+}
