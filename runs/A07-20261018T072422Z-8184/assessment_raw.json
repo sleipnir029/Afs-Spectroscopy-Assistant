@@ -1,0 +1,267 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The customer provided clear process and fluid parameters for an aqueous sucrose solution, allowing a justified technical shortlist of optical methods and probes despite minor open questions on CIP material compatibility.",
+ "premise_checks": [
+  {
+   "premise": "A 10 m remote analyzer connection via fiber optics is feasible for industrial process control.",
+   "verdict": "supported",
+   "explanation": "Robust low-OH silica cables are established for remote industrial process control over 100-300 m distances.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Monitor clear, colourless aqueous sucrose solution concentration in-line (5 to 15 % w/w range, +/-0.3 % w/w quality limit).",
+  "Process conditions: 50 mm stainless steel pipe, 20 to 30 °C, normal pressure.",
+  "Analyzer location: dry, safe room 10 m from the pipe.",
+  "Cleaning: cleaned in place (CIP) with hot caustic once a day.",
+  "Sampling rate: one reading every minute is sufficient.",
+  "Reference method: laboratory refractometer."
+ ],
+ "key_unknowns": [
+  "Optical window and seal material compatibility with daily hot caustic CIP",
+  "Specific mechanical flange standard or mounting port on the 50 mm pipe"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What specific elastomer or window sealing materials (e.g., PEEK, sapphire, FFKM) are compatible with your daily hot caustic cleaning protocol?",
+   "why_it_matters": "CIP chemical compatibility affects probe lifetime and prevents seal degradation.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What exact process flange or pipe connection standard is available on the 50 mm stainless steel line?",
+   "why_it_matters": "Determines the mechanical mounting interface for the inline probe.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR transmission or transflection probes are ideal for online analysis of liquid streams, offering robust fiber-optic remote coupling and penetration across clear aqueous media.",
+   "conditions": "Pathlength must be optimized to prevent signal saturation or loss.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Mid-IR ATR spectroscopy provides high molecular specificity and well-defined absorption bands for aqueous solutions.",
+   "conditions": "Requires fiber compatibility with mid-IR ranges (e.g., PIR fibers) and strict control over fouling on the ATR crystal.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Insertion NIR transflection probe mounted flush or via a suitable port into the 50 mm pipe, directing light across a controlled optical gap.",
+  "location": "Installed directly in the 50 mm process pipe operating at 20 to 30 °C.",
+  "fiber_link": "A 10 m low-OH silica fiber optic cable connecting the probe in the process line to the remote analyzer located in a dry, safe room.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal range 780-2500 nm; usable range depends on the selected spectrometer, fiber bundle, and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Fouling or optical window degradation during daily hot caustic cleaning-in-place.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Temperature fluctuations between 20 and 30 °C shifting spectral baselines if uncompensated in chemometric models.",
+   "rule_ids": [
+    "R-NIR-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Step 1",
+    "purpose": "Collect representative aqueous sucrose solution samples spanning the 5 to 15 % w/w concentration range at 20 to 30 °C.",
+    "citations": []
+   },
+   {
+    "step": "Step 2",
+    "purpose": "Perform laboratory benchtop spectral measurements using NIR and MIR optical setups connected via fiber probes.",
+    "citations": []
+   },
+   {
+    "step": "Step 3",
+    "purpose": "Establish independent reference measurements using the customer's laboratory refractometer.",
+    "citations": []
+   },
+   {
+    "step": "Step 4",
+    "purpose": "Develop and cross-validate initial partial least squares (PLS) calibration models relating spectra to sucrose concentration.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory refractometer measurements provided by the customer.",
+  "decision_basis": "Go/no-go is determined by achieving a prediction error within the customer quality limit of plus or minus 0.3 % w/w on validation samples."
+ },
+ "assumptions": [
+  "The 50 mm pipe allows insertion of a standard industrial process immersion probe.",
+  "Hot caustic cleaning conditions are compatible with standard optical window and seal materials."
+ ],
+ "not_in_sources": [
+  "Exact chemical concentration limits and degradation kinetics during hot caustic cleaning."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Sucrose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the core target variable requested by the customer.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Solution temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature variations between 20 and 30 °C affect optical properties and require compensation.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "PT100 temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Standard fiber-coupled spectrometer operation",
+   "maintenance": "Periodic optical window cleaning and calibration check",
+   "performance_fit": "Directly monitors sucrose concentration via NIR transmission",
+   "cost_drivers": "Single NIR spectrometer and optical transflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Multi-method laboratory evaluation capability",
+   "maintenance": "Independent calibration per method block",
+   "performance_fit": "Allows comparative benchmarking between NIR and MIR ATR for optimal precision",
+   "cost_drivers": "Multi-method spectroscopic evaluation setup",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "The ability to test various optical spectroscopy approaches is crucial for solving complex analytical problems",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Partial least-squares (PLS) regression models must be built using calibration sets covering the 5 to 15 % w/w range, incorporating temperature variation and scatter correction preprocessing.",
+ "realtime_tracking_note": "A 1-minute reading interval is well within the acquisition speed of modern fiber-optic spectrometers.",
+ "future_direction": "Integration of automated temperature compensation and cloud-based IoT sensor monitoring.",
+ "proposal": {
+  "best_current_option": "O1",
+  "basis": "supplied",
+  "what_would_change_it": "If optical interference or severe absorption requires fundamental fingerprint region analysis, a transition to MIR ATR would be considered.",
+  "next_step": "Conduct feasibility trials using representative sucrose solutions and a 10 m fiber-coupled NIR setup."
+ },
+ "brief_answer": "We recommend testing NIR transmission or transflection spectroscopy as the primary method to monitor the aqueous sucrose concentration in-line, connected via a 10 m fiber link to a remote analyzer. MIR ATR serves as a strong comparison option. Material compatibility with daily hot caustic cleaning should be verified before final installation."
+}
