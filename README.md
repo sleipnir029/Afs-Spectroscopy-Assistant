@@ -175,7 +175,8 @@ From STATUS.md, the G5 review (PHASES.md "Review (G5)") and the H01–H06 rule-c
 - **Setup sketch:** the NIR fiber label lists every fiber family that overlaps the range.
 - **Over-questioning:** a complete enquiry can still get 4–5 questions (A07, D-051). The questions are relevant, not re-asks of stated facts.
 - **Confidence rarely varies.** It is computed by code from open questions and named weaknesses. In the G5 review it was Low for 45 of 55 options, Medium for 10 and High for none. It rates the basis of the advice, never a predicted accuracy.
-- **A follow-up can flip the method** without a clear reason (seen in the G5 live loop: Raman to MIR-ATR).
+- **A follow-up can flip the method** without a clear reason (seen in the G5 live loop: Raman to MIR-ATR; and in the demo video: NIR alone to NIR + Raman after only a temperature answer). A re-assessment is a fresh model run, so it can differ for reasons other than the new fact.
+- **Margin note numbers restart per turn,** so in a long thread the same number can point to different quotes in different turns.
 - **Latency:** a full assessment takes about 1.5–3 minutes. The Gemini roles use the flex tier, which can queue or rate-limit. The fallback models cover that, but runs may be slower.
 - **External literature** comes from keyless APIs with small shared quotas (OpenAlex keyless is about 100 searches per day per IP). When those fail, the step falls back to the 9-entry curated library.
 - **Windows:** parallel set runs inside one process are serialised by a thread lock. The cross-process provenance lock uses `fcntl` (POSIX only), so on Windows do not run two `afs-assist` processes at once.
