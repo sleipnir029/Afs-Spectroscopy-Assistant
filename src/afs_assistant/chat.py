@@ -257,7 +257,7 @@ def check_claim(claim: ChatClaim, enquiry: str, items_by_key: dict) -> dict:
     if missing:
         failures.append(f"figures not in this claim's verified quotes or the enquiry: {[n.text for n in missing]}")
     failures += [f"forbidden wording: {h}" for h in forbidden_hits(claim.text)]
-    return {"failures": failures, "citations": kept, "precedent": precedent}
+    return {"failures": failures, "citations": kept, "precedent": precedent, "given": len(claim.citations)}
 
 
 def _shown_claim(claim: ChatClaim, result: dict) -> dict:
@@ -311,7 +311,8 @@ def _repair_user(base_user: str, ans: ChatAnswer, failures: list[str]) -> str:
 
 
 def _round_record(checks: dict) -> dict:
-    return {"claims": [{"failures": c["failures"], "citations": c["citations"]} for c in checks["claims"]],
+    return {"claims": [{"failures": c["failures"], "citations": c["citations"], "given": c["given"]}
+                       for c in checks["claims"]],
             "next_step_failures": checks["next_step_failures"], "dropped_blocks": checks["dropped_blocks"],
             "dropped_facts": checks["dropped_facts"]}
 

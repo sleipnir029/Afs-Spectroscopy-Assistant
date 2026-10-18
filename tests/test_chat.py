@@ -212,3 +212,18 @@ def test_every_role_used_in_code_is_in_every_models_config():
         assert chat_role["model"] == assess["model"], cfg_path.name
         assert chat_role["max_tokens"] == 16000 and chat_role["timeout_s"] == 120
         assert chat_role["reasoning"] == {"effort": "low"}
+
+
+def test_live_check_script_runs_offline(tmp_path, monkeypatch, capsys):
+    """The paid check (plan item 13) is run by hand; here it runs end to end on the fake client."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("chat_live_check", paths.ROOT / "scripts" / "chat_live_check.py")
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+    good = reply([claim("NIR covers 780-2500 nm.", kind="performance_figure", citations=[scit("S01", 10, NIR_QUOTE)])])
+    monkeypatch.setattr(script, "OpenRouterClient", lambda: FakeClient({"chat_answer": [good] * 20}))
+    monkeypatch.setattr(paths, "RUNS", tmp_path)
+    assert script.main([]) == 0
+    assert capsys.readouterr().out.count("citations 1/1") == 2 * len(script.QUESTIONS)
+    assert len(json.loads(next((tmp_path / "chat_live_check").glob("*.json")).read_text())) == 2 * len(script.QUESTIONS)
