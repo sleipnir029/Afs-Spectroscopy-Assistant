@@ -291,3 +291,35 @@ How this maps onto our pipeline:
 | C4 | Mixture-of-Agents (two assessments merged) | Two models assess; a third merges. | About 2–3× the cost per case, plus a merge step and its own verification. | Large. **Not proposed** for today. |
 
 **Proposal:** run the single-model arms first; the measurements per role are in `calls.json`. Then build one combined arm from the per-role results: C1 + C2, plus C3 if the code change passes review. Measure it on the same 6 cases against the best single model.
+
+## 10. Decision models such as TypeSafe "Jev" (added 2026-10-18, user: "can try jev type models?")
+
+What it is (search 2026-10-18; mostly secondary sources, vendor figures unverified):
+
+- **A non-generative decision model.** You send text plus typed questions and get structured answers back. There are three question types:
+  - Choice: a winning label.
+  - Score: an expected value with probabilities per level.
+  - "Noul": P(yes).
+- **It cannot write, summarise or explain.**
+- Launched in early access on 14 or 15 Sep 2026; sources differ. There is a waitlist, and no dedicated pricing page was found.
+- Reported price: $0.042 per 1M input tokens, output free. Vendor latency claim: 70–500 ms. Vendor speed and cost multipliers come from their own workflows.
+- Sources:
+  - https://www.gigazine.net/news/20260916-system-one-jev/
+  - https://www.gradually.ai/en/ai-models/jev/
+  - https://innfactory.ai/en/ai-models/typesafe-jev/
+  - https://pub.towardsai.net/meet-jev-the-ai-model-that-doesnt-write-and-why-data-engineers-should-care-f3ebfa2aab55
+  - Aggregator: https://aiweekly.co/alerts/jev-judge-model-matches-llm-accuracy-at-036-of-the-cost
+- **As a judge:** "JEV vs. LLMs as Rubric Judges: Cheaper, Faster, and Wrong in the Same Places", https://arxiv.org/pdf/2609.29769. A search summary reports RewardBench 92.2% vs 93.5% for an LLM judge, and 14.6 points behind on JudgeBench (not read in full).
+- Related, but different: JEPA-style LLM training (LLM-JEPA, Huang, LeCun, Balestriero, arXiv:2509.14252, https://arxiv.org/abs/2509.14252). It is a training objective, not a model we can call, so it does not apply to us.
+
+Fit for this pipeline:
+
+| Step | Kind of work | Could a decision model do it? |
+|---|---|---|
+| Assess and repair (~75–90% of tokens and time) | Writes the cited assessment, options and questions | **No.** This needs generated text, and it is where the cost is. |
+| Intake | Extracts facts, quotes, slots and unknowns | Mostly no: it must copy enquiry quotes. Only the route or off-topic decision is a Choice. |
+| Screening, verification, cost class | Already deterministic code (rules, verbatim quote checks) | Not needed: code is free, exact and auditable. |
+| External step | Query plan (text) and quote selection (text and verbatim quotes) | No. Source relevance is a deterministic check today. |
+| Eval / bake-off quality judging | Rubric scores | Possible, as a cheap second judge. The paper above says it fails where LLM judges fail. |
+
+**Verdict:** it would not lower our cost or time today. Our cost sits in the generative assess step, which Jev cannot do. Every bounded decision in the pipeline is already deterministic code. Access is early-access with a waitlist and no OpenRouter route, so integrating it today would be an untested dependency right before the freeze. A possible use after the hackathon: a cheap route or off-topic pre-check, or a second rubric judge in the eval.
