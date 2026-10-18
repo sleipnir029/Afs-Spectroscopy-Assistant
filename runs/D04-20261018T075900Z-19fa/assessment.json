@@ -1,0 +1,309 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A provisional assessment is justified for testing vibrational spectroscopy on aqueous bioprocess media, with Raman as the primary method due to water compatibility and NIR as a comparison option.",
+ "premise_checks": [
+  {
+   "premise": "An in situ spectroscopy pilot can be straightforwardly checked against existing laboratory measurements",
+   "verdict": "supported",
+   "explanation": "Online analysis allows direct in-process monitoring that can be calibrated against laboratory measurements, provided timing and synchronization are managed.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Monitor glucose in-line",
+  "Monitor lactate in-line",
+  "Compare with existing laboratory measurements",
+  "Handle changing medium and cell population"
+ ],
+ "key_unknowns": [
+  "Required concentration ranges for glucose and lactate",
+  "Detailed optical properties and turbidity of the medium",
+  "Probe insertion point and reactor interface",
+  "Presence of background fluorescence or luminescence"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What are the required concentration ranges and target accuracy for glucose and lactate?",
+   "why_it_matters": "Determines whether Raman or NIR sensitivity is adequate for trace or millimolar metabolite levels.",
+   "affects": [
+    "method",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the expected turbidity or optical density variation during high cell density phases?",
+   "why_it_matters": "Affects light penetration and the choice between reflection, transmission, or Raman probes.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What standard port sizes and flange fittings are available on the bioreactor for in situ probe insertion?",
+   "why_it_matters": "Determines the physical installation and probe shaft mechanical compatibility.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy is well-suited for aqueous media because water exhibits low absorbance compared to infrared methods, enabling direct metabolite tracking.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection can monitor major components and turbidity changes in scattering media, though calibration is matrix-specific.",
+   "conditions": "If scattering and optical density permit reflection measurements",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "conditional",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "Fluorescence provides high sensitivity for metabolic cofactors and can be combined with vibrational methods for comprehensive bioprocess tracking.",
+   "conditions": "Applies if trace metabolites or fluorescent cofactors need to be tracked alongside glucose and lactate.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Fluorescence spectroscopy can be used for high-sensitivity detection (down to the nM-μM range) of critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion Raman probe with laser excitation and optical filtering",
+  "location": "In-line directly in the bioreactor process flow",
+  "fiber_link": "Silica fiber cable connecting probe to spectrometer",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 3,
+    "quote": "in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman shift is expressed in cm-1 with laser excitation in nm; usable range depends on configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; usable range depends on the instrument, fiber, and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Raman signals are weak and can be swamped by fluorescence background from the cell culture medium.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Changing cell population and turbidity during the run can alter scattering and affect chemometric calibration robustness.",
+   "rule_ids": [
+    "R-CAL-1",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Analyze representative cell culture samples across expected concentration and biomass ranges.",
+    "purpose": "Test method response across process variations.",
+    "citations": []
+   },
+   {
+    "step": "Collect independent reference measurements using existing laboratory analyzers.",
+    "purpose": "Provide reference data for chemometric calibration.",
+    "citations": []
+   },
+   {
+    "step": "Compare Raman single-method calibration against NIR or combined approaches.",
+    "purpose": "Select the optimal analytical configuration.",
+    "citations": []
+   },
+   {
+    "step": "Validate chemometric models on held-out process runs.",
+    "purpose": "Confirm model robustness and prediction accuracy.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory measurements of glucose and lactate from extracted samples.",
+  "decision_basis": "Go/no-go based on achieving customer-defined prediction error thresholds for glucose and lactate."
+ },
+ "assumptions": [
+  "Cell culture medium is accessible via standard bioreactor ports.",
+  "Laboratory reference measurements are available for model calibration.",
+  "Background fluorescence from media components can be handled via optical filtering or baseline correction."
+ ],
+ "not_in_sources": [
+  "Specific bioreactor geometry and port dimensions"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Glucose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Primary target analyte to monitor in-line to avoid delays.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Lactate concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Secondary target metabolite reflecting metabolic state.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Biomass / cell population",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Tracks physical changes and turbidity in the cell culture.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Straightforward single probe setup",
+   "maintenance": "Regular cleaning and calibration upkeep",
+   "performance_fit": "Directly measures metabolites with low water interference",
+   "cost_drivers": "Single spectrometer and Raman probe",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Dual method evaluation setup",
+   "maintenance": "Upkeep for spectrometer and probe interfaces",
+   "performance_fit": "Handles both chemical metabolites and turbidity changes",
+   "cost_drivers": "Two spectroscopic channels and chemometric integration",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "Calibration models must be developed using multivariate partial least squares regression mapped against independent reference laboratory measurements.",
+ "realtime_tracking_note": "In-line fiber probes enable continuous tracking of metabolite consumption and production without sampling delays.",
+ "future_direction": "Integration of fluorescence sensors for tracking metabolic cofactors alongside Raman metabolite monitoring.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "High fluorescence background or severe turbidity requiring multi-method fusion.",
+  "next_step": "Conduct multi-method laboratory trials with representative cell culture samples."
+ },
+ "brief_answer": "For monitoring glucose and lactate in a cell culture aqueous medium, Raman spectroscopy is recommended as the primary method due to its low water interference. A single-probe Raman setup forms the simplest test option, while NIR or combined approaches can be compared if turbidity and biomass tracking are required. Feasibility trials with representative samples and reference lab data are the necessary next step."
+}
