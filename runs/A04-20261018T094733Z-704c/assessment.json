@@ -1,0 +1,443 @@
+{
+ "decision_status": "premise_not_supported",
+ "status_reason": "The sources state that cell-suspension turbidity only correlates with cell density and that optical density is not a viable cell count, so a UV-Vis probe cannot directly deliver viable cell concentration; it can only serve as a calibrated proxy to be validated against reference counts.",
+ "premise_checks": [
+  {
+   "premise": "A UV-Vis fiber probe can directly measure viable cell concentration continuously.",
+   "verdict": "contradicted",
+   "explanation": "The guidance states optical density is not a viable cell count; UV-Vis turbidity is at best a biomass proxy that needs its own calibration against reference counts.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "optical density is not a viable cell count.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Optical monitoring of biomass-related signals in bioprocesses is an established direction worth testing.",
+   "verdict": "precedent_only",
+   "explanation": "The sources describe UV/Vis as a low-cost tool for real-time biomass monitoring in bioreactors; this is a published example, not proof for this customer's medium and cells.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "UV/Vis spectroscopy can be deployed as a low-cost, robust tool for real-time biomass monitoring",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Fluorescence could add viability-related information in a bioreactor.",
+   "verdict": "precedent_only",
+   "explanation": "Fluorescence is reported for intrinsic fluorophores such as NADH in bioprocesses, but no fluorescent species has been identified in this customer's medium, so it remains a hypothesis.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Measure viable cell concentration continuously in a stirred mammalian-cell bioreactor.",
+  "Replace manual sampling for cell counting."
+ ],
+ "key_unknowns": [
+  "Whether the target is total cell density, viable cell density, or viability percentage",
+  "Optical density / turbidity range of the culture over the run",
+  "Required accuracy and how it compares to the manual counting method",
+  "Fluorescent species present in the medium (e.g. NADH, riboflavin)",
+  "Sterilisation, cleaning and fouling constraints for an in-line probe",
+  "Whether periodic reference cell counts remain available for calibration and validation"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Do you need viable cell density specifically (live cells only), or would total biomass/cell density meet the control goal?",
+   "why_it_matters": "UV-Vis turbidity cannot distinguish live from dead cells, so only a calibrated proxy for total biomass is realistic without a second method.",
+   "affects": [
+    "method",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What optical density range does the culture span from inoculation to harvest, at the wavelengths you would measure?",
+   "why_it_matters": "It decides between a transmission/transflection probe for clear broth and an ATR probe for dense, highly scattering broth.",
+   "affects": [
+    "technique",
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What accuracy versus your manual cell count would you accept, and can you keep periodic reference counts during calibration and validation runs?",
+   "why_it_matters": "The proxy calibration and the go/no-go criteria must be defined against the reference counting method the customer trusts.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What are the sterilisation, cleaning and fouling constraints at the intended probe location in the bioreactor?",
+   "why_it_matters": "Probe contact and fouling determine which in-line technique and installation are realistic.",
+   "affects": [
+    "installation",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Are there known fluorescent cofactors or components in your medium (such as NADH, tryptophan, or riboflavin) that correlate with metabolic activity or viability?",
+   "why_it_matters": "Fluorescence spectroscopy can only be considered if a specific fluorescent species or indicator is present in the medium.",
+   "affects": [
+    "method",
+    "M3"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "UV-Vis",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "The only UV-Vis technique that passes screening for this turbid, heterogeneous broth: the evanescent-wave path stays short even in dense, highly scattering cell suspensions. It measures a turbidity/absorbance proxy that must be calibrated against reference viable counts, not a direct cell count.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "UV-Vis",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "For clear, low-optical-density broth a defined path length gives higher sensitivity than ATR, but transmission saturates once the culture becomes dense or highly scattering.",
+   "conditions": "Applicable only if the culture stays optically clear enough at the measurement wavelengths over the whole run.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "conditional",
+   "combined_with": [
+    "UV-Vis"
+   ],
+   "rationale": "Intrinsic fluorophores such as NADH are reported as bioprocess viability-state indicators and could add information a turbidity proxy lacks, but no fluorescent species has been identified in this medium yet.",
+   "conditions": "Only if a defined fluorescent species or justified indicator is identified in the medium, and only as a later hypothesis after the single-method UV-Vis tests.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "Fluorescence spectroscopy can be used for multispectral measurements, for example, in combination with Mid-IR or NIR spectroscopy.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion UV-Vis ATR probe in the bioreactor as the primary geometry; a transmission/transflection probe tested in parallel only if the broth stays optically clear.",
+  "location": "In-line in the stirred bioreactor, at a well-mixed position away from baffles and the impeller zone.",
+  "fiber_link": "Silica fiber for the UV-Vis range; length to be confirmed with AFS since only silica cable lengths are stated in the sources.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 16,
+    "quote": "a UV-ATR (Attenuated Total Reflection) probe is used.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "UV-Vis",
+   "statement": "UV-Vis sensitivity is highest in the UV region (190-360 nm); the usable range depends on the selected light source, fiber and probe, and must be confirmed for the actual configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The turbidity proxy reflects total scattering biomass and cannot separate viable from dead cells or debris, so it may not answer the viability question at all.",
+   "rule_ids": [
+    "R-UV-2"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "optical density is not a viable cell count.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The calibration is specific to the medium and cell line; changes in medium composition, antifoam or passage number can shift it and require re-validation.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Probe fouling by cells and deposits on an ATR crystal can drift the signal during long runs.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Overlapping absorption from medium components in UV-Vis mixtures means chemometric calibration is needed, not a simple single-wavelength reading.",
+   "rule_ids": [
+    "R-UV-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "the strong overlap of spectral signals in UV spectra complicates the analysis of real samples",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative broth samples across the full expected variation: early lag phase (clear), mid exponential, dense late phase, plus medium-only and killed-cell controls.",
+    "purpose": "Cover the chemical and optical range the in-line probe will see.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with the UV-Vis ATR probe and, if the broth is clear enough, a transmission/transflection probe; record spectra at fixed conditions.",
+    "purpose": "Compare the two geometries on the same samples before choosing one.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference viable cell counts for every sample (e.g. trypan blue exclusion counting or an automated viability counter) performed by the customer's standard method.",
+    "purpose": "Provide the reference the spectral proxy is calibrated against.",
+    "citations": []
+   },
+   {
+    "step": "Build a chemometric regression from spectra to reference counts, then validate on held-out samples from separate runs or batches.",
+    "purpose": "Test whether the proxy predicts viable counts, not just fits the calibration set.",
+    "citations": []
+   },
+   {
+    "step": "Go/no-go: the customer defines the acceptable deviation of the in-line prediction from their reference count and the acceptable drift over a full run; only then consider continuous in-line installation.",
+    "purpose": "Make the decision criterion explicit and owned by the customer.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Viable cell concentration by the customer's counting method on every calibration and validation sample.",
+  "decision_basis": "Customer-defined agreement between in-line prediction and reference viable counts, on held-out runs."
+ },
+ "assumptions": [
+  "The culture is an aqueous mammalian-cell suspension in standard medium, as stated.",
+  "Periodic manual or automated reference cell counts remain available during a feasibility phase.",
+  "No fluorescent species or fluorophore indicator has yet been identified in the customer's culture medium."
+ ],
+ "not_in_sources": [
+  "Whether UV-Vis or any optical method can distinguish viable from dead mammalian cells in-line in this customer's medium",
+  "Achievable in-line accuracy for viable cell density in a stirred bioreactor with the described probes"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Viable cell concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the target variable and the reference against which any spectral proxy must be calibrated and validated.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "trypan blue exclusion count or automated viability counter (customer's standard method, off-line samples)",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Turbidity / optical-density signal of the broth",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the quantity the UV-Vis probe actually measures and the input of the proxy calibration to cell density.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": "UV-Vis ATR or transmission/transflection fiber probe",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Optical regime of the broth (clear vs highly scattering at the measurement wavelengths)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It decides whether transmission/transflection is usable or the ATR geometry is needed.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": "UV-Vis fiber probe screening measurements on samples",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Process temperature",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It should be available from the bioreactor and may shift spectral signals, so it should be logged during calibration.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "bioreactor temperature probe",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Single probe, straightforward immersion measurement",
+   "maintenance": "ATR crystal cleaning and fouling checks",
+   "performance_fit": "Fits turbid dense broth where transmission fails",
+   "cost_drivers": "One UV-Vis spectrometer, one ATR probe, calibration samples and reference counts",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Two probe geometries tested, one selected",
+   "maintenance": "Standard probe cleaning; no consumables",
+   "performance_fit": "Covers both clear and dense broth across the whole run",
+   "cost_drivers": "Second probe geometry, extended calibration across the OD range, reference counting effort",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M1",
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Two instruments and probes to operate",
+   "maintenance": "Per-method calibration and diagnostics required",
+   "performance_fit": "Adds metabolic-state information turbidity cannot give",
+   "cost_drivers": "Second spectrometer, combined or paired probes, fused-model development and validation",
+   "fusion_note": "Low-level fusion: UV-Vis turbidity and fluorescence spectra from the same sampling spot, synchronised to a common time step, with one calibration block per method before any joined model. A combined or co-located probe arrangement is needed because separate alternating probes cannot guarantee the same measurement point. The fused model must beat the best single-method model on held-out runs, otherwise the fluorescence channel should be dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "the measurement data must be normalized to a common time step.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A regression model from UV-Vis spectra to reference viable counts is needed; it is matrix-specific and must be validated on held-out runs, with the customer's counting method as the reference data source.",
+ "realtime_tracking_note": "Continuous in-line tracking is the stated goal, but it should only be installed after the off-line feasibility phase shows the proxy meets the customer's accuracy criteria over a full run.",
+ "future_direction": "If a viability-specific measurement proves necessary, a fluorescence channel targeting intrinsic fluorophores such as NADH could be evaluated later as an addition to the UV-Vis proxy.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the customer confirms that live/dead discrimination is essential, the UV-Vis proxy alone is insufficient and the fluorescence extension (O3) or an alternative route must be evaluated; if the broth stays clear at all times, transmission alone may suffice.",
+  "next_step": "Run the off-line feasibility test: UV-Vis ATR (and transmission if clear) spectra of representative broth samples against reference viable counts, with customer-defined go/no-go criteria."
+ },
+ "brief_answer": "A UV-Vis fiber probe cannot directly measure viable cell concentration: turbidity only correlates with total cell density and cannot distinguish live from dead cells. What is realistic is a calibrated UV-Vis proxy - ATR geometry for dense broth, transmission only if the culture stays clear - validated against your reference counts on representative samples. Open points: whether total biomass suffices, your OD range, and the accuracy you require versus manual counting."
+}
