@@ -1,0 +1,549 @@
+{
+ "round": 1,
+ "hard_failures_before": 7,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "premise_not_supported",
+  "status_reason": "The enquiry asks for a written accuracy confirmation and a regulatory acceptance commitment that the supplied material cannot support: accuracy is configuration- and sample-dependent in the sources, and no supplied source addresses regulator acceptance or release testing. NIR diffuse reflection is a defensible first method to test for moisture in a granulate, but the target must be demonstrated on the customer's material before any confirmation, configuration or price is meaningful.",
+  "premise_checks": [
+   {
+    "premise": "A NIR system can be confirmed in writing, before any measurement, to measure granulate moisture to ±0.1 %.",
+    "verdict": "contradicted",
+    "explanation": "The sources state that accuracy depends on the configuration and the sample, and that a published application is a reason to test a method, not proof for a new customer. A written ±0.1 % confirmation before a trial on the customer's material is therefore not supported.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The supplier can commit in writing that the customer's regulator will accept the system for release testing.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source addresses regulatory acceptance, release testing or validation criteria for a customer's regulator.",
+    "citations": []
+   },
+   {
+    "premise": "A price for the complete system can be given before measurement feasibility is established.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source contains prices, product codes or cost classes; the relative cost class of a configuration is not stated in the sources.",
+    "citations": []
+   }
+  ],
+  "requirements_stated": [
+   "Measure moisture in granulate.",
+   "Target accuracy ±0.1 % (stated by the customer, not yet demonstrated).",
+   "Use for release testing.",
+   "NIR named as the expected method."
+  ],
+  "key_unknowns": [
+   "Moisture range and the precision of the customer's release reference method.",
+   "Granulate composition, particle-size distribution, bulk density and colour.",
+   "Fluorescence background and other spectral interferences in the granulate.",
+   "Installation point: contact or non-contact, temperature, pressure, cleaning and fouling.",
+   "Required response time and measurement frequency; at-line or in-line.",
+   "Which regulator and framework must accept the method, and what release testing requires."
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What moisture range must the measurement cover, and which reference method does your release testing use, with what repeatability?",
+    "why_it_matters": "The moisture range and the reference method's own precision decide whether the ±0.1 % target can be compared with release testing at all.",
+    "affects": [
+     "M1"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What is the granulate composition and particle-size distribution, and how is the material presented at the measurement point (flowing stream, bed, batch)?",
+    "why_it_matters": "Composition, particle size and presentation determine which reflection geometry is workable and how much physical variation the model must tolerate.",
+    "affects": [
+     "technique"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "Where would the probe be installed, in contact with the granulate or non-contact through a window, and what are the temperature, pressure and cleaning conditions there?",
+    "why_it_matters": "The installation point decides between contact and non-contact reflection and sets requirements on the probe and window that are not yet known.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Does the granulate contain components that fluoresce or absorb strongly, which could disturb a reflection measurement?",
+    "why_it_matters": "A strong fluorescence or absorption background would weaken a single-method NIR result and decide whether a second method needs testing.",
+    "affects": [
+     "M3"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "Which regulator and framework must accept the method, and what does release testing require in terms of validation and documentation?",
+    "why_it_matters": "The acceptance framework decides what evidence the trial must produce, and no supplied source covers it.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "For a scattering powder, diffuse reflection is the reflection geometry the source table lists for scattering media and powder, and NIR carries the -OH overtone bands of water. NIR bands are broad and overlap, so a chemometric moisture model against reference values is required.",
+    "conditions": "Applies as the first test for any granulate that can be presented to a reflection probe.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "diffuse_reflection_remote",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "The same method in a non-contact geometry, which the source table lists for powder measured at a distance and which the source describes as suited to remote fiber-probe measurement. It is worth comparing only because the installation point is not yet known.",
+    "conditions": "Applies only if the process point cannot take a contact reflection probe or if window fouling makes contact impractical.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "surface at a distance solid, powder 2-5 mm",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "conditional",
+    "combined_with": [
+     "Raman"
+    ],
+    "rationale": "Raman adds the molecular backbone and non-polar groups that NIR reflection sees poorly, and a fused NIR + Raman model has been reported to predict blend potency and coating thickness better than single-method models. Here the gain is a hypothesis and is tested only after the single-method NIR result is known.",
+    "conditions": "Applies only if the single-method NIR test cannot reach the customer's target on held-out batches.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 15,
+      "quote": "The combination of these techniques is particularly effective because it captures complementary chemical information: NIR detects hydrogen bonds and asymmetric polar groups, while Raman provides information on the molecular backbone and symmetrical non-polar groups.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 15,
+      "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   },
+   {
+    "id": "M4",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "not_recommended",
+    "combined_with": [],
+    "rationale": "ATR requires tight contact and suits liquids, pastes and soft solids, which a granulate bed cannot provide; an ATR probe also sees only a few micrometres of surface.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S04",
+      "page": 4,
+      "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "NIR reflection probe; contact diffuse reflection in the granulate flow or bed, non-contact reflection through a window as the alternative if the process point allows no contact.",
+   "location": "At the point where the granulate is presented for release or process measurement; to be fixed after the installation question is answered.",
+   "fiber_link": "The usable fiber link and probe are part of the configuration and are not stated for this case; the sources give 100-300 m only for low-OH silica cables in general, not for this granulate.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, fiber and probe actually selected, and the informative water regions must be confirmed on the customer's granulate.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "The ±0.1 % target is not demonstrated for this granulate; accuracy depends on the configuration and the sample, so NIR alone may not reach it.",
+    "rule_ids": [],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Physical variation of the granulate (particle size, bulk density, surface state) changes the reflection signal and can be read as a moisture change, biasing the calibration.",
+    "rule_ids": [
+     "R-GEO-6"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "If the release reference method is less precise than ±0.1 % or differs from the method used in the trial, the model cannot be compared with release testing.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "The installation point is unknown; if the process cannot present the granulate to a reflection probe, the assumed geometry may not apply.",
+    "rule_ids": [
+     "R-GEN-5"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative granulate samples across the expected moisture range and the expected physical variation (particle size, bulk density, several batches or process states).",
+     "purpose": "Collect representative granulate samples covering the expected moisture range and the expected physical variation (particle size, bulk density, temperature, several batches or process states).",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Measure the samples with the NIR reflection probe at the intended measurement spot, record the sample temperature, and run the contact and, if relevant, the non-contact geometry on the same samples.",
+     "purpose": "Measure the samples with the NIR reflection probe at the intended measurement spot, record the sample temperature, and run the contact and, if relevant, the non-contact geometry on the same samples.",
+     "citations": []
+    },
+    {
+     "step": "Have the same samples measured by the customer's release reference method, independently of the spectra, and record that method's own repeatability.",
+     "purpose": "Have the same samples measured by the customer's release reference method, independently of the spectra, and record that method's own repeatability.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Build and validate a chemometric moisture model with held-out batches or runs, and report the prediction error against the customer's ±0.1 % criterion.",
+     "purpose": "Build and validate a chemometric moisture model with held-out batches or runs, and report the prediction error against the customer's ±0.1 % criterion.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 10,
+       "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Only if NIR alone misses the target on held-out batches: add the Raman measurement and test a fused NIR + Raman model against the best single-method model, then drop the extra instrument if it does not win.",
+     "purpose": "Only if NIR alone misses the target on held-out batches: add the Raman measurement and test a fused NIR + Raman model against the best single-method model, then drop the extra instrument if it does not win.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 5,
+       "quote": "compare with the best single method.",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S01",
+       "page": 15,
+       "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+       "claim_kind": "method_gain"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "The customer's release reference method for moisture, applied to the same samples as the spectra.",
+   "decision_basis": "Go / no-go against the customer's own numerical criterion (±0.1 % moisture) on held-out batches or runs; the customer sets that number."
+  },
+  "assumptions": [
+   "Granulate can be presented to a reflection probe, in contact or through a window.",
+   "Moisture is present as water whose O-H overtone bands are accessible in the NIR region.",
+   "A reference method exists that gives moisture values on the same samples.",
+   "The process temperature and pressure at the measurement point are within what a standard fiber probe can handle; this is not yet known."
+  ],
+  "not_in_sources": [
+   "A written confirmation of ±0.1 % accuracy for this granulate before measurement.",
+   "A regulatory acceptance commitment for release testing.",
+   "A price for the complete system."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Moisture content of the granulate",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is the target of the enquiry and the quantity the NIR model must predict.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Granulate temperature at the measurement point",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "It should be available because a temperature change shifts the water band and can be mistaken for a moisture change; the process temperature has not been stated.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Particle-size distribution and bulk density of the granulate",
+    "kind": "qualitative",
+    "necessity": "optional",
+    "why": "It should be available because reflection is sensitive to surface character and particle size, so this physical variation can be read as moisture and may need to be part of the model.",
+    "measured_by": {
+     "type": "not_measurable_inline",
+     "method": null,
+     "sensor": null,
+     "alternative": "off-line particle-size analysis (sieve or laser diffraction) or the material specification"
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "P4",
+    "name": "Reference moisture value of the same samples",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The calibration and any comparison with release testing need independent reference values measured on the same samples.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "the customer's release reference method for moisture (to be confirmed)",
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P4"
+    ],
+    "ease_of_use": "simple probe handling, chemometric model needed",
+    "maintenance": "probe window cleaning, periodic recalibration",
+    "performance_fit": "least effort that answers the moisture question",
+    "cost_drivers": "one spectrometer, one reflection probe, sample set and reference analyses",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1",
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "moderate; two probe geometries to compare",
+    "maintenance": "probe or window cleaning, scheduled recalibration",
+    "performance_fit": "covers both possible installation points for the target",
+    "cost_drivers": "one spectrometer, two probe geometries, calibration and validation effort",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "surface at a distance solid, powder 2-5 mm",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O3",
+    "tier": "extended",
+    "recommendation_ids": [
+     "M1",
+     "M2",
+     "M3"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "two instruments and a fusion workflow to run",
+    "maintenance": "two calibrations and two sets of diagnostics",
+    "performance_fit": "strongest option, held back until single methods fall short",
+    "cost_drivers": "two spectrometers, two probes, synchronisation and fused-model work",
+    "fusion_note": "Both probes must look at the same granulate volume, and the data must be synchronised to a common time step before fusion; a combined probe helps to keep the measurement spot small. The starting point is low-level concatenation of the two spectra with block scaling so that neither method dominates, and each instrument keeps its own calibration and diagnostics. The fused model must beat the best single-method NIR model on independent batches or runs, otherwise the extra instrument is dropped.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "The use of a combined probe facilitates measurements and allows for the analysis of a smaller sample volume.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "Variables obtained from different spectral methods are not equivalent.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "A moisture model must be built and validated against the customer's reference values: NIR bands are broad and overlapping, so chemometrics is required for quantitative analysis, and the calibration is specific to the granulate matrix and must be re-validated if the material or process changes.",
+  "realtime_tracking_note": null,
+  "future_direction": "Once the trial shows which NIR regions carry the moisture information, a compact spectral fiber sensor for continuous in-line control could be considered as a later extension (S02 p.20, Path C).",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "supplied",
+   "what_would_change_it": "If the trial shows NIR cannot reach the customer's target on held-out batches, the choice would move to the NIR + Raman option (O3); if the process point cannot take a contact probe, only the non-contact reflection geometry remains. A reference method whose precision is coarser than the target would also change the scope.",
+   "next_step": "Agree the moisture range, the release reference method and the installation point, then run the feasibility experiment on representative granulate samples before any system configuration or price is discussed."
+  },
+  "brief_answer": "Moisture in a granulate is a sensible first target for NIR diffuse reflection, and that is the method to test first. The ±0.1 % figure cannot be confirmed before a trial on your samples against your release reference method, and no supplied source supports a regulatory acceptance commitment. Please tell us your moisture range, your reference method, and where the probe would be installed."
+ }
+}
