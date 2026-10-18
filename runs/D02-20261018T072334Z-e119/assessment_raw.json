@@ -1,0 +1,424 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "NIR diffuse reflection is a defensible first method for opaque concentrated dairy, but the customer's accuracy, response-time, temperature/texture range and installation requirements are not yet known. The assessment is therefore provisional and the comparison experiment should use representative product with laboratory reference.",
+ "premise_checks": [
+  {
+   "premise": "In-line spectroscopy can provide earlier information about composition changes than the current sampling approach.",
+   "verdict": "supported",
+   "explanation": "The source describes online fiber-probe analysis directly in the process flow, without sampling, eliminating delays.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "An initial spectroscopy concept and a practical comparison experiment can be defined before all method-selection facts are known.",
+   "verdict": "supported",
+   "explanation": "The source supports testing optical approaches on samples of incompletely known composition to select the most suitable method or combination.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Laboratory checks can be retained alongside an in-line spectroscopy measurement.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses retaining existing laboratory checks alongside an in-line measurement.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Required accuracy, precision and response time for fat and protein.",
+  "Fat and protein concentration ranges and other matrix components or interferences.",
+  "Temperature and texture/viscosity variation at the intended measurement point.",
+  "Flow rate, pressure and installation location.",
+  "Cleaning, fouling and sanitation requirements.",
+  "Reference laboratory methods and sampling frequency."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What numerical accuracy and precision, and what response time, must the in-line measurement meet for fat and protein?",
+   "why_it_matters": "These thresholds decide whether NIR alone is sufficient and set the go/no-go basis.",
+   "affects": [
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What are the expected fat and protein concentration ranges, and what other components or interferences are present?",
+   "why_it_matters": "They determine whether NIR bands are usable and whether a second method is needed.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the temperature range, texture/viscosity range, flow rate and pressure at the intended measurement point?",
+   "why_it_matters": "They affect probe geometry, pathlength and whether reflection or another technique is practical.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Where will the probe be installed, and what cleaning, fouling and sanitation constraints apply?",
+   "why_it_matters": "They determine the probe interface and maintenance effort.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Which laboratory methods and sampling frequency will be retained for fat and protein reference?",
+   "why_it_matters": "They define the reference data available for calibration and validation.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the dairy example for opaque or concentrated products and has been used with PLS to quantify fat and protein. It is also described as the most common online fiber-probe NIR method, so it is the first single method to test.",
+   "conditions": "Test on representative product across the stated temperature and texture range, with laboratory fat and protein reference values.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman gives a molecular fingerprint and is less affected by water than infrared methods, so it is a useful single-method comparison for composition changes. Its weak signal and possible fluorescence background must be checked on the real product.",
+   "conditions": "Only include if the real product's fluorescence background leaves usable Raman bands and a Raman calibration is acceptable.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Start with a flush-mounted NIR diffuse-reflection fiber probe; a Raman probe is the later single-method comparison.",
+  "location": "In the product line at a point representative of the flowing opaque concentrate.",
+  "fiber_link": "NIR uses silica Vis-NIR fibers; Raman also uses silica fibers, with metal-coated fibers where polymer-jacket fluorescence matters.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+    "claim_kind": "application_precedent"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift is stated in cm-1 and the laser excitation wavelength is stated separately; the usable range depends on the selected laser, spectrometer, fiber and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Texture and temperature variation may change NIR scattering more than fat or protein absorption, so a single NIR model could confuse physical variation with composition.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The opaque, concentrated product may foul the probe window or change flow at the measurement point, and no cleaning or fouling requirement is known yet.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Raman may be swamped by fluorescence from the product, so the Raman comparison could be uninformative.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The customer's required accuracy, precision and response time are unknown, so the go/no-go basis for the comparison cannot yet be set.",
+   "rule_ids": [
+    "R-PRO-2"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "1",
+    "purpose": "Collect representative samples or process states across the expected fat/protein, temperature and texture variation, and retain laboratory fat/protein reference values.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "2",
+    "purpose": "Measure each sample first with NIR diffuse reflection using a flush-mounted fiber probe, recording product temperature at each measurement.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the probe is flush-mounted into a pipe or vat to interact directly with the flowing medium.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "step": "3",
+    "purpose": "Measure the same samples with the Raman probe as a single-method comparison and check whether fluorescence leaves usable Raman bands.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "4",
+    "purpose": "Build chemometric calibrations for fat and protein from the NIR data and check them on held-out runs or batches against the laboratory reference.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "5",
+    "purpose": "Set the customer-supplied numerical go/no-go thresholds for fat and protein accuracy, precision and response time; compare NIR alone and Raman alone before any fusion.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory fat and protein reference values on the same samples or runs, at a sampling frequency agreed with the customer.",
+  "decision_basis": "Customer-defined numerical thresholds for fat and protein accuracy, precision and response time; no numerical thresholds are assumed here."
+ },
+ "assumptions": [
+  "The product can be presented to a flush-mounted probe at a representative point in the line.",
+  "The customer's laboratory fat/protein method is suitable as an independent reference.",
+  "The product's fluorescence background is low enough for Raman to be interpretable, which is unknown."
+ ],
+ "not_in_sources": [
+  "No supplied source gives accuracy, response time or an installation and fouling assessment for this specific opaque concentrated milk product.",
+  "No supplied source states that existing laboratory checks can be retained alongside an in-line measurement."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Fat content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Fat is one of the two composition targets and the dairy NIR example uses PLS to quantify it.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Protein content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Protein is the other composition target and is quantified with fat in the same dairy NIR example.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "before using Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Product temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Product temperature varies and must be recorded to separate thermal effects from composition changes.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Texture or viscosity",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Texture variation can change NIR scattering, so a reference texture or viscosity value helps interpret spectral variation; it is not a control target.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "laboratory rheology or texture measurement"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Single probe, standard dairy NIR interface",
+   "maintenance": "Probe cleaning and calibration maintenance",
+   "performance_fit": "Direct fat/protein measurement in opaque dairy",
+   "cost_drivers": "NIR spectrometer, diffuse-reflection probe, reference analyses and calibration effort",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Two probes and synchronised acquisition",
+   "maintenance": "Two instruments, two calibrations, more drift checks",
+   "performance_fit": "NIR dairy workhorse plus Raman comparison",
+   "cost_drivers": "NIR and Raman instruments, probes, synchronization and two calibrations",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "NIR fat and protein quantification needs a chemometric calibration, for example PLS, built on the customer's laboratory reference data and checked on held-out runs; broad overlapping NIR bands make this necessary.",
+ "realtime_tracking_note": "In-line NIR can give near real-time information, but the required update rate and synchronization with temperature and laboratory reference are not yet known.",
+ "future_direction": "If single-method tests show that texture or temperature variation masks composition, test a fused NIR+Raman model with a combined probe after checking fluorescence background and time alignment.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If NIR alone meets the customer's numerical accuracy and response-time targets across the temperature/texture range, the Raman comparison can be dropped; if Raman is swamped by fluorescence or neither single method separates texture from composition, the comparison or fusion plan changes.",
+  "next_step": "Run the representative-sample comparison with NIR diffuse reflection first, with laboratory fat/protein reference and recorded temperature and texture."
+ },
+ "brief_answer": "Test NIR diffuse reflection first on representative opaque concentrated product, with laboratory fat and protein reference and recorded temperature/texture. A Raman single-probe comparison is worth including to see whether it adds molecular information or is swamped by fluorescence. The method choice remains provisional until accuracy, response time, installation and cleaning requirements are known."
+}
