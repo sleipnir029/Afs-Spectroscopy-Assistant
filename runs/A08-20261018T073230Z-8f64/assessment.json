@@ -1,0 +1,313 @@
+{
+ "decision_status": "premise_not_supported",
+ "status_reason": "The customer requests written confirmation of plus or minus 0.1 % measurement accuracy and regulatory approval for release testing, which is contradicted by technical guidance stating that accuracy depends on configuration and sample matrix, while regulatory compliance is not covered.",
+ "premise_checks": [
+  {
+   "premise": "Expects confirmation that the NIR system will achieve an accuracy of plus or minus 0.1 % moisture.",
+   "verdict": "contradicted",
+   "explanation": "Sources state that accuracy depends entirely on specific configuration, calibration matrix, and sample properties, so numerical accuracy cannot be confirmed prior to testing.",
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Asks for assurance of regulatory approval for release testing.",
+   "verdict": "not_covered",
+   "explanation": "The supplied technical sources do not cover regulatory release testing or specific regulatory agency approvals for granulate products.",
+   "citations": []
+  }
+ ],
+ "requirements_stated": [
+  "Written confirmation of NIR moisture measurement accuracy to plus or minus 0.1 %",
+  "Assurance of regulatory approval for release testing",
+  "System pricing"
+ ],
+ "key_unknowns": [
+  "Exact granulate chemical composition and particle size distribution",
+  "Required moisture measurement range",
+  "Reference laboratory method used for calibration",
+  "Process temperature and environmental conditions at the installation point"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the baseline reference method and associated error used for your current moisture determination?",
+   "why_it_matters": "Spectroscopic chemometric models require reliable reference laboratory measurements for calibration and validation.",
+   "affects": [
+    "method",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the expected concentration range of moisture in the granulate?",
+   "why_it_matters": "Defines the required dynamic range and verifies whether NIR sensitivity is adequate.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the physical dimensions, flow rate, and temperature of the granulate process stream where the probe would be installed?",
+   "why_it_matters": "Determines mechanical probe compatibility, optical interface design, and temperature compensation needs.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is well suited for analyzing scattering powder and granulate materials and directly targets moisture absorption bands.",
+   "conditions": "Requires matrix-specific chemometric calibration based on representative sample granulates.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 6,
+     "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy provides complementary molecular backbone information and exhibits low water absorbance in aqueous or hydrated matrices.",
+   "conditions": "Applicable if secondary chemical components or complex structural interferences require differentiation alongside moisture.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR diffuse reflection fiber probe flush-mounted or positioned with a spacer in contact with the granulate flow.",
+  "location": "Process line or feed hopper containing the granulate.",
+  "fiber_link": "Vis-NIR silica fiber cable connecting the probe to the spectrometer located safely away from process dust and vibration.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 17,
+    "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "The use of fiber optics is critical here, as it allows the sensitive spectrometers to be located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal range 780-2500 nm; usable range depends on the specific instrument, fiber optics, and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Granulate physical variations such as particle size changes or surface scattering can mimic chemical composition changes if scatter correction is not applied.",
+   "rule_ids": [
+    "R-GEO-6"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Without matrix-specific calibration transfer and validation samples, the chemometric model may fail to achieve the required precision.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative granulate samples covering the expected variation in moisture and physical properties.",
+    "purpose": "Ensure the calibration set reflects real production heterogeneity.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference laboratory measurements for all sample lots.",
+    "purpose": "Provide ground truth data for chemometric model training and validation.",
+    "citations": []
+   },
+   {
+    "step": "Perform benchtop NIR diffuse reflectance spectral acquisition using representative fiber probes.",
+    "purpose": "Determine spectral reproducibility and feature correlation with moisture.",
+    "citations": []
+   },
+   {
+    "step": "Validate the chemometric calibration model using held-out test runs or independent validation batches.",
+    "purpose": "Quantify actual predictive accuracy and robustness.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent standard laboratory reference method for moisture content.",
+  "decision_basis": "Go/no-go based on customer-defined acceptable prediction error thresholds established during laboratory trials."
+ },
+ "assumptions": [
+  "The granulate is sufficiently scattering to permit diffuse reflectance measurement.",
+  "Reference laboratory data are available to build and validate chemometric models."
+ ],
+ "not_in_sources": [
+  "System pricing and commercial terms",
+  "Specific regulatory approval processes for customer release testing"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Moisture content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Direct target variable for release testing.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Granulate particle size and scattering properties",
+   "kind": "qualitative",
+   "necessity": "optional",
+   "why": "Affects diffuse reflectance scattering background and requires scatter correction.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "Particle size analyzer",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Standard online fiber probe",
+   "maintenance": "Periodic optical window cleaning",
+   "performance_fit": "Directly targets moisture using NIR diffuse reflection",
+   "cost_drivers": "NIR spectrometer and diffuse reflection fiber probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Multispectral laboratory testing setup",
+   "maintenance": "Independent calibration per instrument channel",
+   "performance_fit": "Allows comparative evaluation of NIR and Raman to handle matrix interferences",
+   "cost_drivers": "Multispectral laboratory setup with multiple optical modules",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "The ability to test various optical spectroscopy approaches is crucial for solving complex analytical problems",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Quantitative moisture prediction requires PLS regression models built on reference laboratory data and preprocessed with scatter correction algorithms such as SNV or MSC.",
+ "realtime_tracking_note": "High-speed spectral acquisition enables near-real-time tracking of moisture variations in flowing granulate processes.",
+ "future_direction": "Transition from laboratory multispectral evaluation to customized industrial optical sensor deployment.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "Confirmation of granulate optical properties and reference accuracy requirements could refine the recommendation to a single NIR sensor configuration.",
+  "next_step": "Conduct feasibility trials using representative granulate samples across the expected moisture range."
+ },
+ "brief_answer": "Specific measurement accuracy figures and regulatory approval cannot be confirmed prior to testing. Actual accuracy depends on the sample matrix and optical configuration. We recommend feasibility trials using NIR diffuse reflection alongside laboratory reference measurements to determine achievable performance on your granulate."
+}
