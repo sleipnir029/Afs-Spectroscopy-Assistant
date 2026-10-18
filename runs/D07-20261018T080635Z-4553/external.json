@@ -1,0 +1,199 @@
+{
+ "mode": "cache",
+ "gaps": [
+  {
+   "id": "G1",
+   "kind": "auxiliary_sensor",
+   "text": "In-line measurement of Melt temperature at the measurement point with temperature sensor",
+   "location": "parameters[2]",
+   "option_id": "O2"
+  },
+  {
+   "id": "G2",
+   "kind": "multi_method",
+   "text": "Combining several spectroscopy methods (data fusion) (Low-level fusion: MIR-ATR and Raman spectra from the same probe head merged into one augmented matrix, as in the published pharma example. Both channels must sample the same melt spot and be synchronised to a common time step, with block scaling so neither method dominates. The fused model must beat the best single method on held-out runs, otherwise the extra channel is dropped.)",
+   "location": "solution_options[2]",
+   "option_id": "O3"
+  },
+  {
+   "id": "G3",
+   "kind": "not_in_sources",
+   "text": "Probe temperature and pressure ratings for hot-melt extrusion service",
+   "location": "not_in_sources[0]",
+   "option_id": null
+  },
+  {
+   "id": "G4",
+   "kind": "not_in_sources",
+   "text": "Achievable MIR fiber link length for this installation",
+   "location": "not_in_sources[1]",
+   "option_id": null
+  }
+ ],
+ "queries": [
+  {
+   "gap_id": "G2",
+   "query": "data fusion mid infrared and raman spectroscopy process monitoring"
+  },
+  {
+   "gap_id": "G2",
+   "query": "low level data fusion vibrational spectroscopy polymer melt"
+  }
+ ],
+ "dropped_queries": [],
+ "search_log": [
+  {
+   "api": "europepmc",
+   "query": "data fusion mid infrared and raman spectroscopy process monitoring",
+   "hits": 0,
+   "status": "cache miss; europepmc skipped for the rest of the run"
+  },
+  {
+   "api": "openalex",
+   "query": "data fusion mid infrared and raman spectroscopy process monitoring",
+   "hits": 0,
+   "status": "cache miss; openalex skipped for the rest of the run"
+  },
+  {
+   "api": "europepmc, openalex",
+   "query": "",
+   "hits": 0,
+   "status": "fallback to library only: cache miss (europepmc); cache miss (openalex)"
+  }
+ ],
+ "fallback": "library only: cache miss (europepmc); cache miss (openalex)",
+ "sources": [
+  {
+   "id": "E01",
+   "url": "https://europepmc.org/article/PMC/PMC12573149",
+   "doi": "10.1021/acsomega.5c05705",
+   "title": "Process Analytical Technology-Integrated FT-IR and Raman Spectroscopies for Efficient Reactive Liquid-Liquid Extraction Processing in Lithium Recycling.",
+   "authors": [
+    "Uhl A",
+    "Humann AF",
+    "Schmidt A",
+    "Strube J"
+   ],
+   "year": 2025,
+   "venue": "ACS omega",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:06+00:00",
+   "retrieval_query": "data fusion mid infrared and raman spectroscopy process monitoring",
+   "api": "library",
+   "http_status": null,
+   "sha256": "179d0f1ec8684c80f5b227572ede89e7dc08ce2dc0ddd8901819f582838b540e",
+   "library_id": "in-line-ftir-raman-maintenance",
+   "paragraph_count": 3
+  },
+  {
+   "id": "E02",
+   "url": "https://europepmc.org/article/PMC/PMC9369811",
+   "doi": "10.3390/molecules27154846",
+   "title": "Challenges and Opportunities of Implementing Data Fusion in Process Analytical Technology-A Review.",
+   "authors": [
+    "Casian T",
+    "Nagy B",
+    "Kovács B",
+    "Galata DL",
+    "Hirsch E",
+    "Farkas A"
+   ],
+   "year": 2022,
+   "venue": "Molecules (Basel, Switzerland)",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:03+00:00",
+   "retrieval_query": "data fusion mid infrared and raman spectroscopy process monitoring",
+   "api": "library",
+   "http_status": null,
+   "sha256": "9f1de821c160e56272c801796c416efba068e2f29ff362b71a354ed6f0af1215",
+   "library_id": "pat-data-fusion-review",
+   "paragraph_count": 4
+  },
+  {
+   "id": "E03",
+   "url": "https://europepmc.org/article/PMC/PMC7072065",
+   "doi": "10.1007/s00216-020-02407-z",
+   "title": "A critical review of recent trends, and a future perspective of optical spectroscopy as PAT in biopharmaceutical downstream processing.",
+   "authors": [
+    "Rolinger L",
+    "Rüdt M",
+    "Hubbuch J"
+   ],
+   "year": 2020,
+   "venue": "Analytical and bioanalytical chemistry",
+   "licence": "cc by",
+   "access": "full_text",
+   "retrieved_at": "2026-10-17T18:18:05+00:00",
+   "retrieval_query": "data fusion mid infrared and raman spectroscopy process monitoring",
+   "api": "library",
+   "http_status": null,
+   "sha256": "c12bb98ce60add4c525ef48a5ffe17aa5452fa21fd9135162d9aa1069fe6cf77",
+   "library_id": "optical-spectroscopy-pat-trends",
+   "paragraph_count": 3
+  }
+ ],
+ "items": [
+  {
+   "gap_id": "G2",
+   "finding": "Low-level data fusion is described as the simplest method to achieve a combination of inputs by rearranging the data into a new data matrix where variables from different sources are placed one after the other.",
+   "how_it_applies": "This supports testing whether combining multiple channels in an augmented matrix is feasible for the extrusion process, provided the individual datasets show sufficient complementarity.",
+   "limits_and_transfer_risks": "This finding comes from a general review rather than a polymer extrusion process, so laboratory or literature fusion workflows may not transfer directly to an in-line hot-melt extrusion setup.",
+   "option_id": "O3",
+   "citation": {
+    "source_id": "E02",
+    "para": 31,
+    "cited_para": 31,
+    "quote": "Low-level data fusion (LLDF) is considered the simplest method to achieve a combination of inputs. In this case, the data is rearranged into a new data matrix, where the variables coming from different sources are placed one after the other.",
+    "label": "E02 ¶31",
+    "url": "https://europepmc.org/article/PMC/PMC9369811",
+    "doi": "10.3390/molecules27154846"
+   },
+   "quote_status": "exact",
+   "paragraph_sha256": "fc0fbd874a791b88374a9bd41456699cfceded3a9c0d4a23259281ad30b5076b",
+   "notes": []
+  }
+ ],
+ "dropped": [],
+ "no_usable_source_claimed": [
+  "G1",
+  "G3",
+  "G4"
+ ],
+ "gap_results": [
+  {
+   "gap_id": "G1",
+   "items": [],
+   "result": "no usable external source found"
+  },
+  {
+   "gap_id": "G2",
+   "items": [
+    "E02 ¶31"
+   ],
+   "result": "verified external evidence"
+  },
+  {
+   "gap_id": "G3",
+   "items": [],
+   "result": "no usable external source found"
+  },
+  {
+   "gap_id": "G4",
+   "items": [],
+   "result": "no usable external source found"
+  }
+ ],
+ "proposal_support": [],
+ "error": null,
+ "library_sha256": "c3156319e2bfb1b63855f942f99bf3665b73467de35034448da0911c2eb8f4cf",
+ "library_entries": 9,
+ "prompt_sha256": {
+  "external_queries": "27e6a43756d7ef0643f68aa8b8fd7207b827e92a84cdf7917252069cb81d9ca5",
+  "external_evidence": "286f92a9c8e08bc53d613c534792fed8189232f5bb5582355a95cedbd2912fd1"
+ },
+ "calls": 2,
+ "cost_usd": 0.000681,
+ "seconds": 2.055
+}
