@@ -12,6 +12,7 @@ import json
 import re
 import threading
 import time
+from pathlib import Path
 from types import SimpleNamespace
 
 import httpx
@@ -355,6 +356,27 @@ def test_provenance_record_is_serialized(tmp_path, monkeypatch):
     paths_ = {e.path.decode() for e in iter_tree_contents(repo.object_store, head.tree)}
     assert paths_ == {f"runs/r{k}/a.txt" for k in range(4)}        # no commit lost
 
+
+
+def _record_in_process(repo_path: str, k: int) -> None:
+    provenance.record(f"p{k}", {"a.txt": f"{k}"}, f"run p{k}", repo_path=Path(repo_path))
+
+
+def test_provenance_record_is_serialized_across_processes(tmp_path):
+    import multiprocessing
+
+    Repo.init(str(tmp_path))
+    ctx = multiprocessing.get_context("spawn")
+    procs = [ctx.Process(target=_record_in_process, args=(str(tmp_path), k)) for k in range(4)]
+    for p in procs:
+        p.start()
+    for p in procs:
+        p.join(60)
+    assert [p.exitcode for p in procs] == [0, 0, 0, 0]
+    repo = Repo(str(tmp_path))
+    head = repo[repo.refs[b"refs/heads/provenance"]]
+    paths_ = {e.path.decode() for e in iter_tree_contents(repo.object_store, head.tree)}
+    assert paths_ == {f"runs/p{k}/a.txt" for k in range(4)}        # parallel set runs lose no commit
 
 # ----------------------------------------------------------------- 3. LLM timeouts
 def _response(content='{"a": 1}'):

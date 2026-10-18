@@ -8,6 +8,7 @@ never touched. A local copy is also written to runs/<run_id>/ (gitignored).
 
 from __future__ import annotations
 
+import fcntl
 import json
 import threading
 import time
@@ -22,7 +23,8 @@ from afs_assistant import paths
 
 PROVENANCE_REF = b"refs/heads/provenance"
 AUTHOR = b"afs-assistant pipeline <pipeline@afs-assistant.local>"
-# One provenance commit at a time: parallel runs would otherwise read the same parent and lose commits.
+# One provenance commit at a time: parallel runs would otherwise read the same parent and lose commits. The
+# thread lock covers workers in one process; a flock on a file in the git dir covers parallel processes.
 _RECORD_LOCK = threading.Lock()
 
 
@@ -82,8 +84,13 @@ def code_dirty(repo_path=paths.ROOT) -> bool | None:
 
 def record(run_id: str, files: dict[str, str | bytes], message: str, repo_path=paths.ROOT) -> str:
     """Write files under runs/<run_id>/ locally and commit them on the provenance ref (thread-safe)."""
-    with _RECORD_LOCK:
-        return _record(run_id, files, message, repo_path)
+    lock_path = f"{Repo(str(repo_path)).controldir()}/afs-provenance.lock"
+    with _RECORD_LOCK, open(lock_path, "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            return _record(run_id, files, message, repo_path)
+        finally:
+            fcntl.flock(lock, fcntl.LOCK_UN)
 
 
 def _record(run_id: str, files: dict[str, str | bytes], message: str, repo_path) -> str:

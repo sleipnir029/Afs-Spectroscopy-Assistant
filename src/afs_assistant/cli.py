@@ -41,12 +41,13 @@ def _scenarios_build(_: argparse.Namespace) -> int:
 def _assess_one(enquiry: str, scenario_id: str | None, client, out_dir=None, title: str = "",
                 external: str = "off") -> dict:
     import json
+    import uuid
     from datetime import UTC, datetime
 
     from afs_assistant import pipeline, provenance, render
 
     # Unique per run so provenance tags are never overwritten; output files keep the scenario id.
-    run_id = f"{scenario_id or 'adhoc'}-{datetime.now(UTC):%Y%m%dT%H%M%SZ}"
+    run_id = f"{scenario_id or 'adhoc'}-{datetime.now(UTC):%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:4]}"
     result = pipeline.run(enquiry, client, run_id=run_id, external=external)
     result.manifest["code_sha"] = provenance.code_sha()
     result.manifest["code_dirty"] = provenance.code_dirty()
