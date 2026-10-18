@@ -35,6 +35,7 @@ from afs_assistant.render import (
     measured_by_text,
     request_label,
     request_line,
+    shown_spectral_ranges,
     source_line,
     stated_from_intake,
 )
@@ -380,7 +381,7 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
     view["measurement"] = {"probe": mc.probe_and_geometry, "location": mc.location, "fiber_link": mc.fiber_link,
                            "cites": reg.supplied(mc.citations), "flag": flags.get("measurement_concept")}
     view["spectral"] = [{"method": s.method, "statement": s.statement, "cites": reg.supplied(s.citations),
-                         "flag": flags.get(f"spectral_ranges[{i}]")} for i, s in enumerate(a.spectral_ranges)]
+                         "flag": flags.get(f"spectral_ranges[{i}]")} for i, s in shown_spectral_ranges(a)]
     view["assumptions"] = list(a.assumptions)
     view["not_covered"] = list(a.not_in_sources)
     view["notes"] = [{"label": label, "text": getattr(a, n)} for n, label in NOTE_LABEL.items() if getattr(a, n)]
