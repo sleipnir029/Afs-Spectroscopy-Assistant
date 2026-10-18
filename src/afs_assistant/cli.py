@@ -84,6 +84,7 @@ def _run_set(args: argparse.Namespace) -> int:
     the running ones finish, then it is raised. Ctrl-C cancels the queued cases and sets the tracker's
     cancel event, so running cases stop at their next model call."""
     from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+    from pathlib import Path
 
     from openai import APIError
 
@@ -97,6 +98,7 @@ def _run_set(args: argparse.Namespace) -> int:
         print("--workers must be at least 1.")
         return 2
     client = OpenRouterClient()
+    out_dir = Path(args.outputs) if args.outputs else paths.OUTPUTS / args.set
     items = scenarios.load(args.set)
     if args.only:
         items = [s for s in items if s["id"] in args.only.split(",")]
@@ -110,8 +112,8 @@ def _run_set(args: argparse.Namespace) -> int:
         while queue or running:
             while queue and stop is None and len(running) < args.workers:
                 s = queue.pop(0)
-                running[pool.submit(_assess_one, s["enquiry"], s["id"], client, paths.OUTPUTS / args.set,
-                                    s["title"], external=args.external)] = s["id"]
+                running[pool.submit(_assess_one, s["enquiry"], s["id"], client, out_dir, s["title"],
+                                    external=args.external)] = s["id"]
             if not running:
                 break
             done, _ = wait(running, return_when=FIRST_COMPLETED)
@@ -238,6 +240,7 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--i-know-this-is-the-final-run", dest="final_ok", action="store_true")
     r.add_argument("--external", choices=["live", "cache", "off"], default="live", help=EXTERNAL_HELP)
     r.add_argument("--workers", type=int, default=4, help="scenarios assessed in parallel (1 = one at a time)")
+    r.add_argument("--outputs", help="outputs directory for the .json/.md files (default outputs/<set>)")
     r.set_defaults(func=_run_set)
     ev = sub.add_parser("eval", help="deterministic checklist over saved runs (no model calls)")
     ev.add_argument("--set", choices=["dev", "adversarial"], help="one set (default: both)")

@@ -22,6 +22,9 @@ roles:
 # Provider routing per model: only strict-JSON capable, non-fp4 endpoints, cheapest first (checked 2026-10-17 10:14).
 provider_routing:
   deepseek/deepseek-v4.1-flash: {order: [deepinfra, atlas-cloud, coreweave], only: [deepinfra, atlas-cloud, coreweave], allow_fallbacks: true}
+# Optional per-model request params (D-054): `model_params: {<model>: {omit: [temperature]}}` leaves `temperature`
+# out of the request for a model that does not accept it. Env var AFS_MODELS_CONFIG selects another models config
+# (e.g. config/bakeoff/<arm>.yaml); each run's manifest records the path and sha256 of the one used.
 # Fallback prices (USD per 1M tokens) used only if OpenRouter does not return a cost.
 prices:
   deepseek/deepseek-v4.1-flash: {input: 0.15, output: 0.60}

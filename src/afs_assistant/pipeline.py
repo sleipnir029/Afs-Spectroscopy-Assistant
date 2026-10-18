@@ -25,7 +25,7 @@ from functools import cache, lru_cache
 
 from afs_assistant import activity, kb, paths, quotes
 from afs_assistant.external import step as external_step
-from afs_assistant.llm import RunCancelled
+from afs_assistant.llm import RunCancelled, config_provenance
 from afs_assistant.methods import named_methods
 from afs_assistant.options import method_label
 from afs_assistant.schema import Assessment, Intake
@@ -616,6 +616,7 @@ def _manifest(run_id: str, calls: list[dict], attempts: int, problems: list[str]
         "run_id": run_id,
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "models": sorted({c["model"] for c in calls}),
+        "models_config": config_provenance(),
         "prompt_sha256": {n: sha(prompt(n)) for n in ("intake", "assess", "repair")},
         "skills_sha256": {n: sha(skill(n)) for n in ASSESS_SKILLS},
         "knowledge_sha256": sha(knowledge_block()),
