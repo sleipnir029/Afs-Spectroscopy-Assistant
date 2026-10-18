@@ -1,0 +1,425 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "No central premise is contradicted; the petroleum-water MIR-ATR example is a precedent, not proof. The stream state, water range and reference method are open, so the shortlist is provisional.",
+ "premise_checks": [
+  {
+   "premise": "A fiber-based measurement closer to the process will make changes noticeable sooner.",
+   "verdict": "supported",
+   "explanation": "The source describes in-process fiber-probe analysis without sampling and states that it removes delays.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "It allows for in-process analysis, i.e., directly in the process flow or reactor without sampling, eliminating delays and the risk of sample contamination.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "The existing laboratory water determination is suitable as the reference for a first comparison experiment.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source describes the customer's laboratory method or its uncertainty; the guidance only states that a feasibility plan needs independent reference measurements.",
+   "citations": []
+  },
+  {
+   "premise": "A fiber-based measurement is an appropriate method to investigate for this petroleum stream.",
+   "verdict": "precedent_only",
+   "explanation": "A supplied example shows water content in petroleum measured with ATR probes, which is a reason to test, not proof for this stream.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Water determination in a petroleum stream.",
+  "Fiber-based measurement closer to the process so changes can be noticed sooner.",
+  "Analyzer located outside the process area.",
+  "Before equipment selection, clarify what to establish in a first comparison experiment."
+ ],
+ "key_unknowns": [
+  "Water concentration range, required accuracy, detection limit and response time.",
+  "Water phase and speciation: dissolved, emulsified or free water.",
+  "Stream physical state and optical regime at the measurement point.",
+  "Process temperature, pressure, installation distance and area classification.",
+  "Laboratory reference method, sampling procedure and uncertainty.",
+  "Fouling, cleaning and maintenance requirements."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What water concentration range, required accuracy, detection limit and response time must the measurement meet?",
+   "why_it_matters": "These figures decide whether a single method can meet the target and which method is worth testing first.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the water phase and the stream's physical state at the measurement point: clear liquid, opaque emulsion, free water or gas?",
+   "why_it_matters": "This decides whether an ATR contact probe, a transmission path or a diffuse-reflection geometry is appropriate.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Where will the probe sit, what is the distance and routing to an analyzer outside the process area, and what are the temperature, pressure and area-classification conditions?",
+   "why_it_matters": "These constraints affect the fiber family, probe design and installation feasibility.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Which laboratory method and sampling procedure give the reference water values, and what is their uncertainty?",
+   "why_it_matters": "The first comparison cannot decide anything if the reference values are not independent and comparable.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What are the stream composition, additives, fouling tendency, flow and pipe conditions at the proposed point?",
+   "why_it_matters": "These factors affect probe fouling, calibration stability and whether the primary MIR-ATR option remains representative.",
+   "affects": [
+    "M1"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "MIR-ATR has a supplied precedent for water content in petroleum and suits liquid or soft-solid contact measurements. It is the single method to test first for water changes.",
+   "conditions": "Use only if the stream is a liquid or paste that can wet the ATR crystal and if the water level is within the method's usable range, which is unknown.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR transmission/transflection is the most common online fiber method and can sample a defined path through clear liquids. It is a useful cross-check against MIR-ATR, but its fit depends on low scattering and a controlled pathlength.",
+   "conditions": "Test only if the stream is transparent or semi-transparent and a pathlength in the 1-10 mm range is practical.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm)",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "If single-method tests show that MIR-ATR misses free or emulsified water while NIR sees bulk water, the two methods may be complementary and should be compared with the best single method. Any gain is a hypothesis, not an established result.",
+   "conditions": "Only after single-method tests, and only if both methods can view the same stream location and their data can be synchronised.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Start with an ATR fiber probe in contact with the liquid or soft-solid stream; compare with a NIR transmission or transflection probe only if the stream is clear enough and a controlled pathlength is practical.",
+  "location": "Probe at the process point; analyzer outside the process area, with the fiber route and length still to be defined.",
+  "fiber_link": "Fiber family depends on the chosen method; MIR needs a fiber that transmits the mid-IR range, while NIR can use silica fibers. No link length is stated here.",
+  "citations": []
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal MIR range is 4000-400 cm-1; the usable range depends on the instrument, fiber and ATR probe selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; the usable range depends on the instrument, fiber and probe selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The stream may be opaque, emulsified or contain free water, so a surface ATR reading may not represent the bulk and NIR transmission may fail.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "Water concentration may be below the detection capability of the chosen method; the sources give no detection limit for this stream.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "The customer's laboratory water determination may not be independent or comparable enough to serve as a reference.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "The analyzer may be outside the process area but the required fiber length, routing, temperature and safety conditions are unknown and could rule out a configuration.",
+   "rule_ids": [],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative petroleum-stream samples or process states across the expected water range, water phases, temperatures and flow conditions; include duplicates and normal variation.",
+    "purpose": "To cover the chemical and physical variation the method must handle.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure each sample independently by the customer's laboratory water method and record its uncertainty and sampling procedure.",
+    "purpose": "To provide an independent reference for comparison.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Run MIR-ATR (M1) and NIR transmission/transflection (M2) as separate single-method tests on the same samples, recording probe, pathlength and measurement conditions.",
+    "purpose": "To compare each method alone before any combination.",
+    "citations": []
+   },
+   {
+    "step": "Only if a single method cannot cover the water range or phases, run the combined MIR-ATR + NIR test with synchronised data and per-method calibration.",
+    "purpose": "To test the combination as a later hypothesis against the best single method.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "the data from each method must be obtained simultaneously.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Check on held-out runs or batches and set the go/no-go with the customer's numerical accuracy, repeatability and response-time criteria; compare each method and any fusion against the best single method.",
+    "purpose": "To decide with the customer's criteria whether a method is worth taking forward.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Customer's laboratory water determination, with its uncertainty and sampling procedure recorded.",
+  "decision_basis": "Go/no-go uses the customer's numerical accuracy, repeatability and response-time criteria and agreement with the laboratory reference on held-out runs or batches."
+ },
+ "assumptions": [
+  "The stream is a liquid or paste that can contact an ATR crystal.",
+  "The laboratory method can provide independent reference values for the first comparison.",
+  "A single method may be enough; the combination is only a later hypothesis."
+ ],
+ "not_in_sources": [
+  "Water concentration range, detection limit, accuracy and response time for this petroleum stream.",
+  "The water phase and the stream's physical state: clear, opaque, emulsified or free water.",
+  "A usable MIR fiber length or routing from the process to an analyzer outside the process area.",
+  "Area classification and safety requirements for the installation.",
+  "The customer's laboratory water method and its uncertainty.",
+  "A demonstrated detection limit for water in petroleum by the cited ATR example."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Water concentration in the petroleum stream",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "This is the target the customer wants to follow sooner than the laboratory result.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": "MIR-ATR probe",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Water phase or speciation: dissolved, emulsified or free water",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It determines whether a surface ATR measurement or a bulk transmission measurement represents the stream.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "laboratory water-phase separation or the customer's existing water-determination method"
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Stream temperature at the measurement point",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It should be available to compare spectra and to keep the MIR-ATR and NIR calibrations valid.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "standard silica optics, simple flow cell",
+   "maintenance": "window cleaning and pathlength checks",
+   "performance_fit": "least effort if stream is clear",
+   "cost_drivers": "NIR spectrometer, silica fiber probe, flow cell, calibration",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "ATR contact probe, moderate handling",
+   "maintenance": "crystal cleaning and fouling checks",
+   "performance_fit": "best fit from petroleum-water precedent",
+   "cost_drivers": "MIR spectrometer, ATR probe, IR fiber, calibration",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "two probes need synchronisation",
+   "maintenance": "two calibrations and two cleanings",
+   "performance_fit": "only if single methods miss fractions",
+   "cost_drivers": "two spectrometers, two probes, synchronisation, fusion modelling",
+   "fusion_note": "Low-level fusion of synchronised MIR-ATR and NIR transmission/transflection spectra, with block scaling so neither method dominates. Both probes must view the same stream volume and time step; each method needs its own calibration. The fused model must beat the best single method on held-out runs, otherwise drop the extra method.",
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "MIR-ATR and NIR water calibrations are matrix-specific; build them on representative petroleum samples and re-check after stream composition changes.",
+ "realtime_tracking_note": "The aim is earlier notice of water changes; define whether the measurement must be continuous, time-resolved or a short cycle, because that sets the acquisition and synchronisation needs.",
+ "future_direction": "If single-method tests show different water fractions are missed, a combined MIR-ATR/NIR probe or a dedicated water sensor could be considered later.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the stream is opaque or emulsified, or if the water range is outside MIR-ATR capability, NIR or the combined option would move ahead; if the laboratory reference is unsuitable, the comparison cannot decide.",
+  "next_step": "Run the first comparison on representative samples against the laboratory water method, starting with MIR-ATR and NIR as separate single-method tests."
+ },
+ "brief_answer": "Start with a single-method MIR-ATR test, because a supplied example shows water content in petroleum measured with ATR probes; compare it with NIR transmission/transflection only if the stream is clear enough. The first experiment should compare both against your laboratory water method on representative samples. Still open are the water range and phase, stream state, required response time, and the fiber route from process to analyzer."
+}
