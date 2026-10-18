@@ -1,0 +1,188 @@
+{
+ "id": "e7889811f308",
+ "created_utc": "2026-10-18T16:22:09Z",
+ "turns": [
+  {
+   "kind": "assess",
+   "question": "We run a craft brewery and want to follow sugar and alcohol content in-line during fermentation, in a stainless steel tank at 12–18 °C. The beer is cloudy with yeast and has CO2 bubbles. The analyzer cabinet would be about 30 m from the tank. Which spectroscopic method and probe should we test first?",
+   "run_id": "ui-adhoc-20261018T162210Z-8a89",
+   "at": "2026-10-18T16:23:44Z"
+  },
+  {
+   "kind": "ask",
+   "question": "What does Raman add over NIR alone?",
+   "run_id": "ui-adhoc-20261018T162210Z-8a89",
+   "answer": {
+    "claims": [
+     {
+      "text": "Raman gives a molecular fingerprint of sugars and ethanol and is well suited to aqueous samples because it shows low absorbance for water compared to infrared methods, so it can detect specific metabolites alongside NIR.",
+      "basis": "supplied",
+      "basis_label": "AFS sources",
+      "claim_kind": "general",
+      "citations": [
+       {
+        "kind": "supplied",
+        "label": "S01 p.16",
+        "doc": "S01",
+        "page": 16,
+        "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate. This combination is practical because Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+        "quote_status": "exact",
+        "precedent": false
+       }
+      ],
+      "precedent": false,
+      "basis_lowered": false,
+      "dropped_citations": []
+     },
+     {
+      "text": "NIR and Raman carry complementary chemical information, so combining them can improve prediction accuracy and robustness over a single method, as published for blend potency in a tablet press feed frame.",
+      "basis": "supplied",
+      "basis_label": "AFS sources",
+      "claim_kind": "method_gain",
+      "citations": [
+       {
+        "kind": "supplied",
+        "label": "S01 p.15",
+        "doc": "S01",
+        "page": 15,
+        "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+        "quote_status": "exact",
+        "precedent": true
+       }
+      ],
+      "precedent": true,
+      "basis_lowered": false,
+      "dropped_citations": []
+     },
+     {
+      "text": "For this brewery the fusion gain is a hypothesis to test: the fused NIR+Raman model must beat the best single method on held-out batches before it is adopted.",
+      "basis": "engineering_judgement",
+      "basis_label": "engineering judgement, no source",
+      "claim_kind": "method_gain",
+      "citations": [],
+      "precedent": false,
+      "basis_lowered": false,
+      "dropped_citations": []
+     },
+     {
+      "text": "Raman signals are weak and can be disturbed by fluorescence background, so this must be checked on real beer samples before relying on the Raman channel.",
+      "basis": "supplied",
+      "basis_label": "AFS sources",
+      "claim_kind": "general",
+      "citations": [
+       {
+        "kind": "supplied",
+        "label": "S01 p.11",
+        "doc": "S01",
+        "page": 11,
+        "quote": "measuring Raman spectra is hampered by the low intensity of Raman signals, which are several orders of magnitude weaker than IR absorption peaks in the IR range",
+        "quote_status": "exact",
+        "precedent": false
+       }
+      ],
+      "precedent": false,
+      "basis_lowered": false,
+      "dropped_citations": []
+     }
+    ],
+    "removed": [],
+    "next_step": "In the planned lab trial, build separate PLS models for sugar and alcohol from NIR and from Raman spectra of the same fermentation samples, then test a fused model and keep it only if its validated error on held-out brews is lower than the best single method.",
+    "blocks": [
+     {
+      "type": "options",
+      "id": "O2"
+     },
+     {
+      "type": "plan",
+      "id": null
+     },
+     {
+      "type": "risks",
+      "id": null
+     }
+    ],
+    "new_facts": []
+   },
+   "checks": {
+    "rounds": [
+     {
+      "claims": [
+       {
+        "failures": [],
+        "citations": [
+         {
+          "kind": "supplied",
+          "label": "S01 p.16",
+          "doc": "S01",
+          "page": 16,
+          "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate. This combination is practical because Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+          "quote_status": "exact",
+          "precedent": false
+         }
+        ],
+        "given": 1
+       },
+       {
+        "failures": [],
+        "citations": [
+         {
+          "kind": "supplied",
+          "label": "S01 p.15",
+          "doc": "S01",
+          "page": 15,
+          "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+          "quote_status": "exact",
+          "precedent": true
+         }
+        ],
+        "given": 1
+       },
+       {
+        "failures": [],
+        "citations": [],
+        "given": 0
+       },
+       {
+        "failures": [],
+        "citations": [
+         {
+          "kind": "supplied",
+          "label": "S01 p.11",
+          "doc": "S01",
+          "page": 11,
+          "quote": "measuring Raman spectra is hampered by the low intensity of Raman signals, which are several orders of magnitude weaker than IR absorption peaks in the IR range",
+          "quote_status": "exact",
+          "precedent": false
+         }
+        ],
+        "given": 1
+       }
+      ],
+      "next_step_failures": [],
+      "dropped_blocks": [],
+      "dropped_facts": []
+     }
+    ],
+    "repaired": false,
+    "next_step_fallback": false,
+    "fallback_claim": false,
+    "estimated_input_tokens": 44020,
+    "claims_cut": 0,
+    "repair_error": "",
+    "history_turns": 0
+   },
+   "model": "z-ai/glm-5.3-flash",
+   "models": [
+    "z-ai/glm-5.3-flash"
+   ],
+   "cost": 0.00629,
+   "cached_tokens": [
+    0
+   ],
+   "latency_s": 7.49,
+   "prompt_sha256": "9ca896f076228a9d936373c19472d2ac97613042a6341fdc9334ce400f73bb06",
+   "context_sha256": "c6ac8625c114101a4f8274aa35c3a2031e100d8889cb7e8b8804f27d66efdeee",
+   "at": "2026-10-18T16:24:24Z"
+  }
+ ]
+}
