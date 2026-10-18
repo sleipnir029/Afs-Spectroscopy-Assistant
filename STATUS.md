@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 11:56 CEST (Claude, Phase 5 session 5)._
+_Last updated: 2026-10-18 12:33 CEST (Claude, Phase 6)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
@@ -19,6 +19,8 @@ _Last updated: 2026-10-18 11:56 CEST (Claude, Phase 5 session 5)._
 - **11:52: 5.8 gate PASS on mix-a** (outputs/dev + adversarial, `--external live`): 0 hard failures, 0 runaways, 0 timeouts; citations verified 100% in every case; external replay 19/19 equal; check_cost_class 8/8 + 11/11; eval checklist 0 failures; must 33/34 (A07 max_questions 4>3, known limit D-051), must-not 12/13 (A07: the pattern `reference (method|measurement|analys)` matches a legitimate question on the refractometer's reproducibility, not a re-ask; recorded, eval not changed after seeing outputs). Wall time per case 35–247 s (mean ~105 s; was 500+), cost $0.013–0.070 (dev $0.35, adversarial $0.39).
 
 - **11:56:** 5.12 chat review fixes merged (b71cd77 via bf59457; rows D-064/D-065) → confirm review APPROVE (no blocking; nb: reassess question text counts as user text for figures; stopped turns record no cost; rename `typed`). **Live chat check done (47fec50, docs/chat/live-check-20261018.json):** 10 asks on mix-a, 1.4–6.3 s each, $0.038 total, citations 10/11 verified (1 dropped by checks), 0 claims removed; price question → cost class only + quotation next step; injection → no guarantee; lifetime → not_in_sources + next step. UI review fixes (C1 Brief) in progress (implementer). Pipeline final → Phase 6 freeze can start.
+
+- **12:33: Phase 5 closed (user gate 12:2x). Phase 6 started.** UI review fixes merged (1b3a7b9, pytest 758/2). Tag **freeze-1** at 1b3a7b9 (pipeline unchanged since a0e9700; models config mix-a). **H01–H06 run once** (12:29–12:32, `--external live`): 0 hard failures, citations 120/120 verified, 0 runaways/timeouts, 97–184 s/case, $0.288; external replay 13/13 items equal; check_cost_class 6/6. Status: premise_not_supported ×4, provisional ×1, insufficient_information ×1. Next: reviewer reads H01–H06 (rule compliance only); README/ARCHITECTURE/slides; fresh-clone test; video; user yes/no to publish + submit.
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
@@ -90,8 +92,8 @@ Never read scenarios/final.jsonl before Phase 6.
 | 2 Pipeline MVP | **Closed** 13:33 | G2 passed | |
 | 3 Assessment upgrade | **Closed** 19:36 | G3 passed | 8/8, 236/236 citations, 14/14 charts, 8/8 cost |
 | 4 External evidence (option B) | **Closed** 22:46 | G4 passed | 8/8, 227/227, replay 8/8, 23 external items |
-| 5 Quality, eval and demo surface | **In progress** (G5 B1 done; 5.8–5.11 added 08:05) | G5 | model research, progress feed, layout, fonts + blueprint |
-| 6 Freeze and deliverables | Planned (approved 13:36) | Submit by 22:30 | user yes/no to publish + submit |
+| 5 Quality, eval and demo surface | **Closed** 12:33 | G5 passed (user) | mix-a, chat + live blocks, C1 Brief UI |
+| 6 Freeze and deliverables | **In progress** (freeze-1, H01–H06 done) | Submit by 22:30 | user yes/no to publish + submit |
 
 ## Done
 - **Jury input (12:22, relayed by the user; paraphrase, not verbatim):**
