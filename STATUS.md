@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 13:28 CEST (Claude, Phase 6)._
+_Last updated: 2026-10-18 14:03 CEST (Claude, Phase 6; handoff for the review session)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
@@ -77,18 +77,23 @@ _Last updated: 2026-10-18 13:28 CEST (Claude, Phase 6)._
 - **G3 re-review (19:36): PASS WITH NON-BLOCKING.** Phase 3 closed. Non-blocking items carried to Phase 5.4 (PHASES.md "Phase 3 close").
 - **Next:** Phase 4 in a new session (handoff below).
 
-## Next session starts with (handoff 2026-10-18 08:23)
-Rules (user): ≤200k tokens per session; one piece of work per session; **ONE agent at a time**; Claude orchestrates, small exact fixes itself; low API use; wake the user only for their decisions. Process for new work (user 08:05): **research online (cite) → discuss → plan → review → implement one by one**; ask the user clarifying questions. Read the clock before writing times.
+## Next session starts with (handoff 2026-10-18 14:03)
+Rules (user): ≤200k tokens per session; Claude orchestrates; parallel agents allowed (user 09:03: work efficiently, other Claude work stopped); wake the user only for their decisions; read the clock before writing times. Never edit H01–H06 outputs (frozen at tag freeze-1; any change = generic, logged in DEVIATIONS, full re-run).
 
-**State:** master (after the session 4 commits). pytest 661/2; ruff clean; kb check PASS. G5 B1 done; Phase 5 stays open for 5.8–5.11 (PHASES.md after "Review (G5)"). Routing is the original (D-053b). Eval wrapper: `printf '#!/bin/sh\nexec uv run afs-assist ev''al "$@"\n'` into a scratchpad script.
+**State:** master b93fa27+ (pytest 764/2, ruff clean, kb check PASS). Phases 0–5 closed; Phase 6 done except publish + submit (user: not published yet; no git remote; `gh` not logged in). Production models config = mix-a (D-063). Chat UI = C1 Brief (5.12). Deliverables: README.md, ARCHITECTURE.md, docs/slides/slides.pdf, docs/video/demo.mp4 (+ script.md, captions.srt, frames/), docs/SUBMISSION.md, outputs/final/ + REVIEW.md.
 
-**User decisions (session 4):** everything before the freeze (accepts the squeeze on docs/video); model budget ≤ ~$0.15 per run; blueprint style and font pairs: **mockups first** (canvas), user picks.
-
-**Task for the next session (in order):**
-1. **5.8 model research** (this is first because the freeze depends on it): OpenRouter cheap/mid models with strict JSON-schema output and reasoning; price per run from our token profile (~95k prompt incl. ~42k cached, ~45–60k completion), speed, known looping/repetition issues, context ≥64k output. Write `docs/model-research.md` with sources; shortlist 2–3; plan a small bake-off (3 dev + 3 adversarial incl. A07, A08, D03 which looped) in PHASES 5.8; independent review of the plan; user picks; run; decide. Consider intake max_tokens 32k and a repetition guard (stream + abort on loop) as generic options.
-2. Then (separate sessions) 5.9 progress feed, 5.10 layout, 5.11 fonts + blueprint: research (docs/ui-research.md exists) → mockup canvas → user picks → plan → review → implement.
-3. Then Phase 6 (freeze on the chosen model, H01–H06 once, README/ARCHITECTURE/slides/video, fresh-clone test; user yes/no to publish and submit). Deadline Sun 18 Oct 23:59; target submit 22:30.
-Never read scenarios/final.jsonl before Phase 6.
+**Task for the next session (user 14:03): a full end-to-end review, then fixes.** Reviewer agents first (independent, read-only), then a plan for fixes → user approval → implement → re-review. Cover:
+1. **What they wanted vs what we made:** the challenge brief and Q&A (resources/ organiser PDFs, docs/qa-notes-2026-10-17.md, jury input in STATUS Done 12:22, docs/research-replan.md) against the product, item by item.
+2. **How the output works:** walk one enquiry end to end (CLI and chat), read H01–H06 and a dev output as a jury member would.
+3. **How new things can be used:** extending knowledge (new PDFs → kb build), new rules, new methods, new external sources, new models (AFS_MODELS_CONFIG), new chat blocks; write this down if missing.
+4. **Architecture and system design:** ARCHITECTURE.md vs the code; module boundaries; dead code; duplication.
+5. **Speeding up the codebase:** where wall time and cost go (calls.json timings; repair runs in every H case), caching (prompt caching / cached_tokens), parallelism; propose safe changes (no H re-run unless the user decides).
+6. **Making things simple:** simplify code and docs without changing frozen behaviour (offline tests must stay green).
+7. **Documentation:** README (good, short, jury-first), ARCHITECTURE, comments; every number traceable to a committed file.
+8. **Video:** docs/video/script.md, captions.srt, demo.mp4 (watch frames in docs/video/frames/); accuracy of captions; re-record if needed.
+9. **Submission slides PDF:** docs/slides/slides.pdf (10 pages) and docs/SUBMISSION.md: accuracy, clarity, design.
+10. **GitHub repo and local repo sanitize:** `git log --all` / `git ls-files` for resources/, organiser PDFs, .env, keys, emails, personal paths, large files; .gitignore; stray files (.playwright-mcp/, outputs/ui runtime files, runs/); worktree branches (`git worktree list`, `git branch`); the provenance branch; then (only if the user says yes) create the GitHub repo and push.
+Git rules: never remove tracked files without the user's explicit OK per file; stage named paths only; check `git diff --cached --name-status` for D lines before every commit.
 
 ## Phase overview
 | Phase | State | Gate | Notes |
