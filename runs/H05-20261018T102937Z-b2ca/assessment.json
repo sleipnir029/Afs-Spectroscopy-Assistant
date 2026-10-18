@@ -1,0 +1,494 @@
+{
+ "decision_status": "insufficient_information",
+ "status_reason": "The contaminant, the quality variable and the optical character of the liquid are all unknown, so no single method or exact sensor configuration can be justified yet; the honest next step is a structured multi-method laboratory trial on representative samples.",
+ "premise_checks": [
+  {
+   "premise": "A best method and exact sensor configuration can be named immediately, before the contaminant, quality variable or sample optical behaviour is known.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source supports selecting a method without knowing the target analyte or sample characteristics; the sources instead recommend starting from multi-method trials when composition is incompletely known (S01 p.3; S02 p.20).",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "A structured multi-method laboratory trial is an appropriate first step for a process with incompletely known contamination.",
+   "verdict": "supported",
+   "explanation": "Testing various optical spectroscopy approaches is identified as crucial for analyzing samples of incompletely known composition to select the most suitable method.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Identity and spectral signature of the suspected contaminant",
+  "The quality variable that goes off specification",
+  "Liquid matrix composition and background interferences",
+  "Optical regime of the liquid (clear, turbid or scattering)",
+  "Whether the contaminant or matrix contains fluorescent species",
+  "Installation constraints: temperature, pressure, fouling, distance to spectrometer"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the liquid matrix (chemical composition, aqueous or solvent-based, typical additives)?",
+   "why_it_matters": "The matrix determines which spectral regions are usable and which interferences must be calibrated out.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Can you provide archived normal and off-specification samples together with an independent laboratory reference analysis of each?",
+   "why_it_matters": "Without representative samples and reference values, no method comparison or calibration can be built or judged.",
+   "affects": [
+    "status",
+    "method"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Which quality variable or specification is at risk when the process goes off-spec (e.g. colour, purity, concentration of a named component)?",
+   "why_it_matters": "The target variable decides whether a quantitative calibration, a classification model or a simple trend signal is needed.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Is the liquid optically clear, turbid or strongly scattering, and does it foam or contain particles?",
+   "why_it_matters": "Clarity decides between transmission/transflection and reflection or ATR geometries.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What are the installation constraints: process temperature and pressure, fouling tendency, and distance from the measurement point to a safe spectrometer location?",
+   "why_it_matters": "These determine probe type, fiber family and achievable link length, which differ strongly between silica (NIR/visible) and mid-IR fibers.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman gives a molecular fingerprint of unknown organic contaminants in liquids and tolerates water far better than infrared methods, so it is the strongest single first test when the matrix is not yet characterised. Its weak signal and possible fluorescence background must be checked on real samples.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "MIR-ATR probes are established for in-line liquid analysis and give well-resolved, highly selective bands that complement Raman. It should be tested against Raman on the same samples before any combined use.",
+   "conditions": "The liquid must wet the ATR crystal and tolerate contact; fouling and surface-layer sampling are known risks.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Mid-IR band spectra contain well-defined peaks (absorption bands), while NIR, UV, and fluorescence spectra contain broad, highly overlapping signals",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "NIR transmission is the workhorse for clear liquid streams and is robust for remote fiber-probe use, but it fails if the liquid is too opaque or absorbing, which is not yet known.",
+   "conditions": "Applies only if the liquid is transparent or semi-transparent and a suitable optical pathlength can be controlled.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [
+    "MIR"
+   ],
+   "rationale": "If neither Raman nor MIR-ATR alone separates normal from off-spec samples, a combined Raman + MIR-ATR measurement is a later hypothesis: the two spectra are complementary and published combined probes exist. Any fusion gain must be demonstrated against the best single method.",
+   "conditions": "Only after the single-method tests, and only if both methods show partial but complementary information.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Fluorescence is often expected to catch 'contamination' generically, but it only measures species that actually fluoresce, and most chemicals do not; with no fluorescent species or indicator identified it cannot be the primary screen.",
+   "conditions": "Revisit only if a fluorescent contaminant or a justified indicator is identified.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Laboratory trial first: immersion Raman probe and MIR-ATR fiber probe tested on the same representative liquid samples; NIR transmission/transflection added if the liquid proves clear.",
+  "location": "Bench-top lab trial on archived or grab samples; in-line installation point decided only after the method is selected.",
+  "fiber_link": "Silica fibers for Raman (visible/NIR excitation); mid-IR requires CIR or PIR fibers, whose achievable link length is an open question - long (100-300 m) cables are documented only for low-OH silica fibers.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1 with laser excitation wavelength stated separately; nominal range depends on the selected spectrometer and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1; the usable range depends on the selected fiber and ATR crystal.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The contaminant may have weak Raman activity or sit below the detection limit of any optical method, making spectroscopy the wrong tool.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Fluorescence background from the matrix or from polymer-jacketed fibers can swamp the Raman signal on real samples.",
+   "rule_ids": [
+    "R-RAM-1",
+    "R-FIB-4"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "If the liquid is opaque or strongly absorbing, NIR transmission and UV-Vis transmission will fail and only ATR or reflection geometries remain.",
+   "rule_ids": [
+    "R-GEO-2",
+    "R-GEN-3"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Occasional off-spec events may be rare, so the trial dataset may not contain enough off-spec states to build or validate a model.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples: normal production material plus every available off-spec or suspect batch, spanning the expected chemical and physical variation (temperature, turbidity, age).",
+    "purpose": "Ensure the trial data covers the real process variability.",
+    "citations": []
+   },
+   {
+    "step": "Obtain independent reference analysis of each sample from a certified laboratory (e.g. GC-MS/HPLC for contaminant identification and the off-spec quality variable).",
+    "purpose": "Provide ground truth to label spectra and identify the contaminant.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with the single methods first - Raman probe and MIR-ATR probe - under identical, documented conditions; add NIR transmission only if the samples are optically clear.",
+    "purpose": "Compare single methods before any combination, per the multi-method trial approach.",
+    "citations": []
+   },
+   {
+    "step": "Build a first classification or regression model per method against the reference labels, and only then test a fused Raman + MIR-ATR model, validating on held-out batches.",
+    "purpose": "Establish whether any combination beats the best single method.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Apply customer-defined go/no-go criteria (e.g. required detection limit, false-alarm rate, response time) to decide whether an in-line configuration can be specified.",
+    "purpose": "Make the decision basis explicit and owned by the customer.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Certified laboratory analysis (identity and concentration of any contaminant found, plus the off-spec quality variable) for every sample.",
+  "decision_basis": "Go/no-go against customer-defined numerical criteria (detection limit, classification error, response time); these figures are not in the supplied sources and must come from the customer."
+ },
+ "assumptions": [
+  "The process liquid is accessible for grab or archived sampling.",
+  "Off-spec events leave physical samples or can be reproduced in the laboratory.",
+  "The customer can commission independent laboratory reference analysis."
+ ],
+ "not_in_sources": [
+  "Any performance figure (detection limit, response time, accuracy) for detecting an unknown contaminant in an unspecified liquid",
+  "Achievable mid-IR fiber link length for an in-line installation",
+  "The customer's matrix, contaminant or specification limits"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Contaminant identity and spectral signature",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "The target analyte determines which spectral method and range can detect it at all.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "Fluorescence",
+    "sensor": "Certified laboratory analysis (e.g. GC-MS/HPLC) of off-spec samples",
+    "alternative": "Iterative spectroscopy-based screening once candidate contaminants are proposed"
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Sample optical regime (clear vs turbid/scattering)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It decides between transmission/transflection and ATR or reflection geometries.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "NIR",
+    "sensor": "Laboratory turbidity/optical-density measurement on grab samples",
+    "alternative": "Visual inspection plus trial spectra"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Matrix composition and background interferences",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "Calibrations are matrix-specific, so the background composition must be known to interpret spectral differences.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "MIR",
+    "sensor": "Laboratory composition analysis of normal process liquid",
+    "alternative": "Spectroscopic survey of normal samples"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Process temperature at the measurement point",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Temperature shifts spectra and affects probe material choice; it should be available from existing process instrumentation.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": "NIR",
+    "sensor": "Process temperature sensor",
+    "alternative": "Laboratory measurement at sampling temperature"
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Single probe, straightforward lab setup",
+   "maintenance": "Minimal; one probe and spectrometer",
+   "performance_fit": "Fastest first answer on unknown contaminant",
+   "cost_drivers": "One Raman spectrometer and probe, sample collection, reference lab analyses",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2",
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Structured trial, moderate coordination effort",
+   "maintenance": "Lab-based only at this stage",
+   "performance_fit": "Covers unknown matrix and unknown contaminant by method comparison",
+   "cost_drivers": "Two to three spectrometers and probes for the trial, reference analyses, chemometric modelling time",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M4"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Two instruments, more complex operation",
+   "maintenance": "Each block needs its own calibration and diagnostics",
+   "performance_fit": "Only if single methods prove complementary but insufficient",
+   "cost_drivers": "Two spectrometers, combined or paired probes, fusion software, extended validation",
+   "fusion_note": "Low-level fusion: Raman and MIR-ATR spectra of the same sample spot merged into one augmented matrix after synchronisation to a common time step and block scaling. Both probes must sample the same liquid volume; a combined probe or co-located immersion probes at one point is required. Each method keeps its own calibration, and the fused model must beat the best single method on held-out batches before any in-line commitment.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "With an unknown contaminant, start with unsupervised analysis (PCA) of normal vs off-spec spectra to find discriminating features, then build supervised classification (e.g. PLS-DA) or regression models only once reference labels exist; validate on held-out batches and guard against overfitting given the expected small number of off-spec events.",
+ "realtime_tracking_note": "In-line continuous tracking is the eventual goal, but it is only meaningful after a method and target variable are fixed; fiber optics then allow the spectrometer to sit away from the process point.",
+ "future_direction": "Once the contaminant and quality variable are known, a compact customized spectral fiber sensor or LED-based multi-wavelength sensor tuned to the informative wavelengths can replace the full spectrometer for routine in-line control.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the customer identifies the contaminant and quality variable, or shows the liquid is strongly absorbing/turbid, the shortlist narrows immediately (e.g. NIR transmission drops out or a specific targeted method takes over). If reference analysis shows no optically active contaminant, spectroscopy itself may not be the right tool.",
+  "next_step": "Run the multi-method laboratory trial (Raman and MIR-ATR first, NIR transmission if clear) on representative normal and off-spec samples with independent laboratory reference analysis, against customer-defined go/no-go criteria."
+ },
+ "brief_answer": "No exact sensor configuration can be justified yet: the contaminant, the quality variable and the optical character of your liquid are all unknown. The right first step is a multi-method laboratory trial - Raman and mid-IR ATR probes on representative normal and off-spec samples, adding NIR transmission only if the liquid is clear - with independent lab reference analysis of every sample. The in-line method and configuration follow from those results and your go/no-go criteria."
+}
