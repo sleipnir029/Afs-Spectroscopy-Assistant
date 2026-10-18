@@ -92,8 +92,8 @@ All screenshots show held-out case H04 in the real app.
 
 1. **Clone and install.**
    ```bash
-   git clone https://github.com/sleipnir029/afs-spectroscopy-assistant.git
-   cd afs-spectroscopy-assistant
+   git clone https://github.com/sleipnir029/Afs-Spectroscopy-Assistant.git
+   cd Afs-Spectroscopy-Assistant
    uv sync
    ```
 2. **Add the organiser materials.** Unzip the archive into `resources/`, which gives `resources/materials/S01_Multispectral_Laboratory.pdf` and the other files.

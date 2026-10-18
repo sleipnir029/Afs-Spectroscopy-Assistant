@@ -31,4 +31,10 @@ A chat assistant that turns an in-line spectroscopy customer enquiry into a cite
 - `outputs/final/H01–H06` (`.md` + `.json`) and `outputs/final/REVIEW.md`: the rule-compliance review.
 - `outputs/final/brief/H01–H06.md`: a short view of each answer (560–698 words, organiser's section order), built by code from the frozen run JSON with no model call.
 
-**Repository link:** _to add once the repository is published_.
+**Repository link:** https://github.com/sleipnir029/Afs-Spectroscopy-Assistant
+
+**Links for the submission form**
+- Public Git repository: https://github.com/sleipnir029/Afs-Spectroscopy-Assistant
+- H01–H06 answers (assistant-generated, unedited): https://github.com/sleipnir029/Afs-Spectroscopy-Assistant/tree/master/outputs/final
+- Slides (PDF): https://github.com/sleipnir029/Afs-Spectroscopy-Assistant/blob/master/docs/slides/slides.pdf
+- Video (3:27): https://github.com/sleipnir029/Afs-Spectroscopy-Assistant/blob/master/docs/video/demo.mp4

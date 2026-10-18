@@ -7,7 +7,7 @@ Source text of `slides.html` (kept in sync); `slides.pdf` is exported from `slid
 ## 1. AFS Spectroscopy Assistant
 
 A customer enquiry goes in. A cited first technical assessment comes out.
-Team Helios: Rakibuzzaman Rahat, Md Mahmud Siddique · REPO_URL_PENDING
+Team Helios: Rakibuzzaman Rahat, Md Mahmud Siddique · github.com/sleipnir029/Afs-Spectroscopy-Assistant
 
 ---
 
@@ -75,4 +75,4 @@ Screenshots: `img/app-questions.png` (3 questions for the customer) and `img/app
 - Confidence is mostly "Low" → confidence that tracks the facts.
 - A run takes 1.5–3 minutes → a faster fixing step.
 
-Demo video (3:27): docs/video/demo.mp4 · Team Helios
+Code, answers and demo video (3:27): github.com/sleipnir029/Afs-Spectroscopy-Assistant · Team Helios

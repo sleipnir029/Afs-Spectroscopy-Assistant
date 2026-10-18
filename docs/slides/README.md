@@ -23,7 +23,7 @@ The team members' names are filled in (slide 1). One placeholder is left, in bot
 
 | Placeholder | Where | Replace with |
 |---|---|---|
-| `REPO_URL_PENDING` | slide 1 (small line under the names) | the public repository URL |
+| (filled) | slide 1 and slide 8 | https://github.com/sleipnir029/Afs-Spectroscopy-Assistant |
 
 Replace it, then re-export (macOS `sed`; `#` is the delimiter so the URL's slashes need no escaping):
 
