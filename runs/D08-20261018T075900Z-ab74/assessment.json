@@ -1,0 +1,312 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The customer's laboratory study on biological tissue classification using MIR ATR and fluorescence is directly supported by published precedents and multi-method probe designs in the sources, allowing a provisional assessment and experimental plan.",
+ "premise_checks": [
+  {
+   "premise": "Sequential measurements with separate probes fail to ensure the same sample location due to tissue heterogeneity, requiring simultaneous multi-method sampling.",
+   "verdict": "supported",
+   "explanation": "Sources confirm that simultaneous collection from the same pinpoint area is necessary for heterogeneous samples because alternating probes cannot guarantee spatial coincidence.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample. This is difficult to achieve by using two probes alternately for measurements.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 2,
+     "quote": "Such alternating multispectral measurements cannot guarantee complete coincidence of the spots analyzed by both methods and, moreover, cannot be used in the clinical surgery practice.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "The evaluation uses model biological tissues including chicken muscle, fat, and liver.",
+  "The study compares MIR ATR and fluorescence information.",
+  "The material is heterogeneous and sequential measurements may not sample the same location.",
+  "This is a laboratory classification study.",
+  "The customer needs a first comparison experiment and a statement of what results would demonstrate."
+ ],
+ "key_unknowns": [
+  "Specific instrument configurations and wavelength ranges for MIR ATR and fluorescence",
+  "Exact classification performance metrics and criteria",
+  "Sampling interface geometry and core-co-registration details to address spatial heterogeneity"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What specific classification performance metrics (such as accuracy, sensitivity, or confusion matrix thresholds) are required for the study?",
+   "why_it_matters": "Determines the quantitative go/no-go criteria for evaluating single-method versus fused model performance.",
+   "affects": [
+    "status",
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Will the experiment use a combined multi-method probe for simultaneous co-registered sampling or separate sequential probes?",
+   "why_it_matters": "Directly impacts whether spatial heterogeneity artifacts can be eliminated as hypothesized by the customer.",
+   "affects": [
+    "technique",
+    "installation",
+    "O1",
+    "O2"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What specific excitation wavelength and spectral collection range are planned for the fluorescence channel?",
+   "why_it_matters": "Defines the hardware setup and ensures appropriate matching with intrinsic tissue fluorophores.",
+   "affects": [
+    "technique",
+    "method"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Provides surface chemical fingerprinting, particularly capturing ester carbonyl C=O stretching bands in lipids and amide bands in proteins for tissue differentiation.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "toward rich in lipids fat samples is related to the stretching vibration band of the ester carbonyl C=O at about 1740 cm-1",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "comparison",
+   "combined_with": [
+    "MIR"
+   ],
+   "rationale": "Provides high sensitivity detection of intrinsic fluorophores such as FAD and porphyrins to complement vibrational spectroscopy.",
+   "conditions": "Tested in tandem with MIR ATR using a co-registered multi-method probe.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The observed broad band with the maximum between 520 and 530 nm is formed by the emission of intracellular fluorophores with the dominating contribution of flavin adenine dinucleotide (FAD)",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Combined multispectral ATR crystal probe integrating mid-infrared chalcogenide fibers for ATR and silica fibers for orthogonal fluorescence excitation and collection at a common contact spot.",
+  "location": "Laboratory benchtop classification study using model biological tissues.",
+  "fiber_link": "Chalcogenide (CIR) fibers for MIR and UV-Vis silica fibers for fluorescence, connected to respective spectrometers.",
+  "citations": [
+   {
+    "doc": "S04",
+    "page": 2,
+    "quote": "The proposed solution (Figure 1) is based on a precise determination of the optical configuration of the ATR crystal head, which, in this case, plays the role of a common measurement interface for both methods.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "The nominal mid-IR range is 4000-400 cm-1 (2.5-25 µm); the usable range depends on the specific instrument, fiber and crystal selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Fluorescence",
+   "statement": "Fluorescence measurement range depends on the excitation source and emission of the specific fluorophores in the sample.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "Fluorimetry is based on measuring the broad emission signal observed upon irradiation of certain samples in the UV and visible regions.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Surface fouling or inadequate contact on soft biological tissues can distort MIR ATR spectra.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Spatial misalignment between independent probes can lead to classification errors on heterogeneous samples.",
+   "rule_ids": [
+    "R-CMB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample. This is difficult to achieve by using two probes alternately for measurements.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Prepare representative sample sets of model biological tissues (chicken muscle, fat, and liver) capturing expected physical and biochemical variation.",
+    "purpose": "Ensure samples reflect the heterogeneity and target classes of the study.",
+    "citations": []
+   },
+   {
+    "step": "Acquire baseline single-method spectra using MIR ATR and fluorescence separately across distributed points on each tissue sample.",
+    "purpose": "Establish individual method classification performance and baseline limitations.",
+    "citations": []
+   },
+   {
+    "step": "Acquire simultaneous multi-method spectra using a co-registered multispectral probe sampling the exact same spot.",
+    "purpose": "Test whether simultaneous co-localization resolves spatial heterogeneity issues.",
+    "citations": []
+   },
+   {
+    "step": "Build and validate multivariate classification models (such as PCA or PLS-DA) using data fusion on independent held-out sample splits.",
+    "purpose": "Evaluate whether the fused model improves class separation over single methods.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Standard histological classification (WHO criteria / tissue type confirmation) for the model tissue samples.",
+  "decision_basis": "A go/no-go basis is established if the fused multispectral model achieves statistically significant improvement in classification accuracy over single-method models without overfitting."
+ },
+ "assumptions": [
+  "Model tissues (chicken muscle, fat, and liver) adequately represent structural and biochemical heterogeneity for the classification study.",
+  "Reference tissue typing is accurate and consistently applied.",
+  "The optical regime of the tissue samples is turbid and highly scattering, which is typical for biological soft solids and allows superficial ATR mid-IR sampling alongside diffuse fluorescence emission."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Tissue chemical and structural composition",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "Identifies class differences between muscle, fat, and liver tissues.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "toward rich in lipids fat samples is related to the stretching vibration band of the ester carbonyl C=O at about 1740 cm-1",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Intracellular fluorophore emission",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "Provides complementary biochemical markers (e.g., FAD, porphyrins) for tissue differentiation.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Fluorescence",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 3,
+     "quote": "The observed broad band with the maximum between 520 and 530 nm is formed by the emission of intracellular fluorophores with the dominating contribution of flavin adenine dinucleotide (FAD)",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Standard single-probe ATR setup",
+   "maintenance": "Routine crystal cleaning",
+   "performance_fit": "Captures surface chemical fingerprints but misses deeper fluorophore markers.",
+   "cost_drivers": "Single spectrometer and ATR probe hardware.",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "IR spectroscopy works better for the discrimination of fat",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Multispectral probe requiring aligned acquisition",
+   "maintenance": "Dual instrument calibration and probe maintenance",
+   "performance_fit": "Provides complementary chemical and fluorescence data from the exact same sampling point, resolving heterogeneity.",
+   "cost_drivers": "Multispectral probe head and dual spectrometer setup.",
+   "fusion_note": "Requires low-level data fusion of synchronized MIR and fluorescence spectra into an augmented matrix with block scaling to ensure equal weighting, validated against independent test sets.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "At the same time, the PCA model built on the concatenated IR and fluorescence data revealed three distinct groups of samples corresponding to tissue types",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Multivariate analysis using PCA and PLS-DA on concatenated and autoscaled spectral blocks enables unsupervised and supervised classification of tissue types.",
+ "realtime_tracking_note": null,
+ "future_direction": "Extension of the multispectral probe design to in vivo diagnostic settings or incorporation of additional spectral ranges.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If single-method MIR ATR classification proves fully sufficient for all tissue classes without requiring fluorescence data, the extended fusion approach can be simplified.",
+  "next_step": "Perform comparative laboratory trials on model chicken tissues using a co-registered multispectral probe to evaluate single versus fused classification performance."
+ },
+ "brief_answer": "To evaluate tissue classification on heterogeneous biological samples, compare single-method MIR ATR and fluorescence against a combined multi-method approach using co-registered probes. Testing should follow a structured feasibility plan comparing individual and fused multivariate classification models. Clarification on exact performance metrics and probe geometry will finalize the configuration."
+}
