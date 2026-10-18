@@ -1,0 +1,388 @@
+{
+ "round": 1,
+ "hard_failures_before": 1,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "insufficient_information",
+  "status_reason": "The sources describe the physics and the probe families, but none of them can decide the method for a liquid whose target and matrix are not stated. This assessment is therefore a conditional shortlist with the deciding questions listed.",
+  "premise_checks": [
+   {
+    "premise": "A liquid can be measured in-line with fiber-optic probes as a general approach.",
+    "verdict": "supported",
+    "explanation": "The sources describe probe-based analysis being used in-line in process environments, so the general approach is supported; it says nothing about this customer's liquid.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "This particular liquid is suitable for in-line measurement, so the enquiry can be answered yes or no.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source addresses the customer's liquid; target, matrix, optical behaviour and process conditions are not stated, and method choice depends on the analytical task.",
+    "citations": []
+   }
+  ],
+  "requirements_stated": [
+   "The material is a liquid.",
+   "The measurement should be in-line."
+  ],
+  "key_unknowns": [
+   "Target species or property to be measured, and its range",
+   "Optical behaviour of the liquid (clear, turbid, opaque, strongly absorbing) and whether it is aqueous",
+   "Required accuracy, precision and response time, and the reference method used today",
+   "Process conditions at the measurement point (temperature, pressure, flow) and the exact installation point",
+   "Distance between the instrument location and the measurement point",
+   "Particles, bubbles or multiple phases, and cleaning/fouling requirements"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "Which component(s) or property should the in-line measurement determine, and over what concentration or value range?",
+    "why_it_matters": "The target decides which method can be sensitive and selective enough, so it changes the method choice.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "How does the liquid behave optically at the measurement point - clear and transparent, turbid, opaque or strongly absorbing - and is it water-based?",
+    "why_it_matters": "Transmission geometries fail in thick, opaque or strongly absorbing liquids, while ATR and reflection geometries do not need transparency.",
+    "affects": [
+     "technique",
+     "M2"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What accuracy, precision and response time are required, and which reference method (and accuracy) is used today to check the liquid?",
+    "why_it_matters": "These values are the go/no-go criteria and can rule out methods whose sensitivity is too low.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What are the temperature, pressure and flow rate at the measurement point, and where exactly would the probe be installed?",
+    "why_it_matters": "Process conditions and the installation point decide the probe and fiber hardware and whether the liquid can contact the probe head.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "What distance is there between where the instrument can stand and the measurement point?",
+    "why_it_matters": "The fiber link length needed is not stated in the sources and limits the optical layout.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q6",
+    "question": "Does the liquid contain particles, bubbles or more than one phase, and how is the line cleaned (fouling, CIP)?",
+    "why_it_matters": "Particles and deposits affect contact probes and reflection windows, and the cleaning routine decides how a probe can be mounted.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Mid-IR spectroscopy is described as one of the most informative methods of chemical analysis, and ATR fiber probes let liquids be measured in-line by contact without requiring a transparent sample. It is therefore the single method to test first on an unknown liquid.",
+    "conditions": "Applies if the liquid can be brought into tight contact with the ATR crystal (liquid or soft solid) and no incompatibility with the crystal or probe materials is expected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S04",
+      "page": 4,
+      "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "NIR is described as the most common online analysis method using fiber probes, and transmission or transflection is preferred for transparent or semi-transparent liquids. It becomes worth testing once the liquid's optical behaviour is known.",
+    "conditions": "Applies only if the liquid is transparent or semi-transparent and the optical pathlength can be controlled at the measurement point.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "Raman",
+    "technique": "raman_probe",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Mid-IR and Raman spectra are complementary, and Raman tolerates water better than infrared methods, so it is the natural second single method to compare with the MIR-ATR arm on the same samples. Any gain from using the two together would still be a hypothesis to test after the single-method results.",
+    "conditions": "Applies if the liquid's fluorescence background does not swamp the Raman signal.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "A contact ATR fiber probe for the MIR arm (liquid in contact with the crystal) and a Raman fiber probe on the same sample points; a transmission or transflection probe only if the liquid proves transparent.",
+   "location": "At the process line, in direct contact with the flowing liquid; the exact installation point is still open (Q4).",
+   "fiber_link": "MIR light needs infrared-transmitting fibers (chalcogenide or polycrystalline), not silica; the achievable link length is not stated in the sources and is an open question (Q5).",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "3000 nm Polycrystalline Infrared Fibers 17 µm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "MIR",
+    "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 µm); the usable range depends on the instrument, fiber and ATR crystal actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "Raman",
+    "statement": "Raman is reported as Raman shift (cm-1), with the laser excitation wavelength stated separately; the excitation wavelength for this case is not yet chosen.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "If the target is a trace component, the sensitivity of NIR may not be sufficient and the shortlist would have to change.",
+    "rule_ids": [
+     "R-NIR-4"
+    ],
+    "citations": []
+   },
+   {
+    "risk": "If the measurement point is far from the instrument, the MIR arm may be limited by the fiber link, because no source states an achievable length for a mid-IR link.",
+    "rule_ids": [
+     "R-FIB-2"
+    ],
+    "citations": []
+   },
+   {
+    "risk": "If the liquid fluoresces strongly, the Raman signal can be swamped and the comparison arm weakened.",
+    "rule_ids": [
+     "R-RAM-1"
+    ],
+    "citations": []
+   },
+   {
+    "risk": "If the liquid fouls or coats the ATR crystal, the few-micrometre surface layer may no longer represent the bulk liquid.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": []
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Measure representative samples of the liquid across the expected chemical and physical variation with the MIR-ATR probe first, then with the Raman probe on the same sample points, and keep later runs or batches aside for validation.",
+     "purpose": "Sample set",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "Measure the same samples with the customer's current reference method (to be named in Q3) to obtain reference values for calibration and for the go/no-go comparison.",
+   "decision_basis": "Agree the numerical criteria with the customer before the trial: required accuracy, precision and response time against the reference method; a method passes only if it meets them on held-out runs or batches."
+  },
+  "assumptions": [
+   "The liquid can be brought into contact with a probe head at the measurement point.",
+   "At least one component or property of interest gives a measurable optical signal; this is what the first trial tests."
+  ],
+  "not_in_sources": [
+   "Whether this specific liquid can be measured in-line: no supplied source covers its composition, matrix or optical behaviour.",
+   "An achievable fiber length for a mid-IR link from instrument to process point: no supplied source states one."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Target component or property to be determined in the liquid",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It defines what any calibration model must predict and whether the chosen method can reach the required level.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "MIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P2",
+    "name": "Temperature at the measurement point",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Process temperature shifts spectra and sets the probe and fiber hardware that can be used in-line.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Pressure at the measurement point",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Pressure decides the probe body and the process connection that can be installed in the line.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "pressure sensor",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2"
+    ],
+    "ease_of_use": "one contact probe, one spectrometer",
+    "maintenance": "crystal cleaning, periodic recalibration",
+    "performance_fit": "most informative single method for an unknown liquid",
+    "cost_drivers": "one spectrometer, one ATR fiber probe, sample trial and calibration",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1",
+     "M3"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "two instruments, one shared sample set",
+    "maintenance": "two calibrations, two probe types",
+    "performance_fit": "MIR and Raman complement each other on more liquids",
+    "cost_drivers": "two spectrometers, MIR ATR and Raman probes, two calibrations, data alignment",
+    "fusion_note": null,
+    "citations": []
+   }
+  ],
+  "chemometrics_note": "Plan one calibration or classification model per method, built on representative samples with reference values from the customer's method; expect to re-validate after any change of liquid or feedstock.",
+  "realtime_tracking_note": "If continuous in-line tracking is wanted later, fix the acquisition rates and a common time step before any joint model is built from two methods.",
+  "future_direction": "If a few wavelengths prove sufficient for the target, a compact spectral fiber sensor at the same measurement point could later replace a full spectrometer.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "If the liquid turns out to be transparent or semi-transparent and the target is a major component, the NIR transmission or transflection arm (M2) becomes the cheapest first test. If the target is a trace component or the liquid is opaque, the MIR-ATR arm carries the trial and Raman stays a comparison; fusing the two methods into one model is only worth testing if no single method meets the agreed criteria.",
+   "next_step": "Answer the questions on target, optical behaviour, accuracy and process conditions so that a single-method trial on representative samples can be specified."
+  },
+  "brief_answer": "Nothing in the enquiry yet says what the liquid is or what should be measured, so no method can be confirmed. The first trial worth running is mid-IR ATR with a fiber probe, compared on the same samples with a Raman probe. NIR transmission can be added if the liquid turns out to be transparent. The questions on target, optical behaviour, accuracy and process conditions decide the final configuration."
+ }
+}
