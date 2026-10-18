@@ -1,0 +1,450 @@
+{
+ "round": 1,
+ "hard_failures_before": 2,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "NIR diffuse reflection is a defensible first method for an opaque, concentrated dairy stream, but the product-specific calibration, accuracy and installation are not established. The transflection comparison is a hypothesis to test, not a proven configuration.",
+  "premise_checks": [
+   {
+    "premise": "Spectroscopy is suitable for an opaque, concentrated milk product.",
+    "verdict": "precedent_only",
+    "explanation": "NIR reflection is reported for opaque or highly concentrated dairy products, which is a reason to test it, not proof for this product.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "premise": "Earlier information about composition changes can be obtained while retaining laboratory checks.",
+    "verdict": "not_covered",
+    "explanation": "The sources describe online analysis and near-real-time results, but do not address retaining laboratory checks alongside an inline measurement.",
+    "citations": []
+   },
+   {
+    "premise": "A practical comparison experiment can be designed before required accuracy, response time, and installation constraints are fully defined.",
+    "verdict": "supported",
+    "explanation": "A provisional plan with missing facts is acceptable, provided the go/no-go basis is defined.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "An honest provisional plan is more useful than a final configuration built on missing facts.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [],
+  "key_unknowns": [
+   "Required fat and protein ranges and accuracy",
+   "Required response time for earlier composition information",
+   "Temperature and texture/viscosity ranges on the line",
+   "Installation point, pressure, cleaning and fouling conditions",
+   "Laboratory reference methods and sampling frequency",
+   "Whether opacity/texture varies enough to make transflection feasible at any stage"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the physical state and texture/viscosity range of the product on the line, and can it be kept in reliable contact with a probe or passed through a controlled optical path?",
+    "why_it_matters": "This decides whether a contact probe or a transflection path is practical and whether NIR diffuse reflection or another geometry should be tested first.",
+    "affects": [
+     "technique"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What fat and protein ranges and accuracy must the inline measurement achieve?",
+    "why_it_matters": "The required accuracy and range set the go/no-go basis and determine whether NIR sensitivity is sufficient for this product.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "How quickly must a composition change be detected for the result to be useful?",
+    "why_it_matters": "The required response time affects whether a practical in-line NIR configuration can meet the customer's need.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Where on the line would the probe be installed, and what are the pressure, temperature range and cleaning regime there?",
+    "why_it_matters": "These conditions determine probe geometry, materials, fouling risk and whether the installation is realistic.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "Which laboratory methods and sampling frequency are used for fat and protein, and can those results be time-matched to the inline spectra?",
+    "why_it_matters": "Independent, time-matched laboratory references are needed to build and validate any chemometric calibration.",
+    "affects": [
+     "M1"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Test NIR diffuse reflection first: it is used for opaque or highly concentrated dairy products and can quantify fat and protein with PLS. The nominal NIR range is 780-2500 nm, while the usable range depends on the instrument, fiber and probe selected.",
+    "conditions": "Test on representative product states with laboratory fat and protein references, and record temperature and texture.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "using Partial Least Squares (PLS) regression to quantify fat and protein.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Transflection is reported as a possible combined solution for low- and high-fat milk products, but transmission fails when the product is too thick or opaque, so it is a comparison only. It uses the same nominal NIR range with a different optical path.",
+    "conditions": "Include only if a controlled optical path and probe contact can be maintained without blocking flow.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Start with an NIR diffuse reflection probe for the opaque product, then compare a NIR transflection probe only where a controlled path is practical.",
+   "location": "In-line at a representative flowing point, with a bypass or sampling point for comparison against laboratory checks.",
+   "fiber_link": "Fiber type and length depend on the selected NIR instrument and probe; the sources do not establish a product-specific link length.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range is 780-2500 nm; the usable range depends on the instrument, fiber and probe selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Texture and opacity changes may alter NIR scattering and sampling depth, so a single calibration may not hold across the line.",
+    "rule_ids": [
+     "R-GEO-6"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Fat and protein bands overlap in NIR, and a product-specific calibration may be unstable if laboratory references are sparse or not time-matched.",
+    "rule_ids": [
+     "R-NIR-2",
+     "R-CAL-1"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Temperature variation may shift spectra or change scattering, causing prediction drift without compensation.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "The transflection comparison may be impractical if the product is too thick or opaque for a controlled optical path.",
+    "rule_ids": [
+     "R-GEO-2"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative samples or process states across the expected fat/protein, temperature and texture ranges; record independent laboratory fat/protein, temperature and texture references.",
+     "purpose": "Representativeness and independent reference data.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Measure the same samples with NIR diffuse reflection (M1) under fixed probe contact or distance, and record the auxiliary temperature.",
+     "purpose": "Single-method baseline.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 17,
+       "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+       "claim_kind": "application_precedent"
+      }
+     ]
+    },
+    {
+     "step": "Compare NIR transflection (M2) on the same samples only where a controlled optical path and probe contact can be maintained.",
+     "purpose": "Technique comparison, not fusion.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 18,
+       "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+       "claim_kind": "application_precedent"
+      }
+     ]
+    },
+    {
+     "step": "Build one chemometric calibration per technique against the laboratory references and test it on held-out runs or batches, including temperature and texture variation.",
+     "purpose": "Validation on independent runs or batches.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 10,
+       "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Decide go/no-go against the customer's numerical accuracy and response-time criteria, and keep laboratory checks as the independent reference.",
+     "purpose": "Go/no-go basis from customer criteria.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Laboratory fat and protein, temperature and texture/viscosity measurements taken at the same time as spectra.",
+   "decision_basis": "Customer-defined numerical accuracy and response-time criteria; no numbers are supplied in the sources."
+  },
+  "assumptions": [
+   "The product is in contact with the probe or a suitable flow interface.",
+   "Laboratory fat and protein results can be time-matched to the spectral samples.",
+   "Temperature and texture can be recorded as independent reference variables."
+  ],
+  "not_in_sources": [
+   "The sources do not give a product-specific NIR calibration or expected accuracy for fat and protein in this concentrated milk product.",
+   "The sources do not cover long-term fouling or cleaning behaviour for this line.",
+   "The sources do not give an achievable response time for this product."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "fat",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The customer needs fat as a composition target, and NIR reflection with PLS is reported for fat in milk.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": "NIR diffuse reflection probe",
+     "alternative": "laboratory fat reference for calibration"
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "using Partial Least Squares (PLS) regression to quantify fat and protein.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "protein",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The customer needs protein as a composition target, and NIR reflection with PLS is reported for protein in milk.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": "NIR diffuse reflection probe",
+     "alternative": "laboratory protein reference for calibration"
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "using Partial Least Squares (PLS) regression to quantify fat and protein.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P3",
+    "name": "temperature",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Temperature varies during production and can change scattering and spectra, so it must be recorded for calibration and compensation.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": "NIR",
+     "sensor": "temperature sensor",
+     "alternative": "laboratory temperature reference"
+    },
+    "citations": []
+   },
+   {
+    "id": "P4",
+    "name": "texture/viscosity",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Texture varies during production and changes probe contact and scattering, so it must be separated from composition effects.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": "NIR",
+     "sensor": "laboratory rheology/viscosity",
+     "alternative": "inline viscometer if available"
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "single probe, simple optics",
+    "maintenance": "clean probe, recalibrate on matrix change",
+    "performance_fit": "least hardware for fat/protein trend",
+    "cost_drivers": "single NIR spectrometer, reflection probe, installation, reference samples",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1",
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "two NIR paths, moderate setup",
+    "maintenance": "two probes or paths to clean",
+    "performance_fit": "compares geometries across texture variation",
+    "cost_drivers": "two NIR probe configurations and wider reference sampling",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "A product-specific chemometric calibration against laboratory fat and protein references is needed; revalidate after matrix, temperature or texture changes.",
+  "realtime_tracking_note": "NIR reflection is described for inline milk monitoring; the achievable update rate for this line is not stated in the sources and must be defined.",
+  "future_direction": "If NIR cannot meet the criteria, a later comparison with MIR ATR or Raman could test whether additional molecular specificity improves fat and protein prediction.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "If transflection proves impractical or NIR reflection alone meets the customer's criteria, O1 would be preferred; if NIR cannot meet the criteria, the method shortlist would need review.",
+   "next_step": "Run the comparison on representative product states with independent laboratory references and decide against customer-defined go/no-go criteria."
+  },
+  "brief_answer": "Test NIR diffuse reflection first on representative product states, with laboratory fat and protein references and recorded temperature and texture. A NIR transflection comparison is worth including only where a controlled optical path can be maintained; it may fail in a very thick, opaque product. Required accuracy, response time, installation point, cleaning and reference sampling remain open."
+ }
+}
