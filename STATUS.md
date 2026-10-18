@@ -1,6 +1,8 @@
 # Status
 
-_Last updated: 2026-10-18 14:03 CEST (Claude, Phase 6; handoff for the review session)._
+_Last updated: 2026-10-18 14:05 CEST (Claude, Phase 6; final review session)._
+
+**14:05 review session started:** 4 read-only reviewer agents in parallel (A brief + outputs, items 1–2; B code, items 3–6; C docs/video/slides, items 7–9; D repo sanitize, item 10). Reports in the session scratchpad, to be committed under docs/review-final/. Next: fix plan → user approval → implement → re-review.
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
