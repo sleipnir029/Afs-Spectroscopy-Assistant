@@ -1,0 +1,502 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified from the stated sample and process facts, but the required accuracy, tank interface and cleaning conditions are unknown, so the choice stays provisional.",
+ "premise_checks": [
+  {
+   "premise": "A single method and probe can be named now without knowing the required accuracy and the tank's optical interface.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source states accuracy requirements or tank-port options for fermentation; the shortlist below is therefore conditional on the clarification questions.",
+   "citations": []
+  },
+  {
+   "premise": "A 30 m fiber link from tank to analyzer cabinet is feasible.",
+   "verdict": "precedent_only",
+   "explanation": "Long remote links are documented for silica (NIR) fibers; no source states an achievable length for mid-IR fibers, so the 30 m link is only supported for the NIR option.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "premise": "Spectroscopy can follow sugar and alcohol during fermentation in-line.",
+   "verdict": "precedent_only",
+   "explanation": "Published bioprocess examples show fiber-optic monitoring of metabolites such as glucose in fermenters; this is a reason to test, not proof for this brewery.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Follow sugar content in-line during fermentation",
+  "Follow alcohol content in-line during fermentation",
+  "Stainless steel tank at 12-18 °C",
+  "Cloudy beer with yeast and CO2 bubbles",
+  "Analyzer cabinet about 30 m from the tank"
+ ],
+ "key_unknowns": [
+  "Required accuracy and precision for sugar and alcohol",
+  "Available optical port or flange on the tank and probe insertion geometry",
+  "CIP/SIP conditions and chemical exposure of the probe",
+  "Tank pressure and CO2 headspace behaviour at the measurement point",
+  "Whether the beer contains a usable fluorescent species (for the fluorescence option)"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What accuracy and update rate do you need for sugar (e.g. extract in °P or g/L) and alcohol (% v/v) during fermentation?",
+   "why_it_matters": "This decides whether a single NIR calibration can meet the target or whether a second method must be considered.",
+   "affects": [
+    "method",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Is there an existing optical port, flange or varon/Ingold-style socket on the tank, and at what position relative to the yeast and CO2 gradients?",
+   "why_it_matters": "The probe type (transmission vs transflection vs reflection) and its insertion depth depend on the available port and local homogeneity.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the CIP/SIP conditions (temperature, caustic/acids, duration) that the probe must survive?",
+   "why_it_matters": "Cleaning chemistry and temperature limit which probe windows, fibers and seals are usable.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What is the tank pressure and how strong is CO2 bubbling at the intended measurement point?",
+   "why_it_matters": "Bubbles and turbulence disturb transmission and reflection signals and influence where the probe should sit.",
+   "affects": [
+    "installation",
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR suits remote fiber-probe online measurement and its overtones cover sugar and alcohol in aqueous media; a transflection probe tolerates the turbid, yeast-containing beer where pure transmission would saturate. Silica fibers support the 30 m link.",
+   "conditions": "The optical pathlength must be controlled and the calibration built across the full fermentation range.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman tolerates water well and gives a molecular fingerprint of sugars and ethanol, making it the natural single-method comparison against NIR. Its weak signal and possible fluorescence background must be checked on real beer samples.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "MIR-ATR gives well-resolved sugar and ethanol bands and immersion ATR probes are used in-line for liquids, but it is only worth testing if a 30 m mid-IR fiber link proves feasible, which no supplied source confirms.",
+   "conditions": "Test only after AFS confirms an achievable mid-IR fiber length for the 30 m route; ATR also samples only a few micrometres at the crystal surface.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "If neither NIR nor Raman alone meets the accuracy target, fusing the two could add complementary information, as shown for pharmaceutical blends. The gain is a hypothesis and must beat the best single method on independent batches.",
+   "conditions": "Only after the single-method tests; requires same-spot sampling, synchronised acquisition and per-method calibration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Fluorescence only measures species that actually fluoresce, and no fluorescent marker for sugar or alcohol has been identified in this beer; its selectivity for these targets is low. It could only serve as a supplementary indicator, not the primary method.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion NIR transflection (or transmission) fiber probe inserted through a tank port into the fermenting beer; Raman fiber probe at the same region as the comparison; MIR-ATR immersion probe only as a conditional later test.",
+  "location": "In the stainless steel fermentation tank, at a position representative of the bulk liquid and away from the strongest CO2 bubble streams.",
+  "fiber_link": "Silica Vis-NIR fiber cable for the NIR and Raman channels (30 m is within the documented 100-300 m class for low-OH silica cables); the mid-IR link length for a PIR/CIR fiber is an open question for AFS.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "performance_figure"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, silica fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1 with the laser excitation wavelength (e.g. 785 nm in the published pharma example) stated separately; the usable shift range depends on the selected laser and spectrometer.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 µm); the usable range is limited by the chosen fiber (e.g. PIR 3-17 µm) and ATR crystal.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Yeast turbidity and CO2 bubbles scatter and distort the NIR signal, so physical variation can mimic composition change and scatter correction plus a robust sampling position are needed.",
+   "rule_ids": [
+    "R-GEO-6",
+    "R-GEN-5"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The NIR calibration is specific to the beer matrix and must be rebuilt or re-validated whenever the recipe, yeast or process changes materially.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "No supplied source confirms a 30 m mid-IR fiber link, so the MIR-ATR option may fail on the fiber route rather than on spectroscopy.",
+   "rule_ids": [
+    "R-FIB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 10,
+     "quote": "1.25 Meter Silver Halide - straight run",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "If the MIR-ATR route is pursued, crystal fouling by yeast and protein could bias the surface-layer signal.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative beer samples across the expected variation: several fermentation time points from early to terminal gravity, covering the sugar and alcohol ranges, yeast turbidity and CO2 levels.",
+    "purpose": "Cover the chemical and physical span the in-line model must handle.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with the independent reference method the brewery already uses (e.g. laboratory density/extract and alcohol analysis) to provide ground truth for sugar and alcohol.",
+    "purpose": "Provide the reference data the calibration and the go/no-go criteria are judged against.",
+    "citations": []
+   },
+   {
+    "step": "Record NIR transflection spectra first (single method), then Raman spectra on the same samples, keeping the measurement geometry fixed and logging sample temperature.",
+    "purpose": "Compare the two single methods before any combination is considered.",
+    "citations": []
+   },
+   {
+    "step": "Build separate PLS calibration models for sugar and alcohol per method and validate them on held-out brews or batches not used in calibration.",
+    "purpose": "Estimate real prediction error and check robustness against overfitting.",
+    "citations": []
+   },
+   {
+    "step": "Go/no-go: agree with the customer the numerical accuracy targets for sugar and alcohol beforehand; a method passes only if its validated prediction error on held-out batches meets those targets; only then test a fused NIR+Raman model and require it to beat the best single method.",
+    "purpose": "Give an objective basis for choosing the in-line configuration.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory sugar (extract) and alcohol analysis on every calibration and validation sample, performed by the brewery or an external lab.",
+  "decision_basis": "Validated prediction error on held-out batches against customer-defined accuracy targets for sugar and alcohol."
+ },
+ "assumptions": [
+  "The measurement point can be made representative of the bulk beer despite yeast settling and CO2 gradients.",
+  "A tank port or socket can be fitted or already exists for probe insertion.",
+  "Standard brewery CIP chemistry will be compatible with the chosen probe window and seals (to be confirmed)."
+ ],
+ "not_in_sources": [
+  "Accuracy, detection limits or response times achievable for sugar and alcohol in fermenting beer with any of the shortlisted methods",
+  "Achievable length of a mid-IR (PIR/CIR) fiber link for the 30 m route",
+  "Probe materials and seals compatible with brewery CIP/SIP regimes"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Sugar content (extract, e.g. °P or g/L)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is one of the two target variables the in-line model must predict during fermentation.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Alcohol content (% v/v)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the second target variable the in-line model must predict as fermentation proceeds.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Sample temperature at the probe",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature shifts spectral bands and must be recorded so the calibration can compensate for the 12-18 °C range.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Reference sugar and alcohol values per sample",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Independent laboratory reference values are needed to build and validate the calibration and to set the go/no-go criteria.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "laboratory extract and alcohol analysis (e.g. density/distillation or HPLC)",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P5",
+   "name": "Yeast turbidity / suspended solids level",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It should be available because scattering from yeast strongly affects the NIR signal and may need to be a model variable or correction factor.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Standard NIR probe and spectrometer, familiar workflow",
+   "maintenance": "Window cleaning at CIP; periodic calibration check",
+   "performance_fit": "Covers both targets with one probe on a proven 30 m silica link",
+   "cost_drivers": "NIR spectrometer, transflection probe, silica cable, calibration samples and reference analyses",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "Two probes to install and run during trials",
+   "maintenance": "Two windows/probe tips to keep clean; two calibrations",
+   "performance_fit": "Tests the best single method against its strongest aqueous rival before committing",
+   "cost_drivers": "NIR and Raman spectrometers, two probes, cables, extended calibration and reference campaign",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M4"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "More complex installation and data handling",
+   "maintenance": "Two instruments, two calibrations, fused model upkeep",
+   "performance_fit": "Only if single methods miss the accuracy target on held-out batches",
+   "cost_drivers": "Second spectrometer, combined or co-located probes, data-fusion software, larger validation campaign",
+   "fusion_note": "Low-level fusion: synchronised NIR and Raman spectra merged into one augmented matrix for PLS models, as published for blend potency. Both probes must sample the same beer volume at the same tank position, with data normalised to a common time step. Each method keeps its own calibration, and the fused model must beat the best single method on independent batches or it is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Data processing for pharmaceutical tasks relies on \"low-level data fusion,\" where the synchronized NIR and Raman spectra are merged into a single augmented matrix.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A PLS regression model per method (and per analyte) is the baseline; NIR bands are broad and overlapping, so chemometrics are required for quantitative use. Reference data from every calibration and validation sample is essential, and validation on held-out brews protects against overfitting.",
+ "realtime_tracking_note": "The goal is continuous in-line tracking of sugar and alcohol through fermentation; diode-array or fast-scanning NIR acquisition supports real-time results, and the model must cover the full dynamics from high sugar/zero alcohol to terminal gravity.",
+ "future_direction": "Once the calibration is proven, a compact LED-based NIR sensor at selected wavelengths could replace the full spectrometer for routine monitoring, following the published LED-sensor simplification approach.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the required accuracy is modest and the tank port suits a single immersion probe, O1 alone may suffice; if no 30 m mid-IR link is feasible, M3 drops out, and if single methods miss the accuracy targets on held-out batches, O3 becomes the path.",
+  "next_step": "Answer the clarification questions and run the multi-method lab trial on representative fermentation samples with laboratory reference analyses."
+ },
+ "brief_answer": "Test an NIR transflection (or transmission) immersion fiber probe first: NIR suits remote fiber-probe monitoring, its bands cover sugar and alcohol, and silica fibers support your 30 m link. Run a Raman probe in parallel as the comparison method; consider MIR-ATR only if a 30 m mid-IR fiber link proves feasible. Open points: required accuracy, tank port and CIP conditions, and a calibration validated across the full fermentation range."
+}
