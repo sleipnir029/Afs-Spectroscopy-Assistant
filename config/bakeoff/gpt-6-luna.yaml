@@ -1,0 +1,36 @@
+# 5.8 bake-off arm (D-054): openai/gpt-6-luna, standard tier. Use with AFS_MODELS_CONFIG=config/bakeoff/gpt-6-luna.yaml.
+# Same structure, max_tokens, timeouts and spend caps as config/models.yaml; only the role models, reasoning effort,
+# routing, model_params and prices differ. Endpoint data: GET .../api/v1/models/openai/gpt-6-luna/endpoints.
+provider: openrouter
+base_url: https://openrouter.ai/api/v1
+temperature: 0
+response_mode: json_schema
+timeout_s: 600
+roles:
+  intake: {model: openai/gpt-6-luna, max_tokens: 16000, reasoning: {effort: medium}, timeout_s: 240}
+  assess: {model: openai/gpt-6-luna, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  repair: {model: openai/gpt-6-luna, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  external_queries: {model: openai/gpt-6-luna, max_tokens: 16000, reasoning: {effort: low}, timeout_s: 180}
+  external_evidence: {model: openai/gpt-6-luna, max_tokens: 32000, reasoning: {effort: low}, timeout_s: 180}
+# No endpoint lists `temperature`, so it is not sent (these runs are not at temperature 0; accepted by the user).
+model_params:
+  openai/gpt-6-luna: {omit: [temperature]}
+# Routing checked 2026-10-18 09:03 CEST. The `only` list is load-bearing: require_parameters does not exclude endpoints
+# that list response_format without strict output (structured_outputs). All 7 endpoints list structured_outputs.
+# Standard tier: the tier endpoints are `openai/flex` (service_tier flex) and `openai/fast` (service_tier priority).
+# For a closed-weight model every tier endpoint is opt-in: it serves only when the request sends `service_tier`, uses
+# a :floor/:nitro variant or names the tier slug, and a base slug (`openai`) never matches it (OpenRouter docs,
+# "Service Tiers: How Routing Works" and "Provider Routing: Base Slug Matching"). We do none of these, so only
+# standard endpoints are eligible. Kept: openai (first party), azure (global, us, eu; base slug) and amazon-bedrock
+# (us-east-1); order = cheapest first (openai and azure global 0.10/0.50; the regional ones 0.11/0.55). Quantization is
+# not published for this closed model. Note: Azure lists max_completion_tokens, not max_tokens, so with
+# require_parameters it may never be picked.
+provider_routing:
+  openai/gpt-6-luna: {order: [openai, azure, amazon-bedrock], only: [openai, azure, amazon-bedrock], allow_fallbacks: true}
+# Fallback prices (USD per 1M tokens) used only if OpenRouter does not return a cost: the dearest standard endpoint in
+# the `only` list (regional Azure, Bedrock).
+prices:
+  openai/gpt-6-luna: {input: 0.11, output: 0.55}
+spend_cap_usd:
+  per_run: 1.00
+  per_session: 10.00

@@ -129,3 +129,45 @@ def test_run_writes_to_outputs_set_by_default(monkeypatch):
 def test_run_outputs_flag_sets_the_directory(monkeypatch, tmp_path):
     out = tmp_path / "bakeoff" / "arm" / "dev"
     assert _run_set_out_dirs(monkeypatch, ["run", "--set", "dev", "--outputs", str(out)]) == [out]
+
+
+# ----------------------------------------------------------------- bake-off arm configs (config/bakeoff/)
+ARMS = sorted((paths.ROOT / "config" / "bakeoff").glob("*.yaml"))
+
+
+def _use(monkeypatch, config_file) -> dict:
+    monkeypatch.setenv(llm.CONFIG_ENV, str(config_file))
+    llm._config_source.cache_clear()
+    llm.config.cache_clear()
+    return llm.config()
+
+
+def test_there_are_bakeoff_arms():
+    assert len(ARMS) >= 4
+
+
+@pytest.mark.parametrize("arm", ARMS, ids=lambda p: p.stem)
+def test_bakeoff_arm_matches_the_main_config(fresh_config, monkeypatch, arm):
+    base = copy.deepcopy(llm.config())
+    cfg = _use(monkeypatch, arm)
+    assert set(cfg["roles"]) == set(base["roles"])
+    for key in ("provider", "base_url", "temperature", "response_mode", "timeout_s", "spend_cap_usd"):
+        assert cfg[key] == base[key], key
+    for role, rc in cfg["roles"].items():
+        assert rc["max_tokens"] == base["roles"][role]["max_tokens"], role
+        assert rc.get("timeout_s") == base["roles"][role].get("timeout_s"), role
+    for model in {rc["model"] for rc in cfg["roles"].values()}:
+        routing = cfg["provider_routing"][model]
+        assert routing["only"] and set(routing["order"]) <= set(routing["only"]), model
+        assert cfg["prices"][model]["input"] > 0 and cfg["prices"][model]["output"] > 0, model
+        llm.omitted_params(model)                       # a bad omit name raises
+
+
+def test_an_arm_without_temperature_sends_none(fresh_config, monkeypatch):
+    cfg = _use(monkeypatch, paths.ROOT / "config" / "bakeoff" / "gpt-6-luna.yaml")
+    client = _client([_response('{"a": 1}')])
+    client.complete_json("assess", "sys", "user", "assessment", SCHEMA)
+    sent = client.client.kwargs[0]
+    assert sent["model"] == "openai/gpt-6-luna" and "temperature" not in sent
+    assert sent["extra_body"]["provider"] == {"require_parameters": True, **cfg["provider_routing"][sent["model"]]}
+    assert sent["extra_body"]["reasoning"] == {"effort": "medium"}

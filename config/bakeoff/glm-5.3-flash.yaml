@@ -1,0 +1,30 @@
+# 5.8 bake-off arm (D-054): z-ai/glm-5.3-flash. Use with AFS_MODELS_CONFIG=config/bakeoff/glm-5.3-flash.yaml.
+# Same structure, max_tokens, timeouts and spend caps as config/models.yaml; only the role models, reasoning effort,
+# routing and prices differ. Endpoint data: GET https://openrouter.ai/api/v1/models/z-ai/glm-5.3-flash/endpoints.
+provider: openrouter
+base_url: https://openrouter.ai/api/v1
+temperature: 0
+response_mode: json_schema
+timeout_s: 600
+roles:
+  intake: {model: z-ai/glm-5.3-flash, max_tokens: 16000, reasoning: {effort: medium}, timeout_s: 240}
+  assess: {model: z-ai/glm-5.3-flash, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  repair: {model: z-ai/glm-5.3-flash, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  external_queries: {model: z-ai/glm-5.3-flash, max_tokens: 16000, reasoning: {effort: low}, timeout_s: 180}
+  external_evidence: {model: z-ai/glm-5.3-flash, max_tokens: 32000, reasoning: {effort: low}, timeout_s: 180}
+# Routing checked 2026-10-18 09:03 CEST. The `only` list is load-bearing: require_parameters does not exclude endpoints
+# that list response_format without strict output (structured_outputs). Kept: fp8 endpoints listing structured_outputs,
+# pinned by their fp8 slug; order = cheapest first (est. cost per case at our token profile).
+# Excluded: fp4/nvfp4 (OpenInference, DeepInfra, Sail Research, Decart, InferenceNet, Wafer, Phala, Modal, Crusoe,
+# CoreWeave, Parasail, NextBit); no structured_outputs (Z.AI first party, Novita, GMICloud, SiliconFlow, AtlasCloud,
+# Relace); unknown quantization, not first party (Reka, DigitalOcean, Makora, PrimeIntellect, Fireworks, Friendli,
+# Together, Venice).
+provider_routing:
+  z-ai/glm-5.3-flash: {order: [streamlake/fp8, near-ai/fp8, baseten/fp8, morph/fp8, inceptron/fp8], only: [streamlake/fp8, near-ai/fp8, baseten/fp8, morph/fp8, inceptron/fp8], allow_fallbacks: true}
+# Fallback prices (USD per 1M tokens) used only if OpenRouter does not return a cost: the highest input and output
+# price in the `only` list (Baseten input, Inceptron output).
+prices:
+  z-ai/glm-5.3-flash: {input: 0.15, output: 0.69}
+spend_cap_usd:
+  per_run: 1.00
+  per_session: 10.00

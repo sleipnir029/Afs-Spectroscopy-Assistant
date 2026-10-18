@@ -1,0 +1,31 @@
+# 5.8 bake-off control arm (D-054): deepseek/deepseek-v4.1-flash-1017, like-for-like with config/models.yaml (same
+# reasoning settings: none on intake/assess/repair, low on the external roles).
+# Use with AFS_MODELS_CONFIG=config/bakeoff/deepseek-v4.1-flash-1017.yaml.
+# Same structure, max_tokens, timeouts and spend caps as config/models.yaml; only the role models, routing and prices
+# differ. Endpoint data: GET .../api/v1/models/deepseek/deepseek-v4.1-flash-1017/endpoints.
+provider: openrouter
+base_url: https://openrouter.ai/api/v1
+temperature: 0
+response_mode: json_schema
+timeout_s: 600
+roles:
+  intake: {model: deepseek/deepseek-v4.1-flash-1017, max_tokens: 16000, timeout_s: 240}
+  assess: {model: deepseek/deepseek-v4.1-flash-1017, max_tokens: 64000, timeout_s: 600}
+  repair: {model: deepseek/deepseek-v4.1-flash-1017, max_tokens: 64000, timeout_s: 600}
+  external_queries: {model: deepseek/deepseek-v4.1-flash-1017, max_tokens: 16000, reasoning: {effort: low}, timeout_s: 180}
+  external_evidence: {model: deepseek/deepseek-v4.1-flash-1017, max_tokens: 32000, reasoning: {effort: low}, timeout_s: 180}
+# Routing checked 2026-10-18 09:03 CEST. The `only` list is load-bearing: require_parameters does not exclude endpoints
+# that list response_format without strict output (structured_outputs). Kept: fp8 standard-tier endpoints listing
+# structured_outputs, pinned by their fp8 slug; order = cheapest first (est. cost per case at our token profile).
+# Excluded: DeepSeek first party and Baseten (no structured_outputs); DeepInfra flex and priority tiers (not the
+# standard tier; per the OpenRouter docs a slug without the tier segment does not match a tier endpoint); unknown
+# quantization, not first party (Relace, Cloudflare, Fireworks, PrimeIntellect).
+provider_routing:
+  deepseek/deepseek-v4.1-flash-1017: {order: [deepinfra/fp8, inference-net/fp8, parasail/fp8], only: [deepinfra/fp8, inference-net/fp8, parasail/fp8], allow_fallbacks: true}
+# Fallback prices (USD per 1M tokens) used only if OpenRouter does not return a cost: the dearest endpoint in the
+# `only` list (Parasail).
+prices:
+  deepseek/deepseek-v4.1-flash-1017: {input: 0.30, output: 1.20}
+spend_cap_usd:
+  per_run: 1.00
+  per_session: 10.00
