@@ -1,0 +1,521 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A clear aqueous liquid in a pipe is a good fit for NIR transmission/transflection, and GC is a suitable reference, but the concentration range, temperature and installation constraints are still open, so the recommendation is a shortlist to test rather than a final configuration.",
+ "premise_checks": [
+  {
+   "premise": "A transmission/transflection geometry suits the clear liquid stream",
+   "verdict": "supported",
+   "explanation": "The dairy example states transmission is preferred for transparent or semi-transparent liquids.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "In-line fiber-optic spectroscopy can replace periodic manual sampling for process follow-up",
+   "verdict": "precedent_only",
+   "explanation": "The sources describe online fiber-probe analysis in process lines as an established trend, but each new application must be proven by a feasibility trial.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 2,
+     "quote": "Fiber optic probes and cells are being integrated into reactors and production lines of ongoing technological processes, enabling on-site online analysis and obtaining results in near real time.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Follow ethanol concentration in-line in the pipe after filtration",
+  "Replace manual sampling a few times per shift",
+  "GC as the reference method"
+ ],
+ "key_unknowns": [
+  "Ethanol concentration range and required accuracy",
+  "Process temperature and its variation",
+  "Pipe access: flow-through cell vs immersion probe, and allowed pathlength",
+  "Cleaning/sterilisation (CIP/SIP) and hygienic requirements",
+  "Other components (residual sugars, glycerol, by-products) and how much they vary"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What ethanol concentration range do you expect, and what accuracy do you need in-line?",
+   "why_it_matters": "It sets the required pathlength and decides whether NIR sensitivity is sufficient.",
+   "affects": [
+    "technique",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the process temperature and how much does it vary?",
+   "why_it_matters": "Temperature shifts affect NIR spectra and must be covered by the calibration or compensated.",
+   "affects": [
+    "method",
+    "P2"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "How can the probe be mounted on the pipe: is a flow-through transmission cell possible, or only a probe inserted into the line, and what are the pipe dimensions?",
+   "why_it_matters": "It determines the feasible measurement geometry and optical pathlength.",
+   "affects": [
+    "installation",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "Are there CIP/SIP or hygienic requirements for the probe and window materials?",
+   "why_it_matters": "Cleaning constraints restrict probe and window materials and the installation design.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Which other components (residual sugars, glycerol, organic acids) are present and how do their concentrations vary over a run?",
+   "why_it_matters": "Overlapping NIR bands mean these interferents must be included in the calibration model.",
+   "affects": [
+    "M1",
+    "M2"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "The stream is a clear aqueous liquid, exactly the case where NIR transmission/transflection is the preferred geometry, and NIR suits remote fiber-probe online use. Ethanol has strong NIR overtone bands, but a chemometric calibration against GC is required.",
+   "conditions": "Pathlength must be controlled (typically 1-10 mm in the analogous dairy case) and the calibration must cover temperature and co-fermentation components.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman tolerates water well and gives sharper bands than NIR, so it is worth testing in parallel on the same samples as a simpler-to-interpret alternative. Its weak signal and possible fluorescence background from the broth must be checked on real samples.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "MIR-ATR gives well-resolved ethanol bands and is a proven in-line probe principle for liquids, but it samples only a surface layer of a few micrometres and needs tight contact, so fouling and representativeness are risks in a flowing pipe.",
+   "conditions": "Test only if the NIR trial shows insufficient selectivity or accuracy, and if crystal fouling in the pipe can be managed.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "If the single methods each capture part of the variance (e.g. ethanol plus interfering sugars), a fused NIR+Raman model is a later hypothesis, analogous to the published feed-frame blend potency case. It must beat the best single method to be kept.",
+   "conditions": "Only after the single-method trials, and only if one method alone does not meet the accuracy target.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "By combining Raman and NIR, these models can predict API potency or coating thickness with higher accuracy and robustness than single-method models.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Diffuse reflection is listed for powders and scattering media, not for a clear liquid, and reflection is less representative for clear liquids. A reader might expect it because reflection probes are common in-line, but it does not fit this stream.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "reflection can work well in highly scattering environments but can be less representative for clear liquids.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR transmission or transflection flow cell or probe in the stainless steel pipe after filtration, with a controlled optical pathlength; Raman probe tested in parallel as a comparison",
+  "location": "In the pipe between the filter and the holding tank",
+  "fiber_link": "Vis-NIR silica fibers for NIR and Raman; the achievable link length depends on the selected fiber and is an open question for long runs",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer of the sample to a detector on the opposite side.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the spectrometer, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1 with a stated laser excitation wavelength (e.g. 785 nm in the published pharma example); excitation choice affects fluorescence background.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "MIR",
+   "statement": "Nominal MIR range 4000-400 cm-1 (2.5-25 µm); the usable range is limited by the fiber and ATR crystal selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Overlapping NIR bands from sugars, glycerol and other fermentation components could bias the ethanol calibration if they are not represented in the calibration set.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Temperature variation in the pipe can shift NIR spectra and degrade the model if not covered by calibration or compensation.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "Window fouling or bubble formation in the flow cell could corrupt transmission signals and require cleaning or mechanical safeguards.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "If the slightly yellow broth or its components fluoresce strongly, the Raman comparison could be hampered by fluorescence background.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative filtered broth samples across the expected variation in ethanol concentration, temperature and co-fermentation components over several runs.",
+    "purpose": "Cover the calibration space the in-line model must handle.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with GC as the independent reference, using the customer's existing lab method.",
+    "purpose": "Provide the response values for calibration and validation.",
+    "citations": []
+   },
+   {
+    "step": "Record NIR transmission/transflection spectra at a controlled pathlength on the same samples, and Raman probe spectra in parallel as the comparison method.",
+    "purpose": "Test the primary single method first and the comparison on identical samples.",
+    "citations": []
+   },
+   {
+    "step": "Build a PLS calibration for ethanol on the NIR data (and Raman data separately), validate on held-out runs or batches, and only then test a fused NIR+Raman model against the best single method.",
+    "purpose": "Single methods first; a combination must prove a gain before adding hardware.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 15,
+      "quote": "Data processing for pharmaceutical tasks relies on \"low-level data fusion,\" where the synchronized NIR and Raman spectra are merged into a single augmented matrix.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "step": "Define the go/no-go basis with the customer: the in-line prediction error on held-out runs must meet the accuracy they specify against GC before an in-line installation is designed.",
+    "purpose": "Make the decision criterion explicit and customer-owned.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Gas chromatography in the customer's laboratory, as stated in the enquiry.",
+  "decision_basis": "Prediction accuracy on held-out runs/batches against GC, with the numerical criterion supplied by the customer (Q1)."
+ },
+ "assumptions": [
+  "The filtered broth remains optically clear and of similar composition across runs",
+  "A probe or flow cell can be mounted in or on the pipe with reasonable access"
+ ],
+ "not_in_sources": [
+  "Ethanol-specific detection limits or accuracy figures for NIR or Raman in fermentation broth",
+  "Achievable MIR fiber link length for an in-line installation"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Ethanol concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the target variable the in-line model must predict.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Process temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature variation shifts spectra and must be measured to be compensated or included in the calibration.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Co-fermentation components (residual sugars, glycerol, organic acids)",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "They overlap ethanol bands in NIR and should be available (from GC or the fermentation records) to build a selective calibration.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "GC (existing lab method)",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Simple probe, no flow cell needed",
+   "maintenance": "Low; occasional window cleaning",
+   "performance_fit": "Fits aqueous clarity; selectivity must be verified",
+   "cost_drivers": "Raman spectrometer and laser, probe, trial calibration effort",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Standard NIR probe practice, straightforward",
+   "maintenance": "Window cleaning and periodic calibration checks",
+   "performance_fit": "Preferred geometry for clear liquids with controlled pathlength",
+   "cost_drivers": "NIR spectrometer, transmission/transflection probe or flow cell, GC reference sampling, calibration development",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M4"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Two instruments to run and align",
+   "maintenance": "Each block needs its own calibration and diagnostics",
+   "performance_fit": "Fits only if single methods miss part of the variance",
+   "cost_drivers": "Second spectrometer, synchronisation software, fused model development and validation",
+   "fusion_note": "Low-level fusion: synchronized NIR and Raman spectra merged into one augmented matrix, as in the published feed-frame example. Both probes must sample the same material at the same pipe location, with data normalised to a common time step. Each method keeps its own calibration, and the fused model must beat the best single method on held-out runs or it is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Data processing for pharmaceutical tasks relies on \"low-level data fusion,\" where the synchronized NIR and Raman spectra are merged into a single augmented matrix.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A PLS regression against GC values is the expected model; the calibration set must span the ethanol range, temperature variation and the interfering components (P3), and validation should use held-out runs or batches rather than random splits of repeated measurements.",
+ "realtime_tracking_note": "Once calibrated, the in-line probe gives continuous ethanol tracking in the pipe, replacing the few-per-shift manual samples; diode-array type NIR analyzers allow fast full-spectrum acquisition for fast processes.",
+ "future_direction": "If the trial succeeds, a compact LED- or filter-based NIR sensor tuned to the informative ethanol wavelengths could later replace the full spectrometer for routine monitoring.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the ethanol range demands sensitivity NIR cannot deliver, or the pipe only allows an immersion geometry with poor optical contact, Raman (O1) or MIR-ATR (M3) would move up; a demonstrated fusion gain would justify O3.",
+  "next_step": "Answer the concentration range, temperature and mounting questions, then run the multi-method lab trial on representative filtered broth samples with GC reference values."
+ },
+ "brief_answer": "Test NIR transmission/transflection first: it is the preferred geometry for clear aqueous liquids and ethanol has strong NIR overtone bands, but it needs a controlled pathlength and a PLS calibration against your GC. Test a Raman probe in parallel as a comparison, since Raman tolerates water well. We still need your concentration range and accuracy target, process temperature, pipe mounting options, CIP requirements and the levels of sugars and other co-products."
+}
