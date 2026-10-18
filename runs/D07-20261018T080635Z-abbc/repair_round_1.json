@@ -1,0 +1,379 @@
+{
+ "round": 1,
+ "hard_failures_before": 15,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "The customer provided clear facts regarding hot polymer extrusion and API incorporation, but key unknowns such as polymer type, API concentration range, and optical properties require a provisional assessment with defined single-method options and feasibility steps.",
+  "premise_checks": [
+   {
+    "premise": "An optical measurement can detect composition changes in their process",
+    "verdict": "supported",
+    "explanation": "Sources demonstrate that NIR reflection and MIR-ATR spectroscopy are successfully used to control polymer extrusion in-line and monitor API production.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Detect composition changes during hot polymer extrusion incorporating an active pharmaceutical ingredient",
+   "Handle a hot process interface potentially exposed to material build-up",
+   "Provide an initial comparison plan and clarification questions"
+  ],
+  "key_unknowns": [
+   "Specific polymer type and grade",
+   "Active pharmaceutical ingredient identity and concentration range",
+   "Exact process temperature and pressure values",
+   "Optical properties of the melt (clear vs scattering)",
+   "Required measurement accuracy and response time"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the specific polymer type and the chemical identity and concentration range of the active pharmaceutical ingredient?",
+    "why_it_matters": "Determines the characteristic absorption bands and required sensitivity of the spectroscopic method.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What are the exact operating temperature and pressure conditions of the extrusion process?",
+    "why_it_matters": "Dictates the thermal and mechanical tolerances required for the fiber probe optics and window materials.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "Is the polymer melt optically clear, translucent, or heavily scattering?",
+    "why_it_matters": "Drives the choice between transmission, transflection, diffuse reflection, or ATR measurement geometries.",
+    "affects": [
+     "technique"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What are the required measurement accuracy and response time for detecting composition changes?",
+    "why_it_matters": "Informs whether standard scanning spectrometers or high-speed diode array/LED configurations are necessary.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Mid-IR ATR spectroscopy provides high chemical specificity for monitoring active pharmaceutical ingredients directly in polymer melts.",
+    "conditions": "Requires direct contact with the melt and stable probe sealing against hot conditions.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "NIR diffuse reflection is widely used for polymer extrusion monitoring and offers robust fiber transmission through standard silica cables.",
+    "conditions": "Requires chemometric calibration for broad overlapping absorption bands.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "Raman",
+    "technique": "raman_probe",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "Raman spectroscopy provides complementary molecular backbone information and is well-suited for chemical blending.",
+    "conditions": "Applies if fluorescence background interference is sufficiently low in the polymer matrix.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Immersion ATR probe with a Diamond or Zirconia crystal tip flush-mounted or inserted into the extruder die adaptor or barrel.",
+   "location": "In-line process environment within the hot melt extruder barrel or die adaptor.",
+   "fiber_link": "Infrared transmitting fibers (such as PIR or CIR fibers for MIR, or low-OH silica fibers for NIR) connecting the probe to the spectrometer located safely away from process vibration and heat.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "allow analysis at a significant distance from the spectrometer, without the need for sampling.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "MIR",
+    "statement": "Nominal range 4000-400 cm-1; usable range depends on the selected fiber and crystal materials.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal range 780-2500 nm; usable range depends on the instrument, fiber, and probe configuration.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Material build-up or fouling on the ATR crystal or probe tip can obscure the optical measurement and distort calibration models.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "High extrusion temperatures may exceed the thermal limits of standard probe seals or fiber coatings if not properly specified.",
+    "rule_ids": [
+     "R-GEN-1"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Broad overlapping absorption bands in NIR spectroscopy may limit sensitivity to minor API concentration changes without robust chemometrics.",
+    "rule_ids": [
+     "R-NIR-2"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Prepare representative calibration mixtures",
+     "purpose": "Cover expected polymer and API concentration variations across production limits.",
+     "citations": []
+    },
+    {
+     "step": "Collect independent reference assay data",
+     "purpose": "Establish benchmark offline values for API content across all test mixtures.",
+     "citations": []
+    },
+    {
+     "step": "Perform single-method optical screening",
+     "purpose": "Evaluate MIR-ATR and NIR reflection separately under simulated or pilot extrusion conditions.",
+     "citations": []
+    },
+    {
+     "step": "Validate chemometric calibration models",
+     "purpose": "Test model accuracy and robustness on independent held-out extrusion batches.",
+     "citations": []
+    },
+    {
+     "step": "Determine go/no-go outcome",
+     "purpose": "Compare performance against customer-defined detection limits and accuracy thresholds.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Independent laboratory assays provided by the customer for offline verification.",
+   "decision_basis": "Customer-defined accuracy and repeatability thresholds for API concentration detection."
+  },
+  "assumptions": [
+   "The polymer melt can be brought into adequate contact with an ATR probe or interrogated via diffuse reflection.",
+   "Offline assay results are sufficiently accurate to serve as primary reference data for chemometric calibration."
+  ],
+  "not_in_sources": [
+   "Exact customer extrusion temperatures and pressures",
+   "Specific chemical identity and concentration limits of the active pharmaceutical ingredient"
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "API Concentration",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Primary target for tracking composition changes during extrusion.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "MIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Process Temperature",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Required to ensure thermal compatibility of the probe and fiber optics in the hot extrusion environment.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "Thermocouple / Temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2"
+    ],
+    "ease_of_use": "Standard probe installation",
+    "maintenance": "Periodic optical cleaning",
+    "performance_fit": "Suitable for bulk polymer matrix monitoring",
+    "cost_drivers": "Standard NIR spectrometer and reflection probe",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2"
+    ],
+    "ease_of_use": "Direct melt contact probe",
+    "maintenance": "Regular cleaning for potential build-up",
+    "performance_fit": "High chemical specificity for API in hot polymer melt",
+    "cost_drivers": "FTIR spectrometer and diamond/ZrO2 ATR probe",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 14,
+      "quote": "Spectra of API in hot polymer obtained with Diamond cone ATR probe coupled to iC10 FTIR (MTAC)",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "O3",
+    "tier": "extended",
+    "recommendation_ids": [
+     "M1",
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2"
+    ],
+    "ease_of_use": "Complex dual-instrument setup",
+    "maintenance": "High maintenance for multi-probe hardware",
+    "performance_fit": "Maximum chemical and physical insight by combining surface ATR and bulk reflection",
+    "cost_drivers": "Dual spectrometers and multispectral probe hardware",
+    "fusion_note": "Combines NIR bulk penetration with MIR surface specificity at the same measurement spot. Data from both methods must be synchronised to a common time step, normalized with block scaling, and validated against independent reference runs to prove it beats the best single method.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "Multivariate calibration models (such as PLS) are necessary to relate spectral variations to API concentration changes and handle background scatter.",
+  "realtime_tracking_note": "In-line continuous monitoring allows real-time tracking of composition changes directly in the extruder barrel or die adaptor.",
+  "future_direction": "Transition from laboratory spectrometer systems to dedicated optical multisensor systems (OMS) or IoT fiber sensors for dedicated production line integration.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "supplied",
+   "what_would_change_it": "Evidence of severe fouling or incompatibility with the hot extrusion interface favoring NIR reflection.",
+   "next_step": "Perform initial laboratory feasibility trials using representative polymer-API samples with an MIR-ATR probe and offline reference assays."
+  },
+  "brief_answer": "For monitoring active pharmaceutical ingredients during hot polymer extrusion, MIR spectroscopy with an ATR probe is recommended as the primary approach due to its high chemical specificity. NIR reflection serves as a viable alternative comparison. Initial feasibility trials using representative samples and offline assay references are required to validate calibration models and address potential interface fouling."
+ }
+}
