@@ -6,18 +6,24 @@ tests. Both return `LLMResult`. Every call is costed and checked against spend c
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import threading
 import time
 from dataclasses import dataclass, field
 from functools import lru_cache
+from pathlib import Path
 
 import yaml
 
 from afs_assistant import paths
 
 CONFIG_FILE = paths.ROOT / "config" / "models.yaml"
+# Alternative models config (absolute, or relative to the repo root), e.g. one bake-off arm (D-054).
+CONFIG_ENV = "AFS_MODELS_CONFIG"
+# Request parameters a model may leave out via `model_params: {<model>: {omit: [...]}}` (D-054).
+OMITTABLE = ("temperature", "max_tokens", "response_format")
 
 
 class SpendCapExceeded(RuntimeError):
@@ -32,9 +38,43 @@ class DeadlineExceeded(RuntimeError):
     """No complete reply within the role's wall-clock `timeout_s`; counted as a timeout (retried once)."""
 
 
+def config_path() -> Path:
+    """The models config in use: `AFS_MODELS_CONFIG` if set, else config/models.yaml."""
+    value = os.environ.get(CONFIG_ENV, "").strip()
+    if not value:
+        return CONFIG_FILE
+    path = Path(value)
+    return path if path.is_absolute() else paths.ROOT / path
+
+
+@lru_cache(maxsize=1)
+def _config_source() -> tuple[Path, bytes]:
+    path = config_path()
+    return path, path.read_bytes()
+
+
 @lru_cache(maxsize=1)
 def config() -> dict:
-    return yaml.safe_load(CONFIG_FILE.read_text(encoding="utf-8"))
+    return yaml.safe_load(_config_source()[1].decode("utf-8"))
+
+
+def config_provenance() -> dict:
+    """Path (repo-relative when inside the repo) and sha256 of the loaded models config, for the run manifest."""
+    path, data = _config_source()
+    try:
+        shown = path.resolve().relative_to(paths.ROOT.resolve()).as_posix()
+    except ValueError:
+        shown = str(path)
+    return {"path": shown, "sha256": hashlib.sha256(data).hexdigest()}
+
+
+def omitted_params(model: str) -> set[str]:
+    """Request parameters the model does not accept (e.g. `temperature`); a name outside OMITTABLE is an error."""
+    omit = set(config().get("model_params", {}).get(model, {}).get("omit", []))
+    unknown = omit - set(OMITTABLE)
+    if unknown:
+        raise ValueError(f"model_params.{model}.omit: cannot omit {sorted(unknown)} (allowed: {list(OMITTABLE)})")
+    return omit
 
 
 @dataclass
@@ -178,6 +218,12 @@ class OpenRouterClient:
         extra = {"provider": routing, "usage": {"include": True}}
         if "reasoning" in role_cfg:          # e.g. {effort: low}: bounds the hidden reasoning of a small step
             extra["reasoning"] = role_cfg["reasoning"]
+        # Not sent at all when the model omits them: with require_parameters a sent `temperature` leaves no
+        # endpoint for a model that does not accept it.
+        params = {"temperature": cfg.get("temperature", 0), "max_tokens": role_cfg.get("max_tokens", 8000),
+                  "response_format": response_format}
+        for name in omitted_params(model):
+            params.pop(name)
 
         last_error: Exception | None = None
         timeouts = 0
@@ -187,9 +233,7 @@ class OpenRouterClient:
             try:
                 response = self._create_with_deadline(
                     timeout_s(role),
-                    model=model, messages=messages, temperature=cfg.get("temperature", 0),
-                    max_tokens=role_cfg.get("max_tokens", 8000), response_format=response_format,
-                    extra_body=extra, timeout=timeout_s(role),
+                    model=model, messages=messages, **params, extra_body=extra, timeout=timeout_s(role),
                 )
             except Exception as exc:  # retry only transient API errors
                 if type(exc).__name__ not in self.TRANSIENT:
