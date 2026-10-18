@@ -1,0 +1,535 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A shortlist of methods worth testing can be justified from the supplied material, but the polymer/API identity, melt temperature and melt opacity are unknown, so the choice stays provisional and conditional on the lab trial.",
+ "premise_checks": [
+  {
+   "premise": "In-line optical monitoring of an API in hot polymer extrusion is a realistic goal.",
+   "verdict": "precedent_only",
+   "explanation": "A supplied process example shows NIR reflection and MIR-ATR spectroscopy used to control polymer extrusion in-line; this is a reason to test, not proof for this customer's process.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "An ATR probe can be operated at the customer's hot-melt interface temperature.",
+   "verdict": "not_covered",
+   "explanation": "The sources show ATR probes used in hot environments (e.g. sealed in PEEK and used in microwave furnaces) but state no temperature rating; the actual melt temperature must be checked with AFS.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "Material build-up at the probe will not prevent a useful measurement.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source addresses fouling or build-up on in-line probes in polymer melts; ATR samples only a surface layer a few microns deep, so deposits on the crystal are a real risk to manage.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Detect composition changes of an API in a hot polymer melt during extrusion.",
+  "In-line or at-line measurement during processing; offline assays exist as reference.",
+  "Probe must cope with a hot interface and possible material build-up.",
+  "An initial comparison plan and the questions needed before choosing a probe."
+ ],
+ "key_unknowns": [
+  "Polymer and API identity, and the API concentration range of interest",
+  "Melt temperature and pressure at the intended measurement point",
+  "Optical regime of the melt (transparent vs opaque/scattering)",
+  "Required measurement frequency and response time",
+  "Available access point geometry (flange, sapphire window, bypass) and acceptable probe contact"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which polymer and which API are used, and over what concentration range must composition changes be detected?",
+   "why_it_matters": "The spectral bands, detection limit and calibration strategy all depend on the chemistry and the target range.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the melt temperature and pressure at the proposed measurement point?",
+   "why_it_matters": "It decides whether an ATR or Raman probe can survive there and which fiber and window materials are eligible.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Is the melt optically transparent or opaque/scattering at process conditions?",
+   "why_it_matters": "Transmission-style geometries fail in opaque melts, while reflection or ATR geometries need them; this decides the technique.",
+   "affects": [
+    "technique",
+    "M3"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "How fast must composition changes be detected (response time and measurement frequency)?",
+   "why_it_matters": "Acquisition speed differs strongly between FTIR-based MIR, diode-array NIR and Raman, and shapes the instrument choice.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What access is possible on the extruder (die, barrel port, bypass loop) and is probe contact with the melt acceptable?",
+   "why_it_matters": "ATR needs tight contact with the melt, while Raman can work through a window, so the access point constrains the technique.",
+   "affects": [
+    "installation",
+    "M1"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "MIR-ATR fiber probes are shown in a supplied process example controlling polymer extrusion in-line, and ATR suits liquids and soft solids in tight contact. MIR spectra have well-defined bands, giving good selectivity for an API in a polymer matrix.",
+   "conditions": "The melt temperature must be within the probe and fiber limits, and build-up on the crystal must be managed.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 14,
+     "quote": "NIR-Reflex & MIR-ATR-spectroscopy to control polymer extrusion in-line",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Mid-IR band spectra contain well-defined peaks (absorption bands)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman probes are listed for liquids and solids and Raman tolerates water and can probe through a window, making it a strong second candidate to compare against MIR-ATR on the same melt. Its weak signal and possible fluorescence background must be checked on real samples.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection suits opaque or highly concentrated streams and NIR penetrates millimetres, but its fit depends on the melt's optical regime, which is unknown. It becomes relevant only if the melt proves opaque and the API bands in NIR are strong enough.",
+   "conditions": "Applies if the melt is opaque or highly scattering and the trial shows sufficient API contrast in the NIR bands.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "If neither single method separates the API signal from the polymer matrix well enough, a combined MIR-ATR and Raman measurement is the next hypothesis; mid-IR and Raman spectra are complementary. The gain must be proven against the best single method.",
+   "conditions": "Only after the single-method tests M1 and M2, and only if a fused model beats both.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "This property makes mid-IR and Raman spectra complementary, that is, they complement each other.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Transmission fails when the sample is too thick or opaque because light cannot penetrate it, which is the likely regime of a hot polymer melt. It would only apply to a transparent, thin melt section, which the customer has not described.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M6",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "Fluorescence only measures species that fluoresce, and most chemicals do not; no fluorescent species or indicator has been identified in this polymer/API system. It could only re-enter as an indicator if a suitable fluorophore is identified.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion ATR fiber probe (diamond or zirconium dioxide tip) in tight contact with the melt at a die or barrel port; Raman probe as a comparison, optionally through a window; NIR reflection probe only if the melt is opaque.",
+  "location": "Extruder die or barrel access point downstream of the melting/mixing zone, close to where composition is representative.",
+  "fiber_link": "MIR-ATR requires CIR or PIR fibers because silica fibers do not cover the mid-IR range; Raman and NIR use silica fibers. Achievable MIR link length is an open question; long cables are only documented for silica.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range is 4000-400 cm-1; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1 with the laser excitation wavelength (e.g. 785 nm in the pharma example) stated separately; exact coverage depends on the spectrometer and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Material build-up on the ATR crystal would bias or block the signal, since ATR samples only a surface layer a few microns deep.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "No supplied source states a temperature rating for MIR fibers, ATR probes or their seals, so the hot-melt compatibility is unverified.",
+   "rule_ids": [
+    "R-FIB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 9,
+     "quote": "HWG-750-2m PIR 600/700 -2m",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman signal may be swamped by fluorescence from the polymer or additives, which must be checked on real melt samples.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Any calibration is specific to the polymer/API matrix and must be re-validated whenever the formulation changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative melt samples across the expected API concentration range and polymer batch variation, at process temperature where possible.",
+    "purpose": "Cover the chemical and physical variation the in-line method must handle.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with MIR-ATR and Raman fiber probes in the laboratory, and with an NIR reflection probe if the melt is opaque.",
+    "purpose": "Compare the candidate single methods on identical material before any in-line installation.",
+    "citations": []
+   },
+   {
+    "step": "Analyse all samples with the existing offline assay as the independent reference for API concentration.",
+    "purpose": "Provide the ground truth for calibration and validation.",
+    "citations": []
+   },
+   {
+    "step": "Build a first chemometric calibration per method and validate it on held-out samples or a separate extrusion run.",
+    "purpose": "Quantify each method's prediction error on material it was not fitted to.",
+    "citations": []
+   },
+   {
+    "step": "Define go/no-go with the customer: a maximum acceptable prediction error and detection threshold for composition changes, plus a fouling/temperature check of the probe at the real interface.",
+    "purpose": "Give an objective basis for choosing the probe and deciding whether a fused MIR+Raman option is worth testing.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Offline assays supplied by the customer (API concentration per sample).",
+  "decision_basis": "Customer-defined maximum prediction error for API concentration and minimum detectable composition change, validated on held-out runs."
+ },
+ "assumptions": [
+  "The melt behaves as a liquid or soft solid at the measurement point, so ATR contact is physically possible.",
+  "The offline assay measures the same API concentration the in-line method should track.",
+  "A die or barrel port can be fitted with a probe or window without changing the process critically."
+ ],
+ "not_in_sources": [
+  "Temperature and pressure ratings of ATR and Raman probes for hot-melt extrusion service",
+  "Achievable MIR fiber link length for an in-line extruder installation",
+  "Fouling behaviour or cleaning strategy for probes in polymer melts"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "API concentration in the melt",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the target variable that the optical in-line method must detect during extrusion.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Polymer and API chemical identity",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It determines active vibrational bands and whether matrix fluorescence will interfere.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "customer formulation specification",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Melt temperature at the measurement point",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It decides whether the probe, crystal and fiber can survive in-line service.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "melt thermocouple at the extruder port",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Melt optical regime (transparent vs opaque/scattering)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It decides between transmission, reflection and ATR interface geometries.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "offline laboratory optical characterisation of the melt"
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Single probe, straightforward lab trial",
+   "maintenance": "Crystal cleaning; fouling watch needed",
+   "performance_fit": "Direct precedent for polymer extrusion control",
+   "cost_drivers": "One MIR-ATR probe, FTIR spectrometer, lab trial time, reference assays",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Two probes, moderate trial effort",
+   "maintenance": "Two instruments, separate calibrations",
+   "performance_fit": "Covers complementary API bands and window-based access",
+   "cost_drivers": "MIR-ATR and Raman probes, two spectrometers, extended lab trial, reference assays",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M4"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Most complex; combined or paired probes",
+   "maintenance": "Two calibrations; fused model breaks if any block drifts",
+   "performance_fit": "Only if fusion beats the best single method",
+   "cost_drivers": "Two spectrometers and probes, synchronisation software, fusion model development, validation runs",
+   "fusion_note": "Low-level fusion: MIR-ATR and Raman spectra of the same melt spot merged into one augmented matrix for a PLS model. Both probes must sample the same small area and the data must be normalised to a common time step. The fused model must beat the best single method on held-out runs, otherwise the extra instrument is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Each method needs its own calibration against the offline assay first; a fused MIR+Raman model is only built afterwards and must be validated on held-out extrusion runs, with block scaling so one spectral block does not dominate.",
+ "realtime_tracking_note": "The goal is in-line tracking of composition changes during extrusion; acquisition rate must match the residence-time scale of the process, which is why the required response time (Q4) matters before instrument selection.",
+ "future_direction": "If the trial succeeds, a customised spectral fiber sensor or multisensor system focused on the chosen wavelengths could be developed for permanent in-line process control.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the melt temperature exceeds the probe and fiber limits, or the melt is transparent with strong NIR API bands, the balance shifts toward NIR reflection or a window-based Raman setup. If a single method already meets the customer's error criteria, the fused option is unnecessary.",
+  "next_step": "Run the multi-method lab trial on representative melt samples with MIR-ATR and Raman probes against the offline assay, after confirming melt temperature and access geometry."
+ },
+ "brief_answer": "Test MIR-ATR first: it is the method with a direct in-line polymer extrusion precedent, with Raman as the comparison method on the same melt samples. NIR reflection is conditional on the melt being opaque; NIR transmission and fluorescence are not recommended for now. Open points: polymer/API identity and concentration range, melt temperature and pressure, melt opacity, required response time, and probe access and fouling behaviour at the hot interface."
+}
