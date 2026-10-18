@@ -318,7 +318,8 @@ def to_markdown(data: dict, title: str = "", full_answer: str = "") -> str:
         out += ["## Risks and uncertainty", ""]
         for k in a["risks"][:RISKS_SHOWN]:
             refs = b.refs(k["citations"])
-            out.append(f"- {b.clean(k['risk'])}{refs or b.related_source(k['risk'], k['rule_ids'])}")
+            note = refs or b.related_source(k["risk"], k["rule_ids"]) or " (engineering judgement, no AFS source)"
+            out.append(f"- {b.clean(k['risk'])}{note}")
         out.append("")
 
     fp = a["feasibility_plan"]

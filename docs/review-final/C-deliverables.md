@@ -1,7 +1,7 @@
 # Review C: deliverables (items 7–9: docs, video, slides and submission)
 
 Reviewer: independent, read-only. Repo HEAD 00d5975 (master). No repo file changed (`git status` clean after review).
-Temporary renders: `/private/tmp/claude-501/-Users-rakibuzzamanrahat-Desktop-aails/21274057-9b81-4f83-9ba2-fefe9b3eb293/scratchpad/review/tmp-C/` (slide-01..10.png, hi-05.png, v_41/85/125/140.png, evalout/).
+Temporary renders: `<session scratchpad>/review/tmp-C/` (slide-01..10.png, hi-05.png, v_41/85/125/140.png, evalout/).
 
 ## 1. Verdict
 

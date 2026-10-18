@@ -36,7 +36,7 @@ SHOTLIST = [
     ("06_feed", "shot", 7, "Live activity feed: methods ruled out with the S01 Table 1 reason; 29 citations checked against the AFS pages.", "top"),
     ("07_repair", "shot", 7, "One hard check failed, so the failed checks go back to the model for a repair round.", "top"),
     ("08_answer", "shot", 9, "Answer after 107 s (pipeline wall time, $0.036): the recommendation, a pinned strip (status, confidence, open questions), quotes in the margin.", "bottom"),
-    ("09_recommendation", "shot", 8, "Status, confidence with its reason, and the next step. Every quote beside the answer is word for word from AFS.", "bottom"),
+    ("09_recommendation", "shot", 8, "Status, confidence with its reason, and the next step. Every quote beside the answer was found on its AFS page.", "bottom"),
     ("10_verify", "shot", 7, "Open a margin quote: the stored S01 p.18 page text with the quote highlighted, marked verified (exact match).", "bottom"),
     ("11_options", "shot", 7, "Options: simple, recommended, extended. Cost class comes from S01 Table 1 (p.6) rows; it is not a price.", "bottom"),
     ("12_setup", "shot", 8, "Setup sketch drawn by code from the proposed option; the dashed sensor is auxiliary, to be confirmed with AFS.", "bottom"),
@@ -149,7 +149,7 @@ def card_closing():
         d.text((x, 450), label, font=font(ARIAL_B, 30), fill=INK)
         for j, line in enumerate(wrap(d, sub, font(ARIAL, 23), 330)):
             d.text((x, 500 + j * 32), line, font=font(ARIAL, 23), fill=MUTED)
-    claim = "Every quote is checked word for word against its AFS page; claims without a source are labelled."
+    claim = "Every quote is checked against its AFS page; claims without a source are labelled."
     for j, line in enumerate(wrap(d, claim, font(GEO_I, 32), 1120)):
         d.text((160, 650 + j * 44), line, font=font(GEO_I, 32), fill=INK)
     d.text((160, 760), "uv run afs-assist ui", font=font(str(SUP / "Courier New.ttf"), 30), fill=INK)

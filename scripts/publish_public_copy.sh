@@ -26,11 +26,18 @@ git remote remove origin
 uvx git-filter-repo --invert-paths --path knowledge/pages.jsonl \
   --preserve-commit-hashes --refs refs/heads/master refs/tags/freeze-1 --force >/dev/null
 
-# Checks: no pages.jsonl object anywhere; provenance unchanged.
+# Drop the clone's reflog so the old blobs become unreachable, then prune them.
+git reflog expire --expire=now --all
+git gc -q --prune=now
+
+# Checks: no pages.jsonl path or blob (any version ever committed) left; provenance unchanged.
 if git rev-list --objects --all | grep -q 'knowledge/pages.jsonl'; then
   echo "FAIL: pages.jsonl still reachable" >&2; exit 1
 fi
+for blob in $(git -C "$src" log --all --format= --raw --no-abbrev -- knowledge/pages.jsonl | awk '{print $4}' | sort -u); do
+  case "$blob" in 0000000*) continue ;; esac
+  if git cat-file -e "$blob" 2>/dev/null; then echo "FAIL: pages.jsonl blob $blob still in .git" >&2; exit 1; fi
+done
 [ "$(git rev-parse provenance)" = "$(git -C "$src" rev-parse provenance)" ] \
   || { echo "FAIL: provenance hash changed" >&2; exit 1; }
-git gc -q --prune=now
 echo "OK: $dest (master $(git rev-parse --short master), provenance $(git rev-parse --short provenance))"

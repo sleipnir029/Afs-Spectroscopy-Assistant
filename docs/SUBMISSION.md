@@ -21,13 +21,14 @@ A chat assistant that turns an in-line spectroscopy customer enquiry into a cite
   - about 105 s per case on average.
 - **Model choice:** a blind bake-off of 7 configurations on D01–D08, judged by four blind LLM judge agents against the AFS evaluation data. The production setup ("mix-a": per-role models, a stronger model repairing only the failed checks, cross-model retry) is about 6× faster than the previous single-model setup (84 vs 504 s per case on D01–D08) at similar blind-judged quality (4.06 vs 4.08 of 5), for about $0.03 per case.
 
-**Known limits:** answers are long (about 3,000+ words vs 300–400 in AFS's worked answers); "verified" means the quote is on the cited page, not that it entails the claim; a re-assessment can change the method without a clear reason (README "Known limitations").
+**Known limits:** answers are long (about 3,000+ words vs 300–400 in AFS's worked answers; the code-built short view has 560–698); "verified" means the quote is on the cited page, not that it entails the claim; a re-assessment can change the method without a clear reason (README "Known limitations").
 
 **Deliverables (paths in the repository)**
 - `README.md`: setup with uv, commands, results and known limitations.
 - `ARCHITECTURE.md`: components, data flow and diagram.
-- `docs/slides/slides.pdf`: 10 slides.
+- `docs/slides/slides.pdf`: 11 slides.
 - `docs/video/demo.mp4`: 2:53 demo: captioned screenshots of the real app during a live run.
 - `outputs/final/H01–H06` (`.md` + `.json`) and `outputs/final/REVIEW.md`: the rule-compliance review.
+- `outputs/final/brief/H01–H06.md`: a short view of each answer (560–698 words, organiser's section order), built by code from the frozen run JSON with no model call.
 
 **Repository link:** _to add once the repository is published_.

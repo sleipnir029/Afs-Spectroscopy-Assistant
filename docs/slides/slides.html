@@ -170,7 +170,7 @@ table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0;
 <!-- 4 -->
 <section class="slide">
   <p class="kicker">How it stays grounded</p>
-  <h2>Models write. Code checks every quote, number and word.</h2>
+  <h2>Models write. Code checks quotes, numbers, wording.</h2>
   <div class="flow">
     <div class="step llm"><b>Intake</b>LLM, strict JSON</div><div class="arr">→</div>
     <div class="step code"><b>Screen</b>44 rules, Table 1, fibers</div><div class="arr">→</div>
@@ -235,7 +235,7 @@ table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0;
             <li>one model per method first, then the fusion level.</li>
           </ul>
         </li>
-        <li>Calibration is specific to the matrix (REF p.5), so accuracy is never promised before a feasibility study.</li>
+        <li>Calibration is specific to the matrix (REF §5), so accuracy is never promised before a feasibility study.</li>
       </ul>
     </div>
     <div>
@@ -304,7 +304,7 @@ table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0;
     <ul class="small">
       <li>Dev D01–D08 + adversarial A01–A12: checklist <b>0 failures</b>.</li>
       <li>Adversarial must 33/34 and must-not 12/13. Both misses are A07: 4 questions where at most 3 are allowed, and a must-not pattern that matched a legitimate question about the reference's reproducibility. They are recorded, and the eval was not changed after seeing the outputs.</li>
-      <li>890 offline tests pass (2 skipped). A fresh clone with pages.jsonl rebuilt passed 787/2 (14:38).</li>
+      <li>890 offline tests pass (2 skipped). A fresh clone without pages.jsonl: 357 passed, 535 skipped, 0 failed; with it rebuilt: 890/2.</li>
     </ul>
   </div>
   <div class="src"><span>outputs/final/*.json, REVIEW.md · outputs/eval/summary.md · README.md (fresh-clone test) · docs/slides/README.md (pytest)</span><span>8 / 11</span></div>
@@ -349,7 +349,7 @@ table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0;
   <h2>What it does not do yet</h2>
   <div class="cols">
     <ul class="small">
-      <li><b>Too long:</b> 3,058–3,455 words per H output, against 303–400 words in the AFS worked answers.</li>
+      <li><b>Too long:</b> 3,058–3,455 words per H output, against 303–400 words in the AFS worked answers. A short view built by code from the same runs has 560–698 words (<code>outputs/final/brief/</code>).</li>
       <li><b>“Verified” means the quote is on the page and in scope</b>, not that it supports the claim. There is no entailment check yet.</li>
       <li>Short table cells and page references typed inline are not checked. Fields are not checked against each other.</li>
       <li>A literature item can be tagged to the wrong option or be only weakly relevant.</li>
@@ -372,7 +372,7 @@ table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0;
   <div class="cols">
     <ul>
       <li>An entailment critic: does the quote really support the claim?</li>
-      <li>A short customer reply that matches the length of the AFS worked answers.</li>
+      <li>A short customer reply that matches the length of the AFS worked answers (the code-built short view is a first step).</li>
       <li>Checks on table cells, inline page references and fields against each other.</li>
       <li>Calibrated confidence and fewer questions on complete enquiries.</li>
     </ul>

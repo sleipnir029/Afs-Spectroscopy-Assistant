@@ -70,7 +70,7 @@ Screenshots: crops of `docs/video/frames/11_options.png` (options table, methods
 
 - Single method first. Combine only when one method cannot cover a target or an interference (S01 p.7). Mid-IR and Raman are complementary (S01 p.11).
 - The extended option must carry a fusion note: same spot and volume (S01 p.8), data aligned to a common time step (S01 p.8), one model per method first, then the fusion level.
-- Calibration is specific to the matrix (REF p.5), so accuracy is never promised before a feasibility study.
+- Calibration is specific to the matrix (REF §5), so accuracy is never promised before a feasibility study.
 - Literature runs only for gaps the AFS sources leave open:
   - a curated open-access library (9 entries), then Europe PMC, OpenAlex and Unpaywall, with no keys;
   - queries are guarded, so no names or numbers from the enquiry are sent;
@@ -112,7 +112,7 @@ How mix-a is built:
 - Status: premise_not_supported ×4, provisional ×1, insufficient_information ×1.
 - Rule-compliance review: PASS WITH CAVEATS, no blocking violation (`outputs/final/REVIEW.md`).
 - Dev + adversarial eval: checklist 0 failures; must 33/34, must-not 12/13 (`outputs/eval/summary.md`). Both misses are A07: 4 questions where at most 3 are allowed, and a must-not pattern that matched a legitimate question about the reference's reproducibility. They are recorded, and the eval was not changed after seeing the outputs.
-- 890 offline tests pass (2 skipped) (`docs/slides/README.md`); a fresh clone with `pages.jsonl` rebuilt passed 787/2 at 14:38 (README "Fresh-clone test").
+- 890 offline tests pass (2 skipped) (`docs/slides/README.md`); a fresh clone without `pages.jsonl`: 357 passed, 535 skipped, 0 failed; with it rebuilt: 890/2 (README "Reproducibility").
 
 ---
 
@@ -147,7 +147,7 @@ Not shown on the slide (in the short view): requirements, measurement concept, s
 
 ## 10. Limitations (honest)
 
-- Answers are long: 3,058–3,455 words per H output vs 303–400 words in the AFS worked answers.
+- Answers are long: 3,058–3,455 words per H output vs 303–400 words in the AFS worked answers. A short view built by code from the same runs has 560–698 words (`outputs/final/brief/`).
 - "Verified" means the quote is on the page and in scope, not that it supports the claim. No entailment check yet.
 - Short table cells and page references typed inline are not checked. There is no check across fields.
 - A literature item can be tagged to the wrong option or be only weakly relevant.
@@ -163,7 +163,7 @@ Not shown on the slide (in the short view): requirements, measurement concept, s
 Repository: `REPO_URL_PENDING` (replaced at publish; see `docs/slides/README.md`).
 
 - An entailment critic: does the quote really support the claim?
-- A short customer reply that matches the length of the AFS worked answers.
+- A short customer reply that matches the length of the AFS worked answers (the code-built short view is a first step).
 - Checks on table cells, inline page references and fields against each other.
 - Calibrated confidence and fewer questions on complete enquiries.
 - Run it: `uv sync`, `uv run afs-assist kb build` (needs the organiser materials in `resources/`), `uv run afs-assist ui`, `uv run afs-assist assess --text "…"`, `uv run afs-assist eval`, `uv run pytest`. README.md, ARCHITECTURE.md and DEVIATIONS.md have the details. Demo video: `docs/video/demo.mp4` (2:53).
