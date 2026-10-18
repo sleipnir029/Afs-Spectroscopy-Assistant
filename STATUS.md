@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 13:27 CEST (Claude, Phase 6)._
+_Last updated: 2026-10-18 13:28 CEST (Claude, Phase 6)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
@@ -25,6 +25,8 @@ _Last updated: 2026-10-18 13:27 CEST (Claude, Phase 6)._
 - **12:37:** Phase 6 step 2 done: H01–H06 rule-compliance review PASS WITH CAVEATS (outputs/final/REVIEW.md; no blocking; known limitations recorded). Step 4 fresh-clone test: clone + `uv sync` without resources/: pytest 758/2, kb check all PASS; one live assess in the clone 92 s, $0.031, 0 hard, 25/25; replay of full-text external items needs the local cache (by design, decision 2026-10-17 12:31), library items re-verify. UI confirm review APPROVE WITH FIXES → follow-up chip fix (475a3cd, pytest 763/2). Running: README/ARCHITECTURE/slides writer; demo video agent (live budget ≤ $0.30).
 
 - **13:27:** Phase 6 steps 3 and 5 done: README.md, ARCHITECTURE.md (Mermaid renders), slides (docs/slides/slides.pdf, 10 pages) written → docs review APPROVE WITH FIXES → fixed (d6bd37b). Demo video docs/video/demo.mp4 (2:25, real app on mix-a, live spend $0.088). Video findings: duplicate options table in a follow-up → fixed (4ac8f83, pytest 764/2); method flip on re-assess and per-turn note numbering → README limitations. **Remaining: step 6, user yes/no to publish (no git remote yet; `gh` not logged in) and to submit.**
+
+- **13:28:** User: do not publish yet; prepare submission text → docs/SUBMISSION.md (repo link pending). Everything else in Phase 6 is done. Open: user publishes (needs `gh auth login` + a remote) and submits on the organiser portal before 23:59.
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
