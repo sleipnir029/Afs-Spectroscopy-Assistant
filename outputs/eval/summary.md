@@ -74,7 +74,7 @@ Outputs `outputs/adversarial`: 12 of 12 case(s) evaluated, 0 not run, 0 unreadab
 | cost_class_table1 | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | options_rules | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | proposal_rules | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
-| feasibility_plan | PASS | PASS | PASS | PASS | PASS | **FAIL** | PASS | PASS | PASS | PASS | PASS | – | 10/11 |
+| feasibility_plan | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | premise_flags | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | questions_present | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
 | questions_tied_to_options | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | – | 11/11 |
@@ -84,11 +84,11 @@ Outputs `outputs/adversarial`: 12 of 12 case(s) evaluated, 0 not run, 0 unreadab
 | off_topic_handled | – | – | – | – | – | – | – | – | – | – | – | PASS | 1/1 |
 | mermaid_renders | – | – | – | – | – | – | – | – | – | – | – | – | 0/0 |
 
-**Per criterion (passed / applicable item results):** Technical quality (30) 56/56; AFS grounding (20) 44/44; Feasibility plan (15) 21/22; Clarification and uncertainty (15) 33/33; Explainability (10) 22/22; Prototype (10) 13/13
+**Per criterion (passed / applicable item results):** Technical quality (30) 56/56; AFS grounding (20) 44/44; Feasibility plan (15) 22/22; Clarification and uncertainty (15) 33/33; Explainability (10) 22/22; Prototype (10) 13/13
 
 **Checklist failures:**
 
-- A06 · feasibility_plan: 1 real step(s); need at least 2
+- none
 
 **Per-enquiry checks:** must 33 pass / 1 fail / 0 not run; must-not 13 pass / 0 fail / 0 not run.
 
@@ -115,12 +115,12 @@ Outputs `outputs/adversarial`: 12 of 12 case(s) evaluated, 0 not run, 0 unreadab
 | A05 | must-not | parameter {"name": "pressure\|flow rate", "types": ["spectroscopy"]} | spectroscopy does not measure pressure or flow | PASS | parameters ['Line pressure (not_measurable_inline)', 'Flow rate (not_measurable_inline)'] |
 | A06 | must | off_topic {"value": false} | a measurement question always gets an assessment, never the redirect | PASS | off_topic=False |
 | A06 | must | status_in {"values": ["insufficient_information"]} | no target, sample or process is given | PASS | status insufficient_information |
-| A06 | must | min_questions {"n": 2} | the missing facts are asked for | PASS | 6 question(s) |
+| A06 | must | min_questions {"n": 2} | the missing facts are asked for | PASS | 5 question(s) |
 | A06 | must | mentions {"fields": ["first_question"], "pattern": "propert\|paramet\|component\|variable\|target\|composition\|concentrat\|analyte\|substance\|quantit\|what (?:do you (?:want\|need) to\|would you like to) measure\|(?:want\|need\|like) to (?:measure\|monitor\|determine\|quantify\|know\|learn)"} | the first question is what to measure | PASS | first_question: 'component' |
 | A06 | must-not | status_in {"values": ["provisional_assessment"]} | no method choice without a target | PASS | status insufficient_information |
 | A07 | must | off_topic {"value": false} | a measurement question always gets an assessment, never the redirect | PASS | off_topic=False |
 | A07 | must | status_in {"values": ["provisional_assessment"]} | every deciding fact is stated | PASS | status provisional_assessment |
-| A07 | must | max_questions {"n": 3} | not over-questioned: at most three key questions | **FAIL** | 6 question(s) |
+| A07 | must | max_questions {"n": 3} | not over-questioned: at most three key questions | **FAIL** | 5 question(s) |
 | A07 | must-not | mentions {"fields": ["question_text"], "pattern": "concentration range\|expected range\|reference (?:method\|measurement\|analys)"} | does not ask again for the range or reference the customer stated | PASS | no /concentration range\|expected range\|reference (?:method\|measurement\|analys)/ in question_text |
 | A08 | must | off_topic {"value": false} | a measurement question always gets an assessment, never the redirect | PASS | off_topic=False |
 | A08 | must | route_in {"values": ["certainty_or_approval_requested"]} | the certainty / approval request is recognised | PASS | routes ['in_scope', 'needs_clarification', 'premise_to_check', 'certainty_or_approval_requested'] |
