@@ -21,7 +21,13 @@ from html import escape
 
 from afs_assistant import kb
 from afs_assistant.fibers import method_fiber_coverage
-from afs_assistant.options import TECHNIQUE_LABEL, is_fusion, method_label, option_parts
+from afs_assistant.options import (
+    TECHNIQUE_LABEL,
+    is_fusion,
+    method_label,
+    option_parts,
+    sketch_parts,
+)
 from afs_assistant.render import fiber_label
 from afs_assistant.schema import Assessment, SolutionOption
 
@@ -106,7 +112,7 @@ def option_nodes(a: Assessment, option: SolutionOption, slots: dict) -> dict:
     recs = {r.id: r for r in a.recommendations}
     params = {p.id: p for p in a.parameters}
     used = [params[i] for i in option.parameter_ids if i in params]
-    parts = option_parts(option, recs)
+    parts = sketch_parts(option, recs)
     fused = len(parts) <= 1 or is_fusion(option, recs)
     lanes = []
     for method, technique in parts:

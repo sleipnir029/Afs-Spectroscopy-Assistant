@@ -31,12 +31,13 @@ from afs_assistant.render import (
     STATUS_LABEL,
     TIER_LABEL,
     basis_text,
+    customer_quotes,
     external_verification,
     measured_by_text,
     request_label,
     request_line,
+    shown_spectral_ranges,
     source_line,
-    stated_from_intake,
 )
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.ui import diagrams
@@ -368,7 +369,8 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
                          "premise": p.premise.rstrip().rstrip("."), "explanation": p.explanation,
                          "cites": reg.supplied(p.citations), "flag": flags.get(f"premise_checks[{i}]")}
                         for i, p in enumerate(a.premise_checks)]
-    view["requirements"] = {"stated": list(a.requirements_stated) or stated_from_intake(run),
+    # Every de-duplicated customer quote, no cap: the web view may not show the full enquiry next to it.
+    view["requirements"] = {"stated": list(a.requirements_stated) or [f'"{q}"' for q in customer_quotes(run)],
                             "unknowns": list(a.key_unknowns)}
     view["recommendations"] = [{
         "id": m.id, "role": m.role, "role_label": ROLE_LABEL[m.role], "method": method_label(m.method, m.technique),
@@ -380,7 +382,7 @@ def build(data: dict, markdown: str = "", key: str = "") -> dict:
     view["measurement"] = {"probe": mc.probe_and_geometry, "location": mc.location, "fiber_link": mc.fiber_link,
                            "cites": reg.supplied(mc.citations), "flag": flags.get("measurement_concept")}
     view["spectral"] = [{"method": s.method, "statement": s.statement, "cites": reg.supplied(s.citations),
-                         "flag": flags.get(f"spectral_ranges[{i}]")} for i, s in enumerate(a.spectral_ranges)]
+                         "flag": flags.get(f"spectral_ranges[{i}]")} for i, s in shown_spectral_ranges(a)]
     view["assumptions"] = list(a.assumptions)
     view["not_covered"] = list(a.not_in_sources)
     view["notes"] = [{"label": label, "text": getattr(a, n)} for n, label in NOTE_LABEL.items() if getattr(a, n)]

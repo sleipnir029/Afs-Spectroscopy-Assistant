@@ -28,10 +28,11 @@ from afs_assistant.options import (
     option_citations,
     option_confidence,
     option_costs,
-    option_parts,
+    option_methods,
+    sketch_parts,
 )
 from afs_assistant.pipeline import RunResult
-from afs_assistant.schema import Assessment, Parameter, SolutionOption
+from afs_assistant.schema import Assessment, Parameter, SolutionOption, SpectralRange
 from afs_assistant.verify import (
     ANSWER_QUESTIONS,
     RECHECK_NAMES,
@@ -59,7 +60,11 @@ MERMAID_LABEL_CHARS = 60
 GAP_LABEL = {"status": "decision status", "auxiliary_sensor": "auxiliary sensor", "multi_method": "multi-method",
              "not_in_sources": "not in the supplied sources", "premise_not_covered": "premise not covered",
              "uncited_parameter": "parameter without a source"}
+# The stated-requirements fallback shows at most this share of the enquiry's characters (5.4 item 1).
+STATED_MAX_SHARE = 0.5
 EXTERNAL_TITLE = "Secondary evidence (external, not AFS material)"
+# Model text that already says a combination waits for the single-method tests (no code tail then; 5.4 item 5).
+_SAYS_LATER = re.compile(r"after (?:the )?single[- ]method|later (?:hypothesis|test)", re.IGNORECASE)
 # A step text that starts with its own number ("1." / "1)") would show the number twice in the list.
 _STEP_NUMBER = re.compile(r"^\s*\d+[.)](?!\d)\s*")   # not a decimal such as "1.5 mm"
 
@@ -162,7 +167,7 @@ def mermaid_chart(a: Assessment, option: SolutionOption, slots: dict) -> str:
     used = [params[i] for i in option.parameter_ids if i in params]
     nodes = [("proc", f"Process point: {a.measurement_concept.location}")]
     edges = []
-    parts = option_parts(option, recs)
+    parts = sketch_parts(option, recs)
     fused = len(parts) <= 1 or is_fusion(option, recs)
     models = ["model"] if fused else [f"model{k}" for k in range(1, len(parts) + 1)]
     for k, (method, technique) in enumerate(parts, 1):
@@ -199,6 +204,16 @@ def setup_charts(r: RunResult) -> list[tuple[SolutionOption, str]]:
     return charts
 
 
+def shown_spectral_ranges(a: Assessment) -> list[tuple[int, SpectralRange]]:
+    """(index, entry) of the spectral ranges to show: a method that no solution option uses is left out
+    (5.4 item 5); without options every entry stays."""
+    if not a.solution_options:
+        return list(enumerate(a.spectral_ranges))
+    recs = {x.id: x for x in a.recommendations}
+    used = {m for o in a.solution_options for m in option_methods(o, recs)}
+    return [(i, s) for i, s in enumerate(a.spectral_ranges) if s.method in used]
+
+
 def _option_methods_text(option: SolutionOption, a: Assessment) -> str:
     recs = {x.id: x for x in a.recommendations}
     items = []
@@ -223,11 +238,39 @@ def request_label(r: RunResult) -> str:
     return "Customer request (our summary)" if summary and request_line(r) == summary else "Customer request"
 
 
+def customer_quotes(r: RunResult) -> list[str]:
+    """The verified enquiry quotes of the intake facts, then targets: whitespace-normalised, without a
+    repeat or a quote that is a substring of another one (ignoring case; the longer one stays, order kept)."""
+    seen: set[str] = set()
+    unique: list[str] = []
+    for q in [f.enquiry_quote for f in r.intake.facts_stated] + [t.enquiry_quote for t in r.intake.targets]:
+        q = " ".join(q.split())
+        if q and q.casefold() not in seen:
+            seen.add(q.casefold())
+            unique.append(q)
+    return [q for i, q in enumerate(unique)
+            if not any(q.casefold() in o.casefold() for k, o in enumerate(unique) if k != i)]
+
+
 def stated_from_intake(r: RunResult) -> list[str]:
     """The customer's own words for when the assessment states no requirement (3.R3 B5, 3.R4 B2):
-    the verified enquiry quotes of the intake facts and targets, de-duplicated, never the model's paraphrase."""
-    quotes = [f.enquiry_quote for f in r.intake.facts_stated] + [t.enquiry_quote for t in r.intake.targets]
-    return [f'"{q}"' for q in dict.fromkeys(" ".join(q.split()) for q in quotes)]
+    `customer_quotes`, never the model's paraphrase. Quotes holding a target quote and quotes with a
+    figure (a digit) are always kept; the others are added in order while all shown cover at most
+    `STATED_MAX_SHARE` of the enquiry (the enquiry itself is shown in Expert detail); order kept."""
+    quotes = customer_quotes(r)
+    budget = STATED_MAX_SHARE * len(" ".join(r.enquiry.split()))
+    if sum(map(len, quotes)) > budget:
+        targets = {" ".join(t.enquiry_quote.split()).casefold() for t in r.intake.targets}
+        # A target quote may survive only inside a longer quote (substring rule): that one is kept then.
+        keep = {i for i, q in enumerate(quotes)
+                if any(t in q.casefold() for t in targets) or re.search(r"\d", q)}
+        used = sum(len(quotes[i]) for i in keep)
+        for i, q in enumerate(quotes):
+            if i not in keep and (not keep or used + len(q) <= budget):
+                keep.add(i)
+                used += len(q)
+        quotes = [q for i, q in enumerate(quotes) if i in keep]
+    return [f'"{q}"' for q in quotes]
 
 
 def basis_text(r: RunResult) -> str:
@@ -432,7 +475,10 @@ def to_markdown(r: RunResult, title: str = "") -> str:
     out += ["### Requirements", "", "**Stated by the customer**", ""]
     out += [f"- {s}{warn(f'requirements_stated[{i}]')}" for i, s in enumerate(a.requirements_stated)]
     if not a.requirements_stated:
-        out += [f"- {s}" for s in stated_from_intake(r)]
+        shown = stated_from_intake(r)
+        out += [f"- {s}" for s in shown]
+        if len(shown) < len(customer_quotes(r)):
+            out.append("- *Further statements: see the customer enquiry above.*")
     out += ["", "**Key unknowns**", ""]
     out += [f"- {s}{warn(f'key_unknowns[{i}]')}" for i, s in enumerate(a.key_unknowns)] + [""]
 
@@ -447,7 +493,8 @@ def to_markdown(r: RunResult, title: str = "") -> str:
         cond = "" if m.conditions.strip().lower() in ("", "none") else f" *Conditions:* {m.conditions}"
         # A combination shows in the headline; it stays a later hypothesis after the single-method tests.
         combo = f" + {', '.join(m.combined_with)} (combination)" if m.combined_with else ""
-        later = " Later hypothesis, after single-method tests." if m.combined_with else ""
+        later = (" Later hypothesis, after single-method tests."
+                 if m.combined_with and not _SAYS_LATER.search(f"{m.rationale} {m.conditions}") else "")
         out.append(f"- **{m.id} · {ROLE_LABEL[m.role]}: {method_label(m.method, m.technique)}{combo}.** "
                    f"{m.rationale}{cond}{cite.refs(m.citations)}{later}{warn(f'recommendations[{i}]')}")
     out.append("")
@@ -460,7 +507,7 @@ def to_markdown(r: RunResult, title: str = "") -> str:
 
     out += ["### Spectral range", ""]
     out += [f"- **{s.method}:** {s.statement}{cite.refs(s.citations)}{warn(f'spectral_ranges[{i}]')}"
-            for i, s in enumerate(a.spectral_ranges)] + [""]
+            for i, s in shown_spectral_ranges(a)] + [""]
 
     out += ["### Risks and uncertainty", ""]
     for i, k in enumerate(a.risks):

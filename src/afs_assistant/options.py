@@ -99,20 +99,30 @@ def option_parts(option: SolutionOption, recs: dict[str, Recommendation]) -> lis
     return parts
 
 
+def sketch_parts(option: SolutionOption, recs: dict[str, Recommendation]) -> list[tuple[str, str | None]]:
+    """`option_parts` for the setup sketch labels: a combined method without its own entry shows the
+    technique it borrows (`borrowed_technique`), the one its cost class uses (5.4 item 5)."""
+    return [(m, t if t is not None else borrowed_technique(m, recs)) for m, t in option_parts(option, recs)]
+
+
 def option_methods(option: SolutionOption, recs: dict[str, Recommendation]) -> list[str]:
     """Every method an option uses, including combined_with methods."""
     return list(dict.fromkeys(m for m, _ in option_parts(option, recs)))
 
 
-def borrowed_rows(method: str, recs: dict[str, Recommendation]) -> list[dict]:
-    """Table 1 rows for a combined method without its own entry in the option: the technique of
-    the first other recommendation with that method that is recommended and has an in-line row."""
+def borrowed_technique(method: str, recs: dict[str, Recommendation]) -> str | None:
+    """The technique a combined method without its own entry in the option borrows: that of the first
+    other recommendation with that method that is recommended and has an in-line row; None if none."""
     for r in recs.values():
-        if r.method == method and r.role != "not_recommended":
-            found = table1_rows(r.method, r.technique)
-            if found:
-                return found
-    return []
+        if r.method == method and r.role != "not_recommended" and table1_rows(r.method, r.technique):
+            return r.technique
+    return None
+
+
+def borrowed_rows(method: str, recs: dict[str, Recommendation]) -> list[dict]:
+    """Table 1 rows for a combined method without its own entry in the option (`borrowed_technique`)."""
+    technique = borrowed_technique(method, recs)
+    return table1_rows(method, technique) if technique is not None else []
 
 
 def cost_class(option: SolutionOption, recs: dict[str, Recommendation]) -> CostClass:
