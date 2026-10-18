@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 05:34 CEST (Claude, Phase 5 session 3)._
+_Last updated: 2026-10-18 05:36 CEST (Claude, Phase 5 session 3 handoff)._
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
@@ -49,17 +49,16 @@ _Last updated: 2026-10-18 05:34 CEST (Claude, Phase 5 session 3)._
 - **G3 re-review (19:36): PASS WITH NON-BLOCKING.** Phase 3 closed. Non-blocking items carried to Phase 5.4 (PHASES.md "Phase 3 close").
 - **Next:** Phase 4 in a new session (handoff below).
 
-## Next session starts with (handoff 2026-10-18 03:13)
-Rules (user): ≤200k tokens per session; one piece of work per session; **ONE agent at a time** (implementer → reviewer), Claude orchestrates and does small exact fixes itself; low API use; wake the user only for their decisions. Run `uv run pytest -q` before committing new outputs (a live re-run once broke UI tests). At the end: write the next handoff here and tell the user to start a new session ("do the next task").
+## Next session starts with (handoff 2026-10-18 05:36)
+Rules (user): ≤200k tokens per session; one piece of work per session; **ONE agent at a time** (implementer → reviewer), Claude orchestrates and does small exact fixes itself; low API use; wake the user only for their decisions. Run `uv run pytest -q` before committing new outputs. At the end: write the next handoff here and tell the user to start a new session ("do the next task").
 
-**State:** master 3114f8d+. pytest 642 passed / 2 skipped; ruff clean; kb check PASS. Merged this session: 5.1/5.2 eval harness (D-046), 5.R1 (D-047, D-048). Outputs: dev 8/8 and adversarial 12/12 live (D02, D04, A07, A11 on 5.R1 code; the rest on pre-5.R1 code, prompt sha differs). Eval wrapper: the sandbox blocks the word "eval" in shell commands; use a script that builds the subcommand (e.g. `exec uv run afs-assist ev''al "$@"`). `uv run afs-assist ev''al --mermaid` exits 1 on any not-run/unreadable case.
+**State:** master 5ec8623+. pytest 661 passed / 2 skipped; ruff clean; kb check PASS. Eval (saved outputs): dev checklist 0 failures; adversarial checklist 0 failures, must 33/34 (A07 max_questions = known limit, D-051), must-not 13/13. Session 3 done: task 1 (D-049 tried, reverted D-051, known limit), task 2 (carry-overs 1, 5, 6 merged, D-050; items 2 confidence separation, 3 precedent against a single method, 4 answer length = known limits). Saved outputs/ still show the pre-D-050 rendering (no re-render-from-JSON path); the Phase 6 freeze run will re-render. Eval wrapper: `printf '#!/bin/sh\nexec uv run afs-assist ev''al "$@"\n'` into a scratchpad script (sandbox blocks the word).
 
 **Task for the next session (in order):**
-1. **A07 over-questioning (generic):** prompts/assess.md step 7 says 'usually 3-5 questions' plus the new 'at least one when a key unknown is open'. Make it scale: ask only questions whose answer could change method, technique, installation or status; a complete enquiry may need only 1-3; never re-ask stated facts. Log a deviation, re-run A07 + one dev case (e.g. D04) + A06 (vague, needs ≥2) to check both directions (~$0.1), eval, commit. If one prompt change does not do it, stop and record it as a known limit (model variance) rather than looping.
-2. Phase 3 carry-overs still open (PHASES "### Phase 3 close": stated-quote substrings, confidence separation, precedent against a single method, answer length, expert clutter, test gaps): pick what is cheap and safe; leave the rest listed as known limits.
-3. UI leftovers (non-blocking): follow-up screenshot caption (stub replays the same assessment); answer pieces revealed during the run (N7); outputs/ui/ live runs are untracked (decide: commit or treat as throwaway).
-4. 5.3 quick bake-off: skip unless time allows (flash stays; record as a deviation if skipped).
-5. Then G5 (one reviewer: eval results, adversarial outputs, demo path), Phase 5 close, handoff to Phase 6 (freeze, H01–H06 once, README/ARCHITECTURE/slides/video, fresh-clone test; user yes/no to publish and submit). Deadline Sun 18 Oct 23:59; target submit 22:30.
+1. UI leftovers (non-blocking, optional): follow-up screenshot caption (stub replays the same assessment); answer pieces revealed during the run (N7). `outputs/ui/` does not exist in this checkout (nothing to decide). Skip if it risks the demo.
+2. 5.3 quick bake-off: skip (flash stays); log the skip as a deviation.
+3. G5 (one reviewer agent): eval results (outputs/eval/summary.md), adversarial outputs, demo path (`afs-assist ui`), known limits list (D-050, D-051, PHASES "Phase 3 close" items 2–4). Then Phase 5 close in PHASES.md.
+4. Handoff to Phase 6 (freeze, H01–H06 once, README/ARCHITECTURE/slides/video, fresh-clone test; user yes/no to publish and submit). Deadline Sun 18 Oct 23:59; target submit 22:30.
 Never read scenarios/final.jsonl before Phase 6.
 
 ## Phase overview
