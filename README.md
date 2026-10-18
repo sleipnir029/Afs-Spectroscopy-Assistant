@@ -2,10 +2,34 @@
 
 The assistant reads a customer enquiry about in-line spectroscopy, the kind Art Fiber Systems (AFS) gets: "we want to follow X in our process, which method and probe should we test first?". It writes a cited first technical assessment. It screens the methods against rules taken from the supplied AFS materials. A model writes the assessment, and code then checks every quote word for word against the page it cites. Anything that fails the checks is repaired, removed or labelled before the answer is shown. External literature is used only for gaps the AFS materials leave open, and it is marked as secondary.
 
-Hackathon deliverable. Deadline: Sun 18 Oct 2026, 23:59 Berlin.
+Team Helios · SchubKI National AI Hackathon 2026 · Art Fiber Systems challenge.
+
+**Results at a glance** (held-out H01–H06, run once on tag `freeze-1`, outputs unedited): 120/120 citations verified, 0 hard verification failures, 97–184 s per case, $0.288 in total for the six cases. Independent rule-compliance review: PASS WITH CAVEATS (`outputs/final/REVIEW.md`). Details under [Results](#results); caveats under [Known limitations](#known-limitations).
+
+## How to read an output
+
+Open `outputs/final/H04.md` (or any `outputs/final/H0x.md`). **Start with the `## Answer` section**: brief answer, proposal (best option, what would change it, next step), decision status, the solution options table, the setup sketch and the key questions. That is the part written for the customer. Everything under `## Expert detail` is the supporting record: requirements, parameters, risks, the feasibility plan, every verified quote (`### Evidence (verified quotes)`) and the check report (`### Verification`). A citation such as `S01 p.10` is a 1-based PDF page (S02: slide number); each one is listed under Evidence with its quote. The `.json` next to each `.md` holds the full run (intake, screening, raw and final assessment, checks, model calls, manifest).
+
+**Where the organiser's answer sections are** (REF §3 suggests these sections; ours are headings in the `.md`):
+
+| Organiser section (REF §3) | Our section(s) |
+|---|---|
+| Requirements (stated facts and key unknowns, separate) | `### Requirements`; customer request at the top of `## Answer` |
+| Clarification questions (prioritised) | `### Key questions` (Answer), `### Clarification questions (most decision-relevant first)` |
+| Recommendation and decision status | `### Brief answer`, `### Proposal`, **Decision status**, `### Solution options`; `### Recommendation` |
+| Measurement concept | `### Measurement concept`, `### Setup sketch` |
+| Spectral range | `### Spectral range` |
+| Risks and uncertainty | `### Risks and uncertainty`, `### Assumptions` |
+| Feasibility plan | `### First feasibility experiment` |
+| Sources | inline `S0x p.N` citations, `### Evidence (verified quotes)`; literature apart in `### Secondary evidence (external, not AFS material)` |
+
+## Honest notes
+
+- **No general web or forum search.** It was cut. The literature step uses only keyless scholarly APIs (Europe PMC, OpenAlex, Unpaywall) and a curated 9-entry open-access library. In H01–H06 it found a verified item for 6 of 24 gaps.
+- **The repair model writes the shown answer in practice.** The assess model (`z-ai/glm-5.3-flash`) writes a first draft; in all six H cases the checks found hard failures, and the shown assessment is the repair model's full rewrite (`google/gemini-3.8-flash`, kept round 1).
+- **A live assessment takes about 1.5–3 minutes** (97–184 s per H case). A chat follow-up takes seconds. For a demo, open a saved run while a live one runs.
 
 ## What it produces
-
 - **A first technical assessment** for each enquiry, as JSON and Markdown:
   - a short answer and a proposal (which option to test first, what would change the choice, the next step);
   - two or three solution options (simple / recommended / extended multi-method), each with a cost class taken from S01 Table 1 (p.6) and a confidence level computed by code;
@@ -18,17 +42,18 @@ Hackathon deliverable. Deadline: Sun 18 Oct 2026, 23:59 Berlin.
 
 Screenshots: `docs/ui/brief-*.png` (chat UI), `docs/ui/chat-*.png` (chat answers with blocks).
 
-Example output: `outputs/final/H04.md` (held-out case, unedited). Demo video: `docs/video/demo.mp4` (2:25, the real app with live model calls). Slides: `docs/slides/slides.pdf`.
-
-Without an API key you can still browse saved runs (`uv run afs-assist ui`), and run `uv run pytest` and `uv run afs-assist eval`.
+Example output: `outputs/final/H04.md` (held-out case, unedited). Demo video: `docs/video/demo.mp4` (captioned screenshots of the real app during a live run). Slides: `docs/slides/slides.pdf`.
 
 ## Quick start (uv only)
 
 ```bash
 uv sync
+unzip materials.zip -d resources/      # organiser archive -> resources/materials/ (not in this repo, see below)
+uv run afs-assist kb build             # recreates knowledge/pages.jsonl from it
+uv run afs-assist ui                   # open http://127.0.0.1:8765; open a finished H01–H06 example (no API key needed) or type a new enquiry
 ```
 
-Create a `.env` in the repo root with your own keys. **Never commit `.env`** (it is in `.gitignore`).
+To assess new enquiries, create a `.env` in the repo root with your own keys. **Never commit `.env`** (it is in `.gitignore`).
 
 ```
 OPENROUTER_API_KEY=sk-or-...        # required for any model call
@@ -37,13 +62,13 @@ CONTACT_EMAIL=you@example.org       # Unpaywall needs it; also sent as OpenAlex 
 # AFS_MODELS_CONFIG=config/bakeoff/baseline-v4.1-flash.yaml   # optional: another models config
 ```
 
-Without `CONTACT_EMAIL` the Unpaywall lookup is skipped. The pipeline never calls Crossref.
+Without `CONTACT_EMAIL` the Unpaywall lookup is skipped. The pipeline never calls Crossref. Without an API key you can still open saved runs in the UI, and run `uv run pytest` and `uv run afs-assist eval`.
 
 ### Knowledge base and organiser files
 
 The organiser files (AFS / SchubKI materials, S01–S06 and the reference docx) are **not in this repository**, and neither is their extracted full page text, `knowledge/pages.jsonl` (both are gitignored; see `NOTICE`). What is committed is our own derived knowledge: page scopes, rules (each with a short verbatim source quote), S01 Table 1, fiber data, the graph and our S02 notes.
 
-The assistant needs the page text to assess or to open a run. Recreate it from the organiser archive:
+The assistant needs the page text to assess or to open a run. Recreate it from the organiser archive (as in Quick start):
 
 ```bash
 unzip materials.zip -d resources/      # gives resources/materials/S01_….pdf … (organiser archive)
@@ -65,7 +90,7 @@ The rebuilt `knowledge/pages.jsonl` is byte-identical to the one the runs used: 
 | `uv run afs-assist external replay outputs/final/H01.json` | Re-checks a run's external items offline against the cached text (exact re-check, no model call). |
 | `uv run afs-assist eval [--set dev\|adversarial]` | Deterministic checklist over the saved runs (no model or API call). Writes `outputs/eval/summary.md\|json`. |
 | `uv run afs-assist kb build\|check` | Rebuilds or validates `knowledge/` (see above). |
-| `uv run pytest` | Offline test suite. It uses fake model clients, so it needs no API key and no `resources/`. |
+| `uv run pytest` | Offline test suite. It uses fake model clients, so it needs no API key and no `resources/`. Tests that need `knowledge/pages.jsonl` are skipped, with the `kb build` hint, until it is rebuilt. |
 
 Every run is also written as a commit on the `provenance` branch (see ARCHITECTURE.md). Local copies go to `runs/` (gitignored).
 
@@ -76,8 +101,8 @@ The production config is `config/models.yaml`, the combined arm **mix-a** (D-063
 | Role | Model | Fallback model |
 |---|---|---|
 | intake, external_queries, external_evidence | `google/gemini-3.5-flash-lite` (flex tier) | `z-ai/glm-5.3-flash` |
-| assess (writes the assessment) | `z-ai/glm-5.3-flash` | `google/gemini-3.8-flash` |
-| repair (only when the checks find hard failures) | `google/gemini-3.8-flash` (flex tier) | `z-ai/glm-5.3-flash` |
+| assess (writes the first draft) | `z-ai/glm-5.3-flash` | `google/gemini-3.8-flash` |
+| repair (only when the checks find hard failures; in all six H cases its rewrite is the shown answer) | `google/gemini-3.8-flash` (flex tier) | `z-ai/glm-5.3-flash` |
 | chat_answer (follow-up questions) | `z-ai/glm-5.3-flash` | `google/gemini-3.8-flash` |
 
 - **Per-role models:** a fast, cheap model does the short structured jobs, and a cheap reasoning model writes the assessment.
@@ -174,6 +199,9 @@ From STATUS.md, the G5 review (PHASES.md "Review (G5)") and the H01–H06 rule-c
   - A page reference typed inline in prose, rather than as a citation, skips verification.
   - A cited quote can carry the source's own certainty wording.
   - No check compares fields with each other, for example contact vs non-contact in two sections.
+- **Two known slips in the held-out outputs, left as generated** (a fix needs a pipeline change and a re-run, so H01–H06 stay frozen):
+  - H06: the options table calls the recommended NIR diffuse-reflection option "non-contact", but S03 p.4 describes the probe tip in "immediate slight contact" with the sample, and H06's own measurement concept says light contact.
+  - H03: the brief answer leads with testing Raman. The cheaper first test, with the fluorescence spectrometer the customer already owns (an intrinsic-fluorophore signal such as NADH against biomass references), comes second and is spelled out only in Q1 and option O3.
 - **Literature tagging:** an external item can be tagged to the wrong option, or be only weakly relevant.
 - **Lab reference methods** (for example Kjeldahl or Karl Fischer) are engineering judgement. They are marked "e.g." and flagged as unsourced.
 - **Setup sketch:** the NIR fiber label lists every fiber family that overlaps the range.
@@ -182,7 +210,7 @@ From STATUS.md, the G5 review (PHASES.md "Review (G5)") and the H01–H06 rule-c
 - **A follow-up can flip the method** without a clear reason (seen in the G5 live loop: Raman to MIR-ATR; and in the demo video: NIR alone to NIR + Raman after only a temperature answer). A re-assessment is a fresh model run, so it can differ for reasons other than the new fact.
 - **Margin note numbers restart per turn,** so in a long thread the same number can point to different quotes in different turns.
 - **Latency:** a full assessment takes about 1.5–3 minutes. The Gemini roles use the flex tier, which can queue or rate-limit. The fallback models cover that, but runs may be slower.
-- **External literature** comes from keyless APIs with small shared quotas (OpenAlex keyless is about 100 searches per day per IP). When those fail, the step falls back to the 9-entry curated library.
+- **External literature** comes from keyless scholarly APIs with small shared quotas (OpenAlex keyless is about 100 searches per day per IP). When those fail, the step falls back to the 9-entry curated library. General web and forum search was cut; in H01–H06 a verified item was found for 6 of 24 gaps.
 - **Windows:** parallel set runs inside one process are serialised by a thread lock. The cross-process provenance lock uses `fcntl` (POSIX only), so on Windows do not run two `afs-assist` processes at once.
 - **Reruns differ.** Live model calls do not give byte-identical reruns. The frozen H outputs are stored once and are not regenerated.
 
