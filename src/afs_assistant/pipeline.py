@@ -481,7 +481,8 @@ def _fallback_proposal(data: dict, removed: list[dict], flagged: dict[str, str])
                         "reason": f"proposed option {best} had tier simple; tiers swapped with {old['id']} so the "
                                   f"recommended option is the proposed one", "corrects": "proposal_is_recommended"})
         chosen["tier"], old["tier"] = "recommended", "simple"
-        flagged[f"solution_options[{i}]"] = flagged[f"solution_options[{j}]"] = TIER_SWAPPED_FLAG
+        for k in (i, j):                    # keep an earlier warning on the option (e.g. a lost citation)
+            flagged.setdefault(f"solution_options[{k}]", TIER_SWAPPED_FLAG)
         return
     removed.append({"location": "proposal.best_current_option", "item": best,
                     "reason": f"proposed option {best} is the extended option; changed to the recommended option "
