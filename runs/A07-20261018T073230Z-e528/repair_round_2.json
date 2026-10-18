@@ -1,0 +1,439 @@
+{
+ "round": 2,
+ "hard_failures_before": 3,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "The sample is a transparent liquid, so an NIR transmission trial can be justified from the supplied material, but pathlength, pipe fitting, and CIP survival remain open.",
+  "premise_checks": [
+   {
+    "premise": "NIR transmission/transflection is suitable for a clear aqueous sucrose stream in-line.",
+    "verdict": "precedent_only",
+    "explanation": "The sources show NIR transmission/transflection for clear aqueous liquids in the dairy example; sucrose solution itself is not covered, so this is a reason to test, not proof.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "premise": "A 10 m fiber link from the pipe to the analyser room is feasible for NIR.",
+    "verdict": "supported",
+    "explanation": "The sources state robust 100-300 m low-OH silica cables for remote industrial process control, which covers the 10 m distance for the NIR range.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 7,
+      "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+      "claim_kind": "performance_figure"
+     }
+    ]
+   },
+   {
+    "premise": "A laboratory refractometer is an adequate reference for sucrose concentration at plus or minus 0.3 % w/w.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source addresses refractometer accuracy or its specificity for sucrose against other dissolved solids; this must be confirmed with the customer.",
+    "citations": []
+   }
+  ],
+  "requirements_stated": [
+   "In-line monitoring of sucrose concentration, 5-15 % w/w, quality limit plus or minus 0.3 % w/w",
+   "Clear, colourless aqueous solution in a 50 mm stainless steel pipe at 20-30 °C, normal pressure",
+   "Reading every minute; analyser 10 m away in a dry, safe room; daily hot caustic CIP",
+   "Laboratory refractometer remains the reference method"
+  ],
+  "key_unknowns": [
+   "Required optical path length for 5-15 % w/w sucrose in NIR transmission",
+   "Whether other dissolved solids are present, i.e. whether refractometer reading equals sucrose",
+   "Pipe fitting or insertion port available on the 50 mm pipe",
+   "CIP temperature and required probe materials/seals for hot caustic exposure",
+   "Achievable accuracy of the refractometer reference at the 0.3 % w/w limit"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What other dissolved solids, if any, does the solution contain, so that the refractometer reading can be interpreted as sucrose rather than total soluble solids?",
+    "why_it_matters": "If other solutes vary, a refractometer reference and any spectral calibration track total solids, not sucrose, and the method choice changes.",
+    "affects": [
+     "method",
+     "M1",
+     "M2"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What insertion fitting or sight glass is available on the 50 mm pipe, and what pathlength can be accommodated?",
+    "why_it_matters": "In NIR transmission the optical pathlength must be controlled; too wide loses signal to absorption, too narrow samples a negligible volume.",
+    "affects": [
+     "installation",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What temperature and duration does the daily hot caustic CIP reach, and must the probe survive it in place or be removed?",
+    "why_it_matters": "Probe window, seals and fiber materials must tolerate the cleaning, which constrains the probe selection.",
+    "affects": [
+     "installation",
+     "M1",
+     "M2"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What is the stated accuracy of the laboratory refractometer over 5-15 % w/w, and how is the plus or minus 0.3 % w/w limit defined?",
+    "why_it_matters": "The reference must be at least as accurate as the target limit for the go/no-go criteria to be meaningful.",
+    "affects": [
+     "status",
+     "M1"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "For a clear, colourless aqueous liquid, NIR transmission with a controlled pathlength (or transflection) is the primary method to test first. Water and sucrose O-H and C-H bands appear in the NIR, and standard silica fibers support the 10 m link.",
+    "conditions": "The optical pathlength must be selected and controlled for 5-15 % w/w sucrose, and calibration must be validated on the actual solution.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "Raman",
+    "technique": "raman_probe",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Raman is particularly well-suited for aqueous media because water absorbs weakly compared to infrared methods, providing sharper peaks for dissolved sugars. It serves as the alternative single method if NIR cannot meet the tight plus or minus 0.3 % w/w limit.",
+    "conditions": "Pursued if NIR transmission falls short of the target accuracy or if water background shifts obscure the sucrose signal.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 12,
+      "quote": "dependence on concentration is linear over a wide range of intensities.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "not_recommended",
+    "combined_with": [],
+    "rationale": "MIR-ATR is a common laboratory expectation for sugars, but water absorbs very strongly in the mid-IR and no supplied source supports a 10 m MIR fiber link. It adds risk and complexity without advantage over NIR or Raman for this clear liquid.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm)",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Immersion transmission or transflection NIR fiber probe inserted into the 50 mm pipe through a suitable fitting, with a defined optical pathlength chosen for 5-15 % w/w sucrose.",
+   "location": "In the process pipe, downstream of a straight section; probe flush or immersed in the flowing solution.",
+   "fiber_link": "Low-OH Vis-NIR silica fiber cable from the probe to the NIR spectrometer in the dry room 10 m away; the sources state 100-300 m silica cables for remote process control, so 10 m is within the stated capability, but the exact cable is selected with the probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR method range 780-2500 nm; the usable range depends on the spectrometer, the Vis-NIR silica fiber (nominally to about 2400 nm) and the probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S02",
+      "page": 6,
+      "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+      "claim_kind": "performance_figure"
+     }
+    ]
+   },
+   {
+    "method": "Raman",
+    "statement": "Raman shift in cm-1 with the laser excitation wavelength stated separately (e.g. 785 nm in the pharma example); the exact range depends on the chosen laser and spectrometer.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 15,
+      "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "The pathlength needed for 5-15 % w/w sucrose is unknown; too long a path saturates the water-dominated NIR signal.",
+    "rule_ids": [
+     "R-GEN-4",
+     "R-GEN-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "The 20-30 °C process temperature span shifts the water and sucrose bands, so temperature compensation or an auxiliary temperature sensor is likely needed.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "Daily hot caustic CIP may attack the probe window, seals or fiber, and the sources give no compatibility data for this duty.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "If other dissolved solids are present, the refractometer reference and the spectral model track total soluble solids rather than sucrose specifically.",
+    "rule_ids": [],
+    "citations": []
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative sucrose solutions spanning 5-15 % w/w and the 20-30 °C temperature span, including any other solutes present in the real stream.",
+     "purpose": "Cover the expected chemical and physical variation before any calibration is attempted.",
+     "citations": []
+    },
+    {
+     "step": "Measure each sample independently with the laboratory refractometer, and confirm its accuracy against gravimetrically prepared sucrose standards at the 0.3 % w/w limit.",
+     "purpose": "Establish a trustworthy reference before judging the spectral method.",
+     "citations": []
+    },
+    {
+     "step": "On the bench, acquire NIR transmission spectra at candidate pathlengths and, if available, transflection spectra with the same spectrometer; record solution temperature with each spectrum.",
+     "purpose": "Select the geometry with adequate signal and sensitivity across the range.",
+     "citations": []
+    },
+    {
+     "step": "Build a chemometric calibration (e.g. PLS) per technique against the refractometer values, with temperature as a variable, and validate on held-out batches not used in calibration.",
+     "purpose": "Quantify prediction error honestly, including the temperature effect.",
+     "citations": []
+    },
+    {
+     "step": "Go/no-go: the customer defines the criterion, e.g. prediction error within plus or minus 0.3 % w/w on held-out samples at 1-minute acquisition; only if NIR falls short, test Raman as the next single method.",
+     "purpose": "Give the customer a clear, numeric decision basis for the in-line trial.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Laboratory refractometer on every calibration and validation sample, checked against gravimetric sucrose standards.",
+   "decision_basis": "Customer-defined: prediction error within plus or minus 0.3 % w/w on held-out samples at the required 1-minute cadence."
+  },
+  "assumptions": [
+   "The solution contains no other optically relevant solutes unless the customer says otherwise (Q1).",
+   "A transmission or transflection probe can be mounted in the 50 mm pipe with a suitable fitting (Q2).",
+   "The probe can be protected from, or removed during, the daily hot caustic CIP (Q3)."
+  ],
+  "not_in_sources": [
+   "Refractometer accuracy and its specificity for sucrose versus total soluble solids",
+   "CIP compatibility of probe materials with hot caustic",
+   "Optimal pathlength for 5-15 % w/w aqueous sucrose"
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Sucrose concentration",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is the target variable to monitor in-line within plus or minus 0.3 % w/w.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations of molecules and atomic groups, such as -OH, -NH2=NH, -CH3, =CH2, ≥CH, etc., found in many organic and inorganic compounds.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Solution temperature",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The 20-30 °C span shifts water and sucrose NIR bands, so temperature is needed as a model variable or for compensation.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Refractometer reference value (total soluble solids)",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is the customer's stated reference against which the spectral calibration is built and validated.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "laboratory refractometer",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "Straightforward transmission probe, standard lamp optics",
+    "maintenance": "Low; periodic probe window cleaning",
+    "performance_fit": "Transmission covers sucrose range at lowest effort",
+    "cost_drivers": "One NIR spectrometer, transmission probe, silica cable, calibration",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P3"
+    ],
+    "ease_of_use": "Single immersion Raman probe",
+    "maintenance": "Low; optical window cleaning",
+    "performance_fit": "Raman avoids water interference for tight limit",
+    "cost_drivers": "Raman spectrometer, laser source, Raman probe, silica cable",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 12,
+      "quote": "dependence on concentration is linear over a wide range of intensities.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "A PLS calibration against the refractometer values is needed because NIR bands are broad and overlapping; include temperature as a variable and validate on held-out batches, since the calibration is specific to this matrix.",
+  "realtime_tracking_note": "A reading every minute is compatible with NIR diode-array acquisition, which records all wavelengths simultaneously and suits fast processes; the actual cadence depends on the selected instrument.",
+  "future_direction": "If the trial succeeds, a compact LED-based NIR sensor at selected wavelengths could later replace the full spectrometer for routine monitoring, following the sensor-simplification approach shown in the literature.",
+  "proposal": {
+   "best_current_option": "O1",
+   "basis": "supplied",
+   "what_would_change_it": "If the bench trial shows that NIR water absorption or 20-30 °C temperature shifts prevent achieving ±0.3 % w/w, Raman (O2) becomes the choice; if other solutes are present, calibration needs re-evaluation.",
+   "next_step": "Test NIR transmission on representative sucrose solutions first, and compare against refractometer readings to verify whether ±0.3 % w/w is achieved."
+  },
+  "brief_answer": "For a clear aqueous sucrose solution, test NIR transmission with a fiber probe first as the simple, lower-cost option: it is suited to transparent liquids and operates over a 10 m silica link. Raman is recommended as the optimal technical fit if water background shifts prevent reaching plus or minus 0.3 % w/w. Key open items are optical pathlength, pipe fitting, CIP compatibility, and whether other dissolved solids exist."
+ }
+}
