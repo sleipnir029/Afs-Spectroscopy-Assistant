@@ -1,23 +1,36 @@
 {% extends "base.html" %}
 {% block main %}
-<div class="column start">
-  <form class="ask-form" method="post" action="/chat">
-    <h1 class="start-title"><label for="enquiry">What do you want to measure?</label></h1>
-    <p class="lede">Describe the material, the process and what you need to know. You get a first technical assessment in a few minutes; every claim points to the AFS page it comes from.</p>
-    <textarea id="enquiry" name="enquiry" rows="6" required maxlength="{{ MAX_CHARS }}" placeholder="e.g. what you want to follow, in which line or vessel, and what you already know about the material">{{ q }}</textarea>
-    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
-    <div class="chips" aria-label="Example questions">
-      <span class="muted small">Try an example:</span>
-      {% for e in examples %}<a class="chip" href="/?q={{ e | urlencode }}" data-fill="{{ e }}">{{ e }}</a>{% endfor %}
-    </div>
-    <div class="form-row">
-      {% if busy %}
-      <p class="muted">A question is being assessed. <a href="/jobs/{{ busy.id }}">Follow it</a>.</p>
-      {% else %}
-      <button class="btn" type="submit">Get assessment</button>
-      {% endif %}
-    </div>
-  </form>
+<div class="start">
+  <div class="start-grid">
+    <form class="ask-form" method="post" action="/chat">
+      <h1 class="start-title"><label for="enquiry">What do you want to measure?</label></h1>
+      <p class="lede">Describe the material, the process and what you need to know. You get a first technical assessment in a few minutes; every claim points to the AFS page it comes from. Then ask follow-ups or add what the customer told you.</p>
+      <textarea id="enquiry" name="enquiry" rows="6" required maxlength="{{ MAX_CHARS }}" placeholder="e.g. what you want to follow, in which line or vessel, and what you already know about the material">{{ q }}</textarea>
+      {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+      <div class="form-row">
+        {% if busy %}
+        <p class="muted">A question is being assessed. <a href="/jobs/{{ busy.id }}">Follow it</a>.</p>
+        {% else %}
+        <button class="btn" type="submit">Get assessment</button>
+        <span class="muted small mono">usually a few minutes</span>
+        {% endif %}
+      </div>
+      <div class="chips" aria-label="Example questions">
+        <span class="muted small">Try an example:</span>
+        {% for e in examples %}<a class="chip" href="/?q={{ e | urlencode }}" data-fill="{{ e }}">{{ e }}</a>{% endfor %}
+      </div>
+    </form>
+    <aside class="start-side" aria-labelledby="each-title">
+      <p class="who" id="each-title">In each answer</p>
+      <ol>
+        <li>The method and probe to start with, the decision status and the confidence, with its reason</li>
+        <li>Simple, recommended and extended options with their cost class (S01 Table 1)</li>
+        <li>A setup sketch, parameters, risks and a first feasibility test</li>
+        <li>Questions for the customer, answerable in place</li>
+      </ol>
+      <p class="mnote"><span class="mnote-src d-block">Evidence</span>Every important claim quotes the AFS documents word for word, and code checks each quote against its stored page.</p>
+    </aside>
+  </div>
 
   <section class="examples-list" aria-labelledby="examples-title">
     <h2 id="examples-title" class="h2">Open a finished example</h2>

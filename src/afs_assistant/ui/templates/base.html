@@ -8,7 +8,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='1' y='7' width='14' height='2' fill='%23223a8c'/%3E%3C/svg%3E">
 <script>
   // Theme before first paint: a saved choice wins, else the system setting (CSS handles that case).
-  try { var t = localStorage.getItem("afs-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+  try { var t = localStorage.getItem("afs-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+        if (localStorage.getItem("afs-present") === "on") document.documentElement.dataset.present = "on"; } catch (e) {}
   document.documentElement.classList.add("js");
 </script>
 <link rel="preload" href="{{ url_for('static', path='fonts/ibm-plex-sans-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
@@ -19,8 +20,10 @@
 <body class="{% block body_class %}{% endblock %}">
 <a class="skip" href="#main">Skip to content</a>
 <header class="mast">
-  <a class="wordmark" href="/">AFS Spectroscopy Assistant<span class="wordmark-sub">In-line measurement advice, every claim sourced</span></a>
+  <a class="wordmark" href="/"><span class="wordmark-name"><b>AFS</b> Spectroscopy Assistant</span><span class="wordmark-sub">In-line measurement advice, every claim sourced</span></a>
+  {% block mast_meta %}{% endblock %}
   <nav class="mast-tools" aria-label="Tools">
+    {% block mast_actions %}{% endblock %}
     <details class="menu">
       <summary>Examples</summary>
       <div class="menu-list">
@@ -30,12 +33,14 @@
         </ul>
       </div>
     </details>
+    <button type="button" class="btn-quiet present-toggle" id="present-toggle" aria-pressed="false" title="Larger type and blocks for a projector">Present</button>
     <button type="button" class="btn-quiet theme-toggle" id="theme-toggle" aria-label="Switch colour theme">
       <span class="tt-light">Dark</span><span class="tt-dark">Light</span>
     </button>
-    <a class="btn btn-small" href="/">New question</a>
+    <a class="btn btn-small" href="/" aria-label="New question"><span class="hide-sm">New question</span><span class="show-sm">New</span></a>
   </nav>
 </header>
+{% block pinned %}{% endblock %}
 <div class="frame">
 <main id="main" class="main">
 {% block main %}{% endblock %}

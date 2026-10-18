@@ -1,31 +1,73 @@
 {% extends "base.html" %}
-{% from "macros.html" import flag, question_block %}
+{% from "macros.html" import flag, meter, stamp, question_block %}
 {% import "blocks.html" as blocks with context %}
 {% block title %}{{ current.title if current else 'Conversation' }} · AFS Spectroscopy Assistant{% endblock %}
 {% block body_class %}has-composer{% endblock %}
+
+{% block mast_meta %}{% if current %}{% set s = current.verification.summary %}
+<p class="mast-meta" title="{{ current.title }}">{{ current.title | truncate(70) }} · {{ turns | length }} turn{{ 's' if turns | length != 1 }}{% if s %} · {{ s.citations_verified }} of {{ s.citations_total }} quotes verified{% endif %}</p>
+{% endif %}{% endblock %}
+
+{% block mast_actions %}{% if current and current.reply %}
+<button type="button" class="btn-quiet" data-copy="reply-current" aria-label="Copy customer reply"><span class="hide-sm">Copy customer reply</span><span class="show-sm">Copy reply</span></button>
+<textarea id="reply-current" class="sr-only" tabindex="-1" aria-hidden="true" readonly>{{ current.reply }}</textarea>
+<span class="copied small muted" role="status" aria-live="polite"></span>
+{% endif %}{% endblock %}
+
+{# Pinned strip: the current recommendation, always in view; it follows the latest assessment. #}
+{% block pinned %}{% if current %}{% set rec = current.recommendation %}
+<div class="pinned" role="region" aria-label="Current recommendation">
+  <p class="pinned-in">
+    <span class="pin-v">Current · <span class="pin-n">v{{ turns | rejectattr('kind', 'equalto', 'ask') | list | length }}</span></span>
+    <b class="pin-head">{{ rec.headline }}</b>
+    {{ stamp(current.status) }}
+    {% if rec.confidence %}<span class="pin-conf">Confidence {{ rec.confidence.level }}{% if rec.confidence.plain %} <span class="muted">· {{ rec.confidence.plain | join('; ') }}</span>{% endif %}</span>{% endif %}
+  </p>
+</div>
+{% endif %}{% endblock %}
+
 {% block main %}
-<div class="column thread conversation">
+{% set ns = namespace(ver=0, ref=0) %}
+<div class="brief conversation">
 {% for t in turns %}
   {% set v = t.v %}
-  <article class="turn chat-turn chat-{{ t.kind }}" id="turn-{{ t.n }}" aria-label="Turn {{ t.n + 1 }}">
-    {{ question_block(t.question, not loop.first) }}
+  {% set last = loop.last and not job %}
+  <article class="chat-turn chat-{{ t.kind }}" id="turn-{{ t.n }}" aria-label="Turn {{ t.n + 1 }}">
+    <div class="t-row t-user"><div class="t-main">
+      {{ question_block(t.question, not loop.first, 'New facts from the customer' if t.kind == 'reassess' else none) }}
+    </div></div>
     {% if t.kind != 'ask' %}
+    {% set ns.ver = ns.ver + 1 %}
+    <div class="t-row t-ai">
+      <div class="t-main">
+        <p class="who">Assistant · <span class="pin-n">v{{ ns.ver }}</span>{% if t.kind == 'reassess' %} · re-assessed{% endif %}</p>
       {% if not v %}
-      <p class="flag">This assessment is no longer on disk.</p>
+        <p class="flag">This assessment is no longer on disk.</p>
       {% elif v.off_topic %}
-      <section class="rec" aria-label="Our answer">
-        <h2 class="kicker kicker-accent">Our answer</h2>
-        <p class="rec-head">This is not a measurement question.</p>
-        <p class="rec-text">{{ v.off_topic.message }}</p>
-        <p class="label label-gap">Try one of these instead</p>
-        <ul class="link-list arrows">{% for e in v.off_topic.examples %}<li><a href="/?q={{ e | urlencode }}">{{ e }}</a></li>{% endfor %}</ul>
-      </section>
+        <section class="rec" aria-label="Our answer">
+          <h2 class="kicker kicker-accent">Our answer</h2>
+          <p class="rec-head">This is not a measurement question.</p>
+          <p class="rec-text">{{ v.off_topic.message }}</p>
+          <p class="label label-gap">Try one of these instead</p>
+          <ul class="link-list arrows">{% for e in v.off_topic.examples %}<li><a href="/?q={{ e | urlencode }}">{{ e }}</a></li>{% endfor %}</ul>
+        </section>
       {% elif v.incomplete %}
-      <section class="rec" aria-label="Incomplete run"><h2 class="kicker">Incomplete run</h2><p class="rec-head">{{ v.incomplete }}</p></section>
+        <section class="rec" aria-label="Incomplete run"><h2 class="kicker">Incomplete run</h2><p class="rec-head">{{ v.incomplete }}</p></section>
       {% else %}
-        {% if t.changed %}{{ blocks.changed_rows(t.changed, t.p) }}{% endif %}
-        {{ blocks.recommendation(v, t.p) }}
-        {% if v.options %}{{ blocks.options(v, t.p) }}{% endif %}
+        {% set rec = v.recommendation %}
+        {% set ext = rec.external_support or [] %}
+        <section class="rec" aria-labelledby="{{ t.p }}rec-title">
+          <h2 class="kicker kicker-accent">Our recommendation</h2>
+          <h3 id="{{ t.p }}rec-title" class="verdict">{{ rec.headline }}</h3>
+          <p class="dek">{{ rec.text }} {{ flag(rec.flag) }}{% if rec.cites or ext %}<sup class="refs">{% for cid in rec.cites + ext %}<a class="ref" href="#{{ t.p }}n{{ ns.ref + loop.index }}" data-ref="{{ t.p }}n{{ ns.ref + loop.index }}" aria-label="source {{ ns.ref + loop.index }}">{{ ns.ref + loop.index }}</a>{% endfor %}</sup>{% endif %}</p>
+          <dl class="status-dl">
+            <dt>Status</dt><dd>{{ stamp(v.status) }}{{ v.status.label }}{% if v.status.reason %}. {{ v.status.reason }}{% endif %} {{ flag(v.status.flag) }}{% if v.still_open %} <span class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ v.still_open | length }} check(s) still open</span>{% endif %}</dd>
+            {% if rec.confidence %}<dt>Confidence</dt><dd>{{ meter(rec.confidence.level) }} <strong>{{ rec.confidence.level }}</strong>{% if rec.confidence.plain %}: {{ rec.confidence.plain | join('; ') }}{% endif %}</dd>{% endif %}
+            <dt>Next step</dt><dd>{{ v.proposal.next_step }} {{ flag(v.proposal.flags.next) }}</dd>
+          </dl>
+        </section>
+        {% if t.changed %}{{ blocks.changed_rows(t.changed, t.p, 'v' ~ (ns.ver - 1), 'v' ~ ns.ver) }}{% endif %}
+        {% if v.options %}{{ blocks.options_table(v, t.p) }}{{ blocks.setup_block(v, t.p) }}{% endif %}
         {{ blocks.questions(v, ('/chat/' ~ cid ~ '/reassess') if t.current else none, t.p) }}
         <section class="more" aria-label="More detail">
           <details class="row"><summary><span class="row-t">What to measure and how</span><span class="row-n mono">{{ v.parameters | length }} parameters</span></summary>
@@ -39,54 +81,98 @@
           <details class="row"><summary><span class="row-t">Status</span><span class="row-n mono">{{ v.made.verified }} quotes verified</span></summary>
             <div class="row-body">{{ blocks.status(v) }}</div></details>
         </section>
-        <p class="small"><a href="/runs/{{ v.key }}">Open the full answer</a> <span class="muted">(literature, how it was made, technical detail, downloads)</span></p>
+        <p class="full-link"><a href="/runs/{{ v.key }}">Open the full answer</a> <span class="muted">(literature, how it was made, technical detail, downloads)</span></p>
+        {% if last and current %}{{ blocks.follow_chips() }}{% endif %}
       {% endif %}
+      </div>
+      {% if v and not v.off_topic and not v.incomplete %}
+      <aside class="t-side" aria-label="Sources beside this answer">
+        {% for cid in rec.cites + ext %}{% set c = v.citations[cid] %}{% set k = ns.ref + loop.index %}
+        <div class="mnote{{ ' mnote-sec' if c.kind == 'external' }}" id="{{ t.p }}n{{ k }}">
+          <p class="mnote-src"><b>{{ k }}</b><a href="/runs/{{ v.key }}/cite/{{ cid }}" hx-get="/runs/{{ v.key }}/cite/{{ cid }}" hx-target="#{{ t.p }}n{{ k }}-ctx" hx-swap="innerHTML" data-note aria-expanded="false" aria-controls="{{ t.p }}n{{ k }}-ctx" title="Show the quote in its page and the check result">{{ c.label }}</a>{% if c.kind == 'external' %} <span class="ext-note">external, not AFS material</span>{% endif %}</p>
+          {% if c.kind == 'table' %}<span>{{ v.cost_note }}</span>{% else %}<q>{{ c.quote }}</q>{% endif %}
+          <div class="mnote-ctx" id="{{ t.p }}n{{ k }}-ctx"></div>
+        </div>
+        {% endfor %}
+        {% set best = v.options | selectattr('is_best') | first %}
+        {% if best and best.cost.cites %}
+        <p class="mnote"><span class="mnote-src d-block">Cost class</span>{{ v.cost_note }}</p>
+        {% endif %}
+      </aside>
+      {% set ns.ref = ns.ref + (rec.cites + ext) | length %}
+      {% endif %}
+    </div>
     {% else %}
-      <section class="chat-answer" aria-label="Answer">
-        <p class="chat-answer-head"><span class="kicker kicker-accent">Answer</span>
-          {% if v %}<span class="muted small">about the assessment “{{ v.title }}”{% if t.run_id != (current.key if current else none) %} (an earlier version){% endif %}</span>{% endif %}</p>
-        <ul class="claims">
-          {% for c in t.answer.claims %}{% set ci = loop.index0 %}
-          <li class="claim claim-{{ c.basis }}">{{ c.text }}
-            {% if c.citations %}<span class="tags">{% for x in c.citations %}<a class="tag tag-{{ 'external' if x.kind == 'external' else 'supplied' }}" href="/chat/{{ cid }}/turns/{{ t.n }}/cite/{{ ci }}-{{ loop.index0 }}" hx-get="/chat/{{ cid }}/turns/{{ t.n }}/cite/{{ ci }}-{{ loop.index0 }}" hx-target="#panel-body" hx-swap="innerHTML" data-panel title="“{{ x.quote | truncate(220) }}”{{ ' (external, not AFS material)' if x.kind == 'external' else '' }} · open the verified quote">{{ x.label }}</a>{% endfor %}</span>{% endif %}
-            <span class="basis basis-{{ c.basis }}">{{ c.basis_label }}</span>{% if c.precedent %} <span class="precedent">precedent only: a reason to test, not proof</span>{% endif %}
-          </li>
-          {% endfor %}
-          {% for r in t.answer.removed %}<li class="removed">{{ r.line }}</li>{% endfor %}
-        </ul>
-        <p class="next-step"><span class="muted">Proposed next step:</span> {{ t.answer.next_step }}</p>
-        {% if v %}
-        {% for b in t.answer.blocks %}<div class="chat-block">{{ blocks.block(v, b, t.p ~ 'b' ~ loop.index0 ~ '-', t.changed) }}</div>{% endfor %}
-        {% endif %}
-        {% if t.answer.new_facts and current and t.run_id == current.key %}
-        <form method="post" action="/chat/{{ cid }}/reassess" class="facts-form">
-          <label for="{{ t.p }}facts" class="label">New facts from your message</label>
-          <textarea id="{{ t.p }}facts" name="followup" rows="2" maxlength="{{ MAX_CHARS }}">{{ t.answer.new_facts | join('\n') }}</textarea>
-          <div class="form-row"><button class="btn" type="submit"{% if busy %} disabled{% endif %}>Re-assess with these facts</button>
-            <span class="muted small">Runs the full assessment again with these facts added.</span></div>
-        </form>
-        {% endif %}
-      </section>
+    <div class="t-row t-ai">
+      <div class="t-main">
+        <p class="who">Assistant · answer</p>
+        <section class="chat-answer" aria-label="Answer">
+          {% if v %}<p class="chat-answer-head muted small">about the assessment “{{ v.title | truncate(90) }}”{% if t.run_id != (current.key if current else none) %} (an earlier version){% endif %}</p>{% endif %}
+          {% set cn = namespace(k=ns.ref) %}
+          <ul class="claims">
+            {% for c in t.answer.claims %}
+            <li class="claim claim-{{ c.basis }}" id="{{ t.p }}c{{ loop.index0 }}">{{ c.text }}{% if c.citations %}<sup class="refs">{% for x in c.citations %}{% set cn.k = cn.k + 1 %}<a class="ref" href="#{{ t.p }}n{{ cn.k }}" data-ref="{{ t.p }}n{{ cn.k }}" aria-label="source {{ cn.k }}">{{ cn.k }}</a>{% endfor %}</sup>{% endif %}
+              <span class="basis basis-{{ c.basis }}">{{ c.basis_label }}</span>{% if c.precedent %} <span class="precedent">precedent only: a reason to test, not proof</span>{% endif %}
+            </li>
+            {% endfor %}
+            {% for r in t.answer.removed %}<li class="removed">{{ r.line }}</li>{% endfor %}
+          </ul>
+          <p class="next-step"><span class="muted">Proposed next step:</span> {{ t.answer.next_step }}</p>
+          {% if v %}
+          {% for b in t.answer.blocks %}<div class="chat-block">{{ blocks.block(v, b, t.p ~ 'b' ~ loop.index0 ~ '-', t.changed) }}</div>{% endfor %}
+          {% endif %}
+          {% if t.answer.new_facts and current and t.run_id == current.key %}
+          <form method="post" action="/chat/{{ cid }}/reassess" class="facts-form">
+            <label for="{{ t.p }}facts" class="label">New facts from your message</label>
+            <textarea id="{{ t.p }}facts" name="followup" rows="2" maxlength="{{ MAX_CHARS }}">{{ t.answer.new_facts | join('\n') }}</textarea>
+            <div class="form-row"><button class="btn" type="submit"{% if busy %} disabled{% endif %}>Re-assess with these facts</button>
+              <span class="muted small">Runs the full assessment again with these facts added.</span></div>
+          </form>
+          {% endif %}
+        </section>
+        {% if last and current %}{{ blocks.follow_chips() }}{% endif %}
+      </div>
+      {% set cn = namespace(k=ns.ref) %}
+      <aside class="t-side" aria-label="Sources beside this answer">
+        {% for c in t.answer.claims %}{% set ci = loop.index0 %}{% for x in c.citations %}{% set cn.k = cn.k + 1 %}{% set url = '/chat/' ~ cid ~ '/turns/' ~ t.n ~ '/cite/' ~ ci ~ '-' ~ loop.index0 %}
+        <div class="mnote{{ ' mnote-sec' if x.kind == 'external' }}" id="{{ t.p }}n{{ cn.k }}">
+          <p class="mnote-src"><b>{{ cn.k }}</b><a href="{{ url }}" hx-get="{{ url }}" hx-target="#{{ t.p }}n{{ cn.k }}-ctx" hx-swap="innerHTML" data-note aria-expanded="false" aria-controls="{{ t.p }}n{{ cn.k }}-ctx" title="Show the quote in its page and the check result">{{ x.label }}</a>{% if x.kind == 'external' %} <span class="ext-note">external, not AFS material</span>{% endif %}</p>
+          <q>{{ x.quote }}</q>
+          <div class="mnote-ctx" id="{{ t.p }}n{{ cn.k }}-ctx"></div>
+        </div>
+        {% endfor %}{% endfor %}
+      </aside>
+      {% set ns.ref = cn.k %}
+    </div>
     {% endif %}
   </article>
 {% endfor %}
 {% if job %}
-  <article class="turn chat-turn" aria-label="Working">
-    {{ question_block(job.question, turns | length > 0) }}
-    {% include "job_steps.html" %}
+  <article class="chat-turn" aria-label="Working">
+    <div class="t-row t-user"><div class="t-main">{{ question_block(job.question, turns | length > 0) }}</div></div>
+    <div class="t-row t-ai">
+      <div class="t-main"><p class="who">Assistant · working</p>{% include "job_steps.html" %}</div>
+      <aside class="t-side" aria-label="About this step">
+        <p class="mnote"><span class="mnote-src d-block">{{ 'Why it takes a moment' if job.kind == 'ask' else 'Why it takes minutes' }}</span>{% if job.kind == 'ask' %}The answer is checked against the assessment and every quote is verified before it is shown.{% else %}The assessment runs several model steps, then every quote is checked word for word against its page. You can leave this page open; the answer appears here.{% endif %}</p>
+      </aside>
+    </div>
   </article>
 {% elif not turns %}
   <p class="muted">Nothing here yet. <a href="/">Ask a question</a>.</p>
 {% endif %}
 </div>
 {% endblock %}
+
 {% block composer %}
 <div class="composer">
-  <form class="composer-in" method="post" action="/chat/{{ cid }}/message">
-    <label for="ask" class="sr-only">{{ 'Ask a follow-up question' if current else 'Describe what you want to measure' }}</label>
-    <input id="ask" name="text" type="text" autocomplete="off" maxlength="{{ MAX_CHARS }}" placeholder="{{ 'Ask about this assessment, e.g. why this probe and not another?' if current else 'Describe what you want to measure' }}"{% if busy %} disabled{% endif %}>
-    <button class="btn" type="submit"{% if busy %} disabled{% endif %}>Send</button>
-    {% if current %}<button class="btn-quiet" type="submit" formaction="/chat/{{ cid }}/reassess" title="Run the full assessment again with this detail added"{% if busy %} disabled{% endif %}>Re-assess</button>{% endif %}
-  </form>
+  <div class="composer-grid">
+    <form class="composer-in" method="post" action="/chat/{{ cid }}/message">
+      <label for="ask" class="sr-only">{{ 'Ask a follow-up question' if current else 'Describe what you want to measure' }}</label>
+      <input id="ask" name="text" type="text" autocomplete="off" maxlength="{{ MAX_CHARS }}" placeholder="{{ 'Ask a follow-up, or add what the customer told you' if current else 'Describe what you want to measure' }}"{% if busy or job %} disabled{% endif %}>
+      <button class="btn" type="submit"{% if busy or job %} disabled{% endif %}>Send</button>
+      {% if current %}<button class="btn-quiet" type="submit" formaction="/chat/{{ cid }}/reassess" title="Run the full assessment again with this detail added"{% if busy or job %} disabled{% endif %}>Re-assess</button>{% endif %}
+    </form>
+    <p class="composer-hint">{% if current %}Send asks about the assessment. Re-assess runs it again with the new detail (v{{ turns | rejectattr('kind', 'equalto', 'ask') | list | length + 1 }}).{% else %}Send starts an assessment.{% endif %}</p>
+  </div>
 </div>
 {% endblock %}
