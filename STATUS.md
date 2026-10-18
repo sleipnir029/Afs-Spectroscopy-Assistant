@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 11:02 CEST (Claude, Phase 5 session 5)._
+_Last updated: 2026-10-18 11:47 CEST (Claude, Phase 5 session 5)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
@@ -13,6 +13,8 @@ _Last updated: 2026-10-18 11:02 CEST (Claude, Phase 5 session 5)._
 - **10:06:** User: decide the model only after D01–D08 per arm judged against the AFS data (dev.jsonl eval facts/useful sources, dev_reference worked answers D01–D02); fix both pipeline issues → D-061 (+D-061a after code review NEEDS_FIXES); D01–D08 × 7 arms re-running on e3da219 (outputs/bakeoff-dev, `--external cache`), scorer scripts/bakeoff_afs_score.py. User: chat-first UI with follow-ups and live result blocks → 5.12 plan v2 APPROVED 10:02 (implementer building in a worktree; hard stop 18:00); fresh-UI design agent pivoted to chat-first concepts (docs/fresh-ui/). Jev (decision models) assessed: not adopted.
 
 - **11:02:** D-061a approved (confirm review). D01–D08 × 7 arms done on the fixed pipeline (ace38cc; outputs/bakeoff-dev/afs-score.md): 0 hard failures, checklist 0 fails everywhere; useful-source recall 65–85%; mean s/case: Flash-Lite 29, mix-b 69, mix-a 84, Gemini 3.8 173, 1017 259, GLM 322, baseline 504. 4 blind judges (anonymised letters) scoring vs the AFS eval data. 5.12 chat backend merged (050420e, pytest 738/2); code review running. User picked chat concept **C1 Brief** (docs/fresh-ui/); restyle implementer running in a worktree.
+
+- **11:47:** Blind D01–D08 judging done (c2276a2, outputs/bakeoff-dev/blind/summary.md): 1017 4.15, baseline 4.08, mix-a 4.06, GLM 3.96, Gemini 3.8 3.75, mix-b 3.38, Flash-Lite 3.23. **User picked mix-a → D-063 (9646186), production config.** Gate run (19 cases, `--external live`, mix-a) started 11:47 into outputs/dev + outputs/adversarial. C1 Brief restyle merged (a81fefd); UI review running. Chat review NEEDS_FIXES (memory, user-typed figures, literature offer, empty next_step) → fix implementer running in a worktree.
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
