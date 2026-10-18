@@ -1,0 +1,437 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A shortlist of single methods is justified for a clear, colourless aqueous liquid, with NIR transmission tested first. The customer's accuracy, response-time and cleaning targets are not covered by the sources, so this stays a provisional assessment resting on stated assumptions.",
+ "premise_checks": [
+  {
+   "premise": "The quality limit of plus or minus 0.3 % w/w is achievable by the proposed method.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source states an achievable accuracy for sucrose or any aqueous analyte, so the tolerance must be established by the trial.",
+   "citations": []
+  },
+  {
+   "premise": "The probe can tolerate in-place cleaning with hot caustic once a day.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source covers caustic compatibility of a probe window or ATR crystal; cleaning compatibility is an open question.",
+   "citations": []
+  },
+  {
+   "premise": "The analyser can be placed in a dry, safe room 10 m from the pipe without compromising the measurement.",
+   "verdict": "supported",
+   "explanation": "Silica-fibre cables of 100-300 m are stated for remote industrial process control, which covers a 10 m run for silica-fibre methods.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "In-line sucrose concentration in a clear, colourless aqueous solution.",
+  "Range 5 to 15 % w/w; quality limit plus or minus 0.3 % w/w.",
+  "50 mm stainless steel pipe, 20 to 30 °C, normal pressure.",
+  "Analyser 10 m from the pipe in a dry, safe room.",
+  "Daily hot-caustic clean-in-place; one reading per minute.",
+  "Laboratory refractometer stays in use as reference."
+ ],
+ "key_unknowns": [
+  "Other dissolved species or suspended solids that could interfere with sucrose.",
+  "Whether the 5 to 15 % w/w range is sucrose alone or total dissolved solids.",
+  "Caustic concentration, temperature and contact time during the daily clean-in-place.",
+  "Flow rate and regime, and the exact probe mounting point in the 50 mm pipe.",
+  "Uncertainty of the laboratory refractometer and how reference samples are taken.",
+  "Whether an achievable MIR fibre length supports a 10 m link if MIR ATR is needed."
+ ],
+ "clarification_questions": [],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR transmission/transflection is the preferred geometry for clear, semi-transparent liquids and the most common online fibre-probe method, so it is the single method to test first. Its broad, overlapping bands require a chemometric calibration.",
+   "conditions": "Applies if no dissolved species are present that NIR cannot resolve from sucrose.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman tolerates the aqueous matrix better than infrared methods and its signal is linear with concentration, so it is a useful comparison against NIR. Its weak signal and possible fluorescence background must be checked on the real solution.",
+   "conditions": "Applies if the colourless solution shows no strong fluorescence background.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "dependence on concentration is linear over a wide range of intensities",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "Combining NIR and Raman is a later hypothesis to test only after the single-method tests, adding water-tolerant Raman information to NIR. Any gain is a hypothesis and must be shown against the best single method.",
+   "conditions": "Applies only if the single NIR and Raman tests each fall short of the customer's plus or minus 0.3 % w/w.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Variables obtained from different spectral methods are not equivalent.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "REF",
+     "page": 3,
+     "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "A transmission or transflection fibre probe in the 50 mm pipe with a controlled optical pathlength for NIR; a Raman probe is a separate comparison. No configuration is fixed by the sources.",
+  "location": "Probe at the pipe wall; spectrometers in the dry room about 10 m away, reached with silica-fibre cables.",
+  "fiber_link": "Silica fibres are the only family stated for a 100-300 m remote link; MIR would need chalcogenide or polycrystalline fibres, for which no length is stated.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fibre and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as a Raman shift in cm-1, with the laser excitation wavelength stated separately; no excitation wavelength is fixed here.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "NIR water and sucrose bands overlap broadly, so the plus or minus 0.3 % w/w target may not be reachable with NIR alone.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-GEN-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Raman's weak signal and a possible fluorescence background could limit its accuracy on the real solution.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "A probe window or ATR crystal may not survive daily hot-caustic cleaning; no source covers this.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Any unlisted dissolved species or a temperature shift can invalidate a calibration, which is specific to the matrix.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples across the expected variation: the full 5 to 15 % w/w sucrose range and 20 to 30 °C, from several production batches, including any expected interferents.",
+    "purpose": "Covers the chemical and physical variation the model must handle.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Acquire NIR transmission/transflection spectra in the process geometry with the same probe and a controlled optical pathlength, recording sample temperature.",
+    "purpose": "Single method first, under the real measurement geometry.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure each sample independently with the laboratory refractometer at a controlled temperature as the reference.",
+    "purpose": "Independent reference measurement.",
+    "citations": []
+   },
+   {
+    "step": "Build a chemometric calibration for sucrose against the refractometer and validate it on held-out batches or runs, not only held-out samples.",
+    "purpose": "Held-out validation on runs or batches.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "Chemometric algorithms are implemented in specialized software that enables preliminary data preparation (preprocessing), construction, validation, and application of predictive models, specifically calibration or classification models.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Go/no-go: accept NIR if the held-out prediction error stays within the customer's plus or minus 0.3 % w/w across 5 to 15 % w/w; otherwise test the Raman comparison and then the combined option.",
+    "purpose": "Go/no-go basis, with the numerical criterion from the customer.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory refractometer, already the customer's reference method.",
+  "decision_basis": "Held-out prediction error against the customer's plus or minus 0.3 % w/w over 5 to 15 % w/w."
+ },
+ "assumptions": [
+  "The solution is a single-phase, clear liquid with sucrose as the main dissolved solid.",
+  "The stated 5 to 15 % w/w refers to sucrose and the 20 to 30 °C range holds during measurement.",
+  "The laboratory refractometer can supply reference values across the whole range."
+ ],
+ "not_in_sources": [
+  "An achievable accuracy of plus or minus 0.3 % w/w for in-line sucrose measurement.",
+  "Response time of the candidate methods for a one-reading-per-minute requirement.",
+  "Compatibility of probes or ATR crystals with daily hot-caustic clean-in-place.",
+  "An achievable fibre length for a 10 m MIR link."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "sucrose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the target the customer wants monitored in-line.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "solution temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The stated 20 to 30 °C span can shift vibrational bands and the reference refractometer reading, so it is needed for calibration and compensation.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor (e.g. Pt100/RTD)",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Single probe, no pathlength window",
+   "maintenance": "Laser, probe window, fluorescence checks",
+   "performance_fit": "Water-tolerant, sharp sucrose bands",
+   "cost_drivers": "Raman laser, spectrometer and fibre probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Standard probe, well-understood online method",
+   "maintenance": "Window cleaning, calibration upkeep",
+   "performance_fit": "Best fit for clear liquid, fibre-friendly",
+   "cost_drivers": "NIR spectrometer, transmission probe, calibration effort",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Two instruments, synchronised data",
+   "maintenance": "Two calibrations, two probe checks",
+   "performance_fit": "Adds water-tolerant Raman bands",
+   "cost_drivers": "Two spectrometers, two probes, fusion software",
+   "fusion_note": "Low-level fusion of block-scaled NIR and Raman spectra taken from the same sampling spot, synchronised to a common one-minute time step, with a separate calibration and diagnostics per method. The fused model must beat the best single method on held-out batches before the extra instrument is kept.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "compare with the best single method.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "NIR bands are broad and overlapping, so a calibration model (for example PLS) against the refractometer is needed; reference data should span 5 to 15 % w/w and 20 to 30 °C and be validated on held-out batches. A classification or calibration model is built, validated and applied in specialised software.",
+ "realtime_tracking_note": "The one-reading-per-minute measurement is a continuous in-line tracking task. If two methods are later fused, their data must be normalised to a common time step.",
+ "future_direction": "After a successful trial, a compact optical multisensor (LED/filter) focused on this specific stream could be developed.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the trial shows NIR cannot reach plus or minus 0.3 % w/w over 5 to 15 % w/w, or if interfering dissolved species are present, the Raman comparison and then the combined option move up. A feasible 10 m MIR link could also bring MIR ATR forward.",
+  "next_step": "Run the feasibility experiment with representative samples, the NIR transmission probe and the laboratory refractometer, and report the held-out prediction error against the customer's plus or minus 0.3 % w/w."
+ },
+ "brief_answer": "Test NIR transmission/transflection first: it suits clear liquids and is the common online fibre-probe method, with a chemometric model calibrated against your lab refractometer. Raman is a water-tolerant comparison, and a combined NIR + Raman system is a later hypothesis. Whether plus or minus 0.3 % w/w, one reading a minute and hot-caustic cleaning can be met is not covered by the sources; please confirm interferents, cleaning conditions and flow."
+}
