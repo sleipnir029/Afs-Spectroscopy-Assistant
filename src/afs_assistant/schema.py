@@ -54,7 +54,7 @@ class YesNoSlot(BaseModel):
 class SampleSlots(BaseModel):
     physical_state: StateSlot
     optical_regime: RegimeSlot = Field(description="clear/turbid/opaque (scattering)/opaque_absorbing (dark)/"
-                                   "variable (the enquiry says it changes between clear and turbid or opaque).")
+                                   "variable (the enquiry says it changes between clear and turbid; if it can become opaque, opaque).")
     aqueous: YesNoSlot
     heterogeneous: YesNoSlot
     fluorophore: YesNoSlot = Field(description="Is a fluorescent target or a justified fluorescent indicator identified?")

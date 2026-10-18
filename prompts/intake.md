@@ -23,7 +23,7 @@ Rules:
      - `opaque_absorbing` means dark and absorbing with little scattering.
      - `turbid` means cloudy.
      - `clear` means transparent.
-     - `variable` means the enquiry says the sample changes between clear and turbid or opaque. Use it only when the enquiry states such a change; otherwise pick the single regime.
+     - `variable` means the enquiry says the sample changes between clear and turbid. Use it only when the enquiry states such a change; if the sample can become opaque, use `opaque`; otherwise pick the single regime.
    - `fluorophore = yes` only if a fluorescent target species or a justified fluorescent indicator is named.
 4. `customer_premises` lists every belief, assumption or request in the enquiry that an expert should check rather than accept. Examples:
    - a request for a guarantee, or for proof that a method will work for them (a published application is a reason to test a method, not proof)

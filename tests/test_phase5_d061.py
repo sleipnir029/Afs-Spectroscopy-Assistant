@@ -9,7 +9,6 @@ import copy
 
 import pytest
 from test_phase2 import ASSESSMENT, run_with
-from test_phase3 import still_open
 
 from afs_assistant import kb, render, screen
 from afs_assistant.options import _unknown_phrases
@@ -17,6 +16,8 @@ from afs_assistant.schema import Assessment, RegimeSlot
 from afs_assistant.verify import (
     PROPOSAL_CHANGED_FLAG,
     RECHECK_NAMES,
+    TEXT_FOR_OTHER_OPTION_FLAG,
+    TIER_SWAPPED_FLAG,
     Report,
     check_options,
     recheck,
@@ -46,40 +47,52 @@ def test_proposal_on_the_recommended_option_passes():
     assert "proposal_is_recommended" in RECHECK_NAMES
 
 
-def test_proposal_on_another_option_is_a_hard_failure():
-    failed = hard(options_report(proposing("O1")), "proposal_is_recommended")
+def soft(report_or_result, name: str) -> list:
+    report = getattr(report_or_result, "report", report_or_result)
+    return [c for c in report.soft_failures if c.name == name]
+
+
+def test_proposal_on_another_option_is_a_soft_failure():
+    report = options_report(proposing("O1"))
+    failed = soft(report, "proposal_is_recommended")
     assert failed and failed[0].location == "proposal.best_current_option"
+    assert not hard(report, "proposal_is_recommended")             # no repair round on its own (D-061a)
 
 
 def test_proposal_check_leaves_a_missing_option_and_no_recommended_tier_to_other_checks():
     report = options_report(proposing("O9"))
-    assert hard(report, "proposal_option_exists") and not hard(report, "proposal_is_recommended")
+    assert hard(report, "proposal_option_exists") and not soft(report, "proposal_is_recommended")
     a = proposing("O1")
     a["solution_options"][1]["tier"] = "extended"
     report = options_report(a)
-    assert hard(report, "option_recommended_tier") and not hard(report, "proposal_is_recommended")
+    assert hard(report, "option_recommended_tier") and not soft(report, "proposal_is_recommended")
 
 
-def test_proposal_on_another_option_triggers_a_repair_that_fixes_it():
-    result, client = run_with(assess=proposing("O1"), repairs=[proposing("O2")])
-    repair_user = next(s["user"] for s in client.seen if s["role"] == "repair")
-    assert "[proposal_is_recommended] proposal.best_current_option" in repair_user
-    assert not hard(result, "proposal_is_recommended") and result.manifest["finalize_fallbacks"] == []
-
-
-def test_proposal_fallback_follows_the_recommended_tier():
-    a = proposing("O1")
-    result, _ = run_with(assess=a, repairs=[a, a])
-    assert hard(result, "proposal_is_recommended")              # the kept round still proposes O1
-    assert result.assessment.proposal.best_current_option == "O2"
+def test_a_proposed_simple_option_takes_the_recommended_tier():
+    result, client = run_with(assess=proposing("O1"))
+    assert not any(s["role"] == "repair" for s in client.seen)     # the soft check alone starts no repair
+    final = result.assessment
+    assert final.proposal.best_current_option == "O1"               # the brief answer argues for it
+    assert {o.id: o.tier for o in final.solution_options} == {"O1": "recommended", "O2": "simple"}
     change = next(x for x in result.removed if x.get("corrects") == "proposal_is_recommended")
-    assert change["location"] == "proposal.best_current_option" and change["item"] == "O1"
-    assert result.flagged["proposal"] == PROPOSAL_CHANGED_FLAG
+    assert change["location"] == "solution_options[0].tier" and change["item"] == "simple"
+    assert result.flagged["solution_options[0]"] == result.flagged["solution_options[1]"] == TIER_SWAPPED_FLAG
     assert result.manifest["finalize_fallbacks"] == ["proposal_is_recommended"]
-    assert "proposal_is_recommended" not in still_open(result)
-    assert not hard(recheck(result.assessment, result.candidates), "proposal_is_recommended")
+    assert not soft(recheck(final, result.candidates), "proposal_is_recommended")
     payload = render.to_json(result)
     assert any(x.get("corrects") == "proposal_is_recommended" for x in payload["finalize_changes"])
+
+
+def test_a_proposed_extended_option_moves_the_proposal_and_flags_the_text():
+    a = proposing("O1")
+    a["solution_options"][0]["tier"] = "extended"
+    a["solution_options"][0]["fusion_note"] = "Fusion is a later hypothesis to test against the best single method."
+    result, _ = run_with(assess=a, repairs=[a, a])              # an extended option may need repairs of its own
+    final = result.assessment
+    assert final.proposal.best_current_option == "O2"
+    assert {o.id: o.tier for o in final.solution_options}["O1"] == "extended"
+    assert result.flagged["proposal"] == PROPOSAL_CHANGED_FLAG
+    assert result.flagged["brief_answer"] == result.flagged["proposal.next_step"] == TEXT_FOR_OTHER_OPTION_FLAG
 
 
 # ----------------------------------------------------------------- optical regime `variable`
@@ -130,3 +143,12 @@ def test_exclude_rule_for_one_state_gives_unknown_for_a_variable_sample(monkeypa
     assert "sample clarity varies" in _unknown_phrases(uv, slots)
     turbid = _by_key(screen.screen({**slots, "optical_regime": "turbid"}))
     assert turbid[("UV-Vis", "transmission_transflection")].status == "fail"
+
+
+def test_variable_liquid_keeps_transmission_preferred_and_the_reflection_caveat():
+    by = {(c.method, c.technique): c for c in screen.screen({"physical_state": "liquid", "optical_regime": "variable"})}
+    assert by[("NIR", "transmission_transflection")].status == "pass"          # S01 p.18: preferred for clear
+    reflection = by[("NIR", "diffuse_reflection")]
+    assert reflection.status == "pass" and "R-GEO-4" in reflection.warnings    # the clear-liquid caveat stays
+    clear = {(c.method, c.technique): c for c in screen.screen({"physical_state": "liquid", "optical_regime": "clear"})}
+    assert clear[("NIR", "diffuse_reflection")].status == "fail"

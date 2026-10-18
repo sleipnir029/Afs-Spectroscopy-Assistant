@@ -63,8 +63,9 @@ REGIME_SAMPLE_TYPES = {
     "opaque": {"scattering media"},          # opaque because it scatters (e.g. milk concentrate)
     "opaque_absorbing": set(),               # dark, absorbing, little scattering (e.g. dark oils)
 }
-# A `variable` sample changes between clear and turbid or opaque (D-061): screened as each of these states.
-VARIABLE_REGIMES = ("clear", "turbid", "opaque")
+# A `variable` sample changes between clear and turbid (D-061a; one that can turn opaque is `opaque`): screened as
+# each of these states.
+VARIABLE_REGIMES = ("clear", "turbid")
 REGIME_SAMPLE_TYPES["variable"] = set().union(*(REGIME_SAMPLE_TYPES[r] for r in VARIABLE_REGIMES))
 
 # Technique ids that a rule's `technique: transmission` / `transflection` refers to.
@@ -257,8 +258,10 @@ def screen(slots: dict) -> list[Candidate]:
                     cand.downgrade("unknown", rule["id"], "physical state unknown: " + rule["statement"])
                 elif state not in target["physical_state"]:
                     cand.downgrade("fail", rule["id"], rule["statement"])
-            elif (effect == "warn" and match == "yes" and rule.get("when")
-                  and _target_applies(target, cand, fiber_family)):
+            elif (effect == "warn" and rule.get("when") and _target_applies(target, cand, fiber_family)
+                  and (match == "yes" or (regime == "variable" and any(   # holds in one of the states (D-061a)
+                      _when_state(rule["when"], cand, {**slots, "optical_regime": r}) == "yes"
+                      for r in VARIABLE_REGIMES)))):
                 # Rules with an empty `when` are assessment-level guidance, not candidate warnings.
                 cand.warnings.append(rule["id"])
 

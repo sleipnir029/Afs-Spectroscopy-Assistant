@@ -35,6 +35,8 @@ from afs_assistant.verify import (
     PROPOSAL_CHANGED_FLAG,
     QUESTION_ADDED_FLAG,
     RECOMMENDED_ROLES,
+    TEXT_FOR_OTHER_OPTION_FLAG,
+    TIER_SWAPPED_FLAG,
     Report,
     check_questions,
     check_status,
@@ -461,20 +463,32 @@ def _finalize_options(data: dict, id_map: dict[str, str], removed: list[dict], f
 
 
 def _fallback_proposal(data: dict, removed: list[dict], flagged: dict[str, str]) -> None:
-    """Fallback (D-061), on the finalized options: a proposal that names an existing option other than
-    the single `recommended` one is set to the recommended option. A missing proposed option or no
-    single recommended option stays a visible check failure. Logged (`corrects`: proposal_is_recommended)
-    and flagged."""
-    proposal = data["proposal"]
-    ids = {o["id"] for o in data["solution_options"]}
-    recommended = [o["id"] for o in data["solution_options"] if o["tier"] == "recommended"]
-    if proposal["best_current_option"] not in ids or len(recommended) != 1 or proposal["best_current_option"] in recommended:
+    """Fallback (D-061a), on the finalized options: the proposal and the single `recommended` tier must name
+    the same option. The brief answer and next step argue for the proposed option, so the tier follows the
+    proposal: a proposed `simple` option swaps tiers with the recommended one. A proposed `extended` option
+    keeps its tier (it carries the fusion note); the proposal then moves to the recommended option and the
+    brief answer and next step are flagged as written for the other option. A missing proposed option or no
+    single recommended option stays a visible check failure. Logged (`corrects`: proposal_is_recommended)."""
+    proposal, options = data["proposal"], data["solution_options"]
+    by_id = {o["id"]: (i, o) for i, o in enumerate(options)}
+    recommended = [o["id"] for o in options if o["tier"] == "recommended"]
+    best = proposal["best_current_option"]
+    if best not in by_id or len(recommended) != 1 or best in recommended:
         return
-    removed.append({"location": "proposal.best_current_option", "item": proposal["best_current_option"],
-                    "reason": f"proposed option {proposal['best_current_option']} is not the recommended option; "
-                              f"changed to {recommended[0]}", "corrects": "proposal_is_recommended"})
-    proposal["best_current_option"] = recommended[0]
+    (i, chosen), (j, old) = by_id[best], by_id[recommended[0]]
+    if chosen["tier"] == "simple":
+        removed.append({"location": f"solution_options[{i}].tier", "item": "simple",
+                        "reason": f"proposed option {best} had tier simple; tiers swapped with {old['id']} so the "
+                                  f"recommended option is the proposed one", "corrects": "proposal_is_recommended"})
+        chosen["tier"], old["tier"] = "recommended", "simple"
+        flagged[f"solution_options[{i}]"] = flagged[f"solution_options[{j}]"] = TIER_SWAPPED_FLAG
+        return
+    removed.append({"location": "proposal.best_current_option", "item": best,
+                    "reason": f"proposed option {best} is the extended option; changed to the recommended option "
+                              f"{old['id']}", "corrects": "proposal_is_recommended"})
+    proposal["best_current_option"] = old["id"]
     flagged["proposal"] = PROPOSAL_CHANGED_FLAG
+    flagged["brief_answer"] = flagged["proposal.next_step"] = TEXT_FOR_OTHER_OPTION_FLAG
 
 
 def _finalize_proposal_basis(data: dict, removed: list[dict], flagged: dict[str, str]) -> None:

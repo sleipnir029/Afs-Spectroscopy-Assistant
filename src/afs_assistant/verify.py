@@ -399,9 +399,9 @@ def check_options(a: Assessment, candidates: list[Candidate], report: Report) ->
     recommended = [o.id for o in a.solution_options if o.tier == "recommended"]
     report.add("proposal_is_recommended",
                p.best_current_option not in ids or not recommended or p.best_current_option in recommended,
-               "hard", "proposal.best_current_option",
+               "soft", "proposal.best_current_option",       # finalize makes them agree (D-061a)
                f"best_current_option {p.best_current_option!r} is not the recommended option {recommended}; "
-               f"propose the option with tier recommended")
+               f"make the proposal and the recommended tier name the same option")
 
     for key in ("recommendations", "solution_options", "parameters"):
         item_ids = [x.id for x in getattr(a, key)]
@@ -492,7 +492,9 @@ def check_questions(a: Assessment, report: Report) -> None:
 QUESTION_ADDED_FLAG = "question added by verification from a key unknown"
 METHOD_ADDED_FLAG = "second method added by verification"
 PROPOSAL_CHANGED_FLAG = "proposal changed by verification to the recommended option"
-FALLBACK_FLAGS = frozenset({QUESTION_ADDED_FLAG, METHOD_ADDED_FLAG, PROPOSAL_CHANGED_FLAG})
+TIER_SWAPPED_FLAG = "tier changed by verification so the recommended option is the proposed one"
+TEXT_FOR_OTHER_OPTION_FLAG = "written for another option before verification changed the proposal"
+FALLBACK_FLAGS = frozenset({QUESTION_ADDED_FLAG, METHOD_ADDED_FLAG, PROPOSAL_CHANGED_FLAG, TIER_SWAPPED_FLAG})
 
 
 # Hard checks that are re-run on the finalized assessment; their open state comes from that re-run.
