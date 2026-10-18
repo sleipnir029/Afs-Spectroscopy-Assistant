@@ -1,0 +1,436 @@
+{
+ "round": 1,
+ "hard_failures_before": 3,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "premise_not_supported",
+  "status_reason": "Written assurances of quantitative accuracy prior to testing and regulatory commitments are contradicted by engineering principles and reference guidance. An empirical feasibility trial and matrix-specific chemometric calibration are required before accuracy can be evaluated, and regulatory clearance depends on customer validation rather than vendor promises.",
+  "premise_checks": [
+   {
+    "premise": "An NIR system can be confirmed in writing to achieve plus or minus 0.1% moisture accuracy prior to feasibility testing and calibration.",
+    "verdict": "contradicted",
+    "explanation": "Quantitative accuracy cannot be confirmed beforehand; NIR bands overlap and depend on matrix-specific chemometric calibration, sample scattering, and physical variations.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Do not invent measured spectra or experimental results; accuracy, detection limits, response times, fiber lengths or other performance figures that no source supports",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "An equipment vendor can provide binding regulatory clearance for release testing.",
+    "verdict": "contradicted",
+    "explanation": "Vendors cannot promise regulatory clearance; analytical methods require customer-led qualification and formal validation against approved reference methods.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "a published application is a reason to test a method, not proof that it will work for a new customer.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Written confirmation of granulate moisture measurement to plus or minus 0.1%",
+   "Assurance of regulatory acceptance for release testing",
+   "Complete system pricing prior to ordering"
+  ],
+  "key_unknowns": [
+   "Chemical composition and excipient matrix of the granulate",
+   "Target moisture operating range and current reference method (e.g., Karl Fischer titration or Loss on Drying)",
+   "Granulate particle size distribution and surface morphology",
+   "Measurement interface geometry (in-line chute, pipe, bin, or at-line sample presentation)",
+   "Target regulatory framework and formal validation requirements"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the detailed formulation of the granulate, including active substances, binders, and baseline moisture range?",
+    "why_it_matters": "Determines whether matrix absorption bands overlap with water absorption bands and whether calibration is feasible.",
+    "affects": [
+     "method",
+     "status"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What primary laboratory reference method (such as Karl Fischer titration or Loss on Drying) and reference precision will be used for calibration?",
+    "why_it_matters": "Spectroscopic calibration accuracy is mathematically bounded by the error and repeatability of the reference analytical method.",
+    "affects": [
+     "status",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What are the physical granulate properties (particle size, density, flow rate) and intended presentation geometry (direct contact probe vs. non-contact window)?",
+    "why_it_matters": "Determines whether an immersion reflection probe or a stand-off non-contact reflection head is optimal to mitigate scattering variations.",
+    "affects": [
+     "technique",
+     "installation"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Which regulatory guideline (such as ICH Q2/Q13 or pharmacopeial chapters) governs your release testing validation plan?",
+    "why_it_matters": "Informs the structure of the multivariate method validation protocol required by your quality unit.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Diffuse reflectance NIR is the standard optical technique for measuring moisture in scattering solid materials like granulates and powders. Water exhibits clear absorption bands in the near-infrared overtone region.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "high light scattering by solid and dispersed samples, which enables measurements using diffuse reflectance",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "diffuse_reflection_remote",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Non-contact diffuse reflection measures scattering powders across a distance, avoiding direct probe fouling in moving solid beds. It provides an operational alternative to immersion contact probes.",
+    "conditions": "Applicable if granulate flow tends to coat or abrade direct contact probe windows.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "surface at a distance solid, powder 2-5 mm avera ge",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "enables measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "not_recommended",
+    "combined_with": [],
+    "rationale": "Transmission fails in opaque solids and dense powders because optical penetration is insufficient. Transflection is designed for liquids and colloidal systems rather than dry granulates.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 18,
+      "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Transmission or transflection probe liquid, colloidal 1-10 mm avera ge",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Diffuse reflection probe in direct contact with flowing granulate, or a stand-off non-contact reflection head directed at the granulate stream through an optical viewport.",
+   "location": "In-line granulator discharge, transfer chute, feed hopper, or tablet press feed frame.",
+   "fiber_link": "Standard or metal-coated Vis-NIR silica fiber-optic cable coupling the process reflection probe to a remote NIR spectrometer.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "the transparency of plain and quartz glass (which allows the use of standard optics and probes)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "The nominal NIR range is 780 to 2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Particle size shifts and surface roughness can induce baseline scatter shifts that distort uncorrected moisture calibrations.",
+    "rule_ids": [
+     "R-GEO-6",
+     "R-NIR-2"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Spectroscopic calibration performance is inherently limited by the uncertainty and reproducibility of the offline primary reference method.",
+    "rule_ids": [
+     "R-CAL-1",
+     "R-GEN-2"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "physical variation; calibration specific to the matrix.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Window fouling or material buildup on an immersion probe can distort reflection readings over prolonged processing runs.",
+    "rule_ids": [
+     "R-GEN-5"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative granulate samples across the expected manufacturing moisture range and particle size distributions.",
+     "purpose": "Capture total physical and chemical matrix variance required for a robust calibration model.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Perform duplicate primary reference laboratory measurements (e.g., Karl Fischer titration) for each calibration sample.",
+     "purpose": "Establish reference values and quantify primary analytical error.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Acquire diffuse reflectance NIR spectra using contact and non-contact probe interfaces under controlled conditions.",
+     "purpose": "Evaluate optical signal-to-noise ratio and baseline stability across different measurement geometries.",
+     "citations": [
+      {
+       "doc": "S02",
+       "page": 20,
+       "quote": "1. Multi-Method Lab Trials AFS tests your process using all key fiber optic spectroscopy methods.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Develop multivariate PLS regression models with scatter pre-processing (SNV or second derivative) and validate on independent batches.",
+     "purpose": "Determine empirical root mean square error of prediction (RMSEP) against the client accuracy goal.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 17,
+       "quote": "applying Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles before using Partial Least Squares (PLS) regression",
+       "claim_kind": "general"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "Independent primary analytical laboratory testing, such as Karl Fischer coulometric/volumetric titration or Loss on Drying (LOD).",
+   "decision_basis": "Go/no-go is determined by whether the calibrated PLS model achieves the customer target prediction error of plus or minus 0.1% moisture on independent test sets."
+  },
+  "assumptions": [
+   "The granulate matrix remains chemically consistent with moisture primarily present as free or bound water.",
+   "A validated primary analytical reference method is available to generate reference values for calibration samples."
+  ],
+  "not_in_sources": [
+   "Commercial price lists, quotations, and equipment costs for complete turnkey NIR systems are not contained in the provided technical sources."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Granulate Moisture Content",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Directly required by the customer to monitor granulate drying and satisfy release specifications.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 12,
+      "quote": "Optimal set of wavelengths to see moisture of media in contact",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Reference Water Content",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Required to calibrate and validate the multivariate chemometric model against primary chemical measurements.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "Karl Fischer titration or Loss on Drying",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Granulate Temperature",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "Temperature variations shift water absorption bands and should be tracked to maintain calibration robustness.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "In-line RTD or thermocouple",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1"
+    ],
+    "ease_of_use": "Simple non-contact external optical installation",
+    "maintenance": "Periodic inspection of external window",
+    "performance_fit": "Avoids material contact and fouling",
+    "cost_drivers": "NIR spectrometer, non-contact reflection head, silica fiber cable",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "measurements using diffuse reflectance, including measurements without direct contact with the sample, at a distance.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1"
+    ],
+    "ease_of_use": "Direct probe mounting in vessel",
+    "maintenance": "Routine window inspection and cleaning",
+    "performance_fit": "High signal collection in powders",
+    "cost_drivers": "Industrial diffuse reflection immersion probe, process spectrometer, low-OH silica fibers",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 6,
+      "quote": "Diffuse reflection-probe diffuse reflection Scattering media, powder 0.5-1 mm",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "NIR moisture prediction relies on multivariate calibration (e.g., PLS regression) with scatter correction preprocessing such as Standard Normal Variate (SNV) or Multiplicative Scatter Correction (MSC) to suppress physical particle size variations.",
+  "realtime_tracking_note": "Fiber-optic diffuse reflection probes provide continuous, high-speed acquisition suited to tracking dynamic drying trajectories in granulators or fluid bed systems.",
+  "future_direction": null,
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "Severe probe fouling or mechanical abrasion would favor the non-contact standoff configuration (O1).",
+   "next_step": "Conduct feasibility trials on representative granulate samples paired with primary laboratory reference testing to determine true empirical accuracy."
+  },
+  "brief_answer": "Written confirmation of plus or minus 0.1 % accuracy cannot be issued prior to testing, and regulatory approval cannot be promised by an instrument vendor. Diffuse reflectance NIR is the recommended technique to evaluate for granulate moisture, but quantitative performance depends on matrix-specific chemometric calibration against primary laboratory data. Feasibility trials on representative granulate samples are required to determine empirical performance, and commercial pricing will follow separately."
+ }
+}
