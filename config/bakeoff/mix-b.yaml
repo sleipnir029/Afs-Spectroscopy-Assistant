@@ -1,0 +1,27 @@
+# 5.8 combined arm (D-060; docs/model-research.md §9: C1 per-role models + C2 escalating repair + C3 cross-model
+# retry via fallback_model, D-059). Use with AFS_MODELS_CONFIG=config/bakeoff/mix-b.yaml. Same max_tokens, timeouts
+# and spend caps as config/models.yaml. Routing and prices per model as in the single-model arms (checked 2026-10-18 09:32 CEST).
+provider: openrouter
+base_url: https://openrouter.ai/api/v1
+temperature: 0
+response_mode: json_schema
+timeout_s: 600
+roles:
+  intake: {model: google/gemini-3.5-flash-lite, fallback_model: z-ai/glm-5.3-flash, max_tokens: 16000, reasoning: {effort: medium}, timeout_s: 240}
+  assess: {model: google/gemini-3.5-flash-lite, fallback_model: google/gemini-3.8-flash, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  repair: {model: google/gemini-3.8-flash, fallback_model: z-ai/glm-5.3-flash, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  external_queries: {model: google/gemini-3.5-flash-lite, fallback_model: z-ai/glm-5.3-flash, max_tokens: 16000, reasoning: {effort: low}, timeout_s: 180}
+  external_evidence: {model: google/gemini-3.5-flash-lite, fallback_model: z-ai/glm-5.3-flash, max_tokens: 32000, reasoning: {effort: low}, timeout_s: 180}
+# `only` lists are load-bearing (strict structured output). GLM: Baseten first here (faster than StreamLake in the
+# single-model arm, ~45 tok/s measured there); Gemini: flex tier only.
+provider_routing:
+  z-ai/glm-5.3-flash: {order: [baseten/fp8, inceptron/fp8, near-ai/fp8, streamlake/fp8, morph/fp8], only: [baseten/fp8, inceptron/fp8, near-ai/fp8, streamlake/fp8, morph/fp8], allow_fallbacks: true}
+  google/gemini-3.5-flash-lite: {order: [google-ai-studio/flex, google-vertex/global/flex], only: [google-ai-studio/flex, google-vertex/global/flex], allow_fallbacks: true}
+  google/gemini-3.8-flash: {order: [google-ai-studio/flex, google-vertex/global/flex], only: [google-ai-studio/flex, google-vertex/global/flex], allow_fallbacks: true}
+prices:
+  z-ai/glm-5.3-flash: {input: 0.15, output: 0.69}
+  google/gemini-3.5-flash-lite: {input: 0.15, output: 1.25}
+  google/gemini-3.8-flash: {input: 0.375, output: 1.875}
+spend_cap_usd:
+  per_run: 1.00
+  per_session: 10.00
