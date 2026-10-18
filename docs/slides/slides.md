@@ -1,6 +1,6 @@
 # AFS Spectroscopy Assistant: slides (source text)
 
-Source text for `slides.html` / `slides.pdf`. Every figure comes from a committed file, named on the slide.
+Outline; the final slide text is in `slides.html` / `slides.pdf`. Every figure comes from a committed file, named on the slide.
 
 ---
 
@@ -76,7 +76,7 @@ Screenshots: crops of `docs/ui/brief-thread-full-1440.png` (options table, setup
 
 ## 7. Model choice: evidence
 
-D01–D08 × 7 arms, four blind judges scoring against the AFS eval data (`outputs/bakeoff-dev/blind/summary.md`, `afs-score.md`).
+D01–D08 × 7 arms, four blind judge agents (LLM) scoring against the AFS eval data (`outputs/bakeoff-dev/blind/summary.md`, `afs-score.md`).
 
 | Arm | Quality (1–5) | s/case | $/case | Source recall |
 |---|---|---|---|---|

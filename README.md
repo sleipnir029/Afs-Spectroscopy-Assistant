@@ -18,6 +18,10 @@ Hackathon deliverable. Deadline: Sun 18 Oct 2026, 23:59 Berlin.
 
 Screenshots: `docs/ui/brief-*.png` (chat UI), `docs/ui/chat-*.png` (chat answers with blocks).
 
+Example output: `outputs/final/H04.md` (held-out case, unedited). Demo video: `docs/video/demo.mp4` (2:25, the real app with live model calls). Slides: `docs/slides/slides.pdf`.
+
+Without an API key you can still browse saved runs (`uv run afs-assist ui`), and run `uv run pytest` and `uv run afs-assist eval`.
+
 ## Quick start (uv only)
 
 ```bash
@@ -53,7 +57,7 @@ uv run afs-assist kb check             # validate knowledge/ (every rule quote v
 | `uv run afs-assist assess --text "..."` or `--file enquiry.txt [--out DIR]` | Assesses one enquiry and prints the Markdown. With `--out`, also writes `.json`/`.md`. |
 | `uv run afs-assist run --set dev\|adversarial [--only D01,D02] [--workers 4] [--outputs DIR]` | Assesses a scenario set in parallel. Writes `outputs/<set>/<id>.json\|.md`. |
 | `uv run afs-assist run --set final --i-know-this-is-the-final-run` | The held-out H01–H06 set. It refuses to run without the flag. It was run once on tag `freeze-1`. |
-| `--external live\|cache\|off` (on `assess`, `run`, `ui`) | `live` searches the scholarly APIs and falls back to the curated library on a network error or rate limit. `cache` uses no network and answers HTTP requests from recorded responses only. `off` skips the literature step. |
+| `--external live\|cache\|off` (on `assess`, `run`, `ui`) | `live` searches the scholarly APIs and falls back to the curated library on a network error or rate limit. `cache` makes no literature-API calls and answers them from recorded responses only (model calls still run; a query that differs from the recording falls back to the library). `off` skips the literature step. |
 | `uv run afs-assist external replay outputs/final/H01.json` | Re-checks a run's external items offline against the cached text (exact re-check, no model call). |
 | `uv run afs-assist eval [--set dev\|adversarial]` | Deterministic checklist over the saved runs (no model or API call). Writes `outputs/eval/summary.md\|json`. |
 | `uv run afs-assist kb build\|check` | Rebuilds or validates `knowledge/` (see above). |
@@ -79,7 +83,7 @@ The production config is `config/models.yaml`, the combined arm **mix-a** (D-063
 - **Switching models:** set `AFS_MODELS_CONFIG=config/bakeoff/<arm>.yaml`. The arm configs from the bake-off are in `config/bakeoff/`, including the previous single-model config `baseline-v4.1-flash.yaml`. Each run's manifest records the config path and its sha256.
 
 **Cost and time per case on mix-a:**
-- H01–H06 freeze run: 97–184 s and $0.032–0.065 per case, $0.288 in total (`outputs/final/*.json` manifests).
+- H01–H06 freeze run: 97–184 s and $0.032–0.064 per case, $0.288 in total (`outputs/final/*.json` manifests).
 - 19-case dev + adversarial gate run: 35–247 s per case (mean about 105 s), $0.013–0.070 per case (STATUS.md 11:52).
 - A chat follow-up: 1.4–6.3 s, about $0.004 per question (10 questions for $0.038, `docs/chat/live-check-20261018.json`).
 
@@ -94,7 +98,7 @@ Outputs are in `outputs/final/H01.json|.md` … `H06.json|.md`. They are generat
 | H01 | premise_not_supported | 14/14 | 0 | 97 s | $0.032 |
 | H02 | provisional_assessment | 16/16 | 0 | 98 s | $0.043 |
 | H03 | premise_not_supported | 21/21 | 0 | 184 s | $0.054 |
-| H04 | premise_not_supported | 25/25 | 0 | 180 s | $0.065 |
+| H04 | premise_not_supported | 25/25 | 0 | 180 s | $0.064 |
 | H05 | insufficient_information | 22/22 | 0 | 148 s | $0.045 |
 | H06 | premise_not_supported | 22/22 | 0 | 180 s | $0.050 |
 | **Total** | | **120/120** | **0** | | **$0.288** |
@@ -116,12 +120,12 @@ Source: `outputs/eval/summary.md`, the gate run on mix-a with `--external live`.
 - **Per-enquiry checks (adversarial):** must 33/34 and must-not 12/13. Both failures are A07, a complete enquiry:
   - it got 4 questions where at most 3 are allowed;
   - the must-not pattern `reference (method|measurement|analys)` matched a legitimate question about the reference's reproducibility.
-  - Both are recorded as they are. The eval was not changed after seeing the outputs (D-051).
+  - Both are recorded as they are. The eval was not changed after seeing the outputs (D-051; STATUS 11:52).
 - Citations verified 100 % in every case. External replay 19/19 equal.
 
 ### Model bake-off
 
-7 arms ran on D01–D08 with `--external cache`. Four blind judges scored them against the AFS eval data (facts stated and useful sources in `scenarios/dev.jsonl`, and the worked answers for D01–D02). Arms were shown as anonymous letters.
+7 arms ran on D01–D08 with `--external cache`. Four blind judge agents (LLM reviewers) scored them against the AFS eval data (facts stated and useful sources in `scenarios/dev.jsonl`, and the worked answers for D01–D02). Arms were shown as anonymous letters.
 
 Source: `outputs/bakeoff-dev/blind/summary.md`, with recall from `outputs/bakeoff-dev/afs-score.md`.
 
