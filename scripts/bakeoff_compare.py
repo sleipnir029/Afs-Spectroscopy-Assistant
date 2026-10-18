@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1] / "outputs" / "bakeoff"
+SETS = ("dev", "adversarial")
 
 
 def row(path: Path) -> dict:
@@ -41,7 +42,7 @@ def row(path: Path) -> dict:
 
 def main(arms: list[str]) -> None:
     arms = arms or sorted(p.name for p in ROOT.iterdir() if p.is_dir() and p.name != "smoke")
-    cases = sorted({f"{p.parent.name}/{p.stem}" for arm in arms for p in (ROOT / arm).glob("*/*.json")})
+    cases = sorted({f"{p.parent.name}/{p.stem}" for arm in arms for p in (ROOT / arm).glob("*/*.json") if p.parent.name in SETS})
     cols = ["wall_s", "cost", "out_tok", "assess_tok", "runaways", "timeouts", "hard", "cit", "repairs",
             "fallbacks", "removed", "primary", "questions", "words"]
     totals = {arm: {"cases": 0, "failed": 0, "wall_s": 0.0, "cost": 0.0, "runaways": 0, "timeouts": 0, "hard": 0}
@@ -67,7 +68,7 @@ def main(arms: list[str]) -> None:
     for arm in arms:
         t = totals[arm]
         n = t["cases"] or 1
-        walls = [row(p)["wall_s"] for p in (ROOT / arm).glob("*/*.json")]
+        walls = [row(p)["wall_s"] for p in (ROOT / arm).glob("*/*.json") if p.parent.name in SETS]
         print(f"| {arm} | {t['cases']} | {t['failed']} | {t['wall_s'] / n:.0f} | {max(walls, default=0):.0f} | "
               f"${t['cost'] / n:.3f} | {t['runaways']} | {t['timeouts']} | {t['hard']} |")
 
