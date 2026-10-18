@@ -1,10 +1,11 @@
 # Demo video: script and shot list
 
-- **File:** `docs/video/demo.mp4`, 1440×900, H.264 (yuv420p), 30 fps, **173 s (2:53)**, about 3.2 MB, no audio.
+- **File:** `docs/video/demo.mp4`, 1440×900, H.264 (yuv420p), 30 fps, **207 s (3:27)**, about 3.6 MB, no audio.
 - **Captions:** drawn into the frames (Pillow, Arial 27 px). The same text with its timings is in `docs/video/captions.srt`.
-- **Key frames:** `docs/video/frames/*.png`, without captions: 4 cards (title, problem, known limits, closing) and 20 app screenshots. The video uses 23 of them; `16_followup_blocks.png` stays in the repo but is not shown (it shows a bug fixed after recording, see "Things seen" #2).
-- **Rebuild:** `uv run --with pillow python docs/video/build_video.py [WORKDIR]` (macOS: needs the system fonts in /System/Library/Fonts/Supplemental and /opt/homebrew/bin/ffmpeg). The script reads the committed screenshots in `frames/` in place and never deletes or rewrites them; it redraws only the four cards. WORKDIR (default: a temp dir) gets the captioned frames and the ffmpeg concat list. No live model calls.
+- **Key frames:** `docs/video/frames/*.png`, without captions: 6 cards (title, problem, architecture, feasibility-study plan, known limits, closing) and 20 app screenshots. The video uses 25 of them; `16_followup_blocks.png` stays in the repo but is not shown (it shows a bug fixed after recording, see "Things seen" #2).
+- **Rebuild:** `uv run --with pillow python docs/video/build_video.py [WORKDIR]` (macOS: needs the system fonts in /System/Library/Fonts/Supplemental and /opt/homebrew/bin/ffmpeg). The script reads the committed screenshots in `frames/` in place and never deletes or rewrites them; it redraws only the six cards. WORKDIR (default: a temp dir) gets the captioned frames and the ffmpeg concat list. No live model calls.
 - **Rebuilt:** 2026-10-18 from the committed frames (final review fix F7): corrected closing card, honest "What changed" caption, frame 16 dropped, slower captions, problem and limits cards added. The 2:25 first cut is in git history.
+- **Extended (v3):** 2026-10-18, for the submission form ("show its clarification questions, recommendations, supporting sources and feasibility-study plan. Explain the architecture and main limitations"): an architecture card after the problem card and a feasibility-study-plan card after the setup sketch. Eight shots got one more second (caption text unchanged) so that every caption is at most 2.5 words per second. The 2:53 cut is in git history.
 - **Recorded:** 2026-10-18, 12:38–12:44 CEST, on master at 094d955 (freeze-1 pipeline, `config/models.yaml` mix-a, sha256 1437179f…), `--external live`.
 
 ## How it was recorded
@@ -30,29 +31,48 @@ Answer to open question Q2 (a demo fact, typed into the question's field before 
 |---|---|---|---|---|
 | 1 | 0:00–0:04 | 01_title | Title card | none |
 | 2 | 0:04–0:14 | 01b_problem | Problem card: what an AFS sales engineer gets and needs | none (text on the card) |
-| 3 | 0:14–0:21 | 02_start | Start screen (examples, finished examples) | The local app (uv run afs-assist ui): type an enquiry, try an example, or open a finished one. |
-| 4 | 0:21–0:28 | 03_enquiry | Enquiry typed in | A new, generic enquiry: ethanol in a clear, filtered fermentation broth in a pipe; GC is the lab reference. |
-| 5 | 0:28–0:33 | 04_running | Job started (2 s) | Get assessment: the real pipeline starts (production models, live literature search). |
-| 6 | 0:33–0:39 | 05_steps | Step list at 0:34 | Pipeline steps with timings: read the enquiry, screen methods against the AFS rules, assess. |
-| 7 | 0:39–0:46 | 06_feed | Activity feed at 1:23 | Live activity feed: methods ruled out with the S01 Table 1 reason; 29 citations checked against the AFS pages. |
-| 8 | 0:46–0:53 | 07_repair | Repair round in the feed | One hard check failed, so the failed checks go back to the model for a repair round. |
-| 9 | 0:53–1:02 | 08_answer | Answer turn, pinned strip, margin quotes | Answer after 107 s (pipeline wall time, $0.036): the recommendation, a pinned strip (status, confidence, open questions), quotes in the margin. |
-| 10 | 1:02–1:10 | 09_recommendation | Status, confidence, next step | Status, confidence with its reason, and the next step. Every quote beside the answer is word for word from AFS. |
-| 11 | 1:10–1:17 | 10_verify | Margin quote 1 opened (verification view) | Open a margin quote: the stored S01 p.18 page text with the quote highlighted, marked verified (exact match). |
-| 12 | 1:17–1:24 | 11_options | Options table | Options: simple, recommended, extended. Cost class comes from S01 Table 1 (p.6) rows; it is not a price. |
-| 13 | 1:24–1:32 | 12_setup | Setup sketch | Setup sketch drawn by code from the proposed option; the dashed sensor is auxiliary, to be confirmed with AFS. |
-| 14 | 1:32–1:37 | 13_followup | Follow-up typed in the composer | A follow-up in the composer: "Why not Raman as the first choice?" |
-| 15 | 1:37–1:45 | 14_followup_wait | Follow-up running | Follow-up questions are answered from the assessment and the AFS pages: one model call, quotes checked before display. |
-| 16 | 1:45–1:52 | 15_followup_answer | Cited answer, margin quotes 5–7 | Answer in 5.3 s, $0.006: each point cited (S01 p.18, p.11, p.6), or marked as engineering judgement. |
-| 17 | 1:52–1:59 | 17_followup_setup | Inline Raman setup and feasibility test | Inline result blocks: the setup sketch of the Raman (simple) option and the first feasibility test. |
-| 18 | 1:59–2:06 | 18_answer_question | Q2 answered in place | Answer an open question in place: process temperature about 32 °C, 28 to 36 °C during a batch. |
-| 19 | 2:06–2:11 | 19_reassess_running | Re-assessment running | Update the recommendation: the full assessment runs again with the new fact (v2). |
-| 20 | 2:11–2:20 | 20_v2 | v2 answer | v2 after 147 s ($0.046): the temperature range is now part of the advice; the open questions drop to Q1 and Q3. |
-| 21 | 2:20–2:34 | 21_what_changed | "What changed, v1 → v2" block | What changed, v1 to v2: the method now adds a Raman probe; status and confidence unchanged. A temperature alone does not justify that: a re-assessment is a fresh model run and can shift (a known limitation). |
-| 22 | 2:34–2:44 | 21b_limits | Known limits card (3 lines) | none (text on the card) |
-| 23 | 2:44–2:53 | 22_closing | Closing card | none (numbers below) |
+| 3 | 0:14–0:26 | 01c_architecture | Architecture card: six steps, model vs code (see below) | none (text on the card) |
+| 4 | 0:26–0:34 | 02_start | Start screen (examples, finished examples) | The local app (uv run afs-assist ui): type an enquiry, try an example, or open a finished one. |
+| 5 | 0:34–0:42 | 03_enquiry | Enquiry typed in | A new, generic enquiry: ethanol in a clear, filtered fermentation broth in a pipe; GC is the lab reference. |
+| 6 | 0:42–0:47 | 04_running | Job started (2 s) | Get assessment: the real pipeline starts (production models, live literature search). |
+| 7 | 0:47–0:53 | 05_steps | Step list at 0:34 | Pipeline steps with timings: read the enquiry, screen methods against the AFS rules, assess. |
+| 8 | 0:53–1:01 | 06_feed | Activity feed at 1:23 | Live activity feed: methods ruled out with the S01 Table 1 reason; 29 citations checked against the AFS pages. |
+| 9 | 1:01–1:08 | 07_repair | Repair round in the feed | One hard check failed, so the failed checks go back to the model for a repair round. |
+| 10 | 1:08–1:17 | 08_answer | Answer turn, pinned strip, margin quotes | Answer after 107 s (pipeline wall time, $0.036): the recommendation, a pinned strip (status, confidence, open questions), quotes in the margin. |
+| 11 | 1:17–1:25 | 09_recommendation | Status, confidence, next step | Status, confidence with its reason, and the next step. Every quote beside the answer was found on its AFS page. |
+| 12 | 1:25–1:33 | 10_verify | Margin quote 1 opened (verification view) | Open a margin quote: the stored S01 p.18 page text with the quote highlighted, marked verified (exact match). |
+| 13 | 1:33–1:41 | 11_options | Options table | Options: simple, recommended, extended. Cost class comes from S01 Table 1 (p.6) rows; it is not a price. |
+| 14 | 1:41–1:49 | 12_setup | Setup sketch | Setup sketch drawn by code from the proposed option; the dashed sensor is auxiliary, to be confirmed with AFS. |
+| 15 | 1:49–2:03 | 12b_feasibility | Feasibility-study plan card: steps 1–3 and 5 of the v1 plan (see below) | none (text on the card) |
+| 16 | 2:03–2:08 | 13_followup | Follow-up typed in the composer | A follow-up in the composer: "Why not Raman as the first choice?" |
+| 17 | 2:08–2:16 | 14_followup_wait | Follow-up running | Follow-up questions are answered from the assessment and the AFS pages: one model call, quotes checked before display. |
+| 18 | 2:16–2:23 | 15_followup_answer | Cited answer, margin quotes 5–7 | Answer in 5.3 s, $0.006: each point cited (S01 p.18, p.11, p.6), or marked as engineering judgement. |
+| 19 | 2:23–2:30 | 17_followup_setup | Inline Raman setup and feasibility test | Inline result blocks: the setup sketch of the Raman (simple) option and the first feasibility test. |
+| 20 | 2:30–2:38 | 18_answer_question | Q2 answered in place | Answer an open question in place: process temperature about 32 °C, 28 to 36 °C during a batch. |
+| 21 | 2:38–2:44 | 19_reassess_running | Re-assessment running | Update the recommendation: the full assessment runs again with the new fact (v2). |
+| 22 | 2:44–2:53 | 20_v2 | v2 answer | v2 after 147 s ($0.046): the temperature range is now part of the advice; the open questions drop to Q1 and Q3. |
+| 23 | 2:53–3:08 | 21_what_changed | "What changed, v1 → v2" block | What changed, v1 to v2: the method now adds a Raman probe; status and confidence unchanged. A temperature alone does not justify that: a re-assessment is a fresh model run and can shift (a known limitation). |
+| 24 | 3:08–3:18 | 21b_limits | Known limits card (3 lines) | none (text on the card) |
+| 25 | 3:18–3:27 | 22_closing | Closing card | none (numbers below) |
 
-Captions run at 2.1–2.7 words per second; the three that were too fast in the first cut (repair round, follow-up running, v2) are now 2.25–2.44. Card texts are in `build_video.py` (`card_problem`, `card_limits`, `card_closing`).
+Captions run at 2.17–2.50 words per second (`build_video.py` prints the rate of each). Card texts are in `build_video.py` (`card_problem`, `card_architecture`, `card_feasibility`, `card_limits`, `card_closing`).
+
+## Architecture card (sources)
+
+Six boxes, left to right, each marked MODEL or CODE: Understand the enquiry (model: Gemini 3.5 Flash-Lite) → Screen the 5 methods against 44 AFS rules (code) → Write the assessment from 67 AFS pages (model: GLM-5.3-Flash) → Check every quote, page, number, wording (code) → Fix what failed (stronger model: Gemini 3.8 Flash) → Answer with sources (code). Line under it: "Literature is searched only for gaps the AFS documents leave open, and marked secondary."
+
+- Models: `config/models.yaml` (mix-a), roles `intake` (google/gemini-3.5-flash-lite), `assess` (z-ai/glm-5.3-flash), `repair` (google/gemini-3.8-flash). The literature roles (`external_queries`, `external_evidence`) also use Gemini 3.5 Flash-Lite; the card covers them with the line under the boxes only.
+- Counts: `uv run afs-assist kb check` printed "44 rules" and "67 page records" on 2026-10-18. The 5 methods are NIR, MIR, Raman, UV-Vis and fluorescence (problem card).
+- The literature line matches README ("External literature is used only for gaps the AFS materials leave open, and it is marked as secondary").
+
+## Feasibility-study-plan card (source)
+
+The plan is the demo run's own: `feasibility_plan` of assessment v1, run `ui-adhoc-20261018T103823Z-e0e0`, in the local run record `runs/adhoc-20261018T103823Z-e0e0/assessment.json` (`runs/` is gitignored; the run is also a commit on the provenance ref). Steps 1–3 are also on screen in the committed frame `17_followup_setup.png`. The card shows steps 1, 2, 3 and 5 of 5 (the `step` field, copied character for character and checked by string comparison against the JSON). Step 4 (PLS calibration, then a fused NIR+Raman model) was left out for length. Step 5's own citation (REF p.3) is shown as a tag. Steps 1–3 have no citation in the plan.
+
+1. Collect representative filtered broth samples across the expected variation in ethanol concentration, temperature and co-fermentation components over several runs.
+2. Measure each sample with GC as the independent reference, using the customer's existing lab method.
+3. Record NIR transmission/transflection spectra at a controlled pathlength on the same samples, and Raman probe spectra in parallel as the comparison method.
+5. Define the go/no-go basis with the customer: the in-line prediction error on held-out runs must meet the accuracy they specify against GC before an in-line installation is designed. [REF p.3]
 
 ## Closing-card numbers (H01–H06, recomputed from `outputs/final/H0*.json`)
 
