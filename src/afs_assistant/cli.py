@@ -213,6 +213,26 @@ def _eval(args: argparse.Namespace) -> int:
     return 1 if must_not_failed else 0
 
 
+def _brief(args: argparse.Namespace) -> int:
+    """Short brief view of every saved run JSON in a directory (code only, no model call)."""
+    from pathlib import Path
+
+    from afs_assistant import brief, paths
+
+    src = Path(args.outputs)
+    if not src.is_dir():
+        print(f"{src} is not a directory of run JSON files.")
+        return 2
+    if not paths.PAGES_FILE.exists():
+        print("knowledge/pages.jsonl not found: run `afs-assist kb build` first (needed to check rule source quotes).")
+        return 2
+    written = brief.write_briefs(src, Path(args.out) if args.out else src / "brief")
+    for path, words in written:
+        print(f"{path}: {words} words")
+    print(f"{len(written)} brief(s) written")
+    return 0 if written else 1
+
+
 def _ui(args: argparse.Namespace) -> int:
     from afs_assistant.ui import server
 
@@ -269,6 +289,10 @@ def main(argv: list[str] | None = None) -> int:
     rp = e_sub.add_parser("replay", help="re-verify a run's external items offline against the cached text")
     rp.add_argument("run_json")
     rp.set_defaults(func=_external_replay)
+    br = sub.add_parser("brief", help="short brief view of saved runs, built by code from the run JSON (no model calls)")
+    br.add_argument("outputs", help="directory of run JSON files, e.g. outputs/final")
+    br.add_argument("--out", help="directory for the brief .md files (default <outputs>/brief)")
+    br.set_defaults(func=_brief)
     u = sub.add_parser("ui", help="local web UI: open saved runs, assess a new enquiry")
     u.add_argument("--host", default="127.0.0.1")
     u.add_argument("--port", type=int, default=8765)
