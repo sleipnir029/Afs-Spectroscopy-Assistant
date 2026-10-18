@@ -1,0 +1,25 @@
+# 5.8 bake-off arm (D-058, user 09:20 "think about other models as well, like gemini"): google/gemini-3.8-flash on the flex tier.
+# Use with AFS_MODELS_CONFIG=config/bakeoff/gemini-3.8-flash.yaml. Same structure, max_tokens, timeouts and spend caps as
+# config/models.yaml (max output 65,536 on every endpoint, so assess/repair 64,000 fit).
+# Endpoint data: GET https://openrouter.ai/api/v1/models/google/gemini-3.8-flash/endpoints (checked 2026-10-18 09:24 CEST).
+provider: openrouter
+base_url: https://openrouter.ai/api/v1
+temperature: 0
+response_mode: json_schema
+timeout_s: 600
+roles:
+  intake: {model: google/gemini-3.8-flash, max_tokens: 16000, reasoning: {effort: medium}, timeout_s: 240}
+  assess: {model: google/gemini-3.8-flash, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  repair: {model: google/gemini-3.8-flash, max_tokens: 64000, reasoning: {effort: medium}, timeout_s: 600}
+  external_queries: {model: google/gemini-3.8-flash, max_tokens: 16000, reasoning: {effort: low}, timeout_s: 180}
+  external_evidence: {model: google/gemini-3.8-flash, max_tokens: 32000, reasoning: {effort: low}, timeout_s: 180}
+# Flex tier only (half the standard price; may queue or return 429). Tier endpoints match only by their tier slug.
+# The `only` list is load-bearing (strict structured output listed on both).
+provider_routing:
+  google/gemini-3.8-flash: {order: [google-ai-studio/flex, google-vertex/global/flex], only: [google-ai-studio/flex, google-vertex/global/flex], allow_fallbacks: true}
+# Fallback prices (USD per 1M tokens), used only if OpenRouter returns no cost: the flex price.
+prices:
+  google/gemini-3.8-flash: {input: 0.375, output: 1.875}
+spend_cap_usd:
+  per_run: 1.00
+  per_session: 10.00
