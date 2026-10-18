@@ -182,6 +182,6 @@ Sources: `outputs/final/H0*.json` (checks, 97–184 s, $0.288) · `outputs/final
 | One of our own complete test enquiries still got 4–5 questions. | Fewer questions when the enquiry is already complete |
 | The fixing step takes 46–72 % of each run. | Faster runs |
 
-Demo video (≈3 min): `docs/video/demo.mp4` in the repository
+Demo video (3:27): `docs/video/demo.mp4` in the repository
 
 Sources: `outputs/final/H0*.md`, `brief/H0*.md`, `H0*.json` · `scenarios/dev_reference.jsonl` (AFS answers) · README.md "Known limitations".
