@@ -1,0 +1,376 @@
+{
+ "round": 1,
+ "hard_failures_before": 1,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "outside_supported_scope",
+  "status_reason": "Line pressure and flow rate are physical process quantities that optical spectroscopy as described in the supplied sources cannot measure; they belong to pressure and flow instrumentation, not to the fiber-optic spectroscopic methods covered here. A spectroscopic contribution is conceivable only for the blockage early warning, as a hypothesis to test.",
+  "premise_checks": [
+   {
+    "premise": "Fiber-optic spectroscopy products can measure line pressure and flow rate in the pipe.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source describes spectroscopic measurement of pressure or flow rate; the sources cover chemical and morphological information from spectra (S01 p.4). These quantities require dedicated pressure and flow sensors.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 4,
+      "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "An optical trend in the slurry could serve as an early warning of pipe blockage.",
+    "verdict": "precedent_only",
+    "explanation": "The sources show turbidity-type optical signals tracking a physical process variable (cell density in suspensions) and ATR handling highly scattering fluids; this is a reason to test a solids/turbidity trend as a blockage indicator, not proof for this slurry.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "cell suspension turbidity correlates well with cell density.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Measure line pressure in the transfer pipe",
+   "Measure slurry flow rate",
+   "Early warning when the pipe starts to block"
+  ],
+  "key_unknowns": [
+   "Slurry composition, solid loading and optical opacity",
+   "Required accuracy and response time for pressure and flow",
+   "Pipe material, diameter and possible probe access points",
+   "Whether any chemical variable of the slurry is also of interest",
+   "Temperature range and fouling behaviour at the measurement point"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the slurry made of, what solid loading and particle size do you expect, and how opaque is it?",
+    "why_it_matters": "It decides whether an ATR or reflection probe can see a usable optical signal and whether transmission is hopeless.",
+    "affects": [
+     "technique"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What accuracy and response time do you need for line pressure and flow rate, and over what pressure and temperature ranges?",
+    "why_it_matters": "These quantities will come from pressure and flow sensors, so their specification drives the instrument selection, not spectroscopy.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What are the pipe material and diameter, and where could a probe or sensor be mounted and serviced?",
+    "why_it_matters": "It determines whether a contact probe is feasible and how fouling and abrasion can be managed.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Is there a chemical variable of the slurry (e.g. concentration of a dissolved component) you would also want tracked?",
+    "why_it_matters": "If yes, a spectroscopic method could serve that target alongside the blockage trend; if no, spectroscopy has only the speculative blockage-indicator role.",
+    "affects": [
+     "method"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "UV-Vis",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "Spectroscopy cannot deliver pressure or flow, so the only spectroscopic role worth testing first is a solids/turbidity trend as a possible early blockage indicator; a UV-ATR probe tolerates highly scattering, opaque fluids where transmission saturates. Any warning value of that trend is a hypothesis to be checked against independently measured pressure and flow.",
+    "conditions": "The slurry must tolerate probe contact, and the trend must be validated against reference pressure/flow data during real throttling or blockage events.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "extremely short path length that enables the measurement of \"black\" or highly scattering fluids without dilution.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "cell suspension turbidity correlates well with cell density.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "NIR diffuse reflection is the standard fiber-probe geometry for opaque, scattering media and could provide the same trend information with deeper penetration than ATR. It is a comparison to the UV-Vis ATR trial, not an alternative route to pressure or flow.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "For the spectroscopic trial: a UV-ATR fiber probe (very short evanescent path, a few micrometres) or an NIR diffuse-reflection probe inserted flush into the pipe wall; both sample only near the wall.",
+   "location": "Transfer pipe, at a point representative of the flow and accessible for cleaning; exact position to be agreed once pipe details are known.",
+   "fiber_link": "Silica fibers cover the UV-Vis and NIR ranges; the required link length is unknown and must be confirmed for the selected cable type.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "ATR relies on the evanescent wave that penetrates only a few micrometers into the medium at the crystal interface",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "UV-Vis",
+    "statement": "UV-Vis works from the hard ultraviolet to visible; the UV region 190-360 nm is noted as highly sensitive, but the usable range depends on the selected source, probe and fibers.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "It has very high sensitivity, especially in the UV region (190-360 nm)",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "A solids/turbidity trend may not change early enough, or at all, before a blockage develops, so the early-warning value is unproven.",
+    "rule_ids": [
+     "R-EVI-2"
+    ],
+    "citations": []
+   },
+   {
+    "risk": "An ATR crystal in an abrasive slurry is exposed to fouling and wear, and it reads only a surface layer a few micrometres deep.",
+    "rule_ids": [
+     "R-MIR-3",
+     "R-GEN-5"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Reflection signals are sensitive to surface characteristics and particle size, so physical variation can mimic a composition or blockage change.",
+    "rule_ids": [
+     "R-GEO-6"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Pressure and flow must come from dedicated sensors; no spectroscopic route to them exists in the supplied material, so the core request stays outside this assessment.",
+    "rule_ids": [],
+    "citations": []
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Obtain representative slurry samples spanning the expected variation in solids loading, particle size and composition.",
+     "purpose": "Cover the physical and chemical variation the in-line probe will see.",
+     "citations": []
+    },
+    {
+     "step": "Record UV-Vis ATR and NIR diffuse-reflection spectra of these samples in the laboratory.",
+     "purpose": "Test single methods first and see whether an optical trend tracks solids loading.",
+     "citations": []
+    },
+    {
+     "step": "Measure solids concentration (and any target chemical variable) by an independent laboratory reference method for each sample.",
+     "purpose": "Provide the reference data any calibration or trend interpretation needs.",
+     "citations": []
+    },
+    {
+     "step": "If the lab result is promising, run an in-line trial with the probe plus independent pressure and flow sensors, and compare the optical trend against pressure/flow records during controlled flow restriction.",
+     "purpose": "Check whether the optical signal actually precedes or tracks blockage onset.",
+     "citations": []
+    },
+    {
+     "step": "Validate on held-out runs or batches and agree numerical go/no-go criteria (e.g. required warning lead time and false-alarm tolerance) with the customer before the trial.",
+     "purpose": "Give the decision an objective basis defined by the customer.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Solids concentration by laboratory method; line pressure and flow rate from calibrated pressure and flow sensors during the in-line trial.",
+   "decision_basis": "Go/no-go on whether the optical trend detects the customer-defined blockage onset condition with the agreed lead time and false-alarm tolerance; those numerical criteria must come from the customer."
+  },
+  "assumptions": [
+   "The customer has no existing pressure or flow instrumentation on this line; if they do, those sensors are the direct answer for two of the three targets.",
+   "The blockage of concern is driven by solids settling, agglomeration or concentration changes that an optical probe near the wall could plausibly see."
+  ],
+  "not_in_sources": [
+   "Any spectroscopic or fiber-optic measurement of pressure or flow rate",
+   "Fiber-optic methods for detecting pipe fouling or blockage directly"
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Line pressure",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is a stated target and the reference against which any blockage warning must be validated.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "pressure transducer",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P2",
+    "name": "Flow rate",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is a stated target and the second reference for validating a blockage warning.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "flow meter",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Slurry solids concentration / turbidity trend",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is the candidate spectroscopic early-warning indicator for blockage and must be referenced to lab data.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "UV-Vis",
+     "sensor": null,
+     "alternative": "laboratory solids determination (e.g. filtration and drying) as reference"
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "cell suspension turbidity correlates well with cell density.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P4",
+    "name": "Temperature at the measurement point",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "It should be available because temperature shifts spectra and slurry viscosity, both of which can confound the trend.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P3"
+    ],
+    "ease_of_use": "Simple probe trial, minimal installation work",
+    "maintenance": "Probe window cleaning between runs",
+    "performance_fit": "Fits as a low-effort check whether an optical trend exists at all",
+    "cost_drivers": "One trial probe and spectrometer, lab reference solids measurements, staff time",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "Standard sensors plus one flush-mounted probe",
+    "maintenance": "Pressure/flow sensors low upkeep; probe needs fouling checks",
+    "performance_fit": "Fits because sensors answer pressure and flow while the probe trial addresses blockage warning",
+    "cost_drivers": "Pressure transducer and flow meter, UV-ATR probe and spectrometer, in-line trial and validation effort",
+    "fusion_note": null,
+    "citations": []
+   }
+  ],
+  "chemometrics_note": "If the optical trend is to become a quantitative indicator, a calibration against laboratory-measured solids concentration will be needed, and NIR/reflection calibrations are specific to the matrix, so they must be built and validated on this slurry.",
+  "realtime_tracking_note": "The blockage early warning is inherently a continuous, time-resolved trend question; the optical signal would need to be tracked in-line and correlated with pressure and flow records over time.",
+  "future_direction": "If the trial succeeds, the same probe could later be extended with additional spectral methods at the same point, but only after the single-method trend is proven.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "If the slurry turns out to be too abrasive or opaque for any contact probe, or if the optical trend shows no relation to blockage onset in the trial, the spectroscopy part drops and only the pressure and flow sensors remain.",
+   "next_step": "Answer the clarification questions (slurry composition and opacity, required pressure/flow accuracy, pipe details) and then run the laboratory trend trial on representative samples."
+  },
+  "brief_answer": "Fiber-optic spectroscopy cannot measure line pressure or flow rate; those need standard pressure and flow sensors. What could be tested is an early blockage warning from an optical trend in the slurry (UV-Vis ATR, with NIR reflection as comparison), but that is an unproven hypothesis. We would need your slurry composition, opacity, pipe details and required accuracy to design that trial."
+ }
+}
