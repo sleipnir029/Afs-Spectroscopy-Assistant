@@ -1,0 +1,307 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "Mid-infrared attenuated total reflectance (MIR-ATR) spectroscopy is documented for measuring water in petroleum streams, providing a solid basis for a provisional recommendation pending clarification of concentration ranges and operating conditions.",
+ "premise_checks": [
+  {
+   "premise": "Fiber-based measurement can place the analyzer outside the process area for petroleum streams.",
+   "verdict": "supported",
+   "explanation": "Sources confirm that fiber optic probes allow remote measurements and online analysis without sampling while keeping spectrometers away from the process.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "These immersion probes operate on the ATR principle but allow analysis at a significant distance from the spectrometer, without the need for sampling.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Handle a petroleum stream",
+  "Water determination",
+  "Fiber-based measurement closer to the process",
+  "Analyzer outside the process area"
+ ],
+ "key_unknowns": [
+  "Water concentration range",
+  "Optical regime and turbidity of the petroleum stream",
+  "Exact petroleum matrix composition and variability",
+  "Process temperature and pressure",
+  "Required response time and measurement accuracy"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the expected water concentration range in the petroleum stream?",
+   "why_it_matters": "Determines whether MIR-ATR or an alternative method is best suited for the target concentration levels.",
+   "affects": [
+    "method",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the optical regime and turbidity of the petroleum stream (for instance clear, translucent, or opaque/scattering)?",
+   "why_it_matters": "Determines whether diffuse reflection or transmission is applicable for NIR measurements.",
+   "affects": [
+    "technique",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the operating temperature, pressure, and flow velocity at the measurement point?",
+   "why_it_matters": "Defines the mechanical and thermal specifications required for probe materials and seals.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What is the required response time and measurement accuracy for process control?",
+   "why_it_matters": "Influences spectrometer acquisition parameters and chemometric model complexity.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What is the exact chemical composition and variability of the petroleum matrix?",
+   "why_it_matters": "Impacts background absorption and calibration robustness.",
+   "affects": [
+    "method"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Mid-infrared ATR spectroscopy is established for water determination in petroleum streams using durable ATR tips.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR spectroscopy can serve as an alternative online method for hydrocarbon and water monitoring if optical scattering permits.",
+   "conditions": "If water concentrations and optical scattering properties permit reflection measurements.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "MIR-ATR immersion probe with a Zirconia or diamond ATR tip sealed in a PEEK shaft.",
+  "location": "In-line in the petroleum stream closer to the process.",
+  "fiber_link": "Chalcogenide (CIR) or polycrystalline infrared (PIR) fiber cables connecting the immersion probe to the spectrometer located outside the process area.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 13,
+    "quote": "ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+    "claim_kind": "application_precedent"
+   },
+   {
+    "doc": "S01",
+    "page": 10,
+    "quote": "These immersion probes operate on the ATR principle but allow analysis at a significant distance from the spectrometer, without the need for sampling.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "The nominal mid-IR range is 4000-400 cm-1; the usable range depends on the instrument, fiber, and ATR crystal selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Fouling or coating on the ATR crystal by heavy petroleum fractions can degrade the signal over time.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Fiber transmission limits or coupling efficiency for mid-IR radiation over longer distances outside the process area.",
+   "rule_ids": [
+    "R-FIB-2",
+    "R-FIB-3"
+   ],
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 10,
+     "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative petroleum samples spanning the expected water concentration range.",
+    "purpose": "Ensure samples cover expected chemical and physical variation.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Perform reference laboratory water determinations for all collected samples.",
+    "purpose": "Establish independent reference measurements for model calibration.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Test MIR-ATR probe response across the samples and build an initial partial least squares calibration model.",
+    "purpose": "Evaluate feasibility and correlation between spectra and water content.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Standard laboratory water determination methods currently used by the customer.",
+  "decision_basis": "Proceed based on customer-defined accuracy and response time criteria matching laboratory reference values."
+ },
+ "assumptions": [
+  "The petroleum stream is fluid enough to maintain contact with an ATR probe tip.",
+  "The optical regime of the petroleum stream allows optical probing, assumed opaque or scattering for diffuse reflection or clear for transmission.",
+  "The spectrometer can be housed outside the process area with an appropriate fiber optic link."
+ ],
+ "not_in_sources": [
+  "Exact distance from the process point to the analyzer outside the process area."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Water content",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Core target parameter for process control.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Direct immersion probe in stream",
+   "maintenance": "Periodic cleaning of ATR crystal",
+   "performance_fit": "Directly detects water via documented petroleum precedent",
+   "cost_drivers": "MIR spectrometer and ATR immersion probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft and protected by PEEK-tubing can be used in microwave furnaces",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1"
+   ],
+   "ease_of_use": "Standard silica fiber reflection probe",
+   "maintenance": "Probe window cleaning and inspection",
+   "performance_fit": "Fast screening using standard NIR optics",
+   "cost_drivers": "NIR spectrometer and reflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Multivariate calibration using PLS regression is necessary to relate MIR or NIR spectra to water concentration.",
+ "realtime_tracking_note": "In-line probe placement enables continuous real-time tracking of water content changes closer to the process.",
+ "future_direction": "Transition from laboratory trials to a dedicated optical multisensor system or IoT sensor once calibration is validated.",
+ "proposal": {
+  "best_current_option": "O1",
+  "basis": "supplied",
+  "what_would_change_it": "If water concentrations fall below detection limits or petroleum properties prevent ATR contact, alternative methods like NIR or laboratory cross-checks would be needed.",
+  "next_step": "Conduct laboratory trials on representative petroleum samples using an MIR-ATR probe to establish calibration feasibility."
+ },
+ "brief_answer": "We recommend testing mid-infrared ATR spectroscopy first, as it is documented for water determination in petroleum streams. The analyzer can be placed outside the process area using fiber-optic links. Key unknowns such as stream optical regime, water concentration range, and process conditions must be clarified before finalizing equipment."
+}
