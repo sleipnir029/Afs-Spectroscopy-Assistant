@@ -384,3 +384,28 @@ def test_chips_and_composer_wait_while_another_job_runs(outputs):  # noqa: F811
     gate.set()
     assert wait_job(client, last_job(app))["state"] == "done"
     assert "chips-follow" in client.get(f"/chat/{mine}").text
+
+
+@pytest.mark.parametrize(("best", "other", "chip"), [
+    ("NIR + Raman", "MIR", "Why NIR + Raman and not MIR?"),                 # disjoint
+    ("NIR + Raman", "NIR", "What does Raman add over NIR alone?"),          # subset
+    ("NIR", "NIR + MIR", "Why not add MIR?"),                               # superset
+    ("NIR + MIR", "MIR + Raman", "Why NIR + MIR and not MIR + Raman?"),     # overlap
+])
+def test_follow_up_comparison_chip_reads_right(best, other, chip):
+    from afs_assistant.ui import view
+
+    v = {"options": [{"short": best, "is_best": True, "tab": "Recommended"},
+                     {"short": other, "is_best": False, "tab": "Simple"}]}
+    assert view.follow_ups(v)[0] == chip
+
+
+def test_follow_up_skips_a_reordered_or_empty_comparison():
+    from afs_assistant.ui import view
+
+    reordered = {"options": [{"short": "Raman + NIR", "is_best": True, "tab": "Recommended"},
+                             {"short": "NIR + Raman", "is_best": False, "tab": "Extended"}]}
+    assert not any(c.startswith(("Why", "What does")) for c in view.follow_ups(reordered))
+    empty = {"options": [{"short": "—", "is_best": True, "tab": "Recommended"},
+                         {"short": "NIR", "is_best": False, "tab": "Simple"}]}
+    assert not any("—" in c for c in view.follow_ups(empty))

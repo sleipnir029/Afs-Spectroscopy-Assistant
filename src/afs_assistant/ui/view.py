@@ -149,11 +149,25 @@ def follow_ups(v: dict, limit: int = 4) -> list[str]:
     best = next((o for o in opts if o["is_best"]), None)
     others = [o for o in opts if o is not best]
     out = []
-    differing = [o for o in others if best and o["short"] != best["short"]]
-    disjoint = [o for o in differing if not set(o["short"].split(" + ")) & set(best["short"].split(" + "))]
-    alt = (disjoint or differing or [None])[0]
-    if alt:
-        out.append(f"Why {best['short']} and not {alt['short']}?")
+
+    def methods(o: dict) -> frozenset:
+        return frozenset(o["short"].split(" + "))
+
+    if best and best["short"] != "—":
+        b = methods(best)
+        differing = [o for o in others if o["short"] != "—" and methods(o) != b]   # same set in another order: skip
+        disjoint = [o for o in differing if not methods(o) & b]
+        if disjoint:
+            out.append(f"Why {best['short']} and not {disjoint[0]['short']}?")
+        elif differing:
+            o = differing[0]
+            if methods(o) < b:              # the other option is a subset: ask what the extra method adds
+                extra = " + ".join(m for m in best["short"].split(" + ") if m not in methods(o))
+                out.append(f"What does {extra} add over {o['short']} alone?")
+            elif methods(o) > b:            # a superset: ask why not add its extra method
+                out.append("Why not add " + " + ".join(m for m in o["short"].split(" + ") if m not in b) + "?")
+            else:
+                out.append(f"Why {best['short']} and not {o['short']}?")
     out += [f"Show the setup for the {o['tab']} option" for o in others]
     if v.get("top_questions"):
         out.append("How would the answer to question 1 change the recommendation?")
