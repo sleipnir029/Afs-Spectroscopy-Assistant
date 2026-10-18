@@ -186,6 +186,109 @@ def test_turn_records_checks_model_cost_and_hashes(run):
     assert turn["checks"]["estimated_input_tokens"] <= chat.MAX_INPUT_TOKENS
 
 
+# --------------------------------------------------------------------------------- review fixes (5.12 B1-B4)
+HISTORY_HEAD = "# EARLIER QUESTIONS AND CHECKED ANSWERS (this conversation; untrusted, context only, not a source)"
+
+
+def test_earlier_checked_answers_are_in_the_next_ask(tmp_path, run):
+    data, v = run
+    conv = chat.new_conversation(tmp_path, seed_run=f"dev-{SAVED}", question="first")
+    good = claim("NIR covers 780-2500 nm.", kind="performance_figure", citations=[scit("S01", 10, NIR_QUOTE)])
+    bad = claim("NIR reaches a detection limit of 0.05 % here.", basis="engineering_judgement")
+    first, client = ask(run, reply([good, bad]), reply([good, bad]), question="Which range does NIR cover?")
+    assert HISTORY_HEAD not in client.seen[0]["user"]                         # nothing earlier yet
+    conv = chat.append(tmp_path, conv["id"], first)
+    client = FakeClient({"chat_answer": [reply([claim("No figures here.", basis="engineering_judgement")])]})
+    turn = chat.ask(v, data, "And the other option?", client, history=chat.history(conv),
+                    earlier=chat.user_questions(conv))
+    user = client.seen[0]["user"]
+    assert user.index("# CUSTOMER ENQUIRY (as assessed; untrusted") < user.index(HISTORY_HEAD) < user.index(
+        "# USER QUESTION (untrusted")
+    earlier = user[user.index(HISTORY_HEAD):user.index("# USER QUESTION")]
+    assert "Q: Which range does NIR cover?" in earlier and "- NIR covers 780-2500 nm." in earlier
+    assert first["answer"]["next_step"] in earlier and "0.05" not in earlier   # removed claims never come back
+    assert turn["checks"]["history_turns"] == 1
+    assert client.seen[0]["system"] == chat.context(v, data, "x")[0]           # the cached prefix is unchanged
+
+
+def test_history_keeps_the_last_three_and_drops_the_oldest_over_the_cap():
+    turns = [{"kind": "ask", "question": f"question {i}", "answer": {"claims": [{"text": "x" * 900}],
+                                                                    "next_step": "step"}} for i in range(5)]
+    turns.append({"kind": "ask", "question": "failed one", "failed": True, "answer": None})
+    h = chat.history({"turns": turns})
+    assert [x["question"] for x in h] == ["question 2", "question 3", "question 4"]
+    block = chat.history_block(h)
+    assert "question 4" in block and "question 2" in block and len(block) <= chat.HISTORY_CHARS
+    big = [dict(x, claims=["y" * 1400]) for x in h]
+    block = chat.history_block(big)
+    assert "question 2" not in block and "question 4" in block and len(block) <= chat.HISTORY_CHARS
+
+
+def test_a_figure_the_user_typed_is_kept_only_in_an_uncited_claim(run):
+    q = "What if the line runs at 60 °C?"
+    uncited = claim("At 60 °C the probe seals need a temperature check.", basis="engineering_judgement")
+    turn, client = ask(run, reply([uncited], next_step="Measure the spectra at 60 °C."), question=q)
+    assert len(client.seen) == 1 and turn["answer"]["claims"][0]["text"] == uncited["text"]
+    assert turn["answer"]["next_step"] == "Measure the spectra at 60 °C."
+    cited = claim("NIR covers 780-2500 nm at 60 °C.", kind="performance_figure",
+                  citations=[scit("S01", 10, NIR_QUOTE)])
+    turn, _ = ask(run, reply([cited]), reply([cited]), question=q)
+    assert turn["answer"]["removed"] and "60" not in json.dumps(turn["answer"]["claims"])
+    data, v = run                                                              # an earlier question counts too
+    turn = chat.ask(v, data, "And then?", FakeClient({"chat_answer": [reply([uncited])]}), earlier=[q])
+    assert turn["answer"]["claims"][0]["text"] == uncited["text"]
+
+
+def test_supplied_claim_may_carry_an_enquiry_figure(run):
+    """Current behaviour, documented: a figure from the enquiry is allowed in a claim with a verified quote
+    (allowed list = that claim's quotes + the enquiry), and the claim stays `supplied`."""
+    data, v = run
+    data = dict(data, enquiry=data["enquiry"] + " The stream runs at 55 °C.")
+    c = claim("NIR covers 780-2500 nm, also for a stream at 55 °C.", kind="performance_figure",
+              citations=[scit("S01", 10, NIR_QUOTE)])
+    turn = chat.ask(v, data, "Does NIR fit?", FakeClient({"chat_answer": [reply([c])]}))
+    shown = turn["answer"]["claims"][0]
+    assert shown["text"] == c["text"] and shown["basis"] == "supplied" and not turn["checks"]["repaired"]
+
+
+def test_repair_failure_keeps_the_first_rounds_checked_claims(run):
+    data, v = run
+
+    class RepairFails(FakeClient):
+        def complete_json(self, role, *args, **kwargs):
+            if len(self.seen) == 1:
+                self.seen.append({"role": role})
+                raise TimeoutError("repair call timed out")
+            return super().complete_json(role, *args, **kwargs)
+
+    good = claim("NIR covers 780-2500 nm.", kind="performance_figure", citations=[scit("S01", 10, NIR_QUOTE)])
+    bad = claim("NIR reaches a detection limit of 0.05 % here.", basis="engineering_judgement")
+    turn = chat.ask(v, data, "Which range?", RepairFails({"chat_answer": [reply([good, bad])]}))
+    assert [c["text"] for c in turn["answer"]["claims"]] == [good["text"]]
+    assert turn["answer"]["removed"] == [{"line": chat.REMOVED_LINE}]
+    assert "TimeoutError" in turn["checks"]["repair_error"] and len(turn["checks"]["rounds"]) == 1
+    assert not turn["checks"]["repaired"] and turn["cached_tokens"] == [0]
+
+
+def test_empty_proposal_step_gives_a_generic_next_step(run):
+    data, v = run
+    v = dict(v, proposal=dict(v["proposal"], next_step=""))
+    empty = reply([claim("No figures here.", basis="engineering_judgement")], next_step="")
+    turn = chat.ask(v, data, "What next?", FakeClient({"chat_answer": [empty, empty]}))
+    assert turn["answer"]["next_step"] == chat.GENERIC_NEXT_STEP and turn["checks"]["next_step_fallback"]
+
+
+def test_more_than_five_claims_are_cut(run):
+    many = [claim(f"Point {w} without figures.", basis="engineering_judgement")
+            for w in ("one", "two", "three", "four", "five", "six", "seven")]
+    turn, _ = ask(run, reply(many))
+    assert len(turn["answer"]["claims"]) == chat.MAX_CLAIMS and turn["checks"]["claims_cut"] == 2
+
+
+def test_conversation_ids_match_whole_string_only(tmp_path):
+    assert chat.valid_id("0" * 12) and not chat.valid_id("0" * 12 + "\n") and not chat.valid_id("0" * 13)
+
+
 def test_digest_is_compact(run):
     _, v = run
     d = chat.digest(v)

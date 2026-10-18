@@ -353,16 +353,29 @@ class Jobs:
             job.enter("answer")
             client = ProgressClient(self.client_factory(), job)
             data, _ = self.store.data(job.parent)
-            turn = chat.ask(self.store.view(job.parent), data, job.question, client)
+            conv = chat.load(self.out_dir, job.conversation)
+            turn = chat.ask(self.store.view(job.parent), data, job.question, client,
+                            history=chat.history(conv), earlier=chat.user_questions(conv))
+            if job.stop_requested:               # a stop during the repair call ends in its fallback, not here
+                raise Stopped("stopped by the user")
             chat.append(self.out_dir, job.conversation, turn)
             removed = len(turn["answer"]["removed"])
             job.add_note(f"Checked the answer: {len(turn['answer']['claims'])} claim(s) shown"
                          + (f", {removed} removed (unsupported figure or quote)." if removed else "."))
             job.finish(job.parent, None)
         except Stopped:
+            self._failed_ask(job, "Stopped before the answer was complete.")
             job.finish(None, None, "Stopped before the answer was complete.", state="stopped")
         except Exception as exc:                 # noqa: BLE001 - any failure is shown on the running page
+            self._failed_ask(job, f"{type(exc).__name__}: {exc}")
             job.finish(None, None, f"{type(exc).__name__}: {exc}")
+
+    def _failed_ask(self, job: Job, error: str) -> None:
+        """Keep the question in the conversation as a failed turn, so it does not vanish."""
+        try:
+            chat.append(self.out_dir, job.conversation, chat.failed_turn(job.question, job.parent, error))
+        except (KeyError, OSError, ValueError):  # the conversation itself is gone or unreadable
+            job.add_note("The question could not be kept in the conversation.")
 
 
 def _default_client():
@@ -530,6 +543,7 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
                     item["question"] = item["v"]["enquiry"]
             else:
                 item["answer"] = t.get("answer") or {}
+                item["failed"], item["error"] = bool(t.get("failed")), t.get("error", "")
                 item["changed"] = changed_by_run.get(t.get("run_id"))
                 item["checks"] = t.get("checks") or {}
             turns.append(item)
@@ -544,7 +558,11 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
         if jobs.running() is not None:
             raise HTTPException(409, "A question is already being assessed; wait for it or stop it.")
         conv = chat.new_conversation(live)
-        jobs.start(text, text, kind=chat.route(None, "message"), conversation=conv["id"])
+        try:
+            jobs.start(text, text, kind=chat.route(None, "message"), conversation=conv["id"])
+        except HTTPException:                    # another job won the lock: leave no empty conversation
+            chat.discard(live, conv["id"])
+            raise
         return RedirectResponse(f"/chat/{conv['id']}", status_code=303)
 
     @app.post("/runs/{rid}/chat")
@@ -604,7 +622,10 @@ def create_app(outputs: Path = paths.OUTPUTS, client_factory=_default_client, ex
         turns = conv.get("turns", [])
         ci, _, cj = k.partition("-")
         try:
-            c = turns[n]["answer"]["claims"][int(ci)]["citations"][int(cj)]
+            i, j = int(ci), int(cj)
+            if min(n, i, j) < 0:                 # no counting from the end
+                raise IndexError(k)
+            c = turns[n]["answer"]["claims"][i]["citations"][j]
         except (IndexError, KeyError, ValueError, TypeError):
             raise HTTPException(404, "unknown citation") from None
         v = store.view(turns[n]["run_id"])

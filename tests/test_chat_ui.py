@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import shutil
 import threading
@@ -224,3 +225,67 @@ def test_overlong_message_is_refused(outputs):  # noqa: F811
     cid = seeded(client)
     r = client.post(f"/chat/{cid}/message", data={"text": "x" * (server.MAX_CHARS + 1)})
     assert r.status_code == 422 and "characters or fewer" in r.text and app.state.jobs.jobs == {}
+
+
+# --------------------------------------------------------------------------------- review fixes (5.12)
+def test_second_ask_gets_the_first_question_and_answer(outputs):  # noqa: F811
+    shared = FakeClient({"chat_answer": [CHAT_REPLY, CHAT_REPLY]})
+    client, app = app_client(outputs, lambda: shared)
+    cid = seeded(client)
+    for text in (QUESTION, "And the other option?"):
+        post(client, f"/chat/{cid}/message", {"text": text})
+        assert wait_job(client, last_job(app))["state"] == "done"
+    first, second = shared.seen[0]["user"], shared.seen[1]["user"]
+    assert "# EARLIER QUESTIONS AND CHECKED ANSWERS" not in first
+    earlier = second[second.index("# EARLIER QUESTIONS AND CHECKED ANSWERS"):second.index("# USER QUESTION")]
+    assert f"Q: {QUESTION}" in earlier and "- NIR covers 780-2500 nm." in earlier
+    turns = chat.load(outputs / "ui", cid)["turns"]
+    assert turns[2]["checks"]["history_turns"] == 1 and turns[2]["cached_tokens"] == [0]
+
+
+def test_a_failed_ask_stays_in_the_conversation(outputs):  # noqa: F811
+    client, app = app_client(outputs, lambda: FakeClient({"chat_answer": []}))     # the call raises
+    cid = seeded(client)
+    post(client, f"/chat/{cid}/message", {"text": QUESTION})
+    assert wait_job(client, last_job(app))["state"] == "failed"
+    conv = chat.load(outputs / "ui", cid)
+    assert [t["kind"] for t in conv["turns"]] == ["assess", "ask"]
+    failed = conv["turns"][1]
+    assert failed["failed"] and failed["question"] == QUESTION and "AssertionError" in failed["error"]
+    page = client.get(f"/chat/{cid}").text
+    assert QUESTION in page and "This question was not answered" in page
+    assert chat.history(conv) == [] and QUESTION in chat.user_questions(conv)    # never sent as an answer
+
+
+def test_literature_gap_line_only_without_literature(outputs):  # noqa: F811
+    data = json.loads((outputs / "dev" / f"{SAVED}.json").read_text(encoding="utf-8"))
+    (outputs / "dev" / "Y01.json").write_text(json.dumps(dict(data, external=None)), encoding="utf-8")
+    gap = reply([claim("The supplied sources do not cover the window lifetime.", basis="not_in_sources")])
+    line = "Re-assessing searches literature only for gaps found in the assessment."
+    for rid, shown in ((f"dev-{SAVED}", False), ("dev-Y01", True)):
+        client, app = app_client(outputs, chat_factory(gap))
+        cid = seeded(client, rid)
+        post(client, f"/chat/{cid}/message", {"text": "How long does the window last?"})
+        assert wait_job(client, last_job(app))["state"] == "done"
+        assert (line in client.get(f"/chat/{cid}").text) is shown, rid
+
+
+def test_negative_citation_indexes_are_404(outputs):  # noqa: F811
+    client, app = app_client(outputs, chat_factory())
+    cid = seeded(client)
+    post(client, f"/chat/{cid}/message", {"text": QUESTION})
+    assert wait_job(client, last_job(app))["state"] == "done"
+    assert client.get(f"/chat/{cid}/turns/1/cite/0-0").status_code == 200
+    for bad in ("-1/cite/0-0", "1/cite/-1-0", "1/cite/0--1", "0/cite/0-0"):
+        assert client.get(f"/chat/{cid}/turns/{bad}").status_code == 404, bad
+
+
+def test_chat_start_leaves_no_conversation_when_the_job_cannot_start(outputs, monkeypatch):  # noqa: F811
+    client, app = app_client(outputs)
+
+    def busy(*args, **kwargs):
+        raise server.HTTPException(409, "busy")
+
+    monkeypatch.setattr(app.state.jobs, "start", busy)
+    assert client.post("/chat", data={"enquiry": ENQUIRY}).status_code == 409
+    assert not list(chat.conversations_dir(outputs / "ui").glob("*.json"))
