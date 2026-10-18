@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fresh UI concepts</title>
+<meta name="description" content="Four UI concepts for the AFS Spectroscopy Assistant: Brief, Line, Desk and Casebook. Mockups only; content from a real development run.">
+<!-- Mockup only: production self-hosts these OFL families as woff2. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Hanken+Grotesk:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=Atkinson+Hyperlegible+Mono:wght@400;600&display=swap">
+<style>
+/* Hallmark · pre-emit critique: P4 H5 E4 S5 R4 V5
+ * Gallery shell · macrostructure: Catalogue (four concept specimens) · tone: technical
+ * Each concept below carries its own stamp, tokens and type pairing, scoped to .c1–.c4. */
+:root {
+  --shell-paper: oklch(95.5% 0.006 90);
+  --shell-paper-2: oklch(92% 0.008 90);
+  --shell-ink: oklch(21% 0.01 80);
+  --shell-muted: oklch(43% 0.01 80);
+  --shell-rule: oklch(80% 0.01 90);
+  --shell-focus: oklch(50% 0.16 260);
+  --shell-font: "Hanken Grotesk", "Helvetica Neue", sans-serif;
+  --shell-mono: "JetBrains Mono", ui-monospace, monospace;
+  --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px; --space-3xl: 72px; --space-4xl: 112px;
+  --ease-out: cubic-bezier(.16,1,.3,1); --ease-in: cubic-bezier(.7,0,.84,0); --ease-in-out: cubic-bezier(.65,0,.35,1);
+  --dur-short: 140ms; --dur-med: 240ms;
+}
+* { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+body { margin: 0; background: var(--shell-paper); color: var(--shell-ink); font: 16px/1.5 var(--shell-font); -webkit-font-smoothing: antialiased; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--shell-focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.shell-head { display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-xl); align-items: baseline; justify-content: space-between; padding: var(--space-xl) clamp(16px, 4vw, 56px) var(--space-lg); border-bottom: 1px solid var(--shell-rule); }
+.shell-head h1 { margin: 0; font-size: clamp(28px, 3.4vw, 44px); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
+.shell-head p { margin: var(--space-xs) 0 0; color: var(--shell-muted); max-width: 70ch; }
+.shell-nav { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.shell-nav a, .shell-btn { white-space: nowrap; text-decoration: none; color: var(--shell-ink); border: 1px solid var(--shell-rule); background: var(--shell-paper); padding: 6px 12px; border-radius: 999px; font-size: 14px; cursor: pointer; min-height: 32px; display: inline-flex; align-items: center; }
+.shell-nav a:hover, .shell-btn:hover { background: var(--shell-paper-2); }
+.shell-btn[aria-pressed="true"] { background: var(--shell-ink); color: var(--shell-paper); border-color: var(--shell-ink); }
+
+.overview { padding: var(--space-2xl) clamp(16px, 4vw, 56px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-lg); }
+.ov-item { grid-column: span 6; border-top: 2px solid var(--shell-ink); padding-top: var(--space-md); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-xs) var(--space-lg); }
+.ov-item:nth-child(2) { grid-column: span 6; }
+.ov-item h2 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
+.ov-item .ov-model { margin: 0; color: var(--shell-muted); grid-column: 1 / -1; max-width: 62ch; }
+.ov-item .ov-sig { margin: 0; grid-column: 1 / -1; font-size: 15px; }
+.ov-item .ov-type { margin: 0; grid-column: 1 / -1; font: 13px/1.5 var(--shell-mono); color: var(--shell-muted); }
+.ov-item a { white-space: nowrap; color: var(--shell-ink); font-weight: 600; }
+.ov-pick { font: 600 12px/1 var(--shell-mono); padding: 5px 8px; border: 1px solid var(--shell-ink); border-radius: 999px; align-self: start; white-space: nowrap; }
+
+.concept { padding: var(--space-3xl) 0 var(--space-2xl); border-top: 1px solid var(--shell-rule); }
+.concept-intro { padding: 0 clamp(16px, 4vw, 56px) var(--space-xl); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-xl); align-items: start; }
+.concept-intro h2 { margin: 0; font-size: clamp(36px, 5vw, 64px); line-height: 1; letter-spacing: -0.03em; font-weight: 700; overflow-wrap: anywhere; min-width: 0; }
+.concept-intro dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-xs) var(--space-lg); font-size: 15px; }
+.concept-intro dt { color: var(--shell-muted); font: 500 12px/1.9 var(--shell-mono); text-transform: uppercase; letter-spacing: 0.04em; }
+.concept-intro dd { margin: 0; }
+.screen-label { padding: var(--space-2xl) clamp(16px, 4vw, 56px) var(--space-sm); font: 500 13px/1.4 var(--shell-mono); color: var(--shell-muted); display: flex; gap: var(--space-md); flex-wrap: wrap; }
+.screen-label strong { color: var(--shell-ink); font-weight: 500; }
+.screen { width: 100%; max-width: 1440px; margin: 0 auto; position: relative; overflow: hidden; border-block: 1px solid var(--shell-rule); }
+.extras { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2xl); padding: var(--space-xl) clamp(16px, 4vw, 56px) 0; align-items: start; }
+.phone-frame { margin: 0; }
+.phone-frame iframe { width: 390px; height: 844px; border: 1px solid var(--shell-rule); display: block; background: var(--shell-paper); }
+.phone-frame figcaption, .swatch-cap { font: 13px/1.4 var(--shell-mono); color: var(--shell-muted); margin-top: var(--space-xs); }
+
+@media (max-width: 900px) {
+  .ov-item, .ov-item:nth-child(2) { grid-column: 1 / -1; }
+  .concept-intro { grid-template-columns: minmax(0, 1fr); }
+  .extras { grid-template-columns: minmax(0, 1fr); }
+  .phone-frame iframe { width: 100%; max-width: 390px; }
+}
+/* Solo mode: one screen at a time for screenshots and the phone iframes. */
+body.solo > *:not(.solo-keep) { display: none !important; }
+body.solo .concept > *:not(.solo-keep) { display: none !important; }
+body.solo .screen { border: 0; max-width: none; }
+body.solo .concept { padding: 0; border: 0; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; } }
+</style>
+</head>
+<body>
+<header class="shell-head">
+  <div>
+    <h1>Four chat-first takes on a cited first assessment</h1>
+    <p>Concept mockups for the AFS Spectroscopy Assistant. Every sentence, citation, cost class and timing comes from a real development run (a whey-stream protein enquiry). Each concept shows the same flow: paste the enquiry, watch it run, read the answer with rich blocks, ask a follow-up, add customer facts and see what changed, then verify a citation. Turns after new facts are marked illustrative, because no real re-run exists yet, and they only reuse claims from the real run.</p>
+  </div>
+  <nav class="shell-nav" aria-label="Concepts">
+    <a href="#c1">1 · Brief</a><a href="#c2">2 · Line</a><a href="#c3">3 · Desk</a><a href="#c4">4 · Casebook</a>
+    <button class="shell-btn" type="button" id="theme-toggle" aria-pressed="false">Dark screens</button>
+  </nav>
+</header>
+
+<section class="overview" id="overview" aria-label="Concept overview">
+  <article class="ov-item">
+    <h2>1 · Brief</h2><span class="ov-pick">Recommended</span>
+    <p class="ov-model">Take: a classic single-column chat, typeset like a memo. Rich blocks inline (recommendation, options, sketch, what changed); a pinned strip shows the current recommendation.</p>
+    <p class="ov-sig"><strong>Signature:</strong> an evidence margin running beside the thread. Each claim’s verbatim AFS quote sits next to it, and clicking opens the quote in its page text with the code check.</p>
+    <p class="ov-type">Newsreader + IBM Plex Sans + IBM Plex Mono · oat paper · oxide red</p>
+    <a href="#c1">See screens</a>
+  </article>
+  <article class="ov-item">
+    <h2>2 · Line</h2>
+    <p class="ov-model">Take: chat on the left, a live engineering drawing on the right that is revised with every turn (Rev A, Rev B…). Chat blocks point at the sheet.</p>
+    <p class="ov-sig"><strong>Signature:</strong> ISA tag bubbles, a title block for status and confidence, and revision clouds that pin each open question to the part it affects. They close when the customer answers.</p>
+    <p class="ov-type">Instrument Sans + JetBrains Mono · drafting grid · safety amber</p>
+    <a href="#c2">See screens</a>
+  </article>
+  <article class="ov-item">
+    <h2>3 · Desk</h2>
+    <p class="ov-model">Take: a three-pane research chat. Pinned blocks on the left, the thread in the middle, an evidence pane on the right (Perplexity / NotebookLM lineage).</p>
+    <p class="ov-sig"><strong>Signature:</strong> click a citation number and the quote appears highlighted in its real page text, with a receipt. Pinned cards update after each turn.</p>
+    <p class="ov-type">Hanken Grotesk + Literata · cool paper · highlighter yellow + indigo</p>
+    <a href="#c3">See screens</a>
+  </article>
+  <article class="ov-item">
+    <h2>4 · Casebook</h2>
+    <p class="ov-model">Take: a chat in stage mode for the projector. Big blocks, earlier turns folded, and each set of new facts creates a new version.</p>
+    <p class="ov-sig"><strong>Signature:</strong> a revision rail (v1, v2…) with status and confidence per version, a large “what changed” block, and a verification drawer readable from the back row.</p>
+    <p class="ov-type">Bricolage Grotesque + Atkinson Hyperlegible · night green · lime</p>
+    <a href="#c4">See screens</a>
+  </article>
+</section>

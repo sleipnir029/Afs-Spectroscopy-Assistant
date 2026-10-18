@@ -1,0 +1,53 @@
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var solo = params.get('solo');
+  var theme = params.get('theme');
+  if (solo) {
+    var el = document.getElementById(solo);
+    if (el) {
+      document.body.classList.add('solo');
+      var n = el;
+      while (n && n !== document.body) { n.classList.add('solo-keep'); n = n.parentElement; }
+      document.querySelectorAll('.solo-skip').forEach(function (s) { s.remove(); });
+    }
+  }
+  function setTheme(dark) {
+    document.querySelectorAll('.screen').forEach(function (s) {
+      if (dark) s.setAttribute('data-theme', 'dark'); else s.removeAttribute('data-theme');
+    });
+    var b = document.getElementById('theme-toggle');
+    if (b) b.setAttribute('aria-pressed', dark ? 'true' : 'false');
+  }
+  if (theme === 'dark') setTheme(true);
+  var t = document.getElementById('theme-toggle');
+  if (t) t.addEventListener('click', function () { setTheme(t.getAttribute('aria-pressed') !== 'true'); });
+
+  // C2: option switcher + part inspector (mock interaction)
+  document.querySelectorAll('[data-c2-opt]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var scr = b.closest('.screen');
+      scr.querySelectorAll('[data-c2-opt]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      scr.setAttribute('data-opt', b.getAttribute('data-c2-opt'));
+    });
+  });
+  document.querySelectorAll('[data-c2-part]').forEach(function (g) {
+    g.addEventListener('click', function () {
+      var scr = g.closest('.screen');
+      scr.querySelectorAll('[data-c2-part]').forEach(function (x) { x.classList.toggle('is-sel', x === g); });
+      scr.querySelectorAll('[data-c2-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-c2-panel') !== g.getAttribute('data-c2-part'); });
+    });
+    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); g.click(); } });
+  });
+  // C3: claim selection drives evidence pane
+  document.querySelectorAll('[data-c3-claim]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      var scr = c.closest('.screen');
+      scr.querySelectorAll('[data-c3-claim]').forEach(function (x) { x.setAttribute('aria-pressed', x === c ? 'true' : 'false'); });
+      scr.querySelectorAll('[data-c3-ev]').forEach(function (p) { p.hidden = p.getAttribute('data-c3-ev') !== c.getAttribute('data-c3-claim'); });
+    });
+  });
+})();
+</script>
+</body>
+</html>

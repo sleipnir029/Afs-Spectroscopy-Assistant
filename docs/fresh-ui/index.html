@@ -1,0 +1,1586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fresh UI concepts</title>
+<meta name="description" content="Four UI concepts for the AFS Spectroscopy Assistant: Brief, Line, Desk and Casebook. Mockups only; content from a real development run.">
+<!-- Mockup only: production self-hosts these OFL families as woff2. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Hanken+Grotesk:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=Atkinson+Hyperlegible+Mono:wght@400;600&display=swap">
+<style>
+/* Hallmark · pre-emit critique: P4 H5 E4 S5 R4 V5
+ * Gallery shell · macrostructure: Catalogue (four concept specimens) · tone: technical
+ * Each concept below carries its own stamp, tokens and type pairing, scoped to .c1–.c4. */
+:root {
+  --shell-paper: oklch(95.5% 0.006 90);
+  --shell-paper-2: oklch(92% 0.008 90);
+  --shell-ink: oklch(21% 0.01 80);
+  --shell-muted: oklch(43% 0.01 80);
+  --shell-rule: oklch(80% 0.01 90);
+  --shell-focus: oklch(50% 0.16 260);
+  --shell-font: "Hanken Grotesk", "Helvetica Neue", sans-serif;
+  --shell-mono: "JetBrains Mono", ui-monospace, monospace;
+  --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px; --space-3xl: 72px; --space-4xl: 112px;
+  --ease-out: cubic-bezier(.16,1,.3,1); --ease-in: cubic-bezier(.7,0,.84,0); --ease-in-out: cubic-bezier(.65,0,.35,1);
+  --dur-short: 140ms; --dur-med: 240ms;
+}
+* { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+body { margin: 0; background: var(--shell-paper); color: var(--shell-ink); font: 16px/1.5 var(--shell-font); -webkit-font-smoothing: antialiased; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--shell-focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.shell-head { display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-xl); align-items: baseline; justify-content: space-between; padding: var(--space-xl) clamp(16px, 4vw, 56px) var(--space-lg); border-bottom: 1px solid var(--shell-rule); }
+.shell-head h1 { margin: 0; font-size: clamp(28px, 3.4vw, 44px); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
+.shell-head p { margin: var(--space-xs) 0 0; color: var(--shell-muted); max-width: 70ch; }
+.shell-nav { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.shell-nav a, .shell-btn { white-space: nowrap; text-decoration: none; color: var(--shell-ink); border: 1px solid var(--shell-rule); background: var(--shell-paper); padding: 6px 12px; border-radius: 999px; font-size: 14px; cursor: pointer; min-height: 32px; display: inline-flex; align-items: center; }
+.shell-nav a:hover, .shell-btn:hover { background: var(--shell-paper-2); }
+.shell-btn[aria-pressed="true"] { background: var(--shell-ink); color: var(--shell-paper); border-color: var(--shell-ink); }
+
+.overview { padding: var(--space-2xl) clamp(16px, 4vw, 56px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-lg); }
+.ov-item { grid-column: span 6; border-top: 2px solid var(--shell-ink); padding-top: var(--space-md); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-xs) var(--space-lg); }
+.ov-item:nth-child(2) { grid-column: span 6; }
+.ov-item h2 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
+.ov-item .ov-model { margin: 0; color: var(--shell-muted); grid-column: 1 / -1; max-width: 62ch; }
+.ov-item .ov-sig { margin: 0; grid-column: 1 / -1; font-size: 15px; }
+.ov-item .ov-type { margin: 0; grid-column: 1 / -1; font: 13px/1.5 var(--shell-mono); color: var(--shell-muted); }
+.ov-item a { white-space: nowrap; color: var(--shell-ink); font-weight: 600; }
+.ov-pick { font: 600 12px/1 var(--shell-mono); padding: 5px 8px; border: 1px solid var(--shell-ink); border-radius: 999px; align-self: start; white-space: nowrap; }
+
+.concept { padding: var(--space-3xl) 0 var(--space-2xl); border-top: 1px solid var(--shell-rule); }
+.concept-intro { padding: 0 clamp(16px, 4vw, 56px) var(--space-xl); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-xl); align-items: start; }
+.concept-intro h2 { margin: 0; font-size: clamp(36px, 5vw, 64px); line-height: 1; letter-spacing: -0.03em; font-weight: 700; overflow-wrap: anywhere; min-width: 0; }
+.concept-intro dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-xs) var(--space-lg); font-size: 15px; }
+.concept-intro dt { color: var(--shell-muted); font: 500 12px/1.9 var(--shell-mono); text-transform: uppercase; letter-spacing: 0.04em; }
+.concept-intro dd { margin: 0; }
+.screen-label { padding: var(--space-2xl) clamp(16px, 4vw, 56px) var(--space-sm); font: 500 13px/1.4 var(--shell-mono); color: var(--shell-muted); display: flex; gap: var(--space-md); flex-wrap: wrap; }
+.screen-label strong { color: var(--shell-ink); font-weight: 500; }
+.screen { width: 100%; max-width: 1440px; margin: 0 auto; position: relative; overflow: hidden; border-block: 1px solid var(--shell-rule); }
+.extras { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2xl); padding: var(--space-xl) clamp(16px, 4vw, 56px) 0; align-items: start; }
+.phone-frame { margin: 0; }
+.phone-frame iframe { width: 390px; height: 844px; border: 1px solid var(--shell-rule); display: block; background: var(--shell-paper); }
+.phone-frame figcaption, .swatch-cap { font: 13px/1.4 var(--shell-mono); color: var(--shell-muted); margin-top: var(--space-xs); }
+
+@media (max-width: 900px) {
+  .ov-item, .ov-item:nth-child(2) { grid-column: 1 / -1; }
+  .concept-intro { grid-template-columns: minmax(0, 1fr); }
+  .extras { grid-template-columns: minmax(0, 1fr); }
+  .phone-frame iframe { width: 100%; max-width: 390px; }
+}
+/* Solo mode: one screen at a time for screenshots and the phone iframes. */
+body.solo > *:not(.solo-keep) { display: none !important; }
+body.solo .concept > *:not(.solo-keep) { display: none !important; }
+body.solo .screen { border: 0; max-width: none; }
+body.solo .concept { padding: 0; border: 0; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; } }
+</style>
+</head>
+<body>
+<header class="shell-head">
+  <div>
+    <h1>Four chat-first takes on a cited first assessment</h1>
+    <p>Concept mockups for the AFS Spectroscopy Assistant. Every sentence, citation, cost class and timing comes from a real development run (a whey-stream protein enquiry). Each concept shows the same flow: paste the enquiry, watch it run, read the answer with rich blocks, ask a follow-up, add customer facts and see what changed, then verify a citation. Turns after new facts are marked illustrative, because no real re-run exists yet, and they only reuse claims from the real run.</p>
+  </div>
+  <nav class="shell-nav" aria-label="Concepts">
+    <a href="#c1">1 · Brief</a><a href="#c2">2 · Line</a><a href="#c3">3 · Desk</a><a href="#c4">4 · Casebook</a>
+    <button class="shell-btn" type="button" id="theme-toggle" aria-pressed="false">Dark screens</button>
+  </nav>
+</header>
+
+<section class="overview" id="overview" aria-label="Concept overview">
+  <article class="ov-item">
+    <h2>1 · Brief</h2><span class="ov-pick">Recommended</span>
+    <p class="ov-model">Take: a classic single-column chat, typeset like a memo. Rich blocks inline (recommendation, options, sketch, what changed); a pinned strip shows the current recommendation.</p>
+    <p class="ov-sig"><strong>Signature:</strong> an evidence margin running beside the thread. Each claim’s verbatim AFS quote sits next to it, and clicking opens the quote in its page text with the code check.</p>
+    <p class="ov-type">Newsreader + IBM Plex Sans + IBM Plex Mono · oat paper · oxide red</p>
+    <a href="#c1">See screens</a>
+  </article>
+  <article class="ov-item">
+    <h2>2 · Line</h2>
+    <p class="ov-model">Take: chat on the left, a live engineering drawing on the right that is revised with every turn (Rev A, Rev B…). Chat blocks point at the sheet.</p>
+    <p class="ov-sig"><strong>Signature:</strong> ISA tag bubbles, a title block for status and confidence, and revision clouds that pin each open question to the part it affects. They close when the customer answers.</p>
+    <p class="ov-type">Instrument Sans + JetBrains Mono · drafting grid · safety amber</p>
+    <a href="#c2">See screens</a>
+  </article>
+  <article class="ov-item">
+    <h2>3 · Desk</h2>
+    <p class="ov-model">Take: a three-pane research chat. Pinned blocks on the left, the thread in the middle, an evidence pane on the right (Perplexity / NotebookLM lineage).</p>
+    <p class="ov-sig"><strong>Signature:</strong> click a citation number and the quote appears highlighted in its real page text, with a receipt. Pinned cards update after each turn.</p>
+    <p class="ov-type">Hanken Grotesk + Literata · cool paper · highlighter yellow + indigo</p>
+    <a href="#c3">See screens</a>
+  </article>
+  <article class="ov-item">
+    <h2>4 · Casebook</h2>
+    <p class="ov-model">Take: a chat in stage mode for the projector. Big blocks, earlier turns folded, and each set of new facts creates a new version.</p>
+    <p class="ov-sig"><strong>Signature:</strong> a revision rail (v1, v2…) with status and confidence per version, a large “what changed” block, and a verification drawer readable from the back row.</p>
+    <p class="ov-type">Bricolage Grotesque + Atkinson Hyperlegible · night green · lime</p>
+    <a href="#c4">See screens</a>
+  </article>
+</section>
+<style>
+/* Hallmark · macrostructure: Conversational thread (editorial, sidenoted) · tone: editorial-technical · anchor hue: 80 oat / accent 35 oxide
+ * theme: custom (vibe: "lab memo, typeset, quiet authority") · paper oklch(96.5% 0.012 80) · accent oklch(50% 0.16 35)
+ * fonts: Newsreader (display, OFL) + IBM Plex Sans (body, OFL) + IBM Plex Mono (citations, OFL)
+ * axes: light / roman-serif / warm */
+.c1 {
+  --c1-paper: oklch(96.5% 0.012 80); --c1-paper-2: oklch(93.5% 0.014 80); --c1-paper-3: oklch(90% 0.016 80);
+  --c1-ink: oklch(21% 0.012 60); --c1-ink-2: oklch(36% 0.012 60); --c1-muted: oklch(46% 0.012 70);
+  --c1-rule: oklch(83% 0.014 80); --c1-rule-strong: oklch(62% 0.012 70);
+  --c1-accent: oklch(50% 0.16 35); --c1-accent-wash: oklch(92% 0.035 45); --c1-ok: oklch(45% 0.1 150); --c1-focus: oklch(50% 0.16 35);
+  --c1-display: "Newsreader", Georgia, serif; --c1-body: "IBM Plex Sans", "Helvetica Neue", sans-serif; --c1-mono: "IBM Plex Mono", ui-monospace, monospace;
+  background: var(--c1-paper); color: var(--c1-ink); font: 17px/1.58 var(--c1-body);
+}
+[data-theme="dark"] .c1, .c1[data-theme="dark"] {
+  --c1-paper: oklch(17.5% 0.01 70); --c1-paper-2: oklch(21% 0.012 70); --c1-paper-3: oklch(25% 0.013 70);
+  --c1-ink: oklch(93% 0.01 80); --c1-ink-2: oklch(84% 0.01 80); --c1-muted: oklch(72% 0.01 80);
+  --c1-rule: oklch(32% 0.01 70); --c1-rule-strong: oklch(50% 0.01 70);
+  --c1-accent: oklch(72% 0.13 40); --c1-accent-wash: oklch(28% 0.04 40); --c1-ok: oklch(76% 0.11 150); --c1-focus: oklch(72% 0.13 40);
+  font-weight: 350;
+}
+.c1 :focus-visible { outline: 2px solid var(--c1-focus); outline-offset: 2px; }
+.c1 .bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-md) clamp(16px, 4vw, 56px); border-bottom: 1px solid var(--c1-rule); }
+.c1 .mark { font: italic 500 22px/1 var(--c1-display); white-space: nowrap; }
+.c1 .mark b { font-style: normal; font-weight: 600; }
+.c1 .bar .meta { font: 13px/1.3 var(--c1-mono); color: var(--c1-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.c1 .btn { display: inline-flex; align-items: center; gap: var(--space-xs); white-space: nowrap; min-height: 44px; padding: 0 var(--space-lg); border-radius: 2px; border: 1px solid var(--c1-ink); background: var(--c1-ink); color: var(--c1-paper); font: 500 16px/1 var(--c1-body); cursor: pointer; transition: background-color var(--dur-short) var(--ease-out); }
+.c1 .btn:hover { background: var(--c1-ink-2); }
+.c1 .btn:active { transform: translateY(1px); }
+.c1 .btn.ghost { background: transparent; color: var(--c1-ink); border-color: var(--c1-rule-strong); }
+.c1 .btn.ghost:hover { background: var(--c1-paper-2); }
+.c1 .tiny { font: 13px/1.45 var(--c1-mono); color: var(--c1-muted); }
+
+/* thread grid: text column + margin column for evidence */
+.c1 .thread { padding: var(--space-xl) clamp(16px, 4vw, 56px) 0; }
+.c1 .turn { display: grid; grid-template-columns: minmax(0, 720px) minmax(0, 330px); gap: 0 var(--space-2xl); justify-content: center; padding: var(--space-xl) 0; border-top: 1px solid var(--c1-rule); }
+.c1 .turn:first-child { border-top: 0; }
+.c1 .turn > .main, .c1 .turn > .side { min-width: 0; }
+.c1 .who { font: 500 12px/1.4 var(--c1-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--c1-muted); margin: 0 0 var(--space-xs); }
+.c1 .turn.user .main p:not(.who) { font: italic 400 21px/1.5 var(--c1-display); margin: 0; color: var(--c1-ink); }
+.c1 .turn.user .main p.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.c1 .turn.ai .main > p { margin: 0 0 var(--space-md); max-width: 66ch; }
+.c1 .pinned { position: sticky; top: 0; z-index: 2; background: var(--c1-paper); border-bottom: 1px solid var(--c1-ink); display: grid; grid-template-columns: minmax(0, 720px) minmax(0, 330px); gap: 0 var(--space-2xl); justify-content: center; padding: 10px clamp(16px, 4vw, 56px); }
+.c1 .pinned .cur { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 15px; }
+.c1 .pinned .cur b { font: 500 17px/1.3 var(--c1-display); }
+.c1 .pinned .rv { font: 500 12px/1.4 var(--c1-mono); color: var(--c1-muted); }
+.c1 .verdict { font: 500 clamp(30px, 3vw, 40px)/1.1 var(--c1-display); letter-spacing: -0.02em; margin: 0 0 var(--space-sm); }
+.c1 .dek { font: 400 20px/1.5 var(--c1-display); color: var(--c1-ink-2); margin: 0 0 var(--space-md); }
+.c1 .status { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px var(--space-lg); padding: var(--space-sm) 0; border-block: 1px solid var(--c1-ink); font-size: 16px; margin: 0 0 var(--space-lg); }
+.c1 .status dt { font: 500 12px/1.9 var(--c1-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--c1-muted); }
+.c1 .status dd { margin: 0; }
+.c1 .stamp { display: inline-block; font: 600 12px/1 var(--c1-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--c1-accent); border: 1.5px solid var(--c1-accent); padding: 4px 7px; margin-right: var(--space-xs); }
+.c1 .block { margin: var(--space-lg) 0; }
+.c1 .bh { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); border-bottom: 1px solid var(--c1-ink); padding-bottom: 6px; margin-bottom: var(--space-sm); }
+.c1 .bh h3 { margin: 0; font: 600 20px/1.3 var(--c1-display); }
+.c1 .bh .acts { display: flex; gap: var(--space-md); }
+.c1 .bh .acts button { border: 0; background: none; padding: 4px 0; font: 500 13px/1 var(--c1-mono); color: var(--c1-ink-2); cursor: pointer; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--c1-rule-strong); text-underline-offset: 4px; min-height: 28px; }
+.c1 .bh .acts button:hover { color: var(--c1-accent); }
+.c1 table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+.c1 th, .c1 td { text-align: left; vertical-align: top; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--c1-rule); }
+.c1 thead th { font: 500 12px/1.4 var(--c1-mono); text-transform: uppercase; letter-spacing: 0.04em; color: var(--c1-muted); }
+.c1 .opts th[scope="row"] { font: 500 13px/1.4 var(--c1-mono); color: var(--c1-muted); width: 104px; }
+.c1 .opts .rec { background: var(--c1-accent-wash); }
+.c1 .cost { display: inline-flex; gap: 3px; vertical-align: -1px; margin-right: 6px; }
+.c1 .cost i { width: 8px; height: 12px; border: 1px solid var(--c1-ink); }
+.c1 .cost i.on { background: var(--c1-ink); }
+.c1 sup.ref { font: 600 12px/1 var(--c1-mono); color: var(--c1-accent); padding: 0 2px; cursor: pointer; }
+.c1 .claim.is-active { background: linear-gradient(transparent 62%, var(--c1-accent-wash) 62%); }
+.c1 .note { font-size: 14px; line-height: 1.5; color: var(--c1-ink-2); margin: 0 0 var(--space-md); padding-left: var(--space-sm); border-left: 1px solid var(--c1-rule-strong); }
+.c1 .note .src { font: 600 12px/1.4 var(--c1-mono); color: var(--c1-ink); display: block; margin-bottom: 2px; }
+.c1 .note .src b { color: var(--c1-accent); margin-right: 6px; }
+.c1 .note q { font: italic 400 15.5px/1.45 var(--c1-display); color: var(--c1-ink); }
+.c1 .note .chk { display: flex; align-items: center; gap: 6px; font: 12px/1.4 var(--c1-mono); color: var(--c1-ok); margin-top: 4px; }
+.c1 .note.is-open { border-left: 2px solid var(--c1-accent); background: var(--c1-paper-2); padding: var(--space-sm); }
+.c1 .note.is-open .ctx { font: 400 14px/1.5 var(--c1-display); color: var(--c1-muted); margin: var(--space-xs) 0 0; }
+.c1 .note.is-open .ctx mark { background: var(--c1-accent-wash); color: var(--c1-ink); padding: 0 1px; }
+.c1 .note.sec { border-left-style: dashed; }
+.c1 .chips { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin: var(--space-md) 0 0; }
+.c1 .chip { border: 1px solid var(--c1-rule-strong); background: var(--c1-paper); border-radius: 999px; padding: 7px 14px; font: 500 14px/1.2 var(--c1-body); cursor: pointer; white-space: nowrap; min-height: 36px; }
+.c1 .chip:hover { border-color: var(--c1-ink); background: var(--c1-paper-2); }
+.c1 .chip.q { border-color: var(--c1-accent); }
+.c1 .chip.q b { color: var(--c1-accent); font: 600 12px/1 var(--c1-mono); margin-right: 6px; }
+.c1 figure.sketch { margin: 0; }
+.c1 figure.sketch svg { width: 100%; height: auto; display: block; }
+.c1 figure.sketch figcaption { font-size: 14px; color: var(--c1-muted); margin-top: var(--space-xs); }
+.c1 .sk-box { fill: var(--c1-paper); stroke: var(--c1-ink); stroke-width: 1.2; }
+.c1 .sk-box.res { fill: var(--c1-ink); }
+.c1 .sk-t { fill: var(--c1-ink); font: 500 13px var(--c1-body); }
+.c1 .sk-t.inv { fill: var(--c1-paper); }
+.c1 .sk-s { fill: var(--c1-muted); font: 12px var(--c1-mono); }
+.c1 .sk-l { stroke: var(--c1-ink); stroke-width: 1.2; fill: none; }
+.c1 .sk-d { stroke: var(--c1-muted); stroke-width: 1.2; stroke-dasharray: 3 4; fill: none; }
+.c1 .sk-pipe { stroke: var(--c1-ink); stroke-width: 7; fill: none; }
+.c1 .sk-pipe-in { stroke: var(--c1-paper); stroke-width: 4; fill: none; }
+.c1 .diff { border: 1px solid var(--c1-ink); }
+.c1 .diff .row { display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-md); padding: 10px var(--space-md); border-top: 1px solid var(--c1-rule); font-size: 15px; }
+.c1 .diff .row:first-child { border-top: 0; font: 500 12px/1.4 var(--c1-mono); text-transform: uppercase; letter-spacing: 0.04em; color: var(--c1-muted); }
+.c1 .diff .k { font: 500 13px/1.5 var(--c1-mono); color: var(--c1-muted); }
+.c1 .diff del { color: var(--c1-muted); text-decoration-thickness: 1px; }
+.c1 .diff ins { text-decoration: none; background: var(--c1-accent-wash); padding: 0 2px; }
+.c1 .diff .same { color: var(--c1-muted); }
+.c1 .illus { font: 12px/1.4 var(--c1-mono); color: var(--c1-muted); border: 1px dashed var(--c1-rule-strong); padding: 6px 10px; display: inline-block; margin-bottom: var(--space-md); }
+.c1 .activity { list-style: none; margin: 0; padding: 0; font-size: 15px; }
+.c1 .activity li { display: grid; grid-template-columns: 56px 18px minmax(0, 1fr); gap: 8px; padding: 7px 0; color: var(--c1-ink-2); align-items: baseline; }
+.c1 .activity time { font: 13px/1 var(--c1-mono); color: var(--c1-muted); font-variant-numeric: tabular-nums; }
+.c1 .activity .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c1-ink); }
+.c1 .activity li.now { color: var(--c1-ink); font-weight: 600; }
+.c1 .activity li.now .dot { background: transparent; border: 2px solid var(--c1-accent); animation: c1pulse 1.6s var(--ease-in-out) infinite; }
+.c1 .activity li.todo .dot { background: transparent; border: 1px solid var(--c1-rule-strong); }
+.c1 .activity li.todo { color: var(--c1-muted); }
+@keyframes c1pulse { 50% { opacity: .35; } }
+.c1 .partial { margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px dashed var(--c1-rule-strong); }
+.c1 .partial h4 { font: 600 17px/1.3 var(--c1-display); margin: 0 0 var(--space-xs); }
+.c1 .partial ul { margin: 0; padding-left: 1.2em; font-size: 16px; }
+.c1 .composer { position: sticky; bottom: 0; z-index: 2; background: var(--c1-paper); border-top: 1px solid var(--c1-ink); padding: var(--space-md) clamp(16px, 4vw, 56px) var(--space-lg); display: grid; grid-template-columns: minmax(0, 720px) minmax(0, 330px); gap: 0 var(--space-2xl); justify-content: center; }
+.c1 .composer .box { display: flex; gap: var(--space-sm); align-items: end; border: 1px solid var(--c1-rule-strong); padding: var(--space-sm); background: var(--c1-paper); }
+.c1 .composer textarea { flex: 1; border: 0; background: transparent; resize: none; min-height: 48px; font: 400 18px/1.5 var(--c1-display); color: var(--c1-ink); padding: 4px; }
+.c1 .composer textarea:focus-visible { outline: none; }
+.c1 .composer .box:focus-within { border-color: var(--c1-focus); box-shadow: 0 0 0 1px var(--c1-focus); }
+.c1 .composer .hint { font-size: 14px; color: var(--c1-muted); align-self: center; }
+.c1 .empty { padding: var(--space-3xl) 0 var(--space-2xl); }
+.c1 .empty h2 { font: 400 clamp(40px, 4.4vw, 60px)/1.04 var(--c1-display); letter-spacing: -0.02em; margin: 0 0 var(--space-md); max-width: 15ch; }
+.c1 .empty p { font-size: 18px; color: var(--c1-ink-2); max-width: 56ch; }
+.c1 .empty textarea.big { width: 100%; min-height: 220px; border: 1px solid var(--c1-rule-strong); background: var(--c1-paper); padding: var(--space-lg); font: 400 19px/1.6 var(--c1-display); color: var(--c1-ink); resize: vertical; margin-top: var(--space-md); }
+.c1 .empty ol { padding-left: 1.2em; color: var(--c1-ink-2); font-size: 16px; margin: 0; }
+.c1 .empty ol li { margin-bottom: var(--space-xs); }
+
+@media (max-width: 1100px) {
+  .c1 .turn, .c1 .pinned, .c1 .composer { grid-template-columns: minmax(0, 1fr) minmax(0, 280px); }
+}
+@media (max-width: 760px) {
+  .c1 .turn, .c1 .pinned, .c1 .composer { grid-template-columns: minmax(0, 1fr); }
+  .c1 .turn > .side { margin-top: var(--space-sm); }
+  .c1 .turn > .side .note:not(.is-open) { display: none; }
+  .c1 .composer .side, .c1 .pinned .side { display: none; }
+  .c1 .composer .hint { display: none; }
+  .c1 .bar .meta { display: none; }
+  .c1 .verdict { font-size: 30px; }
+  .c1 .opts thead { display: none; }
+  .c1 .opts, .c1 .opts tbody, .c1 .opts tr, .c1 .opts th, .c1 .opts td { display: block; width: 100%; }
+  .c1 .opts tr { padding: 6px 0; border-bottom: 1px solid var(--c1-ink); }
+  .c1 .opts th[scope="row"] { width: 100%; border: 0; padding: 4px 0 0; }
+  .c1 .opts td { border: 0; padding: 2px 0; }
+  .c1 .opts td::before { content: attr(data-o) " · "; font: 500 13px var(--c1-mono); color: var(--c1-muted); }
+  .c1 .opts .rec { background: transparent; }
+  .c1 .diff .row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .c1 .diff .row:first-child { display: none; }
+  .c1 .bh { flex-wrap: wrap; }
+}
+</style>
+
+<section class="concept" id="c1">
+  <div class="concept-intro">
+    <h2>1 · Brief</h2>
+    <dl>
+      <dt>Take</dt><dd>A classic single-column chat thread, typeset like a memo. Each assistant turn is a short answer plus rich blocks: recommendation, options, setup sketch, “what changed”. Evidence sits in a margin column that runs beside the whole thread.</dd>
+      <dt>Signature</dt><dd>Margin quotes next to every claim. Clicking a reference opens the verification view in place: the quote inside its page text and the code check result. A pinned strip at the top always shows the current recommendation and updates after each turn.</dd>
+      <dt>Type</dt><dd>Newsreader (display, user turns, quotes; OFL) · IBM Plex Sans (body, OFL) · IBM Plex Mono (page refs, OFL)</dd>
+      <dt>Colour</dt><dd>Oat paper, near-black ink, oxide red used only for refs, the status stamp, question chips and the recommended column.</dd>
+      <dt>Space</dt><dd>720 px text measure plus a 330 px margin, on a 4-pt scale. Phone: the margin folds and an opened quote expands under its paragraph.</dd>
+    </dl>
+  </div>
+
+  <p class="screen-label"><strong>c1-start</strong> Empty thread: paste the enquiry</p>
+  <div class="screen c1" id="c1-start">
+    <div class="bar"><span class="mark"><b>AFS</b> Assessment desk</span><button class="btn ghost" type="button">Earlier threads</button></div>
+    <div class="thread">
+      <div class="turn" style="border:0">
+        <div class="main empty">
+          <h2>What is the customer asking for?</h2>
+          <p>Paste the enquiry as received. You get a cited first assessment in this thread. Then ask follow-ups, add facts from the customer, and the assessment updates.</p>
+          <label class="sr" for="c1-enq">Customer enquiry</label>
+          <textarea class="big" id="c1-enq" placeholder="Paste the customer’s message, e.g. what they want to measure, in which process, and what they already know"></textarea>
+          <div style="display:flex;gap:16px;align-items:center;margin-top:16px;flex-wrap:wrap"><button class="btn" type="button">Assess</button><span class="tiny">a recent run took 13 min 42 s</span></div>
+        </div>
+        <div class="side" style="padding-top:150px">
+          <p class="who">In each answer</p>
+          <ol class="tiny" style="padding-left:1.2em;font-size:14px;line-height:1.6">
+            <li>Method and probe to start with, status and confidence, with the reason</li>
+            <li>Simple / recommended / extended options with cost class (S01 Table 1)</li>
+            <li>Setup sketch, parameters, risks, plan</li>
+            <li>Questions for the customer as reply chips</li>
+          </ol>
+          <p class="note" style="margin-top:24px"><span class="src">Evidence</span>Every important claim quotes the AFS documents word for word, and code checks each quote against the page.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="screen-label"><strong>c1-running</strong> Turn 1 in progress: activity lines stream in; finished parts can be read already · state at 06:12</p>
+  <div class="screen c1" id="c1-running">
+    <div class="bar"><span class="mark"><b>AFS</b> Assessment desk</span><span class="meta">Whey stream · thread started 18 Oct 2026</span></div>
+    <div class="thread">
+      <div class="turn user"><div class="main"><p class="who">You · enquiry</p><p>Our dairy process includes a relatively clear whey stream before a concentration stage. We want to investigate whether spectroscopy can track protein concentration as the stream changes, with laboratory results used as the reference. The stream can become more turbid under some operating conditions…</p></div><div class="side"></div></div>
+      <div class="turn ai">
+        <div class="main" aria-live="polite">
+          <p class="who">Assistant · working · 06:12</p>
+          <ol class="activity">
+            <li><time>00:00</time><span class="dot"></span>Reading the enquiry</li>
+            <li><time>00:59</time><span class="dot"></span>Found 4 stated requirements and 6 unknowns</li>
+            <li><time>00:59</time><span class="dot"></span>Screened 10 method and probe routes against S01 Table 1 and the rules: 5 pass, 5 ruled out</li>
+            <li class="now"><time>00:59</time><span class="dot"></span>Writing the assessment: options, setup, questions…</li>
+            <li class="todo"><time>—</time><span class="dot"></span>Check every quote word for word</li>
+            <li class="todo"><time>—</time><span class="dot"></span>Search secondary literature for gaps</li>
+          </ol>
+          <div class="partial">
+            <h4>Already clear: stated by the customer</h4>
+            <ul><li>Whey stream, relatively clear before a concentration stage</li><li>Target: track protein concentration as the stream changes</li><li>Reference: laboratory results</li><li>The stream can become more turbid; the concept must handle this</li></ul>
+          </div>
+          <div class="partial">
+            <h4>Ruled out for a clear liquid</h4>
+            <p style="margin:0;font-size:16px">NIR diffuse reflection, NIR remote reflection, UV-Vis reflection, UV-Vis emission, fluorescence.</p>
+          </div>
+        </div>
+        <div class="side"><p class="note"><span class="src">Why it takes minutes</span>Writing is the longest step (about 12 min last run). You can leave this thread open in the background; the answer appears here.</p></div>
+      </div>
+    </div>
+    <div class="composer"><div class="box"><textarea aria-label="Message" placeholder="You can type the next question while this runs" rows="1"></textarea><button class="btn ghost" type="button">Stop</button></div><div class="side"></div></div>
+  </div>
+
+  <p class="screen-label"><strong>c1-answer</strong> Thread after three turns: answer → follow-up (“Why not NIR reflection?”) → new facts → “what changed”. A citation is opened in the margin.</p>
+  <div class="screen c1" id="c1-answer">
+    <div class="bar"><span class="mark"><b>AFS</b> Assessment desk</span><span class="meta">Whey stream · 3 turns · 29 of 29 quotes verified</span><button class="btn ghost" type="button">Copy customer reply</button></div>
+    <div class="pinned"><div class="cur"><span class="rv">CURRENT · v2</span><b>NIR transmission first, mid-IR ATR as fallback</b><span class="stamp">Provisional</span><span>Confidence Medium · Q1 open</span></div><div class="side"></div></div>
+    <div class="thread">
+      <div class="turn user"><div class="main"><p class="who">You · enquiry</p><p class="clamp">Our dairy process includes a relatively clear whey stream before a concentration stage. We want to investigate whether spectroscopy can track protein concentration as the stream changes, with laboratory results used as the reference. The stream can become more turbid under some operating conditions. We need a first measurement concept that handles this change rather than assuming the liquid always remains clear.</p></div><div class="side"></div></div>
+
+      <div class="turn ai">
+        <div class="main">
+          <p class="who">Assistant · v1 · 13 min 42 s</p>
+          <p class="verdict">Start with NIR transmission/transflection.</p>
+          <p class="dek"><span class="claim is-active">The sources name whey as a preferred case for it</span><sup class="ref">1</sup>, and it is the least effort. Because the stream can turn turbid, keep mid-IR ATR as the fallback<sup class="ref">2</sup> and treat a fused NIR plus mid-IR ATR model as a later hypothesis.</p>
+          <dl class="status">
+            <dt>Status</dt><dd><span class="stamp">Provisional</span>Feasibility assessment. The protein range, required accuracy and severity of the turbidity are not stated.</dd>
+            <dt>Confidence</dt><dd><strong>Medium</strong> for O2: Q1 and Q2 open. Rates the basis of the advice, not a predicted accuracy.</dd>
+          </dl>
+          <div class="block">
+            <div class="bh"><h3>Options</h3><div class="acts"><button type="button">Pin</button><button type="button">Expand</button><button type="button">Copy</button></div></div>
+            <table class="opts">
+              <thead><tr><th></th><th>O1 Simple</th><th class="rec">O2 Recommended</th><th>O3 Extended</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Methods</th><td data-o="O1">NIR transmission/ transflection</td><td class="rec" data-o="O2">NIR transmission + MIR ATR</td><td data-o="O3">NIR + MIR, fused model</td></tr>
+                <tr><th scope="row">Cost class</th><td data-o="O1"><span class="cost" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>average</td><td class="rec" data-o="O2"><span class="cost" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>high</td><td data-o="O3"><span class="cost" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>high</td></tr>
+                <tr><th scope="row">Upkeep</th><td data-o="O1">probe cleaning, periodic recalibration</td><td class="rec" data-o="O2">two probes, two calibrations</td><td data-o="O3">per-instrument calibration</td></tr>
+                <tr><th scope="row">Confidence</th><td data-o="O1">Medium · Q1 open</td><td class="rec" data-o="O2">Medium · Q1, Q2 open</td><td data-o="O3">Low · fusion not yet shown</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:16px;color:var(--c1-ink-2)">Also ready: setup sketch, 3 parameters, 4 risks, a 5-step feasibility plan.</p>
+          <div class="chips" aria-label="Questions for the customer">
+            <button class="chip q" type="button"><b>Q1</b>Protein range, accuracy, response time?</button>
+            <button class="chip q" type="button"><b>Q2</b>How turbid, and why?</button>
+            <button class="chip q" type="button"><b>Q3</b>Where is the measurement point?</button>
+          </div>
+          <div class="chips"><button class="chip" type="button">Show the setup</button><button class="chip" type="button">Why not NIR reflection?</button><button class="chip" type="button">Feasibility plan</button></div>
+        </div>
+        <div class="side">
+          <div class="note is-open"><span class="src"><b>1</b>S01 p.18 · verification</span><q>NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</q>
+            <p class="ctx">…NIR Transmission: <mark>NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</mark> The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer…</p>
+            <span class="chk"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Found word for word · in scope for this page</span></div>
+          <p class="note"><span class="src"><b>2</b>S04 p.4</span><q>…liquid or soft solid samples and their components, allowing a tight contact with the probe head.</q></p>
+          <p class="note"><span class="src">S01 Table 1 (p.6)</span>Cost class is the relative rating for the rows named (2, 7). Not a price.</p>
+        </div>
+      </div>
+
+      <div class="turn user"><div class="main"><p class="who">You</p><p>Why not NIR reflection? That’s what we usually sell for dairy.</p></div><div class="side"></div></div>
+      <div class="turn ai">
+        <div class="main">
+          <p class="who">Assistant</p>
+          <p>NIR reflection is the usual dairy route for opaque or concentrated products<sup class="ref">3</sup>, but this whey stream is normally clear, and reflection is less representative for clear liquids<sup class="ref">4</sup>. Screening also ruled it out: S01 Table 1 lists it for powder and scattering media. The turbid state is covered by the mid-IR ATR fallback instead.</p>
+          <div class="block">
+            <div class="bh"><h3>Setup sketch · O2</h3><div class="acts"><button type="button">Pin</button><button type="button">Expand</button></div></div>
+            <figure class="sketch">
+              <svg viewBox="0 0 700 250" role="img" aria-labelledby="c1-sk-t">
+                <title id="c1-sk-t">Whey line with an NIR transmission probe and a MIR ATR probe, each on its own fiber and spectrometer, feeding chemometric models that give protein concentration; turbidity and temperature sensors feed the models.</title>
+                <path class="sk-pipe" d="M10 30 H690"/><path class="sk-pipe-in" d="M10 30 H690"/>
+                <text class="sk-s" x="12" y="14">whey line · before concentration · point not yet fixed (Q3)</text>
+                <path class="sk-l" d="M120 34 V70"/><path class="sk-l" d="M300 34 V70"/>
+                <rect class="sk-box" x="50" y="70" width="150" height="34"/><text class="sk-t" x="62" y="92">NIR trans. probe</text>
+                <rect class="sk-box" x="230" y="70" width="150" height="34"/><text class="sk-t" x="242" y="92">MIR ATR probe</text>
+                <path class="sk-l" d="M125 104 V140"/><text class="sk-s" x="132" y="126">silica fiber</text>
+                <path class="sk-l" d="M305 104 V140"/><text class="sk-s" x="312" y="126">chalcogenide / PIR</text>
+                <rect class="sk-box" x="50" y="140" width="150" height="34"/><text class="sk-t" x="62" y="162">NIR spectrometer</text>
+                <rect class="sk-box" x="230" y="140" width="150" height="34"/><text class="sk-t" x="242" y="162">MIR spectrometer</text>
+                <path class="sk-l" d="M200 157 H215 V215 H420"/><path class="sk-l" d="M380 157 H400 V215"/>
+                <rect class="sk-box" x="420" y="198" width="150" height="34"/><text class="sk-t" x="430" y="220">Chemometric models</text>
+                <path class="sk-l" d="M570 215 H590"/>
+                <rect class="sk-box res" x="590" y="198" width="100" height="34"/><text class="sk-t inv" x="602" y="220">Protein conc.</text>
+                <rect class="sk-box" x="470" y="70" width="110" height="30" rx="15"/><text class="sk-t" x="484" y="90">Turbidity</text>
+                <rect class="sk-box" x="590" y="70" width="100" height="30" rx="15"/><text class="sk-t" x="600" y="90">Temperature</text>
+                <path class="sk-l" d="M520 34 V70"/><path class="sk-l" d="M640 34 V70"/>
+                <path class="sk-d" d="M525 100 V198"/><path class="sk-d" d="M640 100 V170 H540 V198"/>
+              </svg>
+              <figcaption>Drawn by code from option O2. A schematic, not a configuration.</figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="side">
+          <p class="note"><span class="src"><b>3</b>S01 p.17</span><q>NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.</q></p>
+          <p class="note"><span class="src"><b>4</b>S01 p.18</span><q>reflection can work well in highly scattering environments but can be less representative for clear liquids.</q></p>
+        </div>
+      </div>
+
+      <div class="turn user"><div class="main"><p class="who">You · new facts from the customer</p><p>The line runs at 60 °C, and turbidity goes up to 200 NTU.</p></div><div class="side"></div></div>
+      <div class="turn ai">
+        <div class="main">
+          <p class="who">Assistant · v2 · re-assessed</p>
+          <span class="illus">Illustrative turn: no re-run exists yet. Only claims already in v1 are reused.</span>
+          <p>Thanks. Q2 is now answered and Q4 partly. The recommendation stays the same: the sources state no NTU limit for NIR transmission, so whether 200 NTU defeats it is decided by plan steps 3–4 (the sample series), not by the documents.</p>
+          <div class="block">
+            <div class="bh"><h3>What changed, v1 → v2</h3><div class="acts"><button type="button">Pin</button></div></div>
+            <div class="diff">
+              <div class="row"><span>Item</span><span>v1</span><span>v2</span></div>
+              <div class="row"><span class="k">Recommendation</span><span class="same">NIR transmission first, MIR ATR fallback</span><span class="same">unchanged</span></div>
+              <div class="row"><span class="k">Confidence O2</span><span>Medium · <del>Q1, Q2 open</del></span><span>Medium · <ins>Q1 open</ins></span></div>
+              <div class="row"><span class="k">Q2 turbidity</span><span><del>open</del></span><span><ins>up to 200 NTU (customer)</ins></span></div>
+              <div class="row"><span class="k">Q4 conditions</span><span><del>open</del></span><span><ins>60 °C stated</ins>; pressure and cleaning still open</span></div>
+              <div class="row"><span class="k">Temperature</span><span>optional parameter</span><span>stays in the setup; OH-band sensitivity noted (secondary source)</span></div>
+              <div class="row"><span class="k">Status</span><span class="same">Provisional</span><span class="same">unchanged, Q1 still open</span></div>
+            </div>
+          </div>
+          <div class="chips"><button class="chip q" type="button"><b>Q1</b>Protein range, accuracy, response time?</button><button class="chip q" type="button"><b>Q3</b>Where is the measurement point?</button><button class="chip" type="button">Compare the options</button></div>
+        </div>
+        <div class="side">
+          <p class="note sec"><span class="src">E02 ¶12 · secondary, not AFS</span><q>Additionally, the temperature sensitivity of the OH bands is a severe drawback for measuring aqueous solution in NIR and MIR, which makes tempered sample holders necessary [29].</q><span class="tiny" style="display:block;margin-top:4px">europepmc.org/article/PMC/PMC7072065 · biopharma review, not dairy</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="composer"><div class="box"><textarea aria-label="Message" rows="1" placeholder="Ask a follow-up, or add what the customer told you"></textarea><button class="btn" type="button">Send</button></div><div class="side"><span class="hint">New facts trigger a re-assessment (v3).</span></div></div>
+  </div>
+
+  <div class="extras">
+    <figure class="phone-frame solo-skip"><iframe title="Brief at 390 px" src="index.html?solo=c1-answer" loading="lazy"></iframe><figcaption>c1-mobile · 390 px: margin folds; opened quote shows under its turn</figcaption></figure>
+    <div>
+      <div class="c1" data-theme="dark" style="padding:32px;border:1px solid var(--shell-rule)">
+        <p class="verdict">Start with NIR transmission/transflection.</p>
+        <dl class="status"><dt>Status</dt><dd><span class="stamp">Provisional</span>Feasibility assessment</dd><dt>Confidence</dt><dd><strong>Medium</strong> · Q1, Q2 open</dd></dl>
+        <div class="chips"><button class="chip q" type="button"><b>Q1</b>Protein range?</button><button class="chip" type="button">Show the setup</button></div>
+        <p class="note is-open" style="margin-top:24px"><span class="src"><b>1</b>S01 p.18</span><q>NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</q><span class="chk">Found word for word</span></p>
+      </div>
+      <p class="swatch-cap">Dark mode · paper oklch(17.5% .01 70) · ink oklch(93% .01 80) · accent oklch(72% .13 40)</p>
+    </div>
+  </div>
+</section>
+<style>
+/* Hallmark · macrostructure: Workbench (drawing canvas + inspector) · tone: technical · anchor hue: 235 drafting / accent 65 safety amber
+ * theme: custom (vibe: "P&ID sheet, drafting grid, site safety amber") · paper oklch(97% 0.006 230) · accent oklch(58% 0.14 60)
+ * fonts: Instrument Sans (display + UI, OFL) + JetBrains Mono (tags, refs, OFL)
+ * axes: light / geometric-sans / warm (accent) on cool neutrals */
+.c2 {
+  --c2-paper: oklch(97% 0.006 230); --c2-paper-2: oklch(94% 0.009 230); --c2-grid: oklch(92.5% 0.012 230); --c2-grid-major: oklch(88.5% 0.016 230);
+  --c2-ink: oklch(23% 0.03 245); --c2-ink-2: oklch(36% 0.025 245); --c2-muted: oklch(46% 0.02 240); --c2-rule: oklch(80% 0.015 235);
+  --c2-amber: oklch(56% 0.14 58); --c2-amber-wash: oklch(93% 0.05 80); --c2-amber-fill: oklch(84% 0.13 80);
+  --c2-ok: oklch(46% 0.11 155); --c2-focus: oklch(50% 0.17 255); --c2-panel: oklch(98.5% 0.004 230);
+  --c2-sans: "Instrument Sans", "Helvetica Neue", sans-serif; --c2-mono: "JetBrains Mono", ui-monospace, monospace;
+  background: var(--c2-paper); color: var(--c2-ink); font: 16px/1.5 var(--c2-sans);
+}
+[data-theme="dark"] .c2, .c2[data-theme="dark"] {
+  --c2-paper: oklch(19% 0.02 245); --c2-paper-2: oklch(23% 0.022 245); --c2-grid: oklch(23.5% 0.024 245); --c2-grid-major: oklch(27% 0.028 245);
+  --c2-ink: oklch(94% 0.01 230); --c2-ink-2: oklch(85% 0.012 230); --c2-muted: oklch(72% 0.015 235); --c2-rule: oklch(36% 0.02 240);
+  --c2-amber: oklch(80% 0.14 75); --c2-amber-wash: oklch(30% 0.05 70); --c2-amber-fill: oklch(80% 0.14 75);
+  --c2-ok: oklch(78% 0.12 155); --c2-focus: oklch(75% 0.13 250); --c2-panel: oklch(22% 0.02 245);
+}
+.c2 :focus-visible { outline: 2px solid var(--c2-focus); outline-offset: 2px; }
+.c2 .appbar { display: flex; align-items: center; gap: var(--space-lg); padding: 10px clamp(16px, 2.4vw, 32px); border-bottom: 1px solid var(--c2-ink); background: var(--c2-panel); }
+.c2 .wm { font: 700 17px/1 var(--c2-sans); letter-spacing: -0.01em; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+.c2 .wm svg { display: block; }
+.c2 .crumb { font: 13px/1.3 var(--c2-mono); color: var(--c2-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.c2 .btn { white-space: nowrap; min-height: 40px; padding: 0 16px; border: 1px solid var(--c2-ink); background: var(--c2-ink); color: var(--c2-paper); font: 600 15px/1 var(--c2-sans); border-radius: 3px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.c2 .btn:hover { background: var(--c2-ink-2); }
+.c2 .btn.line { background: transparent; color: var(--c2-ink); border-color: var(--c2-rule); }
+.c2 .btn.line:hover { border-color: var(--c2-ink); }
+.c2 .headband { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-md) var(--space-xl); align-items: end; padding: var(--space-lg) clamp(16px, 2.4vw, 32px) var(--space-md); border-bottom: 1px solid var(--c2-rule); background: var(--c2-panel); }
+.c2 .headband h2 { margin: 0; font: 600 clamp(26px, 2.5vw, 36px)/1.12 var(--c2-sans); letter-spacing: -0.02em; max-width: 34ch; }
+.c2 .headband p { margin: 6px 0 0; color: var(--c2-ink-2); max-width: 80ch; }
+.c2 .optsw { display: inline-flex; border: 1px solid var(--c2-ink); border-radius: 3px; overflow: hidden; }
+.c2 .optsw button { border: 0; border-right: 1px solid var(--c2-ink); background: transparent; padding: 8px 14px; text-align: left; cursor: pointer; min-width: 132px; }
+.c2 .optsw button:last-child { border-right: 0; }
+.c2 .optsw button b { display: block; font: 600 15px/1.2 var(--c2-sans); }
+.c2 .optsw button span { font: 12px/1.3 var(--c2-mono); color: var(--c2-muted); }
+.c2 .optsw button[aria-pressed="true"] { background: var(--c2-ink); color: var(--c2-paper); }
+.c2 .optsw button[aria-pressed="true"] span { color: var(--c2-paper); }
+.c2 .optsw button:hover:not([aria-pressed="true"]) { background: var(--c2-paper-2); }
+.c2 .work { display: grid; grid-template-columns: minmax(0, 1fr) 380px; min-height: 640px; }
+.c2 .canvas { position: relative; min-width: 0; background-color: var(--c2-paper);
+  background-image: linear-gradient(var(--c2-grid-major) 1px, transparent 1px), linear-gradient(90deg, var(--c2-grid-major) 1px, transparent 1px), linear-gradient(var(--c2-grid) 1px, transparent 1px), linear-gradient(90deg, var(--c2-grid) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; border-right: 1px solid var(--c2-ink); padding: var(--space-lg) var(--space-lg) 190px; }
+.c2 .canvas svg.dwg { width: 100%; height: auto; display: block; max-height: 560px; }
+.c2 .pipe-o { stroke: var(--c2-ink); stroke-width: 12; fill: none; }
+.c2 .pipe-i { stroke: var(--c2-paper); stroke-width: 8; fill: none; }
+.c2 .ln { stroke: var(--c2-ink); stroke-width: 1.5; fill: none; }
+.c2 .fib { stroke: var(--c2-ink); stroke-width: 2; fill: none; stroke-dasharray: 12 3 2 3; }
+.c2 .sig { stroke: var(--c2-ink-2); stroke-width: 1.4; fill: none; stroke-dasharray: 5 5; }
+.c2 .bub { fill: var(--c2-paper); stroke: var(--c2-ink); stroke-width: 1.8; }
+.c2 .box { fill: var(--c2-paper); stroke: var(--c2-ink); stroke-width: 1.5; }
+.c2 .box.res { fill: var(--c2-ink); }
+.c2 .tg { font: 700 13px var(--c2-mono); fill: var(--c2-ink); text-anchor: middle; }
+.c2 .tn { font: 500 12px var(--c2-mono); fill: var(--c2-ink-2); text-anchor: middle; }
+.c2 .lb { font: 600 14px var(--c2-sans); fill: var(--c2-ink); }
+.c2 .lb.inv { fill: var(--c2-paper); }
+.c2 .sm { font: 12px var(--c2-mono); fill: var(--c2-muted); }
+.c2 .cloud { fill: none; stroke: var(--c2-amber); stroke-width: 1.8; }
+.c2 .qtag rect { fill: var(--c2-amber-wash); stroke: var(--c2-amber); stroke-width: 1.5; }
+.c2 .qtag text { font: 700 12px var(--c2-mono); fill: var(--c2-ink); }
+.c2 [data-c2-part] { cursor: pointer; }
+.c2 [data-c2-part]:hover .bub, .c2 [data-c2-part]:hover .box:not(.res) { fill: var(--c2-paper-2); }
+.c2 [data-c2-part].is-sel .bub, .c2 [data-c2-part].is-sel .box:not(.res) { fill: var(--c2-amber-fill); stroke-width: 2.4; }
+.c2 [data-c2-part]:focus-visible { outline: none; }
+.c2 [data-c2-part]:focus-visible .bub, .c2 [data-c2-part]:focus-visible .box { stroke: var(--c2-focus); stroke-width: 3; }
+.c2 .t-o3 { display: none; }
+.c2[data-opt="O3"] .t-o2 { display: none; } .c2[data-opt="O3"] .t-o3 { display: inline; }
+.c2[data-opt="O1"] .mir { opacity: .12; }
+.c2 .ghost .bub, .c2 .ghost .box { stroke-dasharray: 4 4; stroke: var(--c2-muted); fill: transparent; }
+.c2 .ghost .lb, .c2 .ghost .tg, .c2 .ghost .tn { fill: var(--c2-muted); }
+.c2 .ghost .ln, .c2 .ghost .fib, .c2 .ghost .sig { stroke: var(--c2-muted); opacity: .6; }
+.c2 .legend { position: absolute; left: var(--space-lg); bottom: var(--space-lg); font: 12px/1.9 var(--c2-mono); color: var(--c2-ink-2); background: var(--c2-paper); border: 1px solid var(--c2-rule); padding: 8px 12px; }
+.c2 .legend span { display: inline-flex; align-items: center; gap: 6px; margin-right: 14px; white-space: nowrap; }
+.c2 .tblock { position: absolute; right: var(--space-lg); bottom: var(--space-lg); width: min(520px, calc(100% - 48px)); border: 2px solid var(--c2-ink); background: var(--c2-panel); display: grid; grid-template-columns: 112px minmax(0, 1fr); font-size: 14px; }
+.c2 .tblock dt, .c2 .tblock dd { margin: 0; padding: 5px 10px; border-bottom: 1px solid var(--c2-rule); }
+.c2 .tblock dt { font: 500 11px/1.9 var(--c2-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--c2-muted); border-right: 1px solid var(--c2-rule); }
+.c2 .tblock dd.ttl { font-weight: 600; font-size: 15px; }
+.c2 .tblock dt:nth-last-of-type(1), .c2 .tblock dd:last-child { border-bottom: 0; }
+.c2 .flag { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.c2 .flag::before { content: ""; width: 10px; height: 10px; background: var(--c2-amber); transform: rotate(45deg); }
+.c2 .insp { background: var(--c2-panel); padding: var(--space-lg); min-width: 0; overflow: auto; }
+.c2 .insp .eyebrow { font: 500 12px/1.4 var(--c2-mono); color: var(--c2-muted); margin: 0 0 4px; }
+.c2 .insp h3 { margin: 0 0 var(--space-sm); font: 600 22px/1.2 var(--c2-sans); letter-spacing: -0.01em; }
+.c2 .insp .role { display: inline-block; font: 600 12px/1 var(--c2-mono); border: 1px solid var(--c2-ink); padding: 5px 7px; margin-bottom: var(--space-md); }
+.c2 .insp p { margin: 0 0 var(--space-md); }
+.c2 .insp .cond { color: var(--c2-muted); font-size: 15px; }
+.c2 .insp h4 { font: 600 13px/1.4 var(--c2-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--c2-muted); margin: var(--space-lg) 0 var(--space-xs); }
+.c2 .cite { border-top: 1px solid var(--c2-rule); padding: 10px 0; }
+.c2 .cite .ref { font: 700 13px/1.4 var(--c2-mono); }
+.c2 .cite blockquote { margin: 4px 0; font-size: 15px; line-height: 1.5; }
+.c2 .cite .ok { font: 12px/1.4 var(--c2-mono); color: var(--c2-ok); display: inline-flex; gap: 6px; align-items: center; }
+.c2 .below { display: grid; grid-template-columns: minmax(0, 1fr) 380px; border-top: 1px solid var(--c2-ink); }
+.c2 .items { padding: var(--space-lg) clamp(16px, 2.4vw, 32px) var(--space-2xl); min-width: 0; }
+.c2 .items h3, .c2 .report h3 { margin: 0 0 var(--space-sm); font: 600 20px/1.3 var(--c2-sans); }
+.c2 .item { display: grid; grid-template-columns: 56px minmax(0, 1fr) minmax(0, 300px); gap: var(--space-md); padding: var(--space-md) 0; border-top: 1px solid var(--c2-rule); align-items: start; }
+.c2 .item .qid { font: 700 13px/1 var(--c2-mono); border: 1.5px solid var(--c2-amber); background: var(--c2-amber-wash); padding: 6px 0; text-align: center; }
+.c2 .item p { margin: 0; }
+.c2 .item .on { font: 12px/1.5 var(--c2-mono); color: var(--c2-muted); margin-top: 4px; }
+.c2 .item input { width: 100%; min-height: 44px; border: 1px solid var(--c2-rule); background: var(--c2-paper); padding: 8px 10px; border-radius: 3px; }
+.c2 .item input:focus-visible { outline: 2px solid var(--c2-focus); outline-offset: 0; }
+.c2 .report { padding: var(--space-lg); background: var(--c2-panel); border-left: 1px solid var(--c2-ink); min-width: 0; }
+.c2 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--c2-rule); margin-bottom: var(--space-md); flex-wrap: wrap; }
+.c2 .tabs button { border: 0; background: transparent; padding: 8px 10px; cursor: pointer; font: 500 14px/1 var(--c2-sans); border-bottom: 2px solid transparent; white-space: nowrap; min-height: 36px; }
+.c2 .tabs button[aria-selected="true"] { border-bottom-color: var(--c2-ink); font-weight: 600; }
+.c2 .report ol { padding-left: 1.2em; margin: 0; font-size: 15px; }
+.c2 .report li { margin-bottom: var(--space-sm); }
+.c2 .report .rid { font: 12px var(--c2-mono); color: var(--c2-muted); }
+.c2 .chain { display: none; }
+/* running + start */
+.c2 .draftlog ol { list-style: none; margin: 0; padding: 0; }
+.c2 .draftlog li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 8px; padding: 10px 0; border-top: 1px solid var(--c2-rule); font-size: 15px; }
+.c2 .draftlog .rv { font: 700 12px/1.6 var(--c2-mono); border: 1px solid var(--c2-ink); text-align: center; height: 22px; }
+.c2 .draftlog li.now .rv { background: var(--c2-amber-fill); }
+.c2 .draftlog li.todo { color: var(--c2-muted); }
+.c2 .draftlog li.todo .rv { border-style: dashed; border-color: var(--c2-muted); }
+.c2 .draftlog time { font: 12px/1.6 var(--c2-mono); color: var(--c2-muted); font-variant-numeric: tabular-nums; }
+.c2 .clock { font: 600 48px/1 var(--c2-mono); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin: var(--space-xs) 0 var(--space-md); }
+.c2 .reqform { position: absolute; left: var(--space-xl); top: var(--space-xl); width: min(560px, calc(100% - 64px)); background: var(--c2-panel); border: 2px solid var(--c2-ink); padding: var(--space-lg); }
+.c2 .reqform h2 { margin: 0 0 var(--space-xs); font: 600 30px/1.1 var(--c2-sans); letter-spacing: -0.02em; }
+.c2 .reqform p { margin: 0 0 var(--space-md); color: var(--c2-ink-2); }
+.c2 .reqform label { font: 500 12px/1.4 var(--c2-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--c2-muted); display: block; margin-bottom: 6px; }
+.c2 .reqform textarea { width: 100%; min-height: 210px; border: 1px solid var(--c2-rule); background: var(--c2-paper); padding: 12px; font: 16px/1.55 var(--c2-sans); resize: vertical; border-radius: 3px; }
+.c2 .reqform .row { display: flex; gap: var(--space-md); align-items: center; margin-top: var(--space-md); flex-wrap: wrap; }
+.c2 .reqform .row span { font: 12px/1.4 var(--c2-mono); color: var(--c2-muted); }
+
+@media (max-width: 1100px) {
+  .c2 .work, .c2 .below { grid-template-columns: minmax(0, 1fr); }
+  .c2 .canvas { border-right: 0; border-bottom: 1px solid var(--c2-ink); }
+  .c2 .report { border-left: 0; border-top: 1px solid var(--c2-ink); }
+}
+@media (max-width: 760px) {
+  .c2 .crumb, .c2 .appbar .btn.line { display: none; }
+  .c2 .headband { grid-template-columns: minmax(0, 1fr); }
+  .c2 .optsw { width: 100%; }
+  .c2 .optsw button { min-width: 0; flex: 1; padding: 8px; }
+  .c2 .canvas { padding: var(--space-md); }
+  .c2 .canvas svg.dwg, .c2 .legend { display: none; }
+  .c2 .chain { display: block; list-style: none; margin: 0; padding: 0; position: relative; }
+  .c2 .chain::before { content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; width: 2px; background: var(--c2-ink); }
+  .c2 .chain li { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; padding: 8px 0; align-items: center; }
+  .c2 .chain .b { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--c2-ink); background: var(--c2-paper); display: grid; place-items: center; font: 700 11px/1 var(--c2-mono); text-align: center; position: relative; z-index: 1; }
+  .c2 .chain .b.sq { border-radius: 3px; }
+  .c2 .chain .b.res { background: var(--c2-ink); color: var(--c2-paper); }
+  .c2 .chain li.sel .b { background: var(--c2-amber-fill); }
+  .c2 .chain strong { display: block; font-size: 16px; }
+  .c2 .chain small { font: 12px/1.4 var(--c2-mono); color: var(--c2-muted); }
+  .c2 .chain .qmark { font: 700 11px/1 var(--c2-mono); border: 1.5px solid var(--c2-amber); background: var(--c2-amber-wash); padding: 3px 5px; margin-left: 6px; }
+  .c2 .tblock { position: static; width: 100%; margin-top: var(--space-md); }
+  .c2 .item { grid-template-columns: 44px minmax(0, 1fr); }
+  .c2 .item input { grid-column: 1 / -1; }
+  .c2 .reqform { position: static; width: 100%; }
+}
+</style>
+<style>
+/* C2 chat layer: thread left, live drawing sheet right */
+.c2 .split { display: grid; grid-template-columns: 480px minmax(0, 1fr); min-height: 860px; }
+.c2 .chat { display: flex; flex-direction: column; border-right: 1px solid var(--c2-ink); background: var(--c2-panel); min-width: 0; }
+.c2 .msgs { flex: 1; padding: var(--space-lg) var(--space-lg) var(--space-md); display: flex; flex-direction: column; gap: var(--space-lg); }
+.c2 .m-user { align-self: flex-end; max-width: 88%; background: var(--c2-paper-2); border: 1px solid var(--c2-rule); padding: 10px 14px; border-radius: 3px; font-size: 15px; }
+.c2 .m-user .clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.c2 .m-ai { font-size: 15.5px; }
+.c2 .m-ai p { margin: 0 0 var(--space-sm); }
+.c2 .m-who { font: 600 11px/1.4 var(--c2-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--c2-muted); margin: 0 0 6px; display: block; }
+.c2 .m-ai h3 { font: 600 21px/1.2 var(--c2-sans); letter-spacing: -0.01em; margin: 0 0 var(--space-xs); }
+.c2 .ref { font: 700 12px/1 var(--c2-mono); color: var(--c2-ink); border-bottom: 1.5px solid var(--c2-amber); cursor: pointer; white-space: nowrap; }
+.c2 .ref.open { background: var(--c2-amber-fill); }
+.c2 .sheetref { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; border: 1px solid var(--c2-ink); padding: 10px 12px; margin: var(--space-sm) 0; background: var(--c2-paper); }
+.c2 .sheetref .ico { width: 40px; height: 40px; border: 1.5px solid var(--c2-ink); display: grid; place-items: center; font: 700 11px/1 var(--c2-mono); }
+.c2 .sheetref b { display: block; font-size: 15px; }
+.c2 .sheetref small { font: 12px/1.4 var(--c2-mono); color: var(--c2-muted); }
+.c2 .sheetref button { white-space: nowrap; border: 1px solid var(--c2-rule); background: transparent; padding: 6px 10px; font: 600 13px/1 var(--c2-sans); cursor: pointer; border-radius: 3px; min-height: 32px; }
+.c2 .mini { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: var(--space-xs) 0; font-variant-numeric: tabular-nums; }
+.c2 .mini th, .c2 .mini td { text-align: left; padding: 6px 6px 6px 0; border-bottom: 1px solid var(--c2-rule); vertical-align: top; }
+.c2 .mini thead th { font: 600 11px/1.3 var(--c2-mono); color: var(--c2-muted); text-transform: uppercase; border-bottom: 1px solid var(--c2-ink); }
+.c2 .mini .rec { background: var(--c2-amber-wash); }
+.c2 .qchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-xs); }
+.c2 .qchip { border: 1.5px solid var(--c2-amber); background: var(--c2-paper); padding: 6px 10px; border-radius: 3px; font: 500 13.5px/1.2 var(--c2-sans); cursor: pointer; white-space: nowrap; min-height: 32px; }
+.c2 .qchip b { font: 700 12px/1 var(--c2-mono); margin-right: 5px; }
+.c2 .qchip.plain { border-color: var(--c2-rule); }
+.c2 .qchip:hover { background: var(--c2-amber-wash); }
+.c2 .chg { list-style: none; margin: var(--space-xs) 0; padding: 0; border: 1px solid var(--c2-ink); font-size: 14px; }
+.c2 .chg li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; padding: 8px 10px; border-top: 1px solid var(--c2-rule); }
+.c2 .chg li:first-child { border-top: 0; }
+.c2 .chg .s { font: 700 13px/1.4 var(--c2-mono); text-align: center; }
+.c2 .illus { font: 11.5px/1.4 var(--c2-mono); color: var(--c2-muted); border: 1px dashed var(--c2-rule); padding: 4px 8px; display: inline-block; margin-bottom: 8px; }
+.c2 .act { list-style: none; margin: 0; padding: 0; font-size: 14.5px; }
+.c2 .act li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 8px; padding: 6px 0; border-top: 1px solid var(--c2-rule); }
+.c2 .act time { font: 12px/1.6 var(--c2-mono); color: var(--c2-muted); }
+.c2 .act li.now { font-weight: 600; }
+.c2 .act li.now time { color: var(--c2-ink); }
+.c2 .act li.todo { color: var(--c2-muted); }
+.c2 .composer { border-top: 1px solid var(--c2-ink); padding: var(--space-sm) var(--space-lg) var(--space-md); position: sticky; bottom: 0; background: var(--c2-panel); }
+.c2 .composer .cbox { display: flex; gap: 8px; align-items: end; border: 1px solid var(--c2-rule); background: var(--c2-paper); padding: 8px; border-radius: 3px; }
+.c2 .composer .cbox:focus-within { border-color: var(--c2-focus); box-shadow: 0 0 0 1px var(--c2-focus); }
+.c2 .composer textarea { flex: 1; border: 0; background: transparent; resize: none; min-height: 44px; font: 15.5px/1.45 var(--c2-sans); padding: 4px; }
+.c2 .composer textarea:focus-visible { outline: none; }
+.c2 .composer .tips { font: 12px/1.4 var(--c2-mono); color: var(--c2-muted); margin: 6px 0 0; }
+.c2 .sheet { position: relative; min-width: 0; display: flex; flex-direction: column; }
+.c2 .sheettop { display: flex; flex-wrap: wrap; gap: var(--space-sm) var(--space-lg); align-items: center; justify-content: space-between; padding: 10px var(--space-lg); border-bottom: 1px solid var(--c2-rule); background: var(--c2-panel); }
+.c2 .revs { display: flex; gap: 4px; font: 12px/1 var(--c2-mono); flex-wrap: wrap; }
+.c2 .revs button { border: 1px solid var(--c2-rule); background: transparent; padding: 7px 10px; cursor: pointer; border-radius: 3px; white-space: nowrap; min-height: 32px; font: inherit; }
+.c2 .revs button[aria-pressed="true"] { border-color: var(--c2-ink); background: var(--c2-ink); color: var(--c2-paper); }
+.c2 .sheet .canvas { flex: 1; border-right: 0; }
+.c2 .optsw.sm button { min-width: 0; padding: 6px 10px; }
+.c2 .optsw.sm button b { font-size: 13.5px; }
+.c2 .verify { position: absolute; left: var(--space-lg); top: 440px; width: 380px; background: var(--c2-panel); border: 2px solid var(--c2-ink); padding: var(--space-md); z-index: 3; font-size: 14.5px; }
+.c2 .verify h4 { margin: 0 0 4px; font: 700 13px/1.4 var(--c2-mono); }
+.c2 .verify .ctx { font-size: 14px; line-height: 1.55; color: var(--c2-ink-2); margin: var(--space-xs) 0; }
+.c2 .verify mark { background: var(--c2-amber-fill); color: var(--c2-ink); }
+.c2 .verify .ok { font: 12px/1.4 var(--c2-mono); color: var(--c2-ok); display: flex; gap: 6px; align-items: center; }
+.c2 .verify .x { position: absolute; right: 8px; top: 6px; border: 0; background: none; font: 600 18px/1 var(--c2-sans); cursor: pointer; width: 32px; height: 32px; }
+.c2 .verify .for { font: 12px/1.4 var(--c2-mono); color: var(--c2-muted); margin: 0 0 var(--space-xs); }
+.c2 .sheet .canvas { min-height: 720px; flex: none; }
+.c2 .sheet .tblock { width: 470px; }
+.c2 .dnotes { border-top: 1px solid var(--c2-ink); padding: var(--space-lg); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-lg) var(--space-2xl); background: var(--c2-panel); flex: 1; align-content: start; }
+.c2 .dnotes h4 { font: 600 12px/1.4 var(--c2-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--c2-muted); margin: 0 0 var(--space-xs); }
+.c2 .dnotes ol { margin: 0; padding-left: 1.3em; font-size: 14.5px; }
+.c2 .dnotes li { margin-bottom: 6px; }
+.c2 .dnotes .r { font: 12px var(--c2-mono); color: var(--c2-muted); }
+.c2 .dnotes .legend { position: static; grid-column: 1 / -1; }
+@media (max-width: 1100px) { .c2 .split { grid-template-columns: 400px minmax(0, 1fr); } .c2 .verify { width: 300px; } }
+@media (max-width: 760px) {
+  .c2 .split { grid-template-columns: minmax(0, 1fr); }
+  .c2 .dnotes { display: none; }
+  .c2 .sheet .canvas { min-height: 0; }
+  .c2 .chat { border-right: 0; }
+  .c2 .sheet { order: -1; border-bottom: 1px solid var(--c2-ink); }
+  .c2 .sheet .canvas { padding: var(--space-md); }
+  .c2 .verify { position: static; width: auto; margin: 0 var(--space-md) var(--space-md); }
+  .c2 .sheettop .optsw { display: none; }
+  .c2 .sheet .tblock { display: none; }
+  .c2 .m-user { max-width: 94%; }
+}
+</style>
+
+<section class="concept" id="c2">
+  <div class="concept-intro">
+    <h2>2 · Line</h2>
+    <dl>
+      <dt>Take</dt><dd>Chat on the left, a live engineering drawing on the right. The drawing is the current assessment, and every turn that changes the setup issues a new revision of the sheet (Rev A, Rev B…). Chat blocks are short and point at the sheet. Tables and comparisons render inline.</dd>
+      <dt>Signature</dt><dd>ISA tag bubbles, a drawing title block holding status, confidence and quote count, and revision clouds that pin each open question onto the part it would change. When the customer answers, its cloud turns into a closed tag.</dd>
+      <dt>Type</dt><dd>Instrument Sans (UI + headings, OFL) · JetBrains Mono (tags, page refs, OFL)</dd>
+      <dt>Colour</dt><dd>Cool drafting paper with a 24/120 px grid, blue-black ink, and safety amber only for open questions, the selected part and opened refs.</dd>
+      <dt>Space</dt><dd>480 px thread plus a fluid sheet. Phone: the sheet collapses to a vertical chain pinned above the thread.</dd>
+    </dl>
+  </div>
+
+  <p class="screen-label"><strong>c2-start</strong> Empty thread, blank sheet</p>
+  <div class="screen c2" id="c2-start" data-opt="O2">
+    <div class="appbar"><span class="wm"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="11" y="15" text-anchor="middle" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="currentColor">AE</text></svg>AFS Line</span><span class="crumb">New sheet · no enquiry yet</span><button class="btn line" type="button">Threads</button><button class="btn" type="button">Export</button></div>
+    <div class="split">
+      <div class="chat">
+        <div class="msgs">
+          <div class="m-ai"><span class="m-who">Assistant</span><h3>Paste the customer’s enquiry.</h3><p>I pick the method and probe, draw the setup on the sheet and mark what is still unknown with revision clouds. Then ask me anything about it, or tell me what the customer answered.</p><p style="color:var(--c2-muted);font-size:14px">I cite AFS documents S01–S06 and REF word for word. Literature is marked as secondary.</p></div>
+        </div>
+        <div class="composer"><div class="cbox"><textarea aria-label="Enquiry" rows="6" placeholder="Paste the enquiry as received"></textarea><button class="btn" type="button">Assess</button></div><p class="tips">last run 13 min 42 s · you can keep chatting while it runs</p></div>
+      </div>
+      <div class="sheet">
+        <div class="sheettop"><div class="revs"><button type="button" aria-pressed="true">Rev —</button></div></div>
+        <div class="canvas" style="min-height:700px"><svg class="dwg" viewBox="0 0 1000 420" aria-hidden="true">
+          <g class="ghost">
+            <path class="ln" d="M30 90 H970" stroke-width="8"/>
+            <path class="ln" d="M520 96 V164"/><circle class="bub" cx="520" cy="190" r="26"/><text class="tg" x="520" y="195">AE</text>
+            <path class="fib" d="M520 216 V300"/>
+            <rect class="box" x="450" y="300" width="140" height="54"/><text class="lb" x="466" y="332">Spectrometer</text>
+            <path class="ln" d="M590 327 H640"/><rect class="box" x="640" y="300" width="140" height="54"/><text class="lb" x="656" y="332">Model</text>
+            <path class="ln" d="M780 327 H830"/><rect class="box" x="830" y="300" width="140" height="54"/><text class="lb" x="846" y="332">Result</text>
+          </g>
+        </svg>
+          <dl class="tblock"><dt>Title</dt><dd class="ttl">—</dd><dt>Status</dt><dd>not started</dd><dt>Sheet</dt><dd>drawn by code from the assessment</dd></dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="screen-label"><strong>c2-running</strong> Turn 1 running: activity lines in the thread, the sheet drafts part by part · 06:12</p>
+  <div class="screen c2" id="c2-running" data-opt="O2">
+    <div class="appbar"><span class="wm"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="11" y="15" text-anchor="middle" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="currentColor">AE</text></svg>AFS Line</span><span class="crumb">Whey stream · drafting Rev A</span><button class="btn line" type="button">Threads</button><button class="btn" type="button">Export</button></div>
+    <div class="split">
+      <div class="chat">
+        <div class="msgs">
+          <div class="m-user"><span class="m-who">You</span><span class="clamp">Our dairy process includes a relatively clear whey stream before a concentration stage. We want to investigate whether spectroscopy can track protein concentration as the stream changes, with laboratory results used as the reference…</span></div>
+          <div class="m-ai" aria-live="polite"><span class="m-who">Assistant · working · 06:12</span>
+            <ol class="act">
+              <li><time>00:00</time><span>Reading the enquiry</span></li>
+              <li><time>00:59</time><span>4 stated requirements, 6 unknowns</span></li>
+              <li><time>00:59</time><span>Screened 10 routes: NIR transmission, MIR ATR, Raman, UV-Vis ATR, UV-Vis transmission pass</span></li>
+              <li class="now"><time>06:12</time><span>Writing the assessment and drawing Rev A…</span></li>
+              <li class="todo"><time>—</time><span>Check every quote word for word</span></li>
+              <li class="todo"><time>—</time><span>Search secondary literature</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="composer"><div class="cbox"><textarea aria-label="Message" rows="1" placeholder="Queue a follow-up…"></textarea><button class="btn line" type="button">Stop</button></div></div>
+      </div>
+      <div class="sheet">
+        <div class="sheettop"><div class="revs"><button type="button" aria-pressed="true">Rev A · drafting</button></div></div>
+        <div class="canvas" style="min-height:700px"><svg class="dwg" viewBox="0 0 1000 420" role="img" aria-label="Partial drawing: whey line and two candidate probes drawn; spectrometers, model and result pending">
+          <path class="pipe-o" d="M30 90 H970"/><path class="pipe-i" d="M30 90 H970"/>
+          <text class="sm" x="34" y="62">WHEY LINE · before concentration stage</text>
+          <path class="ln" d="M230 96 V164"/><circle class="bub" cx="230" cy="190" r="26"/><text class="tg" x="230" y="187">AE</text><text class="tn" x="230" y="203">101</text>
+          <text class="sm" x="264" y="186">NIR transmission</text><text class="sm" x="264" y="202">passes screening</text>
+          <path class="ln" d="M430 96 V164"/><circle class="bub" cx="430" cy="190" r="26"/><text class="tg" x="430" y="187">AE</text><text class="tn" x="430" y="203">102</text>
+          <text class="sm" x="464" y="186">MIR ATR</text><text class="sm" x="464" y="202">passes screening</text>
+          <g class="ghost">
+            <path class="fib" d="M230 216 V300"/><path class="fib" d="M430 216 V300"/>
+            <rect class="box" x="160" y="300" width="140" height="54"/><rect class="box" x="360" y="300" width="140" height="54"/>
+            <rect class="box" x="580" y="300" width="150" height="54"/><text class="lb" x="596" y="332">writing…</text>
+            <rect class="box" x="790" y="300" width="160" height="54"/>
+          </g>
+        </svg>
+          <dl class="tblock"><dt>Title</dt><dd class="ttl">A clear whey stream before concentration</dd><dt>Status</dt><dd>drafting</dd><dt>Screening</dt><dd>5 of 10 routes pass S01 Table 1 + rules</dd><dt>Quotes</dt><dd>checked after the draft</dd></dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="screen-label"><strong>c2-answer</strong> After three turns: answer (Rev A) → “Compare the options” (inline table) → new facts (Rev B). A ref is opened as a verification card on the sheet.</p>
+  <div class="screen c2" id="c2-answer" data-opt="O2">
+    <div class="appbar"><span class="wm"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="11" y="15" text-anchor="middle" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="currentColor">AE</text></svg>AFS Line</span><span class="crumb">Whey stream · Rev B current · 29 of 29 quotes verified</span><button class="btn line" type="button">Threads</button><button class="btn" type="button">Export</button></div>
+    <div class="split">
+      <div class="chat">
+        <div class="msgs">
+          <div class="m-user"><span class="m-who">You</span><span class="clamp">Our dairy process includes a relatively clear whey stream before a concentration stage. We want to investigate whether spectroscopy can track protein concentration as the stream changes…</span></div>
+          <div class="m-ai"><span class="m-who">Assistant · Rev A · 13 min 42 s</span>
+            <h3>Start with NIR transmission/transflection; keep mid-IR ATR as the fallback.</h3>
+            <p>The sources name whey as a preferred case for NIR transmission <span class="ref open">S01 p.18</span>, and it is the least effort. A fused NIR plus mid-IR ATR model is a later hypothesis.</p>
+            <div class="sheetref"><span class="ico">REV<br>A</span><span><b>Setup drawn: option O2</b><small>Provisional · Medium · 3 open questions on the sheet</small></span><button type="button">Show</button></div>
+            <div class="qchips"><button class="qchip" type="button"><b>Q1</b>Range &amp; accuracy?</button><button class="qchip" type="button"><b>Q2</b>How turbid?</button><button class="qchip" type="button"><b>Q3</b>Measurement point?</button><button class="qchip plain" type="button">Compare the options</button></div>
+          </div>
+          <div class="m-user"><span class="m-who">You</span>Compare the options</div>
+          <div class="m-ai"><span class="m-who">Assistant</span>
+            <p>O2 is recommended because it covers both the clear and the turbid state. The cost class comes from <span class="ref">S01 Table 1 (p.6)</span> and is not a price.</p>
+            <table class="mini">
+              <thead><tr><th></th><th>O1 Simple</th><th class="rec">O2 Rec.</th><th>O3 Ext.</th></tr></thead>
+              <tbody>
+                <tr><th>Cost</th><td>average</td><td class="rec">high</td><td>high</td></tr>
+                <tr><th>Ease</th><td>one probe, one flow cell</td><td class="rec">two probes, one method at a time</td><td>two instruments, one fused model</td></tr>
+                <tr><th>Fit</th><td>clear stream only</td><td class="rec">clear and turbid states</td><td>may add robustness</td></tr>
+                <tr><th>Conf.</th><td>Medium</td><td class="rec">Medium</td><td>Low</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="m-user"><span class="m-who">You · customer facts</span>The line runs at 60 °C, and turbidity goes up to 200 NTU.</div>
+          <div class="m-ai"><span class="m-who">Assistant · Rev B</span>
+            <span class="illus">illustrative · no re-run yet · reuses v1 claims only</span>
+            <p>Recommendation unchanged. No source states an NTU limit for NIR transmission, so the sample series (plan steps 3–4) decides it.</p>
+            <ul class="chg">
+              <li><span class="s">✓</span><span>Q2 closed: up to 200 NTU (customer)</span></li>
+              <li><span class="s">~</span><span>Q4 narrowed: 60 °C stated; pressure, cleaning open</span></li>
+              <li><span class="s">=</span><span>Confidence O2 Medium, now only Q1 open</span></li>
+              <li><span class="s">=</span><span>Status Provisional</span></li>
+            </ul>
+            <div class="sheetref"><span class="ico">REV<br>B</span><span><b>Sheet updated: 2 clouds left</b><small>Q2 closed on AE 102 · 60 °C on TT 104</small></span><button type="button">Compare A/B</button></div>
+          </div>
+        </div>
+        <div class="composer"><div class="cbox"><textarea aria-label="Message" rows="1" placeholder="Ask, or add what the customer said"></textarea><button class="btn" type="button">Send</button></div><p class="tips">new facts create a new revision</p></div>
+      </div>
+      <div class="sheet">
+        <div class="sheettop">
+          <div class="revs" role="group" aria-label="Revisions"><button type="button" aria-pressed="false">Rev A · v1</button><button type="button" aria-pressed="true">Rev B · v2 current</button></div>
+          <div class="optsw sm" role="group" aria-label="Solution option"><button type="button" data-c2-opt="O1" aria-pressed="false"><b>O1</b></button><button type="button" data-c2-opt="O2" aria-pressed="true"><b>O2 Recommended</b></button><button type="button" data-c2-opt="O3" aria-pressed="false"><b>O3</b></button></div>
+        </div>
+        <div class="canvas"><svg class="dwg" viewBox="0 0 1000 420" role="img" aria-labelledby="c2-dwg-t">
+          <title id="c2-dwg-t">Setup for option O2: whey line with NIR transmission probe AE 101 and MIR ATR probe AE 102, fibers to two spectrometers, chemometric model, result protein concentration; turbidity AT 103 and temperature TT 104 as auxiliary signals. Revision B: Q2 answered; clouds mark open questions Q1 and Q3.</title>
+          <path class="pipe-o" d="M30 90 H970"/><path class="pipe-i" d="M30 90 H970"/>
+          <path class="ln" d="M930 82 l14 8 l-14 8" stroke-width="2"/>
+          <text class="sm" x="34" y="56">WHEY LINE · before concentration stage</text>
+          <text class="sm" x="850" y="56">to concentration</text>
+
+          <g data-c2-part="ae101" class="is-sel" tabindex="0" role="button" aria-label="AE 101, NIR transmission probe">
+            <path class="ln" d="M230 96 V164"/><circle class="bub" cx="230" cy="190" r="26"/><text class="tg" x="230" y="187">AE</text><text class="tn" x="230" y="203">101</text>
+            <text class="lb" x="264" y="186">NIR trans./transfl.</text><text class="sm" x="264" y="204">probe · primary (M1)</text>
+          </g>
+          <g class="mir" data-c2-part="ae102" tabindex="0" role="button" aria-label="AE 102, MIR ATR probe">
+            <path class="ln" d="M470 96 V164"/><circle class="bub" cx="470" cy="190" r="26"/><text class="tg" x="470" y="187">AE</text><text class="tn" x="470" y="203">102</text>
+            <text class="lb" x="504" y="186">MIR ATR</text><text class="sm" x="504" y="204">probe · fallback (M2)</text>
+          </g>
+          <g data-c2-part="at103" tabindex="0" role="button" aria-label="AT 103, turbidity sensor">
+            <path class="ln" d="M700 96 V164"/><circle class="bub" cx="700" cy="190" r="26"/><text class="tg" x="700" y="187">AT</text><text class="tn" x="700" y="203">103</text>
+            <text class="sm" x="734" y="186">turbidity</text><text class="sm" x="734" y="202">confirm w/ AFS</text>
+          </g>
+          <g>
+            <path class="ln" d="M860 96 V164"/><circle class="bub" cx="860" cy="190" r="26"/><text class="tg" x="860" y="187">TT</text><text class="tn" x="860" y="203">104</text>
+            <text class="sm" x="894" y="186">temp.</text><text class="sm" x="894" y="202">60 °C</text>
+          </g>
+
+          <path class="fib" d="M230 216 V300"/><text class="sm" x="240" y="262">silica fiber</text>
+          <g class="mir"><path class="fib" d="M470 216 V300"/><text class="sm" x="480" y="256">chalcogenide / PIR fiber</text><text class="sm" x="480" y="272">length: no source states it</text></g>
+
+          <rect class="box" x="160" y="300" width="140" height="54"/><text class="lb" x="174" y="332">NIR spectrometer</text>
+          <g class="mir"><rect class="box" x="400" y="300" width="140" height="54"/><text class="lb" x="414" y="332">MIR spectrometer</text>
+          <path class="ln" d="M540 327 H600"/></g>
+          <path class="ln" d="M230 354 V392 H660 V354"/>
+          <rect class="box" x="600" y="300" width="150" height="54"/><text class="lb" x="614" y="324"><tspan class="t-o2">Chemometric</tspan><tspan class="t-o3">Data fusion</tspan></text><text class="lb" x="614" y="342"><tspan class="t-o2">models</tspan><tspan class="t-o3">model</tspan></text>
+          <path class="sig" d="M700 216 V300"/><path class="sig" d="M860 216 V270 H730 V300"/>
+          <path class="ln" d="M750 327 H800"/>
+          <rect class="box res" x="800" y="300" width="160" height="54"/><text class="lb inv" x="814" y="324">Result</text><text class="lb inv" x="814" y="342">protein conc.</text>
+
+          <path class="cloud" d="M150.0 72.0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.7 7.7 0 0 1 13.9 0 a7.0 7.0 0 0 1 0 12.7 a7.0 7.0 0 0 1 0 12.7 a7.0 7.0 0 0 1 0 12.7 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.7 7.7 0 0 1 -13.9 0 a7.0 7.0 0 0 1 0 -12.7 a7.0 7.0 0 0 1 0 -12.7 a7.0 7.0 0 0 1 0 -12.7 Z"/>
+          <g class="qtag"><rect x="548" y="70" width="168" height="22" rx="2"/><text x="556" y="86">Q3 · point not fixed</text></g>
+          
+          <g class="qtag mir"><rect x="494" y="124" width="200" height="22" rx="2"/><text x="502" y="140">Q2 ✓ up to 200 NTU (cust.)</text></g>
+          <path class="cloud" d="M786.0 288.0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a8.0 8.0 0 0 1 14.5 0 a7.3 7.3 0 0 1 0 13.3 a7.3 7.3 0 0 1 0 13.3 a7.3 7.3 0 0 1 0 13.3 a7.3 7.3 0 0 1 0 13.3 a7.3 7.3 0 0 1 0 13.3 a7.3 7.3 0 0 1 0 13.3 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a8.0 8.0 0 0 1 -14.5 0 a7.3 7.3 0 0 1 0 -13.3 a7.3 7.3 0 0 1 0 -13.3 a7.3 7.3 0 0 1 0 -13.3 a7.3 7.3 0 0 1 0 -13.3 a7.3 7.3 0 0 1 0 -13.3 a7.3 7.3 0 0 1 0 -13.3 Z"/>
+          <g class="qtag"><rect x="806" y="372" width="148" height="22" rx="2"/><text x="814" y="388">Q1 · range, accuracy</text></g>
+        </svg>
+          <div class="verify" role="dialog" aria-label="Verification of citation S01 p.18">
+            <button class="x" type="button" aria-label="Close">×</button>
+            <p class="for">claim on AE 101 · primary candidate</p>
+            <h4>S01 p.18 · NIR Transmission</h4>
+            <p class="ctx">…<mark>NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</mark> The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer of the sample…</p>
+            <span class="ok"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>found word for word · page in scope</span>
+          </div>
+          
+          <dl class="tblock">
+            <dt>Title</dt><dd class="ttl">A clear whey stream before concentration</dd>
+            <dt>Status</dt><dd><span class="flag">Provisional feasibility assessment</span></dd>
+            <dt>Confidence</dt><dd>Medium for O2 · Q1 open</dd>
+            <dt>Cost class</dt><dd>high · S01 Table 1 (p.6) rows 2, 7</dd>
+            <dt>Quotes</dt><dd>29 of 29 found word for word</dd>
+            <dt>Revision</dt><dd>B · after customer facts (illustrative)</dd>
+          </dl>
+          <ol class="chain" aria-label="Setup chain, O2">
+          <li><span class="b sq">LINE</span><span><strong>Whey line, before concentration</strong><small>measurement point not fixed</small><span class="qmark">Q3</span></span></li>
+          <li class="sel"><span class="b">AE<br>101</span><span><strong>NIR transmission/transflection probe</strong><small>primary · M1 · 3 quotes</small></span></li>
+          <li><span class="b">AE<br>102</span><span><strong>MIR ATR probe</strong><small>fallback · M2</small><span class="qmark">Q2 ✓</span></span></li>
+          <li><span class="b sq">FIB</span><span><strong>Silica (NIR) · chalcogenide/PIR (MIR)</strong><small>MIR link length: no source</small></span></li>
+          <li><span class="b sq">SPEC</span><span><strong>NIR + MIR spectrometers</strong></span></li>
+          <li><span class="b sq">MOD</span><span><strong>Chemometric models</strong><small>+ AT 103 turbidity, TT 104 temperature</small></span></li>
+          <li><span class="b sq res">OUT</span><span><strong>Protein concentration</strong><span class="qmark">Q1</span></span></li>
+        </ol>
+        </div>
+        <div class="dnotes">
+          <div><h4>Drawing notes · parameters</h4><ol><li><strong>Protein concentration</strong>, required, by NIR spectroscopy <span class="r">S01 p.17</span></li><li><strong>Turbidity</strong>, required, in-line sensor AT 103 (confirm with AFS) <span class="r">S01 p.7</span></li><li><strong>Temperature</strong>, optional, TT 104 <span class="r">engineering judgement</span></li></ol></div>
+          <div><h4>Risks</h4><ol><li>NIR transmission loses signal when a dairy stream becomes too thick <span class="r">S01 p.18 · R-GEO-2</span></li><li>Calibration is matrix-specific; a new whey type needs re-validation <span class="r">REF p.5 · R-CAL-1</span></li><li>No source states a mid-IR fiber link length <span class="r">R-FIB-1</span></li></ol></div>
+          <div style="grid-column:1 / -1"><h4>Open items on this sheet</h4><ol>
+            <li><strong>Q1</strong> What protein concentration range must be covered, and what accuracy and response time are required? <span class="r">cloud on result · affects method, status</span></li>
+            <li><strong>Q3</strong> Where is the measurement point (in-line, bypass or at-line), and how far is the analyzer from it? <span class="r">cloud on whey line · affects installation</span></li>
+            <li><strong>Q5</strong> Which laboratory method and sampling frequency give the reference protein values, and with what uncertainty? <span class="r">affects status</span></li>
+            <li style="color:var(--c2-muted)"><strong>Q2</strong> closed in Rev B: up to 200 NTU (customer) <span class="r">illustrative</span></li>
+          </ol></div>
+          <p class="legend" aria-hidden="true"><span><svg width="16" height="16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>field instrument (ISA tag)</span><span><svg width="28" height="8"><path d="M0 4 H28" stroke="currentColor" stroke-width="2" stroke-dasharray="8 2 2 2"/></svg>fiber</span><span><svg width="28" height="8"><path d="M0 4 H28" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 4"/></svg>auxiliary signal</span><span><svg width="16" height="12"><path d="M2 10 a3 3 0 0 1 4-5 a3 3 0 0 1 6 0 a3 3 0 0 1 2 5Z" fill="none" stroke="currentColor"/></svg>open question</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="extras">
+    <figure class="phone-frame solo-skip"><iframe title="Line at 390 px" src="index.html?solo=c2-answer" loading="lazy"></iframe><figcaption>c2-mobile · 390 px: sheet as a chain above the thread</figcaption></figure>
+    <div>
+      <div class="c2" data-theme="dark" style="border:1px solid var(--shell-rule)">
+        <div class="canvas" style="padding:24px;border:0;min-height:0">
+          <svg class="dwg" viewBox="0 0 560 150" role="img" aria-label="Dark mode sample of the drawing">
+            <path class="pipe-o" d="M10 30 H550"/><path class="pipe-i" d="M10 30 H550"/>
+            <g class="is-sel" data-c2-part="x"><path class="ln" d="M90 36 V82"/><circle class="bub" cx="90" cy="108" r="26"/><text class="tg" x="90" y="105">AE</text><text class="tn" x="90" y="121">101</text></g>
+            <text class="lb" x="128" y="104">NIR trans./transfl.</text><text class="sm" x="128" y="122">primary · S01 p.18</text>
+            <path class="ln" d="M380 36 V82"/><circle class="bub" cx="380" cy="108" r="26"/><text class="tg" x="380" y="105">AE</text><text class="tn" x="380" y="121">102</text>
+            <path class="cloud" d="M340.0 72.0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.6 7.6 0 0 1 13.8 0 a7.7 7.7 0 0 1 0 14.0 a7.7 7.7 0 0 1 0 14.0 a7.7 7.7 0 0 1 0 14.0 a7.7 7.7 0 0 1 0 14.0 a7.7 7.7 0 0 1 0 14.0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.6 7.6 0 0 1 -13.8 0 a7.7 7.7 0 0 1 0 -14.0 a7.7 7.7 0 0 1 0 -14.0 a7.7 7.7 0 0 1 0 -14.0 a7.7 7.7 0 0 1 0 -14.0 a7.7 7.7 0 0 1 0 -14.0 Z"/>
+          </svg>
+          <dl class="tblock" style="position:static;width:100%;margin-top:12px"><dt>Status</dt><dd><span class="flag">Provisional feasibility assessment</span></dd><dt>Confidence</dt><dd>Medium · Q1, Q2 open</dd></dl>
+        </div>
+      </div>
+      
+      <p class="swatch-cap">Dark mode · paper oklch(19% .02 245) · ink oklch(94% .01 230) · amber oklch(80% .14 75)</p>
+    </div>
+  </div>
+</section>
+<style>
+/* Hallmark · macrostructure: Workbench (three-pane research desk) · tone: utilitarian · anchor hue: 255 cool slate / accents indigo 275 + highlighter 100
+ * theme: custom (vibe: "research desk, highlighter on page, receipts") · paper oklch(97.5% 0.005 250) · accent oklch(46% 0.15 275)
+ * fonts: Hanken Grotesk (UI, OFL) + Literata (source text + quotes, OFL)
+ * axes: light / sans + text-serif / cool */
+.c3 {
+  --c3-paper: oklch(97.5% 0.005 250); --c3-panel: oklch(95% 0.007 250); --c3-panel-2: oklch(92% 0.009 250);
+  --c3-ink: oklch(21% 0.015 260); --c3-ink-2: oklch(35% 0.015 260); --c3-muted: oklch(47% 0.015 260); --c3-rule: oklch(86% 0.008 250); --c3-rule-2: oklch(70% 0.01 255);
+  --c3-accent: oklch(46% 0.15 275); --c3-accent-wash: oklch(93% 0.03 275); --c3-hl: oklch(91% 0.12 100); --c3-ok: oklch(45% 0.1 155); --c3-focus: oklch(46% 0.15 275);
+  --c3-ui: "Hanken Grotesk", "Helvetica Neue", sans-serif; --c3-text: "Literata", Georgia, serif;
+  background: var(--c3-paper); color: var(--c3-ink); font: 16px/1.55 var(--c3-ui);
+}
+[data-theme="dark"] .c3, .c3[data-theme="dark"] {
+  --c3-paper: oklch(16.5% 0.01 260); --c3-panel: oklch(19.5% 0.012 260); --c3-panel-2: oklch(23% 0.014 260);
+  --c3-ink: oklch(93% 0.008 250); --c3-ink-2: oklch(84% 0.01 250); --c3-muted: oklch(72% 0.012 255); --c3-rule: oklch(30% 0.012 260); --c3-rule-2: oklch(45% 0.014 260);
+  --c3-accent: oklch(76% 0.11 275); --c3-accent-wash: oklch(28% 0.05 275); --c3-hl: oklch(44% 0.09 100); --c3-ok: oklch(78% 0.11 155); --c3-focus: oklch(76% 0.11 275);
+}
+.c3 :focus-visible { outline: 2px solid var(--c3-focus); outline-offset: 2px; }
+.c3 .top { display: flex; align-items: center; gap: var(--space-lg); padding: 10px var(--space-lg); border-bottom: 1px solid var(--c3-rule); }
+.c3 .logo { font: 700 17px/1 var(--c3-ui); letter-spacing: -0.01em; white-space: nowrap; }
+.c3 .logo span { font: italic 400 17px/1 var(--c3-text); color: var(--c3-muted); margin-left: 6px; }
+.c3 .crumb { flex: 1; min-width: 0; font-size: 14px; color: var(--c3-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c3 .btn { white-space: nowrap; min-height: 40px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--c3-ink); background: var(--c3-ink); color: var(--c3-paper); font: 600 15px/1 var(--c3-ui); cursor: pointer; display: inline-flex; align-items: center; }
+.c3 .btn:hover { background: var(--c3-ink-2); }
+.c3 .btn.q { background: transparent; color: var(--c3-ink); border-color: var(--c3-rule-2); }
+.c3 .btn.q:hover { background: var(--c3-panel); }
+.c3 .desk { display: grid; grid-template-columns: 240px minmax(0, 1fr) 440px; min-height: 900px; }
+.c3 .rail { border-right: 1px solid var(--c3-rule); padding: var(--space-lg) var(--space-md); background: var(--c3-panel); min-width: 0; }
+.c3 .rail h3, .c3 .ev h3 { font: 700 12px/1.4 var(--c3-ui); text-transform: uppercase; letter-spacing: 0.07em; color: var(--c3-muted); margin: 0 0 var(--space-sm); }
+.c3 .pin { display: block; width: 100%; text-align: left; border: 1px solid var(--c3-rule); background: var(--c3-paper); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; }
+.c3 .pin:hover { border-color: var(--c3-rule-2); }
+.c3 .pin b { display: block; font-size: 14.5px; }
+.c3 .pin small { font-size: 13px; color: var(--c3-muted); }
+.c3 .pin.cur { border-color: var(--c3-accent); box-shadow: inset 0 0 0 1px var(--c3-accent); }
+.c3 .rail .hist { list-style: none; padding: 0; margin: var(--space-lg) 0 0; font-size: 14px; }
+.c3 .rail .hist li { padding: 6px 0; border-top: 1px solid var(--c3-rule); color: var(--c3-ink-2); }
+.c3 .center { min-width: 0; display: flex; flex-direction: column; }
+.c3 .msgs { flex: 1; padding: var(--space-xl) clamp(16px, 3vw, 48px) var(--space-lg); max-width: 820px; width: 100%; margin: 0 auto; }
+.c3 .u { margin: 0 0 var(--space-lg); }
+.c3 .u p { margin: 0; font: 600 22px/1.35 var(--c3-ui); letter-spacing: -0.01em; }
+.c3 .u p.clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 19px; font-weight: 500; }
+.c3 .lbl { font: 700 12px/1.4 var(--c3-ui); text-transform: uppercase; letter-spacing: 0.07em; color: var(--c3-muted); margin: 0 0 6px; display: block; }
+.c3 .srcrow { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 var(--space-md); }
+.c3 .srcchip { border: 1px solid var(--c3-rule); background: var(--c3-panel); border-radius: 6px; padding: 5px 9px; font-size: 13px; white-space: nowrap; }
+.c3 .srcchip b { color: var(--c3-accent); margin-right: 4px; }
+.c3 .a { padding-bottom: var(--space-xl); margin-bottom: var(--space-xl); border-bottom: 1px solid var(--c3-rule); }
+.c3 .a p { margin: 0 0 var(--space-md); font-size: 17px; line-height: 1.6; max-width: 68ch; }
+.c3 .cite { display: inline-grid; place-items: center; min-width: 22px; height: 20px; padding: 0 5px; border-radius: 5px; background: var(--c3-accent-wash); color: var(--c3-accent); font: 700 12px/1 var(--c3-ui); vertical-align: 2px; cursor: pointer; border: 0; }
+.c3 .cite[aria-pressed="true"] { background: var(--c3-accent); color: var(--c3-paper); }
+.c3 .hlclaim { background: var(--c3-hl); color: var(--c3-ink); padding: 1px 0; }
+.c3 .card { border: 1px solid var(--c3-rule-2); border-radius: 10px; background: var(--c3-paper); margin: var(--space-md) 0; overflow: hidden; }
+.c3 .card-h { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); padding: 10px 14px; border-bottom: 1px solid var(--c3-rule); background: var(--c3-panel); }
+.c3 .card-h b { font-size: 15px; }
+.c3 .card-h .acts { display: flex; gap: 4px; }
+.c3 .card-h .acts button { border: 1px solid transparent; background: none; font: 600 13px/1 var(--c3-ui); color: var(--c3-ink-2); padding: 6px 8px; border-radius: 5px; cursor: pointer; white-space: nowrap; min-height: 30px; }
+.c3 .card-h .acts button:hover { border-color: var(--c3-rule-2); }
+.c3 .card-b { padding: 14px; }
+.c3 .reco { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-md); align-items: start; }
+.c3 .reco h4 { margin: 0 0 4px; font: 700 22px/1.25 var(--c3-ui); letter-spacing: -0.015em; }
+.c3 .reco p { font-size: 15px; margin: 0; color: var(--c3-ink-2); }
+.c3 .badges { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.c3 .badge { font: 600 13px/1 var(--c3-ui); padding: 6px 9px; border-radius: 5px; border: 1px solid var(--c3-rule-2); white-space: nowrap; }
+.c3 .badge.st { border-color: var(--c3-ink); }
+.c3 table { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.c3 th, .c3 td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--c3-rule); vertical-align: top; }
+.c3 thead th { font: 700 12px/1.3 var(--c3-ui); text-transform: uppercase; letter-spacing: 0.05em; color: var(--c3-muted); }
+.c3 td.rec, .c3 th.rec { background: var(--c3-accent-wash); padding-left: 8px; }
+.c3 .follow { display: flex; gap: 6px; flex-wrap: wrap; margin-top: var(--space-md); }
+.c3 .fchip { border: 1px solid var(--c3-rule-2); background: var(--c3-paper); border-radius: 999px; padding: 7px 13px; font: 500 14px/1.2 var(--c3-ui); cursor: pointer; white-space: nowrap; min-height: 36px; }
+.c3 .fchip:hover { background: var(--c3-panel); }
+.c3 .fchip.q { border-color: var(--c3-accent); color: var(--c3-accent); }
+.c3 .fchip.q b { margin-right: 4px; }
+.c3 .sk-box { fill: var(--c3-paper); stroke: var(--c3-ink); stroke-width: 1.2; }
+.c3 .sk-box.res { fill: var(--c3-ink); }
+.c3 .sk-t { fill: var(--c3-ink); font: 600 13px var(--c3-ui); }
+.c3 .sk-t.inv { fill: var(--c3-paper); }
+.c3 .sk-s { fill: var(--c3-muted); font: 12px var(--c3-ui); }
+.c3 .sk-l { stroke: var(--c3-ink); stroke-width: 1.2; fill: none; }
+.c3 .sk-d { stroke: var(--c3-muted); stroke-width: 1.2; stroke-dasharray: 3 4; fill: none; }
+.c3 .sk-pipe { stroke: var(--c3-ink); stroke-width: 7; fill: none; }
+.c3 .sk-pipe-in { stroke: var(--c3-paper); stroke-width: 4; fill: none; }
+.c3 figure.sketch { margin: 0; } .c3 figure.sketch svg { width: 100%; height: auto; display: block; } .c3 figure.sketch figcaption { font-size: 13px; color: var(--c3-muted); margin-top: 6px; }
+.c3 .chg { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 14px; font-size: 14.5px; margin: 0; }
+.c3 .chg dt { font-weight: 700; }
+.c3 .chg dd { margin: 0; }
+.c3 .chg del { color: var(--c3-muted); }
+.c3 .chg ins { text-decoration: none; background: var(--c3-hl); color: var(--c3-ink); padding: 0 2px; }
+.c3 .illus { font-size: 12.5px; color: var(--c3-muted); border: 1px dashed var(--c3-rule-2); border-radius: 5px; padding: 3px 8px; display: inline-block; margin-bottom: var(--space-sm); }
+.c3 .composer { position: sticky; bottom: 0; background: var(--c3-paper); padding: var(--space-sm) clamp(16px, 3vw, 48px) var(--space-lg); }
+.c3 .composer .cb { max-width: 820px; margin: 0 auto; display: flex; gap: 8px; align-items: end; border: 1px solid var(--c3-rule-2); border-radius: 10px; padding: 8px 8px 8px 14px; background: var(--c3-paper); }
+.c3 .composer .cb:focus-within { border-color: var(--c3-focus); box-shadow: 0 0 0 1px var(--c3-focus); }
+.c3 .composer textarea { flex: 1; border: 0; background: transparent; resize: none; font: 16px/1.5 var(--c3-ui); min-height: 44px; padding: 8px 0; }
+.c3 .composer textarea:focus-visible { outline: none; }
+.c3 .ev { border-left: 1px solid var(--c3-rule); background: var(--c3-panel); padding: var(--space-lg); min-width: 0; }
+.c3 .ev .doc { font: 700 13px/1.4 var(--c3-ui); color: var(--c3-muted); margin: 0 0 4px; }
+.c3 .ev h4 { margin: 0 0 var(--space-md); font: 700 20px/1.3 var(--c3-ui); }
+.c3 .page { background: var(--c3-paper); border: 1px solid var(--c3-rule); border-radius: 6px; padding: var(--space-lg); font: 400 15.5px/1.7 var(--c3-text); color: var(--c3-ink-2); }
+.c3 .page mark { background: var(--c3-hl); color: var(--c3-ink); padding: 1px 0; }
+.c3 .receipt { margin: var(--space-md) 0 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 12px; font-size: 14px; }
+.c3 .receipt dt { color: var(--c3-muted); }
+.c3 .receipt dd { margin: 0; }
+.c3 .ok { color: var(--c3-ok); font-weight: 600; display: inline-flex; gap: 6px; align-items: center; }
+.c3 .others { margin-top: var(--space-lg); }
+.c3 .others button { display: block; width: 100%; text-align: left; border: 0; border-top: 1px solid var(--c3-rule); background: none; padding: 10px 0; font: 400 14.5px/1.45 var(--c3-text); color: var(--c3-ink-2); cursor: pointer; }
+.c3 .others button b { font: 700 13px/1 var(--c3-ui); color: var(--c3-accent); margin-right: 6px; }
+.c3 .act { list-style: none; padding: 0; margin: 0 0 var(--space-lg); font-size: 16px; }
+.c3 .act li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--c3-rule); align-items: center; }
+.c3 .act .i { width: 14px; height: 14px; border-radius: 50%; background: var(--c3-ok); }
+.c3 .act li.now .i { background: transparent; border: 2px solid var(--c3-accent); border-top-color: transparent; animation: c3spin 1s linear infinite; }
+.c3 .act li.todo .i { background: transparent; border: 1.5px solid var(--c3-rule-2); }
+.c3 .act li.todo { color: var(--c3-muted); }
+.c3 .act time { font-size: 13px; color: var(--c3-muted); font-variant-numeric: tabular-nums; }
+@keyframes c3spin { to { transform: rotate(360deg); } }
+.c3 .skel { height: 12px; border-radius: 3px; background: var(--c3-panel-2); margin: 10px 0; }
+.c3 .srclist { list-style: none; margin: 0; padding: 0; font-size: 14.5px; }
+.c3 .srclist li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--c3-rule); }
+.c3 .srclist span { color: var(--c3-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.c3 .hero { max-width: 760px; margin: 0 auto; padding: var(--space-4xl) clamp(16px, 3vw, 48px) var(--space-xl); }
+.c3 .hero h2 { margin: 0 0 var(--space-sm); font: 700 clamp(32px, 3.4vw, 44px)/1.1 var(--c3-ui); letter-spacing: -0.025em; }
+.c3 .hero p { margin: 0 0 var(--space-lg); color: var(--c3-ink-2); font-size: 17px; }
+.c3 .hero .cb { border: 1px solid var(--c3-rule-2); border-radius: 12px; padding: 12px; background: var(--c3-paper); }
+.c3 .hero textarea { width: 100%; border: 0; resize: vertical; min-height: 180px; background: transparent; font: 17px/1.55 var(--c3-ui); padding: 4px; }
+.c3 .hero textarea:focus-visible { outline: none; }
+.c3 .hero .cb:focus-within { border-color: var(--c3-focus); box-shadow: 0 0 0 1px var(--c3-focus); }
+.c3 .hero .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.c3 .hero .row span { font-size: 13.5px; color: var(--c3-muted); }
+@media (max-width: 1200px) { .c3 .desk { grid-template-columns: 200px minmax(0, 1fr) 360px; } }
+@media (max-width: 900px) {
+  .c3 .desk { grid-template-columns: minmax(0, 1fr); }
+  .c3 .rail { display: none; }
+  .c3 .ev { border-left: 0; border-top: 1px solid var(--c3-rule); }
+  .c3 .crumb { display: none; }
+  .c3 .msgs { padding-top: var(--space-lg); }
+  .c3 .reco { grid-template-columns: minmax(0, 1fr); }
+  .c3 .badges { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+  .c3 .optt thead { display: none; }
+  .c3 .optt, .c3 .optt tbody, .c3 .optt tr, .c3 .optt th, .c3 .optt td { display: block; width: 100%; }
+  .c3 .optt tr { border-bottom: 1px solid var(--c3-rule-2); padding: 6px 0; }
+  .c3 .optt th, .c3 .optt td { border: 0; padding: 2px 0; }
+  .c3 .optt td::before { content: attr(data-o) " · "; color: var(--c3-muted); font-weight: 700; font-size: 13px; }
+  .c3 td.rec { background: transparent; padding-left: 0; }
+}
+</style>
+
+<section class="concept" id="c3">
+  <div class="concept-intro">
+    <h2>3 · Desk</h2>
+    <dl>
+      <dt>Take</dt><dd>A research chat with three panes: pinned blocks on the left, the thread in the middle, evidence on the right (Perplexity and NotebookLM style). Each answer starts with its source chips. Blocks are cards you can pin, and pinned cards stay in the left rail and update as the thread goes on.</dd>
+      <dt>Signature</dt><dd>Clicking a citation number opens the verification view: the quote highlighted inside its real page text, plus a receipt (exact match, page in scope, which claim it supports). It is the claim → quote → page loop with no window switching.</dd>
+      <dt>Type</dt><dd>Hanken Grotesk (UI, OFL) · Literata (source page text and quotes, OFL)</dd>
+      <dt>Colour</dt><dd>Cool paper and slate ink. Indigo for citations and the recommended column; highlighter yellow only where a quote is marked on its page.</dd>
+      <dt>Space</dt><dd>240 / fluid (max 820) / 440. Phone: the rail collapses into a “Pinned” menu and the evidence pane opens under the thread.</dd>
+    </dl>
+  </div>
+
+  <p class="screen-label"><strong>c3-start</strong> One box, with the sources it will cite listed beside it</p>
+  <div class="screen c3" id="c3-start">
+    <div class="top"><span class="logo">AFS<span>desk</span></span><span class="crumb">New thread</span><button class="btn q" type="button">Threads</button></div>
+    <div class="desk">
+      <aside class="rail"><h3>Pinned</h3><p style="font-size:14px;color:var(--c3-muted);margin:0">Blocks you pin from answers (options, setup, plan) stay here and update after each turn.</p></aside>
+      <div class="center">
+        <div class="hero">
+          <h2>Paste the customer’s enquiry</h2>
+          <p>You get a cited first assessment, then you can ask follow-ups or add the customer’s answers in the same thread.</p>
+          <div class="cb"><label class="sr" for="c3-enq">Enquiry</label><textarea id="c3-enq" placeholder="What does the customer want to measure, in which process, and what do they already know?"></textarea>
+            <div class="row"><span>a recent run took 13 min 42 s</span><button class="btn" type="button">Assess</button></div></div>
+        </div>
+      </div>
+      <aside class="ev">
+        <h3>Sources it will cite</h3>
+        <ul class="srclist"><li>S01 · AFS document<span>19 pages</span></li><li>S02 · slides<span>20 slides</span></li><li>S03 · abstract<span>17 pages</span></li><li>S04 · MIR-ATR + fluorescence probe<span>6 pages</span></li><li>S05 · AFS flyer<span>2 pages</span></li><li>S06 · laboratory link<span>1 page</span></li><li>REF · organizer guidance<span>2 pages</span></li></ul>
+        <p style="font-size:14px;color:var(--c3-muted)">External literature is searched only for gaps and is always marked as secondary, with quote and URL.</p>
+      </aside>
+    </div>
+  </div>
+
+  <p class="screen-label"><strong>c3-running</strong> Turn 1 running: steps in the thread, a counter for the quote check in the evidence pane · 06:12</p>
+  <div class="screen c3" id="c3-running">
+    <div class="top"><span class="logo">AFS<span>desk</span></span><span class="crumb">Whey stream · running</span><button class="btn q" type="button">Stop</button></div>
+    <div class="desk">
+      <aside class="rail"><h3>Pinned</h3><p style="font-size:14px;color:var(--c3-muted);margin:0">Nothing pinned yet.</p></aside>
+      <div class="center">
+        <div class="msgs">
+          <div class="u"><span class="lbl">You</span><p class="clamp">Our dairy process includes a relatively clear whey stream before a concentration stage. We want to investigate whether spectroscopy can track protein concentration as the stream changes…</p></div>
+          <div class="a" aria-live="polite">
+            <span class="lbl">Assistant · 06:12</span>
+            <ol class="act">
+              <li><span class="i"></span><span>Read the enquiry: 4 stated requirements, 6 unknowns</span><time>0:59</time></li>
+              <li><span class="i"></span><span>Screened 10 method/probe routes against S01 Table 1 and rules: 5 pass</span><time>0:59</time></li>
+              <li class="now"><span class="i"></span><span><strong>Writing the assessment</strong></span><time>5:13 so far</time></li>
+              <li class="todo"><span class="i"></span><span>Check every quote word for word</span><time></time></li>
+              <li class="todo"><span class="i"></span><span>Search secondary literature for gaps</span><time></time></li>
+            </ol>
+            <div class="skel" style="width:90%"></div><div class="skel" style="width:76%"></div><div class="skel" style="width:84%"></div>
+          </div>
+        </div>
+        <div class="composer"><div class="cb"><textarea aria-label="Message" rows="1" placeholder="Queue a follow-up"></textarea><button class="btn q" type="button">Queue</button></div></div>
+      </div>
+      <aside class="ev">
+        <h3>Evidence</h3>
+        <p style="font-size:44px;font-weight:700;margin:0;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">— / —</p>
+        <p style="color:var(--c3-muted);margin-top:0">quotes verified · counted when the draft is ready</p>
+        <h3 style="margin-top:32px">Screening result</h3>
+        <table><tbody>
+          <tr><td>NIR transmission/transflection</td><td>pass</td></tr><tr><td>MIR ATR</td><td>pass</td></tr><tr><td>Raman probe</td><td>pass</td></tr><tr><td>UV-Vis ATR · transmission</td><td>pass</td></tr>
+          <tr><td style="color:var(--c3-muted)">NIR diffuse reflection</td><td style="color:var(--c3-muted)">out · Table 1 lists powder, scattering media</td></tr>
+          <tr><td style="color:var(--c3-muted)">Fluorescence</td><td style="color:var(--c3-muted)">out · only fluorescing species</td></tr>
+        </tbody></table>
+      </aside>
+    </div>
+  </div>
+
+  <p class="screen-label"><strong>c3-answer</strong> Three turns. Citation [1] is open in the evidence pane; options and setup are pinned in the rail.</p>
+  <div class="screen c3" id="c3-answer">
+    <div class="top"><span class="logo">AFS<span>desk</span></span><span class="crumb">Whey stream · v2 · 29 of 29 quotes verified · 167 checks</span><button class="btn q" type="button">Copy customer reply</button><button class="btn" type="button">Export</button></div>
+    <div class="desk">
+      <aside class="rail">
+        <h3>Pinned</h3>
+        <button class="pin cur" type="button"><b>Current recommendation</b><small>v2 · NIR transmission first · Provisional · Medium</small></button>
+        <button class="pin" type="button"><b>Options O1–O3</b><small>cost class S01 Table 1</small></button>
+        <button class="pin" type="button"><b>Setup sketch · O2</b><small>updated v2 · 60 °C noted</small></button>
+        <button class="pin" type="button"><b>Open questions</b><small>Q1, Q3, Q5 open · Q2 answered</small></button>
+        <ul class="hist"><li>v1 · first assessment</li><li>v2 · after customer facts</li></ul>
+      </aside>
+      <div class="center">
+        <div class="msgs">
+          <div class="u"><span class="lbl">You</span><p class="clamp">Our dairy process includes a relatively clear whey stream before a concentration stage. We want to investigate whether spectroscopy can track protein concentration as the stream changes, with laboratory results used as the reference…</p></div>
+          <div class="a">
+            <span class="lbl">Assistant · v1</span>
+            <div class="srcrow"><span class="srcchip"><b>1</b>S01 p.18</span><span class="srcchip"><b>2</b>S01 p.5</span><span class="srcchip"><b>3</b>S04 p.4</span><span class="srcchip"><b>4</b>S01 p.18</span><span class="srcchip">+ 25 more</span></div>
+            <p><span class="hlclaim">The sources name whey as a preferred case for NIR transmission</span> <button class="cite" type="button" aria-pressed="true">1</button> and NIR suits online measurement through fiber probes <button class="cite" type="button" aria-pressed="false">2</button>. Because the stream can turn turbid, keep mid-IR ATR as the fallback <button class="cite" type="button" aria-pressed="false">3</button>.</p>
+            <div class="card">
+              <div class="card-h"><b>Recommendation</b><div class="acts"><button type="button">Pin</button><button type="button">Copy</button></div></div>
+              <div class="card-b reco"><div><h4>Start with NIR transmission/transflection</h4><p>Fallback: MIR ATR probe if the turbid state defeats transmission. Later hypothesis: fused NIR + MIR model.</p></div><div class="badges"><span class="badge st">Provisional feasibility</span><span class="badge">Confidence Medium · Q1, Q2 open</span></div></div>
+            </div>
+            <div class="follow"><button class="fchip q" type="button"><b>Q1</b>Range &amp; accuracy?</button><button class="fchip q" type="button"><b>Q2</b>How turbid?</button><button class="fchip q" type="button"><b>Q3</b>Measurement point?</button><button class="fchip" type="button">Compare the options</button><button class="fchip" type="button">Show the setup</button></div>
+          </div>
+          <div class="u"><span class="lbl">You</span><p>Compare the options</p></div>
+          <div class="a">
+            <span class="lbl">Assistant</span>
+            <p>O2 covers the clear and the turbid operating states; O1 only the clear one. O3 adds a fused model whose benefit is not yet shown, so its confidence is Low. Cost class is the relative rating in S01 Table 1 (p.6), not a price.</p>
+            <div class="card">
+              <div class="card-h"><b>Options</b><div class="acts"><button type="button">Pinned ✓</button><button type="button">Expand</button><button type="button">Copy</button></div></div>
+              <div class="card-b">
+                <table class="optt"><thead><tr><th></th><th>O1 Simple</th><th class="rec">O2 Recommended</th><th>O3 Extended</th></tr></thead>
+                <tbody>
+                  <tr><th>Methods</th><td data-o="O1">NIR transmission</td><td class="rec" data-o="O2">NIR transmission + MIR ATR</td><td data-o="O3">NIR + MIR fused</td></tr>
+                  <tr><th>Cost class</th><td data-o="O1">average</td><td class="rec" data-o="O2">high</td><td data-o="O3">high</td></tr>
+                  <tr><th>Ease of use</th><td data-o="O1">single standard probe and flow cell</td><td class="rec" data-o="O2">two probes, one method at a time</td><td data-o="O3">two instruments, one fused model</td></tr>
+                  <tr><th>Fit</th><td data-o="O1">clear stream only</td><td class="rec" data-o="O2">clear and turbid states</td><td data-o="O3">may add robustness</td></tr>
+                  <tr><th>Confidence</th><td data-o="O1">Medium</td><td class="rec" data-o="O2">Medium</td><td data-o="O3">Low</td></tr>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+          <div class="u"><span class="lbl">You · customer facts</span><p>The line runs at 60 °C, and turbidity goes up to 200 NTU.</p></div>
+          <div class="a" style="border-bottom:0">
+            <span class="lbl">Assistant · v2</span>
+            <span class="illus">Illustrative turn. No re-run exists yet; only v1 claims are reused.</span>
+            <p>The recommendation stays. The sources give no NTU limit for NIR transmission, so 200 NTU is a test condition for plan steps 3–4, not a reason to switch.</p>
+            <div class="card">
+              <div class="card-h"><b>What changed · v1 → v2</b><div class="acts"><button type="button">Pin</button></div></div>
+              <div class="card-b"><dl class="chg">
+                <dt>Q2 turbidity</dt><dd><del>open</del> → <ins>up to 200 NTU (customer)</ins></dd>
+                <dt>Q4 conditions</dt><dd><del>open</del> → <ins>60 °C</ins>; pressure, cleaning still open</dd>
+                <dt>Confidence O2</dt><dd>Medium · <del>Q1, Q2 open</del> → <ins>Q1 open</ins></dd>
+                <dt>Recommendation</dt><dd>unchanged</dd>
+                <dt>Status</dt><dd>Provisional, unchanged</dd>
+              </dl></div>
+            </div>
+          </div>
+        </div>
+        <div class="composer"><div class="cb"><textarea aria-label="Message" rows="1" placeholder="Ask a follow-up or add customer facts"></textarea><button class="btn" type="button">Send</button></div></div>
+      </div>
+      <aside class="ev" aria-label="Evidence">
+        <h3>Evidence · citation 1</h3>
+        <p class="doc">S01 · page 18 · AFS material</p>
+        <h4>NIR Transmission</h4>
+        <div class="page">… - NIR Transmission: <mark>NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</mark> The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer of the sample to a detector on the opposite side. The key experimental action is the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume. …</div>
+        <dl class="receipt">
+          <dt>Quote</dt><dd><span class="ok"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>found word for word</span></dd>
+          <dt>Scope</dt><dd>page allowed for this claim</dd>
+          <dt>Supports</dt><dd>M1 · primary candidate (claim highlighted in the thread)</dd>
+        </dl>
+        <div class="others">
+          <h3>Same claim, other quotes</h3>
+          <button type="button"><b>2</b>S01 p.5 · “making it ideal for online applications, including remote measurements via fiber optic probes.”</button>
+          <button type="button"><b>4</b>S01 p.18 · “the precise control of the optical pathlength (usually 1 - 10 mm)…”</button>
+          <h3 style="margin-top:var(--space-lg)">Secondary · not AFS</h3>
+          <button type="button"><b>E02</b>¶12 · “the temperature sensitivity of the OH bands is a severe drawback for measuring aqueous solution in NIR and MIR…” · europepmc.org/article/PMC/PMC7072065</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="extras">
+    <figure class="phone-frame solo-skip"><iframe title="Desk at 390 px" src="index.html?solo=c3-answer" loading="lazy"></iframe><figcaption>c3-mobile · 390 px: evidence under the thread, rail in a menu</figcaption></figure>
+    <div>
+      <div class="c3" data-theme="dark" style="padding:24px;border:1px solid var(--shell-rule)">
+        <div class="card" style="margin-top:0"><div class="card-h"><b>Recommendation</b></div><div class="card-b reco"><div><h4>Start with NIR transmission/transflection</h4><p>Fallback: MIR ATR probe.</p></div><div class="badges"><span class="badge st">Provisional</span><span class="badge">Medium</span></div></div></div>
+        <div class="page"><mark>NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</mark> The setup typically consists of a transmission / transflection probe…</div>
+      </div>
+      <p class="swatch-cap">Dark mode · paper oklch(16.5% .01 260) · ink oklch(93% .008 250) · indigo oklch(76% .11 275) · highlight oklch(44% .09 100)</p>
+    </div>
+  </div>
+</section>
+<style>
+/* Hallmark · macrostructure: Conversational thread, stage mode (projector) · tone: atmospheric-technical · anchor hue: 165 night green / accent 128 lime
+ * theme: custom (vibe: "night shift control room, legible from the back row") · paper oklch(17% 0.015 165) · accent oklch(86% 0.16 128)
+ * fonts: Bricolage Grotesque (display, OFL) + Atkinson Hyperlegible (body, OFL) + Atkinson Hyperlegible Mono (refs, OFL)
+ * axes: dark / geometric-sans display / chromatic-green */
+.c4 {
+  --c4-paper: oklch(17% 0.015 165); --c4-raise: oklch(21% 0.018 165); --c4-raise-2: oklch(25% 0.02 165);
+  --c4-ink: oklch(95% 0.012 140); --c4-ink-2: oklch(86% 0.012 150); --c4-muted: oklch(74% 0.015 160); --c4-rule: oklch(32% 0.018 165); --c4-rule-2: oklch(46% 0.02 165);
+  --c4-accent: oklch(86% 0.16 128); --c4-accent-ink: oklch(20% 0.03 140); --c4-accent-wash: oklch(30% 0.05 135); --c4-warn: oklch(82% 0.12 75); --c4-focus: oklch(86% 0.16 128);
+  --c4-display: "Bricolage Grotesque", "Helvetica Neue", sans-serif; --c4-body: "Atkinson Hyperlegible", "Helvetica Neue", sans-serif; --c4-mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  background: var(--c4-paper); color: var(--c4-ink); font: 19px/1.55 var(--c4-body);
+}
+[data-theme="light"] .c4, .c4[data-theme="light"] {
+  --c4-paper: oklch(97% 0.01 150); --c4-raise: oklch(94% 0.012 150); --c4-raise-2: oklch(90% 0.015 150);
+  --c4-ink: oklch(20% 0.02 165); --c4-ink-2: oklch(32% 0.02 165); --c4-muted: oklch(44% 0.02 165); --c4-rule: oklch(84% 0.015 150); --c4-rule-2: oklch(66% 0.02 160);
+  --c4-accent: oklch(44% 0.12 145); --c4-accent-ink: oklch(97% 0.01 150); --c4-accent-wash: oklch(91% 0.05 135); --c4-warn: oklch(50% 0.12 65); --c4-focus: oklch(44% 0.12 145);
+}
+.c4 :focus-visible { outline: 3px solid var(--c4-focus); outline-offset: 3px; }
+.c4 .hd { display: flex; align-items: center; gap: var(--space-lg); padding: 14px var(--space-xl); border-bottom: 1px solid var(--c4-rule); }
+.c4 .brand { font: 800 22px/1 var(--c4-display); letter-spacing: -0.02em; white-space: nowrap; }
+.c4 .brand i { font-style: normal; color: var(--c4-accent); }
+.c4 .case { flex: 1; min-width: 0; font: 15px/1.3 var(--c4-mono); color: var(--c4-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c4 .btn { white-space: nowrap; min-height: 48px; padding: 0 22px; border-radius: 12px; border: 2px solid var(--c4-accent); background: var(--c4-accent); color: var(--c4-accent-ink); font: 700 18px/1 var(--c4-body); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.c4 .btn:hover { filter: brightness(1.06); }
+.c4 .btn.o { background: transparent; color: var(--c4-ink); border-color: var(--c4-rule-2); }
+.c4 .btn.o:hover { border-color: var(--c4-ink); }
+.c4 .stage { display: grid; grid-template-columns: 210px minmax(0, 1fr) 400px; min-height: 900px; }
+.c4 .stage.nodrawer { grid-template-columns: 210px minmax(0, 1fr); }
+.c4 .revrail { border-right: 1px solid var(--c4-rule); padding: var(--space-xl) var(--space-lg); position: relative; }
+.c4 .revrail h3 { font: 700 13px/1.4 var(--c4-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--c4-muted); margin: 0 0 var(--space-lg); }
+.c4 .revs { list-style: none; margin: 0; padding: 0; position: relative; }
+.c4 .revs::before { content: ""; position: absolute; left: 11px; top: 12px; bottom: 12px; width: 2px; background: var(--c4-rule-2); }
+.c4 .revs li { position: relative; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 12px; padding-bottom: var(--space-xl); }
+.c4 .revs .dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--c4-rule-2); background: var(--c4-paper); position: relative; z-index: 1; }
+.c4 .revs li.cur .dot { background: var(--c4-accent); border-color: var(--c4-accent); }
+.c4 .revs b { display: block; font: 700 20px/1.1 var(--c4-display); }
+.c4 .revs small { display: block; font-size: 15px; color: var(--c4-muted); line-height: 1.4; margin-top: 4px; }
+.c4 .main { min-width: 0; display: flex; flex-direction: column; }
+.c4 .flow { flex: 1; width: 100%; max-width: 980px; margin: 0 auto; padding: var(--space-xl) clamp(16px, 3vw, 48px); }
+.c4 .past { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; gap: var(--space-md); align-items: center; padding: 14px 18px; border: 1px solid var(--c4-rule); border-radius: 14px; margin-bottom: 10px; font-size: 17px; color: var(--c4-ink-2); }
+.c4 .past .w { font: 700 13px/1 var(--c4-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--c4-muted); }
+.c4 .past .t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.c4 .past button { border: 0; background: none; color: var(--c4-ink); font: 700 15px/1 var(--c4-body); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; white-space: nowrap; min-height: 32px; }
+.c4 .you { margin: var(--space-xl) 0 var(--space-md); display: flex; justify-content: flex-end; }
+.c4 .you p { margin: 0; max-width: 70%; background: var(--c4-raise-2); padding: 14px 20px; border-radius: 18px 18px 4px 18px; font-size: 21px; }
+.c4 .ai { margin: var(--space-md) 0 var(--space-xl); }
+.c4 .ai .who { font: 700 13px/1.4 var(--c4-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--c4-muted); margin: 0 0 var(--space-sm); }
+.c4 .ai > p { font-size: 21px; line-height: 1.5; margin: 0 0 var(--space-lg); max-width: 60ch; }
+.c4 .big { background: var(--c4-raise); border: 1px solid var(--c4-rule); border-radius: 20px; padding: var(--space-xl); margin: 0 0 var(--space-lg); }
+.c4 .big-h { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md); margin-bottom: var(--space-md); }
+.c4 .big-h h3 { margin: 0; font: 700 15px/1.3 var(--c4-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--c4-muted); }
+.c4 .big-h .acts { display: flex; gap: 8px; }
+.c4 .big-h .acts button { border: 1px solid var(--c4-rule-2); background: transparent; color: var(--c4-ink); border-radius: 8px; padding: 6px 12px; font: 700 14px/1 var(--c4-body); cursor: pointer; min-height: 36px; white-space: nowrap; }
+.c4 .verdict { font: 800 clamp(36px, 3.8vw, 54px)/1.04 var(--c4-display); letter-spacing: -0.03em; margin: 0 0 var(--space-md); }
+.c4 .pills { display: flex; flex-wrap: wrap; gap: 10px; }
+.c4 .pill { font: 700 17px/1 var(--c4-body); padding: 10px 14px; border-radius: 999px; border: 2px solid var(--c4-rule-2); white-space: nowrap; }
+.c4 .pill.st { border-color: var(--c4-warn); color: var(--c4-warn); }
+.c4 .ref { font: 700 15px/1 var(--c4-mono); color: var(--c4-accent); border-bottom: 2px solid var(--c4-accent); cursor: pointer; white-space: nowrap; }
+.c4 .ref.open { background: var(--c4-accent); color: var(--c4-accent-ink); padding: 2px 4px; border-radius: 4px; }
+.c4 .diff { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.c4 .diff .r { display: grid; grid-template-columns: 52px 220px minmax(0, 1fr); gap: var(--space-md); padding: 14px 0; border-top: 1px solid var(--c4-rule); align-items: baseline; font-size: 20px; }
+.c4 .diff .r:first-child { border-top: 0; }
+.c4 .diff .sym { font: 800 24px/1 var(--c4-display); text-align: center; }
+.c4 .diff .sym.up { color: var(--c4-accent); }
+.c4 .diff .k { font: 700 15px/1.4 var(--c4-mono); color: var(--c4-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.c4 .diff del { color: var(--c4-muted); }
+.c4 .diff ins { text-decoration: none; color: var(--c4-accent); font-weight: 700; }
+.c4 .illus { font: 14px/1.4 var(--c4-mono); color: var(--c4-muted); border: 1px dashed var(--c4-rule-2); border-radius: 8px; padding: 6px 10px; display: inline-block; margin-bottom: var(--space-md); }
+.c4 .replies { display: flex; flex-wrap: wrap; gap: 12px; margin: var(--space-md) 0; }
+.c4 .reply { border: 2px solid var(--c4-rule-2); background: transparent; color: var(--c4-ink); border-radius: 14px; padding: 12px 18px; font: 700 18px/1.2 var(--c4-body); cursor: pointer; text-align: left; min-height: 48px; }
+.c4 .reply:hover { border-color: var(--c4-accent); }
+.c4 .reply.q { border-color: var(--c4-warn); }
+.c4 .reply.q span { display: block; font: 400 15px/1.3 var(--c4-body); color: var(--c4-muted); margin-top: 4px; }
+.c4 .sk-box { fill: var(--c4-raise); stroke: var(--c4-ink); stroke-width: 1.4; }
+.c4 .sk-box.res { fill: var(--c4-accent); stroke: var(--c4-accent); }
+.c4 .sk-t { fill: var(--c4-ink); font: 700 13px var(--c4-body); }
+.c4 .sk-t.inv { fill: var(--c4-accent-ink); }
+.c4 .sk-s { fill: var(--c4-muted); font: 12px var(--c4-mono); }
+.c4 .sk-l { stroke: var(--c4-ink); stroke-width: 1.4; fill: none; }
+.c4 .sk-d { stroke: var(--c4-muted); stroke-width: 1.4; stroke-dasharray: 3 4; fill: none; }
+.c4 .sk-pipe { stroke: var(--c4-ink); stroke-width: 8; fill: none; }
+.c4 .sk-pipe-in { stroke: var(--c4-raise); stroke-width: 4; fill: none; }
+.c4 figure.sketch { margin: 0; } .c4 figure.sketch svg { width: 100%; height: auto; display: block; } .c4 figure.sketch figcaption { font-size: 15px; color: var(--c4-muted); margin-top: 8px; }
+.c4 .composer { position: sticky; bottom: 0; background: var(--c4-paper); border-top: 1px solid var(--c4-rule); padding: var(--space-md) clamp(16px, 3vw, 48px) var(--space-lg); }
+.c4 .composer .cb { max-width: 980px; margin: 0 auto; display: flex; gap: 12px; align-items: end; background: var(--c4-raise); border: 2px solid var(--c4-rule-2); border-radius: 18px; padding: 10px 10px 10px 18px; }
+.c4 .composer .cb:focus-within { border-color: var(--c4-focus); }
+.c4 .composer textarea { flex: 1; border: 0; background: transparent; resize: none; font: 20px/1.45 var(--c4-body); min-height: 48px; padding: 8px 0; color: var(--c4-ink); }
+.c4 .composer textarea::placeholder { color: var(--c4-muted); }
+.c4 .composer textarea:focus-visible { outline: none; }
+.c4 .drawer { border-left: 1px solid var(--c4-rule); background: var(--c4-raise); padding: var(--space-xl) var(--space-lg); min-width: 0; }
+.c4 .drawer h3 { font: 700 13px/1.4 var(--c4-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--c4-muted); margin: 0 0 var(--space-md); }
+.c4 .drawer .q { font: 500 24px/1.4 var(--c4-display); margin: 0 0 var(--space-md); letter-spacing: -0.01em; }
+.c4 .drawer .q::before { content: "“"; } .c4 .drawer .q::after { content: "”"; }
+.c4 .drawer .meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 14px; font-size: 16px; margin: 0 0 var(--space-lg); }
+.c4 .drawer .meta dt { color: var(--c4-muted); }
+.c4 .drawer .meta dd { margin: 0; }
+.c4 .drawer .ok { color: var(--c4-accent); font-weight: 700; }
+.c4 .drawer .ctx { font-size: 16px; line-height: 1.6; color: var(--c4-ink-2); border-left: 3px solid var(--c4-rule-2); padding-left: 14px; }
+.c4 .drawer .ctx mark { background: var(--c4-accent-wash); color: var(--c4-ink); }
+.c4 .acts-lines { list-style: none; margin: 0; padding: 0; }
+.c4 .acts-lines li { display: grid; grid-template-columns: 90px 28px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-top: 1px solid var(--c4-rule); font-size: 22px; align-items: center; color: var(--c4-ink-2); }
+.c4 .acts-lines time { font: 700 17px/1 var(--c4-mono); color: var(--c4-muted); font-variant-numeric: tabular-nums; }
+.c4 .acts-lines .d { width: 18px; height: 18px; border-radius: 50%; background: var(--c4-accent); }
+.c4 .acts-lines li.now { color: var(--c4-ink); font-weight: 700; }
+.c4 .acts-lines li.now .d { background: transparent; border: 3px solid var(--c4-accent); animation: c4p 1.4s var(--ease-in-out) infinite; }
+.c4 .acts-lines li.todo { color: var(--c4-muted); }
+.c4 .acts-lines li.todo .d { background: transparent; border: 2px solid var(--c4-rule-2); }
+@keyframes c4p { 50% { opacity: .3; } }
+.c4 .clock { font: 800 96px/1 var(--c4-display); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; margin: 0; }
+.c4 .start { max-width: 980px; margin: 0 auto; padding: var(--space-4xl) clamp(16px, 3vw, 48px) var(--space-2xl); }
+.c4 .start h2 { font: 800 clamp(48px, 5.4vw, 80px)/0.98 var(--c4-display); letter-spacing: -0.04em; margin: 0 0 var(--space-lg); max-width: 13ch; }
+.c4 .start p { font-size: 22px; color: var(--c4-ink-2); max-width: 46ch; margin: 0 0 var(--space-xl); }
+.c4 .start .cb { background: var(--c4-raise); border: 2px solid var(--c4-rule-2); border-radius: 20px; padding: 18px; }
+.c4 .start .cb:focus-within { border-color: var(--c4-focus); }
+.c4 .start textarea { width: 100%; min-height: 200px; border: 0; background: transparent; resize: vertical; font: 21px/1.5 var(--c4-body); color: var(--c4-ink); }
+.c4 .start textarea::placeholder { color: var(--c4-muted); }
+.c4 .start textarea:focus-visible { outline: none; }
+.c4 .start .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.c4 .start .row span { font: 15px/1.3 var(--c4-mono); color: var(--c4-muted); }
+@media (max-width: 1200px) { .c4 .stage { grid-template-columns: 180px minmax(0, 1fr) 340px; } }
+@media (max-width: 900px) {
+  .c4 { font-size: 17px; }
+  .c4 .stage, .c4 .stage.nodrawer { grid-template-columns: minmax(0, 1fr); }
+  .c4 .revrail { border-right: 0; border-bottom: 1px solid var(--c4-rule); padding: var(--space-md); }
+  .c4 .revrail h3 { display: none; }
+  .c4 .revs { display: flex; gap: var(--space-lg); }
+  .c4 .revs::before { display: none; }
+  .c4 .revs li { padding-bottom: 0; }
+  .c4 .revs small { display: none; }
+  .c4 .drawer { border-left: 0; border-top: 1px solid var(--c4-rule); }
+  .c4 .case { display: none; }
+  .c4 .hd { padding: 12px var(--space-md); }
+  .c4 .hd .btn.o { display: none; }
+  .c4 .big { padding: var(--space-lg) var(--space-md); border-radius: 14px; }
+  .c4 .verdict { font-size: 34px; }
+  .c4 .you p { max-width: 90%; font-size: 18px; }
+  .c4 .ai > p { font-size: 18px; }
+  .c4 .diff .r { grid-template-columns: 32px minmax(0, 1fr); font-size: 17px; }
+  .c4 .diff .r .k { grid-column: 2; }
+  .c4 .diff .r > span:last-child { grid-column: 2; }
+  .c4 .past { grid-template-columns: minmax(0, 1fr) auto; }
+  .c4 .past .w { display: none; }
+  .c4 .clock { font-size: 64px; }
+  .c4 .acts-lines li { grid-template-columns: 64px 20px minmax(0, 1fr); font-size: 18px; }
+}
+</style>
+
+<section class="concept" id="c4">
+  <div class="concept-intro">
+    <h2>4 · Casebook</h2>
+    <dl>
+      <dt>Take</dt><dd>A chat thread in stage mode, built to be read on a projector. Big blocks, one turn in focus at a time, and earlier turns folded into one-line summaries. Every assessment is a numbered version on a revision rail; new facts create the next version and lead with a large “what changed” block.</dd>
+      <dt>Signature</dt><dd>The revision rail (v1, v2…), with status and confidence per version, plus a verification drawer that shows the opened quote large enough to read from the back of a room.</dd>
+      <dt>Type</dt><dd>Bricolage Grotesque (display, OFL) · Atkinson Hyperlegible (body, designed for low-vision legibility, OFL) · Atkinson Hyperlegible Mono (refs, OFL)</dd>
+      <dt>Colour</dt><dd>Dark first: night-green paper, near-white ink, lime for references, the current version and primary actions, and amber for the provisional status and open questions. A light theme is included.</dd>
+      <dt>Space</dt><dd>Body 19–21 px, verdict 54 px, 48 px targets. Rail / stage (max 980) / drawer. Phone: the rail becomes a version switcher and the drawer stacks.</dd>
+    </dl>
+  </div>
+
+  <p class="screen-label"><strong>c4-start</strong> Big, single action</p>
+  <div class="screen c4" id="c4-start">
+    <div class="hd"><span class="brand">AFS <i>casebook</i></span><span class="case">no case open</span><button class="btn o" type="button">Cases</button></div>
+    <div class="start">
+      <h2>What does the customer want to measure?</h2>
+      <p>Paste the enquiry. The answer arrives in this thread with sources, options and a setup sketch. Keep talking to refine it.</p>
+      <div class="cb"><label class="sr" for="c4-enq">Enquiry</label><textarea id="c4-enq" placeholder="Paste the customer’s message"></textarea>
+        <div class="row"><span>a recent run took 13 min 42 s</span><button class="btn" type="button">Start the case</button></div></div>
+    </div>
+  </div>
+
+  <p class="screen-label"><strong>c4-running</strong> Running: a large clock and plain-language steps · 06:12</p>
+  <div class="screen c4" id="c4-running">
+    <div class="hd"><span class="brand">AFS <i>casebook</i></span><span class="case">Whey stream · v1 in progress</span><button class="btn o" type="button">Stop</button></div>
+    <div class="stage nodrawer">
+      <aside class="revrail"><h3>Versions</h3><ol class="revs"><li class="cur"><span class="dot"></span><span><b>v1</b><small>writing…</small></span></li></ol></aside>
+      <div class="main">
+        <div class="flow">
+          <div class="you"><p>Our dairy process includes a relatively clear whey stream before a concentration stage… The stream can become more turbid under some operating conditions.</p></div>
+          <div class="ai" aria-live="polite">
+            <p class="who">Assistant · working</p>
+            <p class="clock">06:12</p>
+            <p style="color:var(--c4-muted);margin:4px 0 24px">Writing is the long step: about 12 minutes last run</p>
+            <ol class="acts-lines">
+              <li><time>00:00</time><span class="d"></span><span>Reading the enquiry</span></li>
+              <li><time>00:59</time><span class="d"></span><span>4 requirements stated · 6 unknowns found</span></li>
+              <li><time>00:59</time><span class="d"></span><span>10 methods screened · 5 pass</span></li>
+              <li class="now"><time>06:12</time><span class="d"></span><span>Writing the assessment</span></li>
+              <li class="todo"><time>—</time><span class="d"></span><span>Checking every quote</span></li>
+              <li class="todo"><time>—</time><span class="d"></span><span>Searching secondary literature</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="composer"><div class="cb"><textarea aria-label="Message" rows="1" placeholder="Queue a question for when it’s done"></textarea><button class="btn o" type="button">Queue</button></div></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="screen-label"><strong>c4-answer</strong> Stage mode: earlier turns folded; “Show the setup” renders the sketch large; new facts → v2 with “what changed”; the verification drawer is open</p>
+  <div class="screen c4" id="c4-answer">
+    <div class="hd"><span class="brand">AFS <i>casebook</i></span><span class="case">Whey stream · v2 · 29 of 29 quotes verified</span><button class="btn o" type="button">Copy customer reply</button></div>
+    <div class="stage">
+      <aside class="revrail"><h3>Versions</h3>
+        <ol class="revs">
+          <li><span class="dot"></span><span><b>v1</b><small>NIR transmission first · Provisional · Medium (Q1, Q2 open)</small></span></li>
+          <li class="cur"><span class="dot"></span><span><b>v2</b><small>unchanged pick · Provisional · Medium (Q1 open)</small></span></li>
+        </ol>
+      </aside>
+      <div class="main">
+        <div class="flow">
+          <div class="past"><span class="w">You</span><span class="t">Our dairy process includes a relatively clear whey stream before a concentration stage…</span><button type="button">Show</button></div>
+          <div class="past"><span class="w">v1</span><span class="t">Start with NIR transmission/transflection; MIR ATR as fallback · 3 options · 5 questions</span><button type="button">Show</button></div>
+          <div class="you"><p>Show the setup</p></div>
+          <div class="ai">
+            <p class="who">Assistant</p>
+            <div class="big">
+              <div class="big-h"><h3>Setup sketch · O2 recommended</h3><div class="acts"><button type="button">Full screen</button><button type="button">Pin</button></div></div>
+              <figure class="sketch">
+              <svg viewBox="0 0 700 250" role="img" aria-labelledby="c4-sk-t">
+                <title id="c4-sk-t">Whey line with an NIR transmission probe and a MIR ATR probe, each on its own fiber and spectrometer, feeding chemometric models that give protein concentration; turbidity and temperature sensors feed the models.</title>
+                <path class="sk-pipe" d="M10 30 H690"/><path class="sk-pipe-in" d="M10 30 H690"/>
+                <text class="sk-s" x="12" y="14">whey line · before concentration · point not yet fixed (Q3)</text>
+                <path class="sk-l" d="M120 34 V70"/><path class="sk-l" d="M300 34 V70"/>
+                <rect class="sk-box" x="50" y="70" width="150" height="34"/><text class="sk-t" x="62" y="92">NIR trans. probe</text>
+                <rect class="sk-box" x="230" y="70" width="150" height="34"/><text class="sk-t" x="242" y="92">MIR ATR probe</text>
+                <path class="sk-l" d="M125 104 V140"/><text class="sk-s" x="132" y="126">silica fiber</text>
+                <path class="sk-l" d="M305 104 V140"/><text class="sk-s" x="312" y="126">chalcogenide / PIR</text>
+                <rect class="sk-box" x="50" y="140" width="150" height="34"/><text class="sk-t" x="62" y="162">NIR spectrometer</text>
+                <rect class="sk-box" x="230" y="140" width="150" height="34"/><text class="sk-t" x="242" y="162">MIR spectrometer</text>
+                <path class="sk-l" d="M200 157 H215 V215 H420"/><path class="sk-l" d="M380 157 H400 V215"/>
+                <rect class="sk-box" x="420" y="198" width="150" height="34"/><text class="sk-t" x="430" y="220">Chemometric models</text>
+                <path class="sk-l" d="M570 215 H590"/>
+                <rect class="sk-box res" x="590" y="198" width="100" height="34"/><text class="sk-t inv" x="602" y="220">Protein conc.</text>
+                <rect class="sk-box" x="470" y="70" width="110" height="30" rx="15"/><text class="sk-t" x="484" y="90">Turbidity</text>
+                <rect class="sk-box" x="590" y="70" width="100" height="30" rx="15"/><text class="sk-t" x="600" y="90">Temperature</text>
+                <path class="sk-l" d="M520 34 V70"/><path class="sk-l" d="M640 34 V70"/>
+                <path class="sk-d" d="M525 100 V198"/><path class="sk-d" d="M640 100 V170 H540 V198"/>
+              </svg>
+              <figcaption>Drawn by code from option O2. A schematic, not a configuration.</figcaption>
+            </figure>
+            </div>
+          </div>
+          <div class="you"><p>Customer says: the line runs at 60 °C, turbidity up to 200 NTU.</p></div>
+          <div class="ai">
+            <p class="who">Assistant · v2</p>
+            <span class="illus">illustrative turn · no re-run yet · reuses v1 claims only</span>
+            <div class="big">
+              <div class="big-h"><h3>Recommendation · v2</h3><div class="acts"><button type="button">Pin</button></div></div>
+              <p class="verdict">Still: start with NIR transmission/transflection.</p>
+              <p style="font-size:20px;margin:0 0 20px;color:var(--c4-ink-2)">Whey is a preferred case for it <span class="ref open">S01 p.18</span>. No source states an NTU limit, so the sample series decides whether 200 NTU needs the MIR ATR fallback.</p>
+              <div class="pills"><span class="pill st">Provisional feasibility</span><span class="pill">Confidence Medium · Q1 open</span><span class="pill">O2 · cost class high</span></div>
+            </div>
+            <div class="big">
+              <div class="big-h"><h3>What changed · v1 → v2</h3></div>
+              <div class="diff">
+                <div class="r"><span class="sym up">✓</span><span class="k">Q2 turbidity</span><span><del>open</del> → <ins>up to 200 NTU</ins></span></div>
+                <div class="r"><span class="sym up">~</span><span class="k">Q4 conditions</span><span><ins>60 °C</ins> · pressure, cleaning still open</span></div>
+                <div class="r"><span class="sym">=</span><span class="k">Confidence</span><span>Medium · now only Q1 open</span></div>
+                <div class="r"><span class="sym">=</span><span class="k">Recommendation</span><span>unchanged</span></div>
+              </div>
+            </div>
+            <div class="replies">
+              <button class="reply q" type="button">Q1 · range &amp; accuracy<span>affects method, status</span></button>
+              <button class="reply q" type="button">Q3 · measurement point<span>affects installation</span></button>
+              <button class="reply" type="button">Compare the options</button>
+              <button class="reply" type="button">Draft customer reply</button>
+            </div>
+          </div>
+        </div>
+        <div class="composer"><div class="cb"><textarea aria-label="Message" rows="1" placeholder="Ask, or add what the customer said"></textarea><button class="btn" type="button">Send</button></div></div>
+      </div>
+      <aside class="drawer" aria-label="Verification">
+        <h3>Verify · S01 p.18</h3>
+        <p class="q">NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</p>
+        <dl class="meta"><dt>Check</dt><dd class="ok">found word for word</dd><dt>Source</dt><dd>S01, AFS material, page 18</dd><dt>Used for</dt><dd>M1 primary candidate</dd></dl>
+        <div class="ctx">… - NIR Transmission: <mark>NIR Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.</mark> The setup typically consists of a transmission / transflection probe, where light passes entirely through a defined layer of the sample…</div>
+        <h3 style="margin-top:32px">Secondary · not AFS</h3>
+        <p style="font-size:16px;color:var(--c4-ink-2);margin:0">E02 ¶12: “the temperature sensitivity of the OH bands is a severe drawback for measuring aqueous solution in NIR and MIR…” <span style="color:var(--c4-muted)">europepmc.org/article/PMC/PMC7072065 · biopharma, not dairy</span></p>
+      </aside>
+    </div>
+  </div>
+
+  <div class="extras">
+    <figure class="phone-frame solo-skip"><iframe title="Casebook at 390 px" src="index.html?solo=c4-answer" loading="lazy"></iframe><figcaption>c4-mobile · 390 px: version switcher on top, drawer stacks</figcaption></figure>
+    <div>
+      <div class="c4" data-theme="light" style="padding:28px;border:1px solid var(--shell-rule)">
+        <p class="verdict" style="font-size:40px">Still: start with NIR transmission/transflection.</p>
+        <div class="pills"><span class="pill st">Provisional feasibility</span><span class="pill">Medium · Q1 open</span></div>
+        <div class="replies"><button class="reply q" type="button">Q1 · range &amp; accuracy<span>affects method, status</span></button></div>
+      </div>
+      <p class="swatch-cap">Default is dark. Light swatch shown here: paper oklch(97% .01 150) · ink oklch(20% .02 165) · accent oklch(44% .12 145)</p>
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var solo = params.get('solo');
+  var theme = params.get('theme');
+  if (solo) {
+    var el = document.getElementById(solo);
+    if (el) {
+      document.body.classList.add('solo');
+      var n = el;
+      while (n && n !== document.body) { n.classList.add('solo-keep'); n = n.parentElement; }
+      document.querySelectorAll('.solo-skip').forEach(function (s) { s.remove(); });
+    }
+  }
+  function setTheme(dark) {
+    document.querySelectorAll('.screen').forEach(function (s) {
+      if (dark) s.setAttribute('data-theme', 'dark'); else s.removeAttribute('data-theme');
+    });
+    var b = document.getElementById('theme-toggle');
+    if (b) b.setAttribute('aria-pressed', dark ? 'true' : 'false');
+  }
+  if (theme === 'dark') setTheme(true);
+  var t = document.getElementById('theme-toggle');
+  if (t) t.addEventListener('click', function () { setTheme(t.getAttribute('aria-pressed') !== 'true'); });
+
+  // C2: option switcher + part inspector (mock interaction)
+  document.querySelectorAll('[data-c2-opt]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var scr = b.closest('.screen');
+      scr.querySelectorAll('[data-c2-opt]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      scr.setAttribute('data-opt', b.getAttribute('data-c2-opt'));
+    });
+  });
+  document.querySelectorAll('[data-c2-part]').forEach(function (g) {
+    g.addEventListener('click', function () {
+      var scr = g.closest('.screen');
+      scr.querySelectorAll('[data-c2-part]').forEach(function (x) { x.classList.toggle('is-sel', x === g); });
+      scr.querySelectorAll('[data-c2-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-c2-panel') !== g.getAttribute('data-c2-part'); });
+    });
+    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); g.click(); } });
+  });
+  // C3: claim selection drives evidence pane
+  document.querySelectorAll('[data-c3-claim]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      var scr = c.closest('.screen');
+      scr.querySelectorAll('[data-c3-claim]').forEach(function (x) { x.setAttribute('aria-pressed', x === c ? 'true' : 'false'); });
+      scr.querySelectorAll('[data-c3-ev]').forEach(function (p) { p.hidden = p.getAttribute('data-c3-ev') !== c.getAttribute('data-c3-claim'); });
+    });
+  });
+})();
+</script>
+</body>
+</html>
