@@ -9,7 +9,7 @@ import threading
 import time
 
 import pytest
-from test_chat import NIR_QUOTE, claim, reply, scit
+from test_chat import NIR_QUOTE, claim, reply, run, scit  # noqa: F401
 from test_phase2 import ASSESSMENT, ENQUIRY, INTAKE
 from test_ui import BASE, DEV, HX, SAVED, app_client, no_provenance, outputs, wait_job  # noqa: F401
 
@@ -289,3 +289,98 @@ def test_chat_start_leaves_no_conversation_when_the_job_cannot_start(outputs, mo
     monkeypatch.setattr(app.state.jobs, "start", busy)
     assert client.post("/chat", data={"enquiry": ENQUIRY}).status_code == 409
     assert not list(chat.conversations_dir(outputs / "ui").glob("*.json"))
+
+
+# --------------------------------------------------------------------------------- C1 Brief review fixes
+def copy_run(root, stem, **changes) -> str:
+    """A copy of the saved fixture run under another name (optionally changed); returns its run id."""
+    data = json.loads((root / "dev" / f"{SAVED}.json").read_text(encoding="utf-8"))
+    (root / "dev" / f"{stem}.json").write_text(json.dumps(dict(data, **changes)), encoding="utf-8")
+    return f"dev-{stem}"
+
+
+def pinned(page: str) -> str:
+    return page[page.index('class="pinned"'):page.index('<div class="frame">')] if 'class="pinned"' in page else ""
+
+
+def test_pinned_strip_is_short_and_links_the_open_question(outputs):  # noqa: F811
+    client, app = app_client(outputs)
+    page = client.get(f"/chat/{seeded(client)}").text
+    strip = pinned(page)
+    assert strip and '<a class="pin-q" href="#t0-sharpen"' in strip and "Q1 open" in strip
+    assert "below" not in strip and 'id="t0-sharpen"' in page
+    assert pinned(client.get(f"/chat/{seeded(client, 'dev-X90')}").text) == ""     # off topic: nothing pinned
+    empty = chat.new_conversation(app.state.jobs.out_dir)
+    assert pinned(client.get(f"/chat/{empty['id']}").text) == ""
+
+
+def test_pin_reasons_and_follow_ups_are_built_from_the_view(run):  # noqa: F811
+    from afs_assistant.ui import view
+    assert view.pin_reasons(["open question: Q4, Q2", "other reason"], ["Q2", "Q4"]) == [
+        {"text": "Q2, Q1 open", "open": True}, {"text": "other reason", "open": False}]
+    _, v = run
+    chips = view.follow_ups(v)
+    best = next(o for o in v["options"] if o["is_best"])
+    others = [o for o in v["options"] if not o["is_best"]]
+    assert len(chips) <= 4 and chips[0].startswith(f"Why {best['short']} and not ")
+    assert f"Show the setup for the {others[0]['tab']} option" in chips
+    assert view.follow_ups({}) == list(view.FOLLOW_DEFAULTS)
+
+
+def test_multi_turn_page_folds_earlier_turns_and_keeps_ids_unique(outputs):  # noqa: F811
+    client, app = app_client(outputs, chat_factory())
+    live, later = app.state.jobs.out_dir, copy_run(outputs, "Y03")
+    cid = seeded(client)
+    post(client, f"/chat/{cid}/message", {"text": QUESTION})
+    assert wait_job(client, last_job(app))["state"] == "done"
+    chat.append(live, cid, {"kind": "reassess", "question": FACT, "run_id": later})
+    page = client.get(f"/chat/{cid}").text
+    assert page.count('<details class="row turn-full">') == 1 and "v1 in full" in page
+    assert "Earlier recommendation" in page and page.count("Our recommendation") == 1
+    assert 'id="t0-n' not in page and 'id="t1-n1"' in page and 'id="t2-n2"' in page   # no notes beside v1
+    assert page.count('class="sharpen-form"') == 1 and f'action="/chat/{cid}/reassess" class="sharpen-form"' in page
+    assert "Show the setup for the Simple option" in page                        # chips from the current run
+    ids = re.findall(r'\bid="([^"]+)"', re.sub(r"<svg.*?</svg>", "", page, flags=re.DOTALL))
+    assert len(ids) == len(set(ids)), [i for i in ids if ids.count(i) > 1][:5]
+
+
+def test_unverified_quote_is_marked_in_the_margin(outputs):  # noqa: F811
+    data = json.loads((outputs / "dev" / f"{SAVED}.json").read_text(encoding="utf-8"))
+    ver = dict(data["verification"], citations=[dict(c, verified=False) for c in data["verification"]["citations"]])
+    client, _ = app_client(outputs)
+    marker = '<span class="mnote-mark flag">not verified</span>'
+    assert marker not in client.get(f"/chat/{seeded(client)}").text
+    page = client.get(f"/chat/{seeded(client, copy_run(outputs, 'Y02', verification=ver))}").text
+    side = page[page.index('<aside class="t-side"'):]
+    assert marker in side and "Not verified: show the quote" in side
+
+
+def test_cite_fragment_takes_the_panel_id_only_in_the_panel(outputs):  # noqa: F811
+    client, _ = app_client(outputs)
+    url = f"/runs/dev-{SAVED}/cite/s1"
+    note = client.get(url, headers={**HX, "HX-Target": "t0-n1-ctx"}).text
+    panel = client.get(url, headers={**HX, "HX-Target": "panel-body"}).text
+    assert 'id="panel-title"' not in note and 'class="cite-title"' in note
+    assert 'id="panel-title"' in panel and 'id="panel-title"' in client.get(url).text
+
+
+def test_chips_and_composer_wait_while_another_job_runs(outputs):  # noqa: F811
+    gate = threading.Event()
+
+    class Slow(FakeClient):
+        def complete_json(self, role, *args, **kwargs):
+            gate.wait(10)
+            return super().complete_json(role, *args, **kwargs)
+
+    client, app = app_client(outputs, chat_factory(cls=Slow))
+    mine, other = seeded(client), seeded(client)
+    page = client.get(f"/chat/{mine}").text
+    assert "chips-follow" in page and "Another question is being assessed" not in page
+    post(client, f"/chat/{other}/message", {"text": QUESTION})
+    page = client.get(f"/chat/{mine}").text
+    composer = page[page.index('<div class="composer">'):]
+    assert "chips-follow" not in page and "Another question is being assessed" in composer
+    assert composer.count(" disabled") == 3 and f'href="/jobs/{last_job(app)}"' in composer
+    gate.set()
+    assert wait_job(client, last_job(app))["state"] == "done"
+    assert "chips-follow" in client.get(f"/chat/{mine}").text

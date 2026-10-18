@@ -53,7 +53,19 @@
     });
   }
 
+  // Scrolling is instant when the person asks for reduced motion.
+  function scrollBehavior() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    // A conversation opens at its latest turn (a link to a part of the page keeps its own target).
+    var thread = document.querySelector(".conversation");
+    if (thread && !window.location.hash) {
+      var turns = thread.querySelectorAll(".chat-turn");
+      if (turns.length > 1) turns[turns.length - 1].scrollIntoView({ block: "start", behavior: "auto" });
+    }
+
     var toggle = document.getElementById("theme-toggle");
     if (toggle) toggle.addEventListener("click", function () {
       var next = effectiveTheme() === "dark" ? "light" : "dark";
@@ -145,8 +157,19 @@
       if (said) said.classList.add("is-active");
       var link = note.querySelector("a[data-note]");
       if (link && !note.classList.contains("is-open")) link.click();
-      note.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      note.scrollIntoView({ block: "nearest", behavior: scrollBehavior() });
       if (link) link.focus({ preventScroll: true });
+    });
+
+    // A job in this conversation that failed or was stopped (polling ended without a redirect): the composer
+    // takes input again; the error stays visible in the step list.
+    document.body.addEventListener("htmx:afterSettle", function () {
+      var steps = document.getElementById("job-steps");
+      var composer = document.querySelector(".composer");
+      if (!steps || !composer || steps.hasAttribute("hx-get")) return;
+      composer.querySelectorAll("input[disabled], button[disabled]").forEach(function (el) { el.disabled = false; });
+      var hint = document.getElementById("composer-hint");
+      if (hint) hint.textContent = "This question did not finish. You can send it again.";
     });
 
     // Suggested follow-ups fill the composer; the person still sends.
