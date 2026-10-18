@@ -96,7 +96,7 @@ def card_title():
     d.text((160, 350), "An in-line spectroscopy enquiry in, a cited first technical assessment out.",
            font=font(GEO_I, 34), fill=INK)
     d.line([(160, 430), (1280, 430)], fill=RED, width=3)
-    for i, t in enumerate(["Live demo of the real app: one new enquiry, a follow-up question, one re-assessment.",
+    for i, t in enumerate(["The real app during a live run (captioned screenshots): one enquiry, a follow-up, one re-assessment.",
                            "Production models (mix-a), live literature search. No voice; captions only.",
                            "Team Helios · Art Fiber Systems challenge · October 2026"]):
         d.text((160, 470 + i * 52), t, font=font(ARIAL, 28), fill=MUTED if i == 2 else INK)

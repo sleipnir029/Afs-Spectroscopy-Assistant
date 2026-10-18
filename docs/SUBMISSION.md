@@ -27,7 +27,7 @@ A chat assistant that turns an in-line spectroscopy customer enquiry into a cite
 - `README.md`: setup with uv, commands, results and known limitations.
 - `ARCHITECTURE.md`: components, data flow and diagram.
 - `docs/slides/slides.pdf`: 10 slides.
-- `docs/video/demo.mp4`: 2:25 demo: captioned screenshots of the real app during a live run.
+- `docs/video/demo.mp4`: 2:53 demo: captioned screenshots of the real app during a live run.
 - `outputs/final/H01–H06` (`.md` + `.json`) and `outputs/final/REVIEW.md`: the rule-compliance review.
 
 **Repository link:** _to add once the repository is published_.
