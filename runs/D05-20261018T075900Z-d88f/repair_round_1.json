@@ -1,0 +1,475 @@
+{
+ "round": 1,
+ "hard_failures_before": 8,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "provisional_assessment",
+  "status_reason": "The sources support a shortlist of single methods worth testing, so a provisional assessment is possible. It stays provisional because the metabolic target, the optical-density range of the broth and the reference measurements are still open.",
+  "premise_checks": [
+   {
+    "premise": "A biomass signal and a metabolic signal can be separated and measured optically.",
+    "verdict": "precedent_only",
+    "explanation": "A review-style source maps UV/Vis for growth and Raman for specific metabolites in the same reactor, which is a reason to test the separation, not proof that it works in this broth.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "premise": "The broth becoming more optically dense as the run develops gives useful information about growth.",
+    "verdict": "supported",
+    "explanation": "Turbidity is described as tracking cell density, so the optical-density trend is a usable growth indicator. It remains a proxy, not a cell count.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "cell suspension turbidity correlates well with cell density.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [],
+  "key_unknowns": [
+   "Identity and concentration range of the metabolic signal",
+   "Optical-density or turbidity range across the run, and where light transmission stops",
+   "Offline reference methods available and their sampling frequency",
+   "Installation point, fiber run, cleaning and sterilisation requirements",
+   "Required accuracy, detection limit and response time (go/no-go criteria)",
+   "Whether the broth contains a usable fluorescent species"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "Which chemical species defines the 'metabolic signal', and over what concentration range must it be followed?",
+    "why_it_matters": "Without a named species and range, no technique can be chosen for the second target, and Raman can only be tested blindly.",
+    "affects": [
+     "method",
+     "technique"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What is the optical-density or turbidity range across the run, and at which point does the broth stop transmitting light?",
+    "why_it_matters": "It decides whether a transmission or transflection path remains usable or whether only reflection and ATR geometries can work.",
+    "affects": [
+     "technique"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What accuracy, detection limit and response time must the measurement meet for the go/no-go decision?",
+    "why_it_matters": "These figures are the acceptance basis for the trial and are not in the supplied sources.",
+    "affects": [
+     "status"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "Where will the probe be installed (vessel wall or recirculation loop), what fiber run length is needed, and what cleaning or sterilisation is required?",
+    "why_it_matters": "Installation and cleaning determine the probe geometry, window material and fiber family, and no link length for the required range is stated in the sources.",
+    "affects": [
+     "installation"
+    ]
+   },
+   {
+    "id": "Q5",
+    "question": "Which offline reference methods and sampling frequency are available for biomass and for the metabolite?",
+    "why_it_matters": "The calibration and the comparison against single methods rest entirely on these references.",
+    "affects": [
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "NIR is the most common in-line method with fiber probes and tolerates the scattering of an increasingly turbid broth, so one probe can follow both the scattering trend and the major organic components. Its nominal range is 780-2500 nm, and the usable range depends on the instrument, fiber and probe actually selected.",
+    "conditions": "Applies if a flush-mounted reflection window can be kept clean enough between measurements.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "NIR spectroscopy, with its relatively large penetration depth (up to several millimetres) even into dense solid samples due to low absorption and strong scattering, allows the use of ordinary glass for optics",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "Raman",
+    "technique": "raman_probe",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Raman is well suited to aqueous media and gives a molecular fingerprint for specific metabolites such as glucose, acetate or lactate. The signal is weak and can be swamped by fluorescence, so the background must be checked on the real broth.",
+    "conditions": "Applies once a named metabolite has a usable Raman band and the broth's fluorescence background is acceptable at the chosen excitation wavelength.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "NIR",
+    "technique": "diffuse_reflection",
+    "role": "conditional",
+    "combined_with": [
+     "Fluorescence",
+     "MIR"
+    ],
+    "rationale": "The closest published example to this enquiry combines NIR with fluorescence on yeast fermentation, for biomass and intra- and extracellular metabolites. Fluorescence only works if the broth contains a fluorescent species, so this stays conditional.",
+    "conditions": "Applies only if the broth shows an intrinsic fluorescent species at usable intensity, such as NADH, tryptophan or riboflavin.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Thus, the combination of NIR spectroscopy with fluorescence spectroscopy demonstrated the possibility of more accurately determining the biomass content during yeast fermentation, as well as distinguishing between their intra- and extracellular metabolites.",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 12,
+      "quote": "Fluorescence spectroscopy can be used for multispectral measurements, for example, in combination with Mid-IR or NIR spectroscopy.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "A flush-mounted NIR diffuse-reflection probe in contact with the broth, with the spectrometer set back on a fiber link.",
+   "location": "In the vessel or a recirculation loop, at a point that sees the same broth throughout the run.",
+   "fiber_link": "Silica fibers cover the NIR range; the achievable length depends on the fiber and probe chosen and is not stated in the sources.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "NIR",
+    "statement": "Nominal range 780-2500 nm.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "Raman",
+    "statement": "Raman is recorded in the visible and NIR spectral regions and reported as Raman shift in cm-1, with the laser excitation wavelength stated separately; the usable shift range depends on the laser, spectrometer and probe selected.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "Measurement of the weak Raman effect requires special probes but is recorded in the visible and NIR spectral regions.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "The metabolic signal is undefined, so the second method may end up targeting a species that does not matter to the process.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "As the broth becomes more optically dense, a transmission path saturates and a growth signal can reflect scattering and window fouling rather than cell mass.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "Raman may be swamped by fluorescence from the broth, while fluorescence may find no usable species at all.",
+    "rule_ids": [],
+    "citations": []
+   },
+   {
+    "risk": "Calibrations are specific to this matrix, so a change of medium, feed or strain would require them to be rebuilt.",
+    "rule_ids": [],
+    "citations": []
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative broth across the run: early, mid and late phase, plus at least one run with a deliberate change in feed or temperature; record optical density and temperature at every sampling point.",
+     "purpose": "Cover the expected chemical and physical variation of the broth.",
+     "citations": []
+    },
+    {
+     "step": "Measure independent references on each sample: dry cell weight or viable count for biomass, offline optical density, and the chosen metabolite by a laboratory method.",
+     "purpose": "Provide independent reference values for calibration and comparison.",
+     "citations": []
+    },
+    {
+     "step": "Measure the same samples with NIR reflection and with Raman as separate single-method tests, plus one in-line trial of each; report Raman as shift in cm-1 with the laser excitation wavelength stated separately.",
+     "purpose": "Compare single methods first, on the same samples and in-line.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 3,
+       "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S01",
+       "page": 11,
+       "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Only if neither single method meets the agreed criteria, test the combined NIR + fluorescence probe with synchronised acquisition and one calibration per block, and compare the fused model with the best single method on held-out runs.",
+     "purpose": "Test the combination only as a later hypothesis against the best single method.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 8,
+       "quote": "the data from each method must be obtained simultaneously.",
+       "claim_kind": "general"
+      },
+      {
+       "doc": "S01",
+       "page": 8,
+       "quote": "Variables obtained from different spectral methods are not equivalent.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Set the go/no-go thresholds with the customer before the trial and validate on held-out runs or batches.",
+     "purpose": "Give the trial a numerical acceptance basis supplied by the customer.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    }
+   ],
+   "reference_measurements": "Dry cell weight or viable count, offline optical density, and the chosen metabolite by a laboratory method.",
+   "decision_basis": "Thresholds to be set by the customer before the trial."
+  },
+  "assumptions": [],
+  "not_in_sources": [
+   "Which offline reference methods suit this broth, and at what frequency, is not addressed by the supplied sources.",
+   "A quantitative relationship between optical density and cell mass for this broth is not given in the sources."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Biomass (cell concentration, growth trend)",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The growth target has to be traceable both to a spectral signal and to an independent cell-mass reference.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "NIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P2",
+    "name": "Optical density / turbidity of the broth",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It decides whether a transmission path is usable at all and gives the cheapest growth reference series.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "offline absorbance (optical density) at a fixed wavelength",
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "cell suspension turbidity correlates well with cell density.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "optical density is not a viable cell count.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "P3",
+    "name": "Metabolic marker (species to be defined: for example glucose, acetate, lactate or ethanol)",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "The second target is undefined, so a named metabolite with a concentration range is needed before a method can be chosen.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "Raman",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "While UV/Vis tracks growth, Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P4",
+    "name": "Broth temperature",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "It should be available because it is a basic process variable that must be recorded alongside the spectra to interpret run-to-run changes.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P4"
+    ],
+    "ease_of_use": "One probe, standard glass optics",
+    "maintenance": "Window cleaning and scatter checks",
+    "performance_fit": "Covers growth trend and major components",
+    "cost_drivers": "One spectrometer, one reflection probe, reference analyses",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1",
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "Two probes, one sampling point",
+    "maintenance": "Two instruments, separate diagnostics",
+    "performance_fit": "Adds metabolite fingerprint NIR may miss",
+    "cost_drivers": "Second spectrometer and probe, more reference analyses",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O3",
+    "tier": "extended",
+    "recommendation_ids": [
+     "M3"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P4"
+    ],
+    "ease_of_use": "One combined probe shaft",
+    "maintenance": "Two spectrometers, both blocks monitored",
+    "performance_fit": "Adds early metabolic state to growth",
+    "cost_drivers": "Combined probe, two spectrometers, fusion and calibration work",
+    "fusion_note": "Low-level fusion of NIR and fluorescence spectra into one matrix with block scaling, from a combined probe at the same spot. Acquisition must be synchronised to a common time step, and each block needs its own calibration and drift checks. The fused model must beat the best single method on held-out runs, otherwise the extra channel is dropped.",
+    "citations": []
+   }
+  ],
+  "chemometrics_note": "Both NIR and Raman need calibration models built on reference data from this broth; NIR bands overlap strongly, and Raman calibration is matrix-specific. Plan the reference analyses at the same time points as the spectra, and re-validate if the medium, feed or strain changes.",
+  "realtime_tracking_note": "A flush-mounted probe can log continuously through the run; each spectrum must be time-stamped against the offline reference samples so that early changes can be compared with the references.",
+  "future_direction": "Once the informative bands are known, a compact analyser at a few selected wavelengths could replace the full spectrometer, following the multisensor route described in the sources.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "supplied",
+   "what_would_change_it": "If the metabolic species proves to be present only at trace level and Raman is swamped by fluorescence, the second method shifts toward fluorescence or MIR ATR. If the early-run broth is optically thin, a UV-Vis transmission probe becomes the simplest biomass option.",
+   "next_step": "Define the metabolic species and the go/no-go figures, then provide broth samples across the run for a side-by-side NIR and Raman trial with offline references."
+  },
+  "brief_answer": "Test a single NIR reflection probe first against offline references: it suits an increasingly turbid, scattering broth and is the usual in-line fiber method. Run Raman beside it as a separate single-method test for the metabolic signal. Fluorescence is added only if the broth proves to contain a fluorescent species; the closest published example combines NIR with fluorescence on yeast fermentation. The metabolic target, optical-density range and go/no-go figures remain open."
+ }
+}
