@@ -63,8 +63,8 @@ REGIME_SAMPLE_TYPES = {
     "opaque": {"scattering media"},          # opaque because it scatters (e.g. milk concentrate)
     "opaque_absorbing": set(),               # dark, absorbing, little scattering (e.g. dark oils)
 }
-# A `variable` sample changes between clear and turbid (D-061): screened as each of these states.
-VARIABLE_REGIMES = ("clear", "turbid")
+# A `variable` sample changes between clear and turbid or opaque (D-061): screened as each of these states.
+VARIABLE_REGIMES = ("clear", "turbid", "opaque")
 REGIME_SAMPLE_TYPES["variable"] = set().union(*(REGIME_SAMPLE_TYPES[r] for r in VARIABLE_REGIMES))
 
 # Technique ids that a rule's `technique: transmission` / `transflection` refers to.

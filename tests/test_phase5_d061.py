@@ -87,14 +87,15 @@ def test_regime_slot_accepts_variable():
     assert RegimeSlot.model_validate({"value": "variable", "basis": "stated", "enquiry_quote": "x"}).value == "variable"
     screen.validate_slots({"optical_regime": "variable"})
     assert screen.REGIME_SAMPLE_TYPES["variable"] == (screen.REGIME_SAMPLE_TYPES["clear"]
-                                                      | screen.REGIME_SAMPLE_TYPES["turbid"])
+                                                      | screen.REGIME_SAMPLE_TYPES["turbid"]
+                                                      | screen.REGIME_SAMPLE_TYPES["opaque"])
 
 
 @pytest.mark.parametrize(("expected", "state"), [
-    (["clear", "turbid"], "yes"),           # holds for both states
+    (["clear", "turbid", "opaque"], "yes"),  # holds for every state
     ("clear", "maybe"),                     # holds for one state only
     (["turbid", "opaque"], "maybe"),
-    (["opaque", "opaque_absorbing"], "no"),  # holds for neither
+    (["opaque_absorbing"], "no"),           # holds for none
 ])
 def test_when_state_checks_a_variable_regime_as_each_state(expected, state):
     cand = screen.Candidate("NIR", "diffuse_reflection", [], True, set())
