@@ -1,0 +1,512 @@
+{
+ "decision_status": "premise_not_supported",
+ "status_reason": "The premise that fluorescence sensitivity alone justifies direct in-line glucose measurement is contradicted by the sources: glucose is not among the species fluorescence can measure, and no fluorescent target or marker has been identified. A conditional path for biomass via intrinsic fluorophores remains open.",
+ "premise_checks": [
+  {
+   "premise": "Fluorescence sensitivity is sufficient justification for measuring glucose directly, without a fluorescent target or marker.",
+   "verdict": "contradicted",
+   "explanation": "Fluorescence only works on species that actually fluoresce; most chemicals, glucose included, do not, so sensitivity alone does not make glucose measurable.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "it is limited to the samples containing at least one fluorescent component",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "Fluorescence can still play a role in fermentation monitoring.",
+   "verdict": "precedent_only",
+   "explanation": "Published bioprocess work reports fluorescence used for intrinsic fluorophores such as NADH, tryptophan and riboflavin; this is a reason to test, not proof for this customer's process.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "A spectroscopic method can track glucose and metabolites directly in a fermenter.",
+   "verdict": "precedent_only",
+   "explanation": "Literature examples report Raman used in the same reactor for direct detection of metabolites such as glucose; this supports a feasibility trial, not a ready solution.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Report glucose concentration in-line during fermentation.",
+  "Report viable biomass in-line during fermentation.",
+  "Use the existing fluorescence spectrometer."
+ ],
+ "key_unknowns": [
+  "Whether the broth contains intrinsic fluorophores (e.g. NADH, riboflavin) usable as a biomass-related indicator",
+  "Optical density / turbidity range of the broth, which decides transmission vs reflection vs ATR geometry",
+  "Required accuracy and go/no-go criteria for glucose and biomass",
+  "Excitation wavelengths and fiber interface of the existing fluorescence spectrometer",
+  "Reference method available for viable biomass (e.g. viable count)"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which organism and medium do you ferment, and does the broth contain known intrinsic fluorophores (NADH, tryptophan, riboflavin) or could an added fluorescent indicator be acceptable?",
+   "why_it_matters": "Fluorescence can only report something if a fluorescing species or justified indicator exists; without one it cannot serve either target.",
+   "affects": [
+    "M3",
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the expected optical density / turbidity range of the broth over the run?",
+   "why_it_matters": "Turbidity decides whether transmission, reflection or ATR geometry is viable for any optical probe in the broth.",
+   "affects": [
+    "technique",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What accuracy do you need for glucose and biomass, and what numerical go/no-go criteria should the feasibility test meet?",
+   "why_it_matters": "The feasibility experiment and the decision to proceed need customer-defined numerical criteria.",
+   "affects": [
+    "status",
+    "O2"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What excitation wavelengths, detection range and probe interface does your existing fluorescence spectrometer have?",
+   "why_it_matters": "It determines whether the instrument can be coupled to an in-line fluorescence probe at all.",
+   "affects": [
+    "installation",
+    "M3"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Which reference method will you use for viable biomass (e.g. viable count) and at what sampling frequency?",
+   "why_it_matters": "Viable biomass is not directly measured by spectroscopy; an independent reference is needed to build and validate any model.",
+   "affects": [
+    "P2",
+    "O2"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman tolerates water well and published bioprocess work reports direct detection of metabolites such as glucose in the reactor. It is the strongest single-method candidate to test first for glucose.",
+   "conditions": "Fluorescence background from the broth must be checked on real samples; a matrix-specific chemometric calibration is required.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR is the most common online fiber-probe method and literature reports it tracking major components like glucose in the millimolar range, but it needs a matrix-specific calibration and may miss trace levels.",
+   "conditions": "Viable only if the broth stays transparent enough for a controlled 1-10 mm pathlength; otherwise a reflection geometry must be tested.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Fluorescence could serve as a high-sensitivity biomass-related signal via intrinsic fluorophores such as NADH or riboflavin, but only if such species are present and a reference relationship is established.",
+   "conditions": "Applies only if Q1 confirms a fluorescing species or an accepted indicator; it cannot measure glucose directly.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Fluorescence spectroscopy can be used for high-sensitivity detection (down to the nM-μM range) of critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "comparison",
+   "combined_with": [
+    "Raman"
+   ],
+   "rationale": "If single-method tests show Raman covers glucose but not biomass-related state, adding fluorescence is the natural second block; published bioprocess work combines fluorescence with other spectral methods.",
+   "conditions": "Tested only after the single-method trials, against the best single method, with same-spot sampling and synchronised data.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "Fluorescence spectroscopy can be used for multispectral measurements, for example, in combination with Mid-IR or NIR spectroscopy.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  },
+  {
+   "id": "N1",
+   "method": "Fluorescence",
+   "technique": "fluorescence_probe",
+   "role": "not_recommended",
+   "combined_with": [],
+   "rationale": "The customer proposed fluorescence alone for glucose, but glucose is not a fluorescent target and no marker or reference relationship exists, so the sources contradict this use.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "However, most chemicals do not exhibit this property.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion Raman fiber probe for the fermenter broth (primary test); fluorescence only via a fiber probe if a fluorophore is confirmed; NIR transmission/transflection as comparison if the broth is transparent enough.",
+  "location": "In the fermenter or a bypass sampling point, same spot for any combined measurement.",
+  "fiber_link": "Silica fibers suit Raman and NIR; the existing fluorescence spectrometer's fiber compatibility is unknown (Q4). No link length can be stated from the sources.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 11,
+    "quote": "The kit includes a Raman spectrometer, laser, and Raman fiber probe.",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1 with laser excitation wavelength stated separately (e.g. 785 nm excitation appears in the pharma example); the usable shift range depends on the selected spectrometer, laser and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Fluorescence",
+   "statement": "Emission depends on the fluorescent species and the excitation wavelength; no range can be stated until a fluorophore is identified.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "Fluorimetry is based on measuring the broad emission signal observed upon irradiation of certain samples in the UV and visible regions.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The broth's fluorescence background could swamp the weak Raman signal, degrading the primary glucose measurement.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Any glucose or biomass model is matrix-specific and must be re-validated if the medium, organism or process changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Rising turbidity during fermentation can saturate transmission geometries and force a switch to reflection or ATR.",
+   "rule_ids": [
+    "R-GEO-2",
+    "R-GEN-7"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "transmission setup becomes saturated because the light cannot penetrate the bulk of the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Spectroscopic signals correlate with biomass only indirectly; viable count is the reference and the correlation may not hold across process phases.",
+   "rule_ids": [
+    "R-UV-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative broth samples across the expected variation: organism/medium states, glucose levels from high to depleted, and early to late process phases.",
+    "purpose": "Cover the chemical and physical variation the model must handle.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with independent reference methods: glucose by a laboratory enzymatic or HPLC method, viable biomass by viable count.",
+    "purpose": "Provide the reference data the calibration and validation depend on.",
+    "citations": []
+   },
+   {
+    "step": "Record Raman spectra of all samples first (single method), checking fluorescence background; then NIR transmission/transflection on the same samples if the broth is transparent enough.",
+    "purpose": "Compare the single methods before any combination.",
+    "citations": []
+   },
+   {
+    "step": "Build a matrix-specific chemometric model per method and validate on held-out runs or batches; only then test a fluorescence block added to the best single method.",
+    "purpose": "Establish whether any combined model beats the best single method.",
+    "citations": []
+   },
+   {
+    "step": "Apply the customer's numerical go/no-go criteria (Q3) for glucose accuracy and biomass agreement to decide whether an in-line installation is justified.",
+    "purpose": "Give the decision an objective basis.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory glucose assay and viable cell count on every calibration and validation sample.",
+  "decision_basis": "Customer-defined accuracy targets for glucose and agreement limits for biomass (Q3); no numbers can be assumed from the sources."
+ },
+ "assumptions": [
+  "The fermentation is aqueous and the broth is a liquid, as inferred from the enquiry.",
+  "The existing fluorescence spectrometer could be coupled to a fiber probe, which is unverified (Q4)."
+ ],
+ "not_in_sources": [
+  "Whether glucose or viable biomass has ever been measured in-line by fluorescence with or without an added indicator; the supplied material does not cover this."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Glucose concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the primary target the customer wants reported in-line.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Viable biomass (viable cell concentration)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the second target, and spectroscopy can only correlate with it, so an independent reference is needed.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "viable cell count (e.g. plate count or equivalent)",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Presence of intrinsic fluorophores (NADH, tryptophan, riboflavin or similar)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "Fluorescence can only contribute if a fluorescing species exists in the broth; this decides whether the existing spectrometer has any role.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Fluorescence",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "critical cofactors and amino acids like NADH, tryptophan, and riboflavin.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Broth optical density / turbidity",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It should be available because it decides the viable probe geometry and can serve as a biomass-related process trend.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "UV-Vis",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "cell suspension turbidity correlates well with cell density.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Lab trial, no process installation",
+   "maintenance": "Minimal, bench instruments only",
+   "performance_fit": "Answers glucose feasibility directly on real broth samples",
+   "cost_drivers": "Raman spectrometer and probe rental or purchase, reference lab assays, chemometric modelling time",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P4"
+   ],
+   "ease_of_use": "In-line probe with established workflow",
+   "maintenance": "Probe cleaning and calibration upkeep",
+   "performance_fit": "Covers glucose in-line and benchmarks the best fiber-probe method",
+   "cost_drivers": "In-line Raman probe and spectrometer, NIR comparison hardware, calibration samples and reference assays",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M4",
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Two instruments, more complex operation",
+   "maintenance": "Two calibrations and two probe channels to maintain",
+   "performance_fit": "Adds biomass-related fluorophore signal glucose-only Raman lacks",
+   "cost_drivers": "Second spectrometer channel, combined or co-located probes, fused-model development and validation effort",
+   "fusion_note": "Low-level fusion: Raman and fluorescence spectra synchronised to a common time step and merged into one augmented matrix, with block scaling so neither method dominates. Both probes must sample the same broth volume, ideally via a combined or co-located probe head. Each method keeps its own calibration, and the fused model must beat the best single method on held-out batches or it is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "the data from each method must be obtained simultaneously.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A glucose calibration (e.g. PLS on Raman or NIR spectra) and, if fluorescence contributes, a biomass-related model both need reference data across the full process range; validation on held-out runs or batches is essential before any in-line use.",
+ "realtime_tracking_note": "The goal is continuous in-line tracking during fermentation; acquisition rate and data synchronisation to a common time step must be planned if more than one method is used.",
+ "future_direction": "If the feasibility trial succeeds, a specialised compact sensor tuned to the selected spectral features (an optical multisensor approach) could replace full spectrometers for routine process control.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the broth contains no usable fluorophore and Raman suffers strong fluorescence background, the Raman route weakens and NIR (geometry depending on turbidity) becomes the lead candidate; if the customer's accuracy targets are modest and only a biomass trend is needed, the simple fluorescence-based screening (M3) could suffice.",
+  "next_step": "Run the multi-method lab trial on representative broth samples with independent glucose and viable-count references, starting with Raman."
+ },
+ "brief_answer": "Fluorescence alone cannot report glucose: glucose is not fluorescent and you have no marker or reference relationship, so that premise does not hold. Test Raman first on representative broth samples against lab glucose and viable-count references; NIR transmission is the comparison if the broth is transparent enough. Your fluorescence spectrometer may still serve a biomass-related signal via intrinsic fluorophores such as NADH or riboflavin, but that must be confirmed first. Required accuracy and go/no-go criteria remain open."
+}
