@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 12:33 CEST (Claude, Phase 6)._
+_Last updated: 2026-10-18 12:37 CEST (Claude, Phase 6)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
@@ -21,6 +21,8 @@ _Last updated: 2026-10-18 12:33 CEST (Claude, Phase 6)._
 - **11:56:** 5.12 chat review fixes merged (b71cd77 via bf59457; rows D-064/D-065) → confirm review APPROVE (no blocking; nb: reassess question text counts as user text for figures; stopped turns record no cost; rename `typed`). **Live chat check done (47fec50, docs/chat/live-check-20261018.json):** 10 asks on mix-a, 1.4–6.3 s each, $0.038 total, citations 10/11 verified (1 dropped by checks), 0 claims removed; price question → cost class only + quotation next step; injection → no guarantee; lifetime → not_in_sources + next step. UI review fixes (C1 Brief) in progress (implementer). Pipeline final → Phase 6 freeze can start.
 
 - **12:33: Phase 5 closed (user gate 12:2x). Phase 6 started.** UI review fixes merged (1b3a7b9, pytest 758/2). Tag **freeze-1** at 1b3a7b9 (pipeline unchanged since a0e9700; models config mix-a). **H01–H06 run once** (12:29–12:32, `--external live`): 0 hard failures, citations 120/120 verified, 0 runaways/timeouts, 97–184 s/case, $0.288; external replay 13/13 items equal; check_cost_class 6/6. Status: premise_not_supported ×4, provisional ×1, insufficient_information ×1. Next: reviewer reads H01–H06 (rule compliance only); README/ARCHITECTURE/slides; fresh-clone test; video; user yes/no to publish + submit.
+
+- **12:37:** Phase 6 step 2 done: H01–H06 rule-compliance review PASS WITH CAVEATS (outputs/final/REVIEW.md; no blocking; known limitations recorded). Step 4 fresh-clone test: clone + `uv sync` without resources/: pytest 758/2, kb check all PASS; one live assess in the clone 92 s, $0.031, 0 hard, 25/25; replay of full-text external items needs the local cache (by design, decision 2026-10-17 12:31), library items re-verify. UI confirm review APPROVE WITH FIXES → follow-up chip fix (475a3cd, pytest 763/2). Running: README/ARCHITECTURE/slides writer; demo video agent (live budget ≤ $0.30).
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
