@@ -1,0 +1,202 @@
+# Results, evaluation and limitations
+
+This page holds the detail behind the [README](../README.md): how to read an output, the model setup, the held-out results, the development evaluation, the model bake-off, reproducibility and the full list of known limitations. Every number links to the committed file it comes from. References such as `D-063` are entries in [DEVIATIONS.md](../DEVIATIONS.md) (each change from the plan, logged with its reason). Times such as "STATUS 11:52" are entries in the [STATUS.md](../STATUS.md) log.
+
+**Terms used below**
+- **H01–H06:** the held-out test set of six customer enquiries from the organisers. It was run once, and the outputs were not edited.
+- **D01–D08, A01–A12:** the development set (organiser enquiries with AFS evaluation data) and our own adversarial enquiries, both used during development.
+- **`freeze-1`:** the git tag of the frozen pipeline that ran H01–H06.
+- **mix-a:** the production model configuration ([config/models.yaml](../config/models.yaml)).
+- **REF:** the organiser's examples-and-reference document. REF §3 suggests the answer sections.
+
+## Contents
+
+- [How to read an output](#how-to-read-an-output)
+- [Honest notes](#honest-notes)
+- [Models](#models)
+- [Held-out set H01–H06](#held-out-set-h01h06)
+- [Evaluation on the development and adversarial sets](#evaluation-on-the-development-and-adversarial-sets)
+- [Model bake-off](#model-bake-off)
+- [Reproducibility](#reproducibility)
+- [Known limitations](#known-limitations)
+- [Licences and materials](#licences-and-materials)
+
+## How to read an output
+
+**Short version first:** [outputs/final/brief/](../outputs/final/brief/) gives each held-out answer in about 550–700 words, in the organiser's section order (REF §3). Code builds these files from the frozen run JSON (`uv run afs-assist brief outputs/final`), with no model call and no new facts. Every citation shown is one the run verified. The full answers stay authoritative. The development set has the same view in [outputs/dev/brief/](../outputs/dev/brief/).
+
+**Full answer:** open [outputs/final/H04.md](../outputs/final/H04.md) or any other `outputs/final/H0x.md`. **Start with the `## Answer` section.** It holds the brief answer, the proposal (best option, what would change it, next step), the decision status, the solution options table, the setup sketch and the key questions. That part is written for the customer.
+
+Everything under `## Expert detail` is the supporting record: requirements, parameters, risks, the feasibility plan, every verified quote (`### Evidence (verified quotes)`) and the check report (`### Verification`). A citation such as `S01 p.10` is a 1-based PDF page (S02 uses slide numbers). Each citation is listed under Evidence with its quote. The `.json` file next to each `.md` holds the full run: intake, screening, raw and final assessment, checks, model calls and manifest.
+
+**Where the organiser's answer sections are** (REF §3 suggests these sections; ours are headings in the `.md`):
+
+| Organiser section (REF §3) | Our section(s) |
+|---|---|
+| Requirements (stated facts and key unknowns, separate) | `### Requirements`; customer request at the top of `## Answer` |
+| Clarification questions (prioritised) | `### Key questions` (Answer), `### Clarification questions (most decision-relevant first)` |
+| Recommendation and decision status | `### Brief answer`, `### Proposal`, **Decision status**, `### Solution options`; `### Recommendation` |
+| Measurement concept | `### Measurement concept`, `### Setup sketch` |
+| Spectral range | `### Spectral range` |
+| Risks and uncertainty | `### Risks and uncertainty`, `### Assumptions` |
+| Feasibility plan | `### First feasibility experiment` |
+| Sources | inline `S0x p.N` citations, `### Evidence (verified quotes)`; literature apart in `### Secondary evidence (external, not AFS material)` |
+
+## Honest notes
+
+- **No general web or forum search.** It was cut. The literature step uses only keyless scholarly APIs (Europe PMC, OpenAlex, Unpaywall) and a curated library of 9 open-access entries. In H01–H06 it found a verified item for 6 of 24 gaps.
+- **In practice, the repair model writes the answer that is shown.** The assess model (`z-ai/glm-5.3-flash`) writes a first draft. In all six H cases the checks found hard failures, and the shown assessment is the repair model's full rewrite (`google/gemini-3.8-flash`, kept round 1).
+- **A live assessment takes about 1.5–3 minutes** (97–184 s per H case). A chat follow-up takes seconds. For a demo, open a saved run while a live one runs.
+
+## Models
+
+The production config is [config/models.yaml](../config/models.yaml), the combined arm **mix-a**. The user chose it after the bake-off (D-063). All models are called through OpenRouter, pinned, with strict JSON output and temperature 0.
+
+| Role | Model | Fallback model |
+|---|---|---|
+| intake, external_queries, external_evidence | `google/gemini-3.5-flash-lite` (flex tier) | `z-ai/glm-5.3-flash` |
+| assess (writes the first draft) | `z-ai/glm-5.3-flash` | `google/gemini-3.8-flash` |
+| repair (only when the checks find hard failures; in all six H cases its rewrite is the shown answer) | `google/gemini-3.8-flash` (flex tier) | `z-ai/glm-5.3-flash` |
+| chat_answer (follow-up questions) | `z-ai/glm-5.3-flash` | `google/gemini-3.8-flash` |
+
+- **Per-role models:** a fast, cheap model does the short structured jobs, and a cheap reasoning model writes the assessment.
+- **Escalating repair:** when the deterministic checks fail, the repair goes to a different, stronger model. This is a cascade in the style of FrugalGPT, with the verifier as the scorer ([docs/model-research.md](model-research.md) §9).
+- **Cross-model retry:** a reply that is cut off, is invalid JSON or times out is retried on the fallback model instead of the same one (D-059).
+- **Spend caps:** $1.00 per run and $10.00 per session (`spend_cap_usd`).
+- **Switching models:** set `AFS_MODELS_CONFIG=config/bakeoff/<arm>.yaml`. The arm configs from the bake-off are in [config/bakeoff/](../config/bakeoff/), including the previous single-model config `baseline-v4.1-flash.yaml`. Each run's manifest records the config path and its sha256.
+
+**Cost and time per case on mix-a**
+- H01–H06 run: 97–184 s and $0.032–0.064 per case, $0.288 in total (manifests in `outputs/final/*.json`).
+- 19-case dev + adversarial gate run: 35–247 s per case (mean about 105 s), $0.013–0.070 per case (STATUS 11:52).
+- A chat follow-up: 1.4–6.3 s, about $0.004 per question (10 questions for $0.038, [docs/chat/live-check-20261018.json](chat/live-check-20261018.json)).
+
+## Held-out set H01–H06
+
+The outputs are in [outputs/final/](../outputs/final/) (`H01.json|.md` … `H06.json|.md`). The assistant generated them, and nobody edited them. The run used `--external live`, the models config mix-a, and code `1b3a7b9` on a clean tree. That is the original hash recorded in the manifests. In this public repository the same tree is commit `0b35037`, tag `freeze-1`. [docs/commit-map.txt](commit-map.txt) maps every original hash, because `knowledge/pages.jsonl` was filtered out of the public history.
+
+| Case | Status | Citations verified | Hard failures | Wall time | Cost |
+|---|---|---|---|---|---|
+| H01 | premise_not_supported | 14/14 | 0 | 97 s | $0.032 |
+| H02 | provisional_assessment | 16/16 | 0 | 98 s | $0.043 |
+| H03 | premise_not_supported | 21/21 | 0 | 184 s | $0.054 |
+| H04 | premise_not_supported | 25/25 | 0 | 180 s | $0.064 |
+| H05 | insufficient_information | 22/22 | 0 | 148 s | $0.045 |
+| H06 | premise_not_supported | 22/22 | 0 | 180 s | $0.050 |
+| **Total** | | **120/120** | **0** | | **$0.288** |
+
+- 0 runaway replies and 0 timeouts.
+- The cost class matched S01 Table 1 in 6 of 6 cases ([scripts/check_cost_class.py](../scripts/check_cost_class.py)).
+- External replay: 13/13 rows equal (6 kept items, 1 dropped item, 6 library-file hash checks) on the machine that ran the set.
+- **Rule-compliance review** by an independent reviewer agent ([outputs/final/REVIEW.md](../outputs/final/REVIEW.md)): PASS WITH CAVEATS, no blocking violation.
+  - Each status is justified by a cited source.
+  - External items appear only in the secondary section.
+  - Cost is given only as a Table 1 class, never a price.
+  - No invented accuracy, detection limit, response time or fiber length.
+  - Every case has a proposal, a change trigger, a next step, and 4–5 questions.
+
+## Evaluation on the development and adversarial sets
+
+Source: [outputs/eval/summary.md](../outputs/eval/summary.md), the gate run on mix-a with `--external live`. The dev set is D01–D08 and the adversarial set is A01–A12.
+- **Checklist:** 0 failures in both sets. It has 19 binary items mapped to the six judging criteria: structure, citations verified, no open failures, no flagged figures, no currency, no certainty wording, cost class vs Table 1, option and proposal rules, feasibility plan, premise flags, questions, length, external items secondary and replayable, off-topic handling.
+- **Per-enquiry checks (adversarial):** must 33/34 and must-not 12/13. Both failures are A07, a complete enquiry:
+  - it got 4 questions where at most 3 are allowed;
+  - the must-not pattern `reference (method|measurement|analys)` matched a legitimate question about the reference's reproducibility.
+  - Both are recorded as they are. The eval was not changed after seeing the outputs (D-051; STATUS 11:52).
+- Citations verified 100 % in every case. External replay 19/19 equal.
+
+## Model bake-off
+
+7 arms ran on D01–D08 with `--external cache`. Four blind judge agents (LLM reviewers) scored them against the AFS evaluation data: the facts stated and useful sources in [scenarios/dev.jsonl](../scenarios/dev.jsonl), and the worked answers for D01–D02. The arms were shown as anonymous letters.
+
+Source: [outputs/bakeoff-dev/blind/summary.md](../outputs/bakeoff-dev/blind/summary.md), with recall from [outputs/bakeoff-dev/afs-score.md](../outputs/bakeoff-dev/afs-score.md).
+
+| Arm | Blind quality (1–5) | Mean s/case | Mean $/case | AFS useful-source recall |
+|---|---|---|---|---|
+| deepseek-v4.1-flash-1017 | 4.15 | 259 | $0.013 | 78 % |
+| baseline (deepseek-v4.1-flash) | 4.08 | 504 | $0.022 | 82 % |
+| **mix-a (chosen)** | **4.06** | **84** | **$0.030** | **85 %** |
+| glm-5.3-flash | 3.96 | 322 | $0.006 | 85 % |
+| gemini-3.8-flash | 3.75 | 173 | $0.059 | 82 % |
+| mix-b | 3.38 | 69 | $0.030 | 75 % |
+| gemini-3.5-flash-lite | 3.23 | 29 | $0.015 | 65 % |
+
+All arms had 0 hard failures and 0 checklist failures. The top three are close on quality. mix-a was chosen because it is 3–6× faster than the other two, and it was also in the top group of an earlier 3-case review (D-063).
+
+An earlier 6-case bake-off is in [outputs/bakeoff/compare.md](../outputs/bakeoff/compare.md). In it, two arms (Haiku 5.5 and GPT-6 Luna) were dropped because their APIs rejected our strict JSON schema on the first call ([outputs/bakeoff/README.md](../outputs/bakeoff/README.md)).
+
+## Reproducibility
+
+### Knowledge base and organiser files
+
+The organiser files (AFS / SchubKI materials, S01–S06 and the reference docx) are **not in this repository**, and neither is their extracted full page text, `knowledge/pages.jsonl`. Both are gitignored; see [NOTICE](../NOTICE). What is committed is our own derived knowledge: page scopes, rules (each with a short verbatim source quote), S01 Table 1, fiber data, the graph and our S02 notes.
+
+The assistant needs the page text to assess or to open a run. Recreate it from the organiser archive:
+
+```bash
+unzip materials.zip -d resources/      # gives resources/materials/S01_….pdf … (organiser archive)
+uv run afs-assist kb build             # writes knowledge/pages.jsonl (and rebuilds the other knowledge files)
+uv run afs-assist kb check             # validate knowledge/ (every rule quote verbatim on its page, etc.)
+```
+
+The rebuilt `knowledge/pages.jsonl` is byte-identical to the one the runs used. Its sha256 equals `pages_sha256` in every run manifest (`7e23c2ae…` in [outputs/final/H01.json](../outputs/final/H01.json); checked by rebuilding in a fresh clone, 2026-10-18).
+
+Without it:
+- `assess`, `run` and `ui` stop with a message that says to run `kb build`;
+- `kb check` reports `pages_present` as failing;
+- the tests that need the page text are skipped with the same hint.
+
+The saved outputs, `afs-assist eval` and `afs-assist external replay` work without it.
+
+### Fresh-clone test
+
+Run 2026-10-18 14:38, after `knowledge/pages.jsonl` left the repository:
+- A fresh `git clone` + `uv sync`, with no `resources/` folder and no `pages.jsonl`: `uv run pytest -q` gives 357 passed, 535 skipped (the page-text tests, each with the `kb build` hint), 0 failed. `uv run afs-assist kb check` reports `pages_present` FAIL with that hint; the other 7 checks PASS.
+- The same clone with `pages.jsonl` added: 890 passed, 2 skipped, and `kb check` 13/13 PASS (the S02 PDF text-layer comparison is skipped without the PDF).
+- `afs-assist kb build` in a fresh clone with the organiser materials in `resources/` recreates `pages.jsonl` byte-identically (sha256 `7e23c2ae…` = `pages_sha256` in the run manifests) and leaves every committed knowledge file unchanged.
+- Earlier (12:35, when the page text was still committed): one live `afs-assist assess --text ... --external off` in a fresh clone took 92 s and $0.031, with 0 hard failures and 25/25 citations verified.
+
+### Literature replay
+
+- `afs-assist external replay outputs/final/<H>.json` re-checks the items from the curated library.
+- In a fresh clone it reports the full-text items as "source text not in the local cache". This is by design (user decision 2026-10-17 12:31):
+  - git holds the metadata, the verified quotes and the sha256 of each fetched source;
+  - the full fetched text stays in the local, gitignored cache `runs/external_cache/`.
+- On the machine that ran H01–H06, the replay is 13/13 equal.
+
+### Run manifests and provenance
+
+Every run's manifest records the code sha, a dirty flag, the models config and its sha256, and the prompt, skill, knowledge, pages and rules sha256. It also records the cost, the tokens and the provenance commit. Every run is also written as a commit on the `provenance` branch (see [ARCHITECTURE.md](../ARCHITECTURE.md)). Local copies go to `runs/` (gitignored).
+
+## Known limitations
+
+From STATUS.md, the G5 review (PHASES.md "Review (G5)", the end-of-phase-5 review) and the H01–H06 rule-compliance review ([outputs/final/REVIEW.md](../outputs/final/REVIEW.md), generic patterns only):
+
+- **Answers are long.** The H01–H06 Markdown files are 3,058–3,455 words each, including the expert detail. The AFS worked answers for D01–D02 are 303–400 words ([scenarios/dev_reference.jsonl](../scenarios/dev_reference.jsonl)). The short answer and the tables carry the reader, but the full report is far longer than what AFS writes. The code-built [short view](../outputs/final/brief/) helps.
+- **"Verified" means the quote is on the cited page and in scope, not that it supports the claim.** A page-scope check (`scope.py`) limits what kind of claim a page can back, and precedents are labelled. Still, a claim can go beyond its valid quote, and a citation is sometimes used for a point the page does not really make (seen in four of the six H outputs). The planned entailment critic (PHASES 5.5) was not built.
+- **Gaps in the checks:**
+  - Short table cells (performance fit, future direction) are not screened for overclaiming.
+  - A page reference typed inline in prose, rather than as a citation, skips verification.
+  - A cited quote can carry the source's own certainty wording.
+  - No check compares fields with each other, for example contact vs non-contact in two sections.
+- **Two known slips in the held-out outputs, left as generated.** A fix needs a pipeline change and a re-run, so H01–H06 stay frozen:
+  - H06: the options table calls the recommended NIR diffuse-reflection option "non-contact", but S03 p.4 describes the probe tip in "immediate slight contact" with the sample, and H06's own measurement concept says light contact.
+  - H03: the brief answer leads with testing Raman. The cheaper first test, with the fluorescence spectrometer the customer already owns (an intrinsic-fluorophore signal such as NADH against biomass references), comes second and is spelled out only in Q1 and option O3.
+- **Literature tagging:** an external item can be tagged to the wrong option, or be only weakly relevant.
+- **Lab reference methods** (for example Kjeldahl or Karl Fischer) are engineering judgement. They are marked "e.g." and flagged as unsourced.
+- **Setup sketch:** the NIR fiber label lists every fiber family that overlaps the range.
+- **Over-questioning:** a complete enquiry can still get 4–5 questions (A07, D-051). The questions are relevant, not re-asks of stated facts.
+- **Confidence rarely varies.** Code computes it from open questions and named weaknesses. In the G5 review it was Low for 45 of 55 options, Medium for 10 and High for none. It rates the basis of the advice, never a predicted accuracy.
+- **A follow-up can flip the method** without a clear reason. This was seen in the G5 live loop (Raman to MIR-ATR) and in the demo video (NIR alone to NIR + Raman after only a temperature answer). A re-assessment is a fresh model run, so it can differ for reasons other than the new fact.
+- **Margin note numbers restart per turn,** so in a long thread the same number can point to different quotes in different turns.
+- **Latency:** a full assessment takes about 1.5–3 minutes. The Gemini roles use the flex tier, which can queue or rate-limit. The fallback models cover that, but runs may be slower.
+- **External literature** comes from keyless scholarly APIs with small shared quotas (OpenAlex keyless is about 100 searches per day per IP). When those fail, the step falls back to the 9-entry curated library. General web and forum search was cut; in H01–H06 a verified item was found for 6 of 24 gaps.
+- **Windows:** parallel set runs inside one process are serialised by a thread lock. The cross-process provenance lock uses `fcntl` (POSIX only), so on Windows do not run two `afs-assist` processes at once.
+- **Reruns differ.** Live model calls do not give byte-identical reruns. The frozen H outputs are stored once and are not regenerated.
+
+## Licences and materials
+
+- **Our code and docs:** MIT ([LICENSE](../LICENSE)). [NOTICE](../NOTICE) lists what the licence does not cover.
+- **Organiser and publisher materials** (S01–S05, S06, the reference docx and the method table; AFS / SchubKI and the publishers) are not in the repository and belong to their holders. Their full page text (`knowledge/pages.jsonl`) is rebuilt locally with `kb build`. The short verbatim quotes in `knowledge/` (rules, page scopes, S02 notes, Table 1) and in `outputs/` are citations for the challenge. S03 is open access under CC BY 4.0 (attribution in NOTICE).
+- **Fonts:** IBM Plex Sans and Mono (Copyright 2017 IBM Corp.) and Newsreader (Copyright 2020 The Newsreader Project Authors). All are under the SIL Open Font License 1.1 and self-hosted in `src/afs_assistant/ui/static/fonts/` (see `OFL.txt` and `OFL-Newsreader.txt`).
+- **htmx 2.0.4** (0BSD) is vendored in `src/afs_assistant/ui/static/vendor/`.
+- **External literature:** only short verified quotes, each with its URL or DOI, and metadata are stored. The curated library holds open-access (CC BY) passages.
