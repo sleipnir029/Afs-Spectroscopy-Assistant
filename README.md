@@ -41,13 +41,17 @@ Without `CONTACT_EMAIL` the Unpaywall lookup is skipped. The pipeline never call
 
 ### Knowledge base and organiser files
 
-`resources/` holds the organiser files (AFS / SchubKI materials). They are copyrighted, so they are **not in git** (`resources/` is gitignored). The derived knowledge in `knowledge/` (page text, page scopes, rules, Table 1, fiber data, graph) **is** committed, so the assistant runs without `resources/`. You only need the originals to rebuild the knowledge base:
+The organiser files (AFS / SchubKI materials, S01–S06 and the reference docx) are **not in this repository**, and neither is their extracted full page text, `knowledge/pages.jsonl` (both are gitignored; see `NOTICE`). What is committed is our own derived knowledge: page scopes, rules (each with a short verbatim source quote), S01 Table 1, fiber data, the graph and our S02 notes.
+
+The assistant needs the page text to assess or to open a run. Recreate it from the organiser archive:
 
 ```bash
-unzip materials.zip -d resources/      # organiser archive
-uv run afs-assist kb build             # rebuild knowledge/ from resources/
+unzip materials.zip -d resources/      # gives resources/materials/S01_….pdf … (organiser archive)
+uv run afs-assist kb build             # writes knowledge/pages.jsonl (and rebuilds the other knowledge files)
 uv run afs-assist kb check             # validate knowledge/ (every rule quote verbatim on its page, etc.)
 ```
+
+The rebuilt `knowledge/pages.jsonl` is byte-identical to the one the runs used: its sha256 equals `pages_sha256` in every run manifest (`7e23c2ae…` in `outputs/final/H01.json`; checked by rebuilding in a fresh clone, 2026-10-18). Without it, `assess`, `run` and `ui` stop with a message that says to run `kb build`, `kb check` reports `pages_present` as failing, and the tests that need the page text are skipped with the same hint. The saved outputs, `afs-assist eval` and `afs-assist external replay` work without it.
 
 ## Commands
 
@@ -184,7 +188,8 @@ From STATUS.md, the G5 review (PHASES.md "Review (G5)") and the H01–H06 rule-c
 
 ## Licences and materials
 
-- **Organiser materials** (`resources/`, AFS / SchubKI) are copyrighted and excluded from git. `knowledge/` holds derived page text and our own notes for grounding and verification.
+- **Our code and docs:** MIT (`LICENSE`). `NOTICE` lists what the licence does not cover.
+- **Organiser and publisher materials** (S01–S05, S06, the reference docx and the method table, AFS / SchubKI and the publishers) are not in the repository and belong to their holders. Their full page text (`knowledge/pages.jsonl`) is rebuilt locally with `kb build`. The short verbatim quotes in `knowledge/` (rules, page scopes, S02 notes, Table 1) and in `outputs/` are citations for the challenge. S03 is open access under CC BY 4.0 (attribution in `NOTICE`).
 - **Fonts:** IBM Plex Sans and Mono (Copyright 2017 IBM Corp.) and Newsreader (Copyright 2020 The Newsreader Project Authors). All are under the SIL Open Font License 1.1 and self-hosted in `src/afs_assistant/ui/static/fonts/` (see `OFL.txt` and `OFL-Newsreader.txt`).
 - **htmx 2.0.4** (0BSD) is vendored in `src/afs_assistant/ui/static/vendor/`.
 - **External literature:** only short verified quotes, each with its URL or DOI, and metadata are stored. The curated library holds open-access (CC BY) passages.
