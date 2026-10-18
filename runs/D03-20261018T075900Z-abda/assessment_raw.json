@@ -1,0 +1,277 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The customer's whey stream transitions from clear to turbid, requiring spectroscopic methods and probe geometries that can handle variable optical scattering properties, such as NIR transmission/transflection or diffuse reflection.",
+ "premise_checks": [
+  {
+   "premise": "Spectroscopy can track protein concentration in whey streams undergoing turbidity changes.",
+   "verdict": "supported",
+   "explanation": "The literature confirms NIR spectroscopy is widely used for dairy stream monitoring, handling both clear/semi-transparent and scattering states.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Track protein concentration in a dairy whey stream",
+  "Handle stream transitioning from clear to turbid",
+  "Use laboratory results as reference"
+ ],
+ "key_unknowns": [
+  "Expected range of turbidity variation and suspended solids",
+  "Required measurement accuracy and response time",
+  "Process temperature, pressure, and pipe dimensions",
+  "Cleaning and fouling management requirements"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the expected quantitative range of turbidity or optical density during the transition from clear to turbid states?",
+   "why_it_matters": "Determines whether a transmission, transflection, or diffuse reflection probe geometry is required to prevent signal saturation.",
+   "affects": [
+    "technique",
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What are the required measurement accuracy, precision, and update frequency for protein concentration tracking?",
+   "why_it_matters": "Guides the selection of spectrometer resolution and chemometric model complexity.",
+   "affects": [
+    "status",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the mechanical constraints, temperature, and pressure at the intended installation point before the concentration stage?",
+   "why_it_matters": "Ensures proper probe material and flange mounting selection for in-line operation.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR transmission and transflection probes are standard for dairy streams and can accommodate variable pathlengths or transflection configurations for clear-to-turbid liquids.",
+   "conditions": "Applies when turbidity does not cause total signal saturation.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Diffuse reflection handles opaque or highly scattering conditions when the stream becomes turbid.",
+   "conditions": "Applies if turbidity increases to the point where transmission fails.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "MIR-ATR provides high-selectivity fingerprint absorption bands independent of bulk scattering via evanescent wave interaction.",
+   "conditions": "Applies if NIR scattering interference proves too high and optical fouling can be managed.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR transflection or adaptable reflection probe flush-mounted in the process pipe.",
+  "location": "Dairy whey stream before the concentration stage.",
+  "fiber_link": "Vis-NIR silica fiber cable linking the process probe to the spectrometer.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+    "claim_kind": "application_precedent"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range is 780-2500 nm; usable range depends on the specific instrument, fiber, and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Turbidity shifts cause strong scattering interference that can mimic concentration changes in transmission mode.",
+   "rule_ids": [
+    "R-GEO-6",
+    "R-NIR-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Fouling or protein deposition on optical windows leads to signal drift over time.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative whey samples covering the full expected range of clear to turbid operating conditions.",
+    "purpose": "Ensure calibration encompasses physical variations.",
+    "citations": []
+   },
+   {
+    "step": "Acquire reference protein concentration measurements using standard laboratory methods for all sample states.",
+    "purpose": "Provide independent reference data for chemometric model training.",
+    "citations": []
+   },
+   {
+    "step": "Test NIR transmission/transflection and reflection configurations with the collected samples.",
+    "purpose": "Determine which optical setup best handles the turbidity transition.",
+    "citations": []
+   },
+   {
+    "step": "Build and cross-validate PLS calibration models relating spectra to protein concentration.",
+    "purpose": "Assess predictive accuracy across varying turbidity states.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Standard laboratory reference measurements for protein concentration.",
+  "decision_basis": "Go/no-go based on achieving the required prediction accuracy for protein concentration across both clear and turbid operating states."
+ },
+ "assumptions": [
+  "The whey stream temperature and pressure are within standard fiber-optic probe ratings.",
+  "Laboratory reference methods provide accurate protein values."
+ ],
+ "not_in_sources": [],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Protein concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Core target variable to be tracked in-line.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Turbidity / scattering level",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Tracks the physical transition from clear to turbid which affects optical path response.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Straightforward NIR transflection operation",
+   "maintenance": "Regular optical window cleaning",
+   "performance_fit": "Handles clear to moderate turbidity states well",
+   "cost_drivers": "Single NIR spectrometer and transflection probe",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Adaptable probe or dual-mode assessment",
+   "maintenance": "Periodic calibration and window maintenance",
+   "performance_fit": "Compensates for wide turbidity swings using flexible probe geometry",
+   "cost_drivers": "NIR spectrometer with adaptable probe interface",
+   "fusion_note": null,
+   "citations": []
+  }
+ ],
+ "chemometrics_note": "Requires partial least squares (PLS) calibration with scatter correction methods like SNV or MSC to handle turbidity variations.",
+ "realtime_tracking_note": "In-line continuous tracking of protein concentration prior to the concentration stage.",
+ "future_direction": "Integration of automated cleaning systems or multi-spectral sensor arrays if fouling or extreme scattering occurs.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "Confirmation that turbidity remains within a narrow band allowing standard transmission, or severe fouling requiring MIR-ATR.",
+  "next_step": "Conduct multi-method laboratory trials with representative clear and turbid whey samples."
+ },
+ "brief_answer": "To track protein concentration in a dairy whey stream transitioning from clear to turbid, NIR spectroscopy using a transflection or adaptable reflection probe is recommended first. Laboratory reference measurements on representative samples will be needed to build robust chemometric calibration models that account for physical scattering changes."
+}
