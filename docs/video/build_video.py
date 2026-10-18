@@ -127,7 +127,7 @@ ARCH_STEPS = [("model", "Understand the enquiry", "Gemini 3.5 Flash-Lite"),
               ("code", "Screen the 5 methods against 44 AFS rules", ""),
               ("model", "Write the assessment from 67 AFS pages", "GLM-5.3-Flash"),
               ("code", "Check every quote, page, number, wording", ""),
-              ("model", "Fix what failed", "stronger model: Gemini 3.8 Flash"),
+              ("model", "Fix what failed", "second model: Gemini 3.8 Flash"),
               ("code", "Answer with sources", "")]
 
 
@@ -192,7 +192,7 @@ def card_feasibility():
             d.rectangle([lx, ly + 1, lx + d.textlength(cite, font=font(ARIAL_B, 20)) + 14, ly + 32], outline=RED, width=2)
             d.text((lx + 7, ly + 5), cite, font=font(ARIAL_B, 20), fill=RED)
         y += len(lines) * 38 + 26
-    d.text((160, 790), "Source: demo run record runs/adhoc-20261018T103823Z-e0e0/assessment.json, feasibility_plan.",
+    d.text((160, 790), "Source: demo run record on the provenance branch, runs/adhoc-20261018T103823Z-e0e0/assessment.json.",
            font=font(ARIAL, 22), fill=MUTED)
     return img
 

@@ -59,7 +59,7 @@ Captions run at 2.17–2.50 words per second (`build_video.py` prints the rate o
 
 ## Architecture card (sources)
 
-Six boxes, left to right, each marked MODEL or CODE: Understand the enquiry (model: Gemini 3.5 Flash-Lite) → Screen the 5 methods against 44 AFS rules (code) → Write the assessment from 67 AFS pages (model: GLM-5.3-Flash) → Check every quote, page, number, wording (code) → Fix what failed (stronger model: Gemini 3.8 Flash) → Answer with sources (code). Line under it: "Literature is searched only for gaps the AFS documents leave open, and marked secondary."
+Six boxes, left to right, each marked MODEL or CODE: Understand the enquiry (model: Gemini 3.5 Flash-Lite) → Screen the 5 methods against 44 AFS rules (code) → Write the assessment from 67 AFS pages (model: GLM-5.3-Flash) → Check every quote, page, number, wording (code) → Fix what failed (second model: Gemini 3.8 Flash) → Answer with sources (code). Line under it: "Literature is searched only for gaps the AFS documents leave open, and marked secondary."
 
 - Models: `config/models.yaml` (mix-a), roles `intake` (google/gemini-3.5-flash-lite), `assess` (z-ai/glm-5.3-flash), `repair` (google/gemini-3.8-flash). The literature roles (`external_queries`, `external_evidence`) also use Gemini 3.5 Flash-Lite; the card covers them with the line under the boxes only.
 - Counts: `uv run afs-assist kb check` printed "44 rules" and "67 page records" on 2026-10-18. The 5 methods are NIR, MIR, Raman, UV-Vis and fluorescence (problem card).
@@ -67,7 +67,7 @@ Six boxes, left to right, each marked MODEL or CODE: Understand the enquiry (mod
 
 ## Feasibility-study-plan card (source)
 
-The plan is the demo run's own: `feasibility_plan` of assessment v1, run `ui-adhoc-20261018T103823Z-e0e0`, in the local run record `runs/adhoc-20261018T103823Z-e0e0/assessment.json` (`runs/` is gitignored; the run is also a commit on the provenance ref). Steps 1–3 are also on screen in the committed frame `17_followup_setup.png`. The card shows steps 1, 2, 3 and 5 of 5 (the `step` field, copied character for character and checked by string comparison against the JSON). Step 4 (PLS calibration, then a fused NIR+Raman model) was left out for length. Step 5's own citation (REF p.3) is shown as a tag. Steps 1–3 have no citation in the plan.
+The plan is the demo run's own: `feasibility_plan` of assessment v1, run `ui-adhoc-20261018T103823Z-e0e0`, in the local run record `runs/adhoc-20261018T103823Z-e0e0/assessment.json` (also committed on the `provenance` branch, tag `run/adhoc-20261018T103823Z-e0e0`; `runs/` is gitignored; the run is also a commit on the provenance ref). Steps 1–3 are also on screen in the committed frame `17_followup_setup.png`. The card shows steps 1, 2, 3 and 5 of 5 (the `step` field, copied character for character and checked by string comparison against the JSON). Step 4 (PLS calibration, then a fused NIR+Raman model) was left out for length. Step 5's own citation (REF p.3) is shown as a tag. Steps 1–3 have no citation in the plan.
 
 1. Collect representative filtered broth samples across the expected variation in ethanol concentration, temperature and co-fermentation components over several runs.
 2. Measure each sample with GC as the independent reference, using the customer's existing lab method.
