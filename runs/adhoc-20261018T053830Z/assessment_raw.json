@@ -1,0 +1,441 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The stated aqueous, strongly scattering product and the sources justify a short method shortlist, but the monomer species, its concentration range and any fluorescence are unknown, so the choice stays provisional.",
+ "premise_checks": [
+  {
+   "premise": "In-line spectroscopy can replace the lab sampling currently used for the residual monomer.",
+   "verdict": "precedent_only",
+   "explanation": "A source describes fiber probes integrated into reactors and production lines for online analysis in near real time; this is a reason to test, not proof for this process.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 2,
+     "quote": "Fiber optic probes and cells are being integrated into reactors and production lines of ongoing technological processes, enabling on-site online analysis and obtaining results in near real time.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "premise": "An optical measurement will work in the milky white, strongly scattering product.",
+   "verdict": "precedent_only",
+   "explanation": "A source shows NIR reflection used for opaque, highly concentrated dairy products, a similar scattering liquid; this supports testing, not a guarantee for this emulsion.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Which residual monomer species is to be measured and over what concentration range",
+  "Required detection limit, accuracy and response time",
+  "Whether the formulation contains fluorescent species (surfactants, initiators, stabilisers, brighteners)",
+  "Optical behaviour of the mixture during the feed (particle size, solids) versus the final milky white product",
+  "Available probe port, distance from the reactor to the spectrometer and probe cleaning",
+  "Reference lab method for the residual monomer and its uncertainty"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which residual monomer is to be followed, over what concentration range, and what detection limit and accuracy are required?",
+   "why_it_matters": "The monomer's spectral signature and the required sensitivity decide which method can meet the target.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Are fluorescent species present in the formulation, such as surfactants, initiators, stabilisers or optical brighteners?",
+   "why_it_matters": "A strong fluorescence background can make Raman unusable and would shift the technique choice toward NIR or MIR.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What probe port is available, what is the distance from the reactor to the spectrometer, and how will the probe be cleaned?",
+   "why_it_matters": "Port, distance and cleaning decide the probe type, the fiber link and the maintenance concept.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What reference lab method is used for the residual monomer, and what is its typical uncertainty?",
+   "why_it_matters": "The in-line model must be validated against that reference, and its uncertainty sets the achievable accuracy.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Can representative samples be taken across the feed, or a bypass provided, for the trial?",
+   "why_it_matters": "Without representative samples and reference values, no calibration or go/no-go decision is possible.",
+   "affects": [
+    "status"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman tolerates the water matrix, where water absorbs far less than in infrared methods, and it can give a molecular fingerprint for a specific monomer. It is the single method to test first for the residual monomer.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman spectroscopy can be used in the same reactor to provide a \"molecular fingerprint\" for direct detection of specific metabolites like glucose, acetate, or lactate.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is the geometry for opaque, highly scattering samples like this milky white product, and NIR suits remote fiber-probe measurement in-line. Its broad overlapping bands need a chemometric calibration.",
+   "conditions": "Applies if the residual monomer is present at a level NIR can detect.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "making it ideal for online applications, including remote measurements via fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "NIR and Raman carry complementary information, NIR detecting hydrogen bonds and polar groups and Raman the molecular backbone and non-polar groups, so fusion may improve monomer quantification. Any gain is a hypothesis to test against the best single method.",
+   "conditions": "Only if the single-method tests leave the residual-monomer target or a stated interference uncovered.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "The combination of these techniques is particularly effective because it captures complementary chemical information: NIR detects hydrogen bonds and asymmetric polar groups, while Raman provides information on the molecular backbone and symmetrical non-polar groups.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 7,
+     "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "A Raman probe first, with NIR diffuse reflection as a comparison; both contact or view the flowing emulsion through a reactor port.",
+  "location": "In-line at the reactor during the feed, not off-line sampling.",
+  "fiber_link": "Fiber link length is not stated in the sources and depends on the selected configuration and the port distance; treat it as an open question.",
+  "citations": []
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman is reported as a Raman shift in cm-1; the laser excitation wavelength is stated separately and is not fixed by the sources for this case.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "The nominal NIR range is 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Raman signals are weak and a fluorescence background from surfactants, initiators or the monomer could mask the monomer band in the milky emulsion.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The residual-monomer concentration range and the required detection limit are unknown; if very low, both Raman and NIR may lack sensitivity.",
+   "rule_ids": [
+    "R-NIR-4"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The optical properties of the mixture change during the feed (particle size, solids), so a calibration built at one state may not transfer.",
+   "rule_ids": [
+    "R-CAL-1",
+    "R-GEO-6"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "Probe fouling or coating at about 80 C in a polymerising emulsion could degrade the signal and require frequent cleaning.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative samples across the feed at different conversion states, each with an independent lab reference value for the residual monomer.",
+    "purpose": "Provide the reference data for calibration and a later go/no-go basis.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure all samples with a Raman probe first and record signal strength and any fluorescence background.",
+    "purpose": "Test the single primary method before any combination.",
+    "citations": []
+   },
+   {
+    "step": "Measure the same samples by NIR diffuse reflection and compare the two single methods.",
+    "purpose": "Check whether the scattering-friendly geometry gives an equal or better result.",
+    "citations": []
+   },
+   {
+    "step": "Build calibration models on one subset and validate on held-out runs or batches, with proper cross-validation and a permutation test.",
+    "purpose": "Reduce the risk of overfitting on a limited dataset.",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 14,
+      "quote": "A thorough validation, including full, segmented and random-subset CVs, as well as randomization tests, are recommended in any cases for which important conclusions depend on calibration or discrimination models built on limited experimental material.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Only if the single methods fall short, test NIR and Raman fusion at the same sampling spot and require the fused model to beat the best single method; set the go/no-go detection limit, accuracy and response-time criteria together with the customer.",
+    "purpose": "Decide whether the added second method earns its place.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "compare with the best single method.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Independent lab values for the residual monomer are needed for every trial sample.",
+  "decision_basis": "Go/no-go thresholds for detection limit, accuracy and response time are to be set by the customer, not by the sources."
+ },
+ "assumptions": [
+  "The residual monomer is an organic species with a measurable vibrational signature.",
+  "Representative samples and an independent lab reference can be obtained across the feed."
+ ],
+ "not_in_sources": [
+  "No supplied source covers in-line residual-monomer monitoring in emulsion polymerisation, its achievable detection limit, or the optical behaviour of this specific milky white product.",
+  "No supplied source states an achievable fiber link length for this in-line installation."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Residual monomer concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "This is the target variable the customer wants to follow in-line during the feed.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Temperature",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature affects the reaction state and the spectra, so it is needed to interpret and stabilise the model.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Emulsion scatter (particle size or solids content)",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "Physical variation can mimic a composition change in scattering samples, so a reference for scatter helps separate physical from chemical effects.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "particle-size or gravimetric solids measurement",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "the method is sensitive to the surface characteristics and fat globule size.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P3"
+   ],
+   "ease_of_use": "simple probe, standard NIR spectrometer",
+   "maintenance": "window cleaning and scatter-drift checks",
+   "performance_fit": "direct fit to the milky scattering product",
+   "cost_drivers": "one NIR spectrometer and reflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "single probe, laser safety measures",
+   "maintenance": "probe cleaning, laser and filter checks",
+   "performance_fit": "molecular specificity for the monomer in water",
+   "cost_drivers": "Raman spectrometer, laser and Raman probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "two instruments, synchronised acquisition",
+   "maintenance": "two calibrations and probe cleanings",
+   "performance_fit": "complementary blocks may cover scatter and monomer",
+   "cost_drivers": "two spectrometers, combined or dual probes, data fusion",
+   "fusion_note": "Low-level fusion of synchronised NIR and Raman spectra from the same small sampling spot, with per-method calibration and block scaling. Validate on held-out runs and require the fused model to beat the best single method.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "If the variables have different units of measurement, the data should be normalized in some way, for example, using an autoscaling algorithm.",
+     "claim_kind": "method_gain"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Both NIR and Raman will need a chemometric calibration built on the independent lab reference values. NIR bands are broad and overlapping and the milky emulsion requires scatter handling, while a Raman model is matrix-specific; both must be re-validated when the matrix or monomer grade changes.",
+ "realtime_tracking_note": "The aim is continuous in-line tracking of the residual monomer during the feed, so acquisition speed and time alignment of the data matter; data from more than one method must be normalised to a common time step before fusion.",
+ "future_direction": "After successful multi-method lab trials, the method could be reduced to a compact sensor with a small set of selected wavelengths for the reactor.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "A very low required detection limit or a strong fluorescence background would move the choice to the NIR+Raman fusion (O3) or to MIR ATR; if NIR diffuse reflection proves sensitive enough, it would become the primary.",
+  "next_step": "Run a multi-method lab trial on representative feed samples against an independent lab reference for the residual monomer."
+ },
+ "brief_answer": "Test Raman first: water interferes less than in infrared methods and Raman can target the monomer directly. Compare it with NIR diffuse reflection, which suits the strongly scattering milky white product, and keep NIR+Raman fusion as a later hypothesis. The choice stays provisional until the monomer, its concentration range and any fluorescence are known."
+}
