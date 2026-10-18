@@ -1,8 +1,10 @@
 # Status
 
-_Last updated: 2026-10-18 08:41 CEST (Claude, Phase 5 session 5, 5.8 research running)._
+_Last updated: 2026-10-18 09:11 CEST (Claude, Phase 5 session 5: bake-off running)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
+
+- **09:11:** 5.8 plan v2 approved 09:00 (all arms). Code merged (D-054 b/c config + `--outputs`; D-056 cross-process provenance lock + run-id suffix). 5.9 activity feed implemented (D-055, 38f778e and earlier; pytest 679/2). Bake-off started 09:10 (D-057: `--external cache`, arms parallel): **Haiku 5.5 and GPT-6 Luna dropped** (schema 400 at the first call; outputs/bakeoff/README.md). Running: baseline, GLM-5.3-Flash, v4.1-flash-1017. Reviewer on the 5.8/5.9/D-056 code; mockup agent on 5.10/5.11 (docs/mockups/).
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
