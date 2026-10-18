@@ -270,3 +270,24 @@ All accessed 2026-10-18 between 08:41 and 08:49 CEST.
 20. LLM Gateway, DeepSeek V4.1 Flash (soft vs strict JSON on its upstream): https://llmgateway.io/models/deepseek-v4-1-flash (search summary only).
 21. GPT-6 Luna third-party guides (effort levels none…max; AA index about 38): https://codersera.com/blog/gpt-6-luna-complete-guide-2026/, https://benchlm.ai/models/jevbench-gpt-6-luna (search summaries only; conflicting figures).
 22. Internal evidence: `runs/*/calls.json` (51 full runs, measured 2026-10-18 08:45), DEVIATIONS.md D-025, D-053, D-053a, D-053b, `config/models.yaml`, `src/afs_assistant/llm.py`, `src/afs_assistant/schema.py`.
+
+## 9. Combining models (added 2026-10-18 09:30, user: "combining data from different models so we can make better results at cheaper costs")
+
+Known approaches:
+
+- **Cascades (FrugalGPT).** Send each query to a cheap model first. A scorer judges the answer. Only answers that fail go to a dearer model. The paper reports matching the best single model's quality at a large cost reduction on its benchmarks. Chen, Zaharia, Zou, "FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance", arXiv:2305.05176, https://arxiv.org/abs/2305.05176.
+- **Routers (RouteLLM).** A learned router picks the strong or weak model per query before answering. Ong et al., "RouteLLM: Learning to Route LLMs with Preference Data", arXiv:2406.18665, https://arxiv.org/abs/2406.18665.
+- **Mixture-of-Agents.** Several models answer, then an aggregator model merges the answers. This raises quality on chat benchmarks, but every query pays for all the models plus the aggregator. Wang et al., "Mixture-of-Agents Enhances Large Language Model Capabilities", arXiv:2406.04692, https://arxiv.org/abs/2406.04692.
+
+How this maps onto our pipeline:
+
+- Our pipeline already has the scorer a cascade needs: the deterministic verifier. It checks quotes verbatim on the cited page, the scope, numbers and rules, and records hard failures. This is stronger than FrugalGPT's learned scorer, because a failure is a checked fact, not a prediction.
+
+| # | Combination | How | Cost effect | Code |
+|---|---|---|---|---|
+| C1 | **Per-role models** | A fast, cheap model for intake and the two external roles (short structured jobs); the best-value model for assess. | Pays for strength only where the long reasoning happens. | None (roles already name their own model). |
+| C2 | **Escalating repair (cascade)** | Assess on the cheap model. Only when the verifier finds hard failures does the repair call go to a different, stronger model. It sees the failed checks and fixes them. | The dearer model runs only on failing cases (about 0–1 repair calls per case today). | None (the repair role names its own model). |
+| C3 | **Cross-model retry on a runaway** | When a reply is discarded (cut at max_tokens, invalid JSON) or times out, retry on a fallback model instead of the same one. At temperature 0 the same model "re-entered the loop on the same content" (§4). | Removes the 64k-token loops that cost the most and take the longest. | Small: a per-role `fallback_model` in `llm.py`, used only for the retry after a discard or timeout. |
+| C4 | Mixture-of-Agents (two assessments merged) | Two models assess; a third merges. | About 2–3× the cost per case, plus a merge step and its own verification. | Large. **Not proposed** for today. |
+
+**Proposal:** run the single-model arms first; the measurements per role are in `calls.json`. Then build one combined arm from the per-role results: C1 + C2, plus C3 if the code change passes review. Measure it on the same 6 cases against the best single model.
