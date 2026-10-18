@@ -1,0 +1,415 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "A method shortlist can be justified from general method properties, but no supplied source covers sucrose in-line or states an achievable accuracy, so the ±0.3 % w/w target and the reference method's uncertainty are assumptions rather than established facts.",
+ "premise_checks": [
+  {
+   "premise": "An accuracy of plus or minus 0.3 % w/w is achievable in-line for this stream.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source gives an accuracy figure for sucrose, or for any in-line sugar measurement. The target stays a customer requirement to be demonstrated in a trial.",
+   "citations": []
+  },
+  {
+   "premise": "A 10 m standoff between the pipe and a dry, safe analyser room is compatible with the measurement.",
+   "verdict": "supported",
+   "explanation": "Remote process-control over silica fibers at this order of distance is stated. For a MIR link, the achievable length is not stated anywhere in the sources, so that part remains an open question.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "premise": "One reading per minute is sufficient and achievable.",
+   "verdict": "supported",
+   "explanation": "Array detectors used in NIR instruments record all wavelengths at once, which is far faster than one reading per minute.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "DDA detectors are arrays of photodiodes that allow instantaneous recording of light intensity at all wavelengths simultaneously",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Whether other dissolved species, additives or impurities are present besides sucrose and water.",
+  "Whether the stream contains particles, gas bubbles or entrained air.",
+  "Whether a measurement port or window already exists on the 50 mm pipe, or a spool piece can be fitted.",
+  "The uncertainty and measurement conditions of the laboratory refractometer.",
+  "Flow rate and whether the pipe runs full.",
+  "The achievable length of a MIR fiber link for the 10 m standoff (a question for AFS, not the customer)."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Besides sucrose and water, are any other dissolved species, additives or impurities present in the stream?",
+   "why_it_matters": "Other species change the spectral matrix and can overlap the sucrose signal, which changes the method choice and the calibration.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Does the stream contain particles, gas bubbles or entrained air?",
+   "why_it_matters": "Scattering and bubbles disturb transmission and ATR readings and decide which measurement geometry is usable.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Is there already a measurement port or window in the 50 mm pipe, or can a spool piece be fitted?",
+   "why_it_matters": "The probe type and the installation effort depend on the fitting that is available.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What is the uncertainty of the laboratory refractometer, and under what conditions (temperature, sampling, calibration) is it used?",
+   "why_it_matters": "The reference must be clearly better than plus or minus 0.3 % w/w for the trial to show whether the analyser meets the target.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "Is the plus or minus 0.3 % w/w limit required of the analyser reading itself, or of its agreement with the reference?",
+   "why_it_matters": "This sets the accuracy the method must reach and how the trial is judged.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q6",
+   "question": "Does the pipe run full, and what is the flow rate?",
+   "why_it_matters": "A full pipe and a steady flow are needed for a representative transmission or ATR measurement.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR transmission/transflection is the preferred geometry for transparent liquids and NIR is the most common in-line method run through fiber probes, so a clear aqueous stream is a good fit. Silica fibers carry the signal over the 10 m standoff to the dry analyser room.",
+   "conditions": "Applies while the stream stays clear and free of bubbles and the transmission pathlength can be fixed at a defined value.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "MIR gives sharp, well-defined bands with high selectivity and ATR samples only a very thin layer, which suits an aqueous stream in contact with the crystal. It is the natural second single method to compare against NIR.",
+   "conditions": "Applies if a MIR fiber link and a CIP-compatible ATR interface can be provided for the 10 m standoff, which is an open question.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "Mid-IR band spectra contain well-defined peaks (absorption bands)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "Raman is well suited to aqueous media because water absorbs little, making it a reasonable fallback if the NIR or MIR route cannot reach the target. Its weak signal and possible fluorescence background have to be checked on the real stream.",
+   "conditions": "Applies only if the single-method NIR or MIR trial cannot reach the accuracy target, or if the stream turns out to contain a fluorescing species.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "signals, which are several orders of magnitude weaker than IR absorption peaks",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR transmission or transflection probe through the 50 mm line (a fixed, defined pathlength), with MIR-ATR as the contact alternative; probe in contact with the flowing solution.",
+  "location": "In the pipe; analyser in the dry room about 10 m away.",
+  "fiber_link": "Silica (VIS-NIR) fibers for the NIR route; a MIR fiber family (CIR/PIR) would be needed for the MIR-ATR route, with an unstated achievable length.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+    "claim_kind": "performance_figure"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "nominal method range",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "NIR bands are broad and overlapping, so reaching plus or minus 0.3 % w/w depends on a matrix-specific calibration that must be rebuilt if the product changes.",
+   "rule_ids": [
+    "R-NIR-2",
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The achievable length of a MIR fiber link for the 10 m standoff is not stated in the supplied sources, so the MIR-ATR comparison may not be installable as described.",
+   "rule_ids": [
+    "R-FIB-2"
+   ],
+   "citations": []
+  },
+  {
+   "risk": "An ATR crystal or a transmission window in the pipe can foul or be affected by the daily hot-caustic clean-in-place, which can bias the reading.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The laboratory refractometer's own uncertainty and sampling may be too large to demonstrate the plus or minus 0.3 % w/w limit, which would limit what the trial can conclude.",
+   "rule_ids": [],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Prepare representative samples or process states across the expected 5-15 % w/w sucrose range and the 20-30 °C window, including any other species, bubbles or turbidity that occur.",
+    "purpose": "Representative variation",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Measure every sample with the single methods first: NIR transmission/transflection (M1) and MIR-ATR (M2), using the probe and geometry intended for the line.",
+    "purpose": "Single methods first",
+    "citations": []
+   },
+   {
+    "step": "Measure the reference sucrose value for each sample with the laboratory refractometer under controlled temperature, and record its uncertainty.",
+    "purpose": "Independent reference",
+    "citations": []
+   },
+   {
+    "step": "Build one calibration model per method and validate it on held-out runs or batches, not on the samples used for calibration.",
+    "purpose": "Held-out validation",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 14,
+      "quote": "A thorough validation, including full, segmented and random-subset CVs, as well as randomization tests, are recommended in any cases for which important conclusions depend on calibration or discrimination models built on limited experimental material.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Go/no-go: the customer's plus or minus 0.3 % w/w limit decides whether the single-method route is sufficient.",
+    "purpose": "Go/no-go basis",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Laboratory refractometer, kept in use as stated by the customer, measured on every trial sample under controlled temperature.",
+  "decision_basis": "Customer's plus or minus 0.3 % w/w quality limit over the stated 5-15 % w/w range."
+ },
+ "assumptions": [
+  "The stream stays clear and free of bubbles during normal operation.",
+  "A suitable fitting or spool piece can be provided on the 50 mm stainless steel pipe.",
+  "The laboratory refractometer is clearly more accurate than plus or minus 0.3 % w/w under controlled conditions.",
+  "A MIR fiber link of about 10 m can be provided if the MIR-ATR comparison is installed (unstated in the sources)."
+ ],
+ "not_in_sources": [
+  "In-line measurement of sucrose in a 5-15 % w/w aqueous stream, and any accuracy figure for it: not covered by the supplied sources.",
+  "The achievable length of a MIR fiber link: no supplied source states an achievable length for MIR fibers.",
+  "Hot-caustic clean-in-place compatibility and cleaning intervals for the probes: not covered."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Sucrose concentration (% w/w)",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It is the target variable the customer wants to monitor in-line.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimolar range but may lack the sensitivity to detect trace compounds below 0.1 percent.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Temperature of the solution at the probe",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "The process runs over 20 to 30 °C and the water bands used for the sucrose signal shift with temperature, so readings need temperature compensation.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor at the probe",
+    "alternative": null
+   },
+   "citations": []
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "single contact probe, no pathlength",
+   "maintenance": "clean ATR tip; check CIP compatibility",
+   "performance_fit": "sharp selective bands in an aqueous stream",
+   "cost_drivers": "FTIR spectrometer, MIR fiber link, ATR probe, calibration",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 5,
+     "quote": "strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR)",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "standard probe, remote silica fiber link",
+   "maintenance": "window cleaning; daily CIP compatibility",
+   "performance_fit": "fits clear stream and 10 m standoff",
+   "cost_drivers": "NIR spectrometer, silica fiber, transmission probe, calibration",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "Transmission is the preferred method for transparent or semi-transparent liquids, such as skim milk, whey, or permeate.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "the precise control of the optical pathlength (usually 1 - 10 mm); if the pathlength is too wide, the signal is lost to absorption; if too narrow, the sample represents a negligible volume.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "The NIR bands of sucrose and water overlap, so a matrix-specific calibration model (for example PLS regression) is needed and must be validated on independent batches before any accuracy claim.",
+ "realtime_tracking_note": "One reading per minute is well within the speed of an array-detector NIR instrument, which records all wavelengths at once.",
+ "future_direction": "If the single-method trial succeeds, a dedicated optical multisensor system for this stream could be considered as a later step.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "If the stream turns out to contain species that interfere in NIR, or if a 10 m MIR fiber link proves feasible and the NIR trial cannot reach plus or minus 0.3 % w/w, the MIR-ATR route moves up.",
+  "next_step": "Run a feasibility trial on representative samples across the stated range with a NIR transmission/transflection probe, using the laboratory refractometer as the reference."
+ },
+ "brief_answer": "For a clear aqueous stream, test a NIR transmission/transflection probe first, with MIR-ATR as the single-method comparison. What is still open: other species or bubbles in the stream, the pipe port, and whether the refractometer can support a plus or minus 0.3 % w/w check. A calibration on your own matrix is needed."
+}
