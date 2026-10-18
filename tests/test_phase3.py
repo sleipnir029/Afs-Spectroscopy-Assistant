@@ -170,7 +170,9 @@ def test_extended_option_needs_a_fusion_note_and_two_methods():
     a = with_(solution_options=ASSESSMENT["solution_options"] + [bad])
     result, _ = run_with(assess=a, repairs=[a, a])
     assert hard(result, "extended_fusion_note") and hard(result, "extended_two_methods")
-    assert "extended_two_methods" in still_open(result)        # the primary is already its only method
+    # The primary is already its only method; finalize adds the comparison (5.R1 fallback). The note stays open.
+    assert result.assessment.solution_options[2].recommendation_ids == ["M1", "M2"]
+    assert still_open(result) == {"extended_fusion_note"}
 
 
 @pytest.mark.parametrize("method", ["MIR", None])

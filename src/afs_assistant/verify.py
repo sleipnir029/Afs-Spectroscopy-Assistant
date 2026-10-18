@@ -481,6 +481,12 @@ def check_questions(a: Assessment, report: Report) -> None:
                f"{a.decision_status}: ask the deciding questions (Q1 first), each with `affects`")
 
 
+# Flags written by the finalize fallbacks (5.R1); not about figures or citations.
+QUESTION_ADDED_FLAG = "question added by verification from a key unknown"
+METHOD_ADDED_FLAG = "second method added by verification"
+FALLBACK_FLAGS = frozenset({QUESTION_ADDED_FLAG, METHOD_ADDED_FLAG})
+
+
 # Hard checks that are re-run on the finalized assessment; their open state comes from that re-run.
 RECHECK_NAMES = frozenset({"brief_answer_present", "proposal_present", "proposal_option_exists", "option_count",
                            "option_tiers_distinct", "option_recommended_tier", "option_has_methods",
