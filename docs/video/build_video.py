@@ -164,13 +164,13 @@ def card_architecture():
 # Feasibility card: steps copied word for word (selected, not reworded) from the demo run v1 record,
 # runs/adhoc-20261018T103823Z-e0e0/assessment.json, field feasibility_plan.steps[].step (5 steps; 4 is left out).
 # Steps 1-3 are also on screen in frames/17_followup_setup.png. The step 5 tag is that step's own citation.
-FEAS_STEPS = [("1", "Collect representative filtered broth samples across the expected variation in ethanol concentration, "
-                    "temperature and co-fermentation components over several runs.", ""),
+FEAS_STEPS = [("1", ("Collect representative filtered broth samples across the expected variation in ethanol concentration, "
+                     "temperature and co-fermentation components over several runs."), ""),
               ("2", "Measure each sample with GC as the independent reference, using the customer's existing lab method.", ""),
-              ("3", "Record NIR transmission/transflection spectra at a controlled pathlength on the same samples, "
-                    "and Raman probe spectra in parallel as the comparison method.", ""),
-              ("5", "Define the go/no-go basis with the customer: the in-line prediction error on held-out runs must "
-                    "meet the accuracy they specify against GC before an in-line installation is designed.", "REF p.3")]
+              ("3", ("Record NIR transmission/transflection spectra at a controlled pathlength on the same samples, "
+                     "and Raman probe spectra in parallel as the comparison method."), ""),
+              ("5", ("Define the go/no-go basis with the customer: the in-line prediction error on held-out runs must "
+                     "meet the accuracy they specify against GC before an in-line installation is designed."), "REF p.3")]
 
 
 def card_feasibility():
