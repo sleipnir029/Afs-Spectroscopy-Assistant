@@ -1,6 +1,6 @@
 # Status
 
-_Last updated: 2026-10-18 11:47 CEST (Claude, Phase 5 session 5)._
+_Last updated: 2026-10-18 11:52 CEST (Claude, Phase 5 session 5)._
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
@@ -15,6 +15,8 @@ _Last updated: 2026-10-18 11:47 CEST (Claude, Phase 5 session 5)._
 - **11:02:** D-061a approved (confirm review). D01–D08 × 7 arms done on the fixed pipeline (ace38cc; outputs/bakeoff-dev/afs-score.md): 0 hard failures, checklist 0 fails everywhere; useful-source recall 65–85%; mean s/case: Flash-Lite 29, mix-b 69, mix-a 84, Gemini 3.8 173, 1017 259, GLM 322, baseline 504. 4 blind judges (anonymised letters) scoring vs the AFS eval data. 5.12 chat backend merged (050420e, pytest 738/2); code review running. User picked chat concept **C1 Brief** (docs/fresh-ui/); restyle implementer running in a worktree.
 
 - **11:47:** Blind D01–D08 judging done (c2276a2, outputs/bakeoff-dev/blind/summary.md): 1017 4.15, baseline 4.08, mix-a 4.06, GLM 3.96, Gemini 3.8 3.75, mix-b 3.38, Flash-Lite 3.23. **User picked mix-a → D-063 (9646186), production config.** Gate run (19 cases, `--external live`, mix-a) started 11:47 into outputs/dev + outputs/adversarial. C1 Brief restyle merged (a81fefd); UI review running. Chat review NEEDS_FIXES (memory, user-typed figures, literature offer, empty next_step) → fix implementer running in a worktree.
+
+- **11:52: 5.8 gate PASS on mix-a** (outputs/dev + adversarial, `--external live`): 0 hard failures, 0 runaways, 0 timeouts; citations verified 100% in every case; external replay 19/19 equal; check_cost_class 8/8 + 11/11; eval checklist 0 failures; must 33/34 (A07 max_questions 4>3, known limit D-051), must-not 12/13 (A07: the pattern `reference (method|measurement|analys)` matches a legitimate question on the refractometer's reproducibility, not a re-ask; recorded, eval not changed after seeing outputs). Wall time per case 35–247 s (mean ~105 s; was 500+), cost $0.013–0.070 (dev $0.35, adversarial $0.39).
 
 **00:07 session 2 started:** task 1: reviewer agent on branch worktree-agent-a5dda1b856731189d (eval harness), read-only.
 - **Eval branch review: NEEDS_FIXES** (B1 CLI exits 0 with nothing checked + hidden must_not on unreadable/raising predicate; B2 adversarial never run (G5); B3 A07 must_not fails good answers via why_it_matters; non-blocking: A02/A03/A06 predicates loose, no_currency scans the enquiry, external_replay all-or-nothing, D03 real fail pending re-run; merge conflict cli.py only, merged tree 611 passed). Implementer agent applying fixes + merge of master in the worktree (no API spend).
