@@ -8,6 +8,7 @@ import re
 import shutil
 import threading
 import time
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -19,6 +20,7 @@ from afs_assistant.pipeline import OFF_TOPIC_EXAMPLES
 from afs_assistant.ui import diagrams, server, view
 
 SAVED = "D03"                                     # a dev run with external evidence and proposal support
+FIXTURE = Path(__file__).parent / "fixtures" / "ui"  # frozen copy, so a live re-run does not change the expected text
 DEV = sorted(p.stem for p in (paths.OUTPUTS / "dev").glob("*.json"))
 BASE = "http://127.0.0.1:8765"
 HX = {"HX-Request": "true"}
@@ -33,7 +35,7 @@ INCOMPLETE_RUN = {"run_id": "adhoc-cut", "enquiry": "Follow sugar in juice.", "i
 def outputs(tmp_path):
     (tmp_path / "dev").mkdir()
     for suffix in (".json", ".md"):
-        shutil.copy(paths.OUTPUTS / "dev" / f"{SAVED}{suffix}", tmp_path / "dev" / f"{SAVED}{suffix}")
+        shutil.copy(FIXTURE / f"{SAVED}{suffix}", tmp_path / "dev" / f"{SAVED}{suffix}")
     (tmp_path / "dev" / "X90.json").write_text(json.dumps(OFF_TOPIC_RUN), encoding="utf-8")
     (tmp_path / "dev" / "X91.json").write_text(json.dumps(INCOMPLETE_RUN), encoding="utf-8")
     return tmp_path
