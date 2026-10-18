@@ -1,0 +1,419 @@
+{
+ "decision_status": "insufficient_information",
+ "status_reason": "MIR-ATR is a sound method for a solvent-based reactor liquid, but no supplied source shows a mid-infrared fiber link of 150 m or a loss figure for one, so the fibre choice and expected loss cannot be answered from the material provided.",
+ "premise_checks": [
+  {
+   "premise": "A mid-infrared fiber can carry the signal 150 m from reactor to analyser house.",
+   "verdict": "not_covered",
+   "explanation": "Long cables (100-300 m) are stated only for low-OH silica fibers, which do not transmit mid-IR; the MIR fiber and hollow-waveguide examples in the sources are 1-2 m laboratory lengths, and no source states an achievable MIR link length or its loss.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    },
+    {
+     "doc": "S02",
+     "page": 10,
+     "quote": "1.25 Meter Silver Halide - straight run",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "premise": "MIR-ATR is a suitable in-line technique for a liquid reaction mixture in a reactor.",
+   "verdict": "supported",
+   "explanation": "ATR fiber probes are described for in-line, in-process liquid analysis without sampling.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Follow a reaction in a solvent-based batch reactor with a mid-infrared ATR probe.",
+  "Spectrometer must stay in the analyser house about 150 m from the reactor for safety reasons.",
+  "Customer asks which fiber would carry the mid-infrared signal that far and what signal loss to expect."
+ ],
+ "key_unknowns": [
+  "Whether a 150 m mid-infrared fiber link is technically achievable; no source states an MIR link length.",
+  "The mid-infrared spectral range the reaction monitoring needs, which decides between CIR, PIR fibers or hollow waveguides.",
+  "Target species, concentration ranges and solvent composition, which decide the method and calibration.",
+  "Process temperature and pressure at the probe.",
+  "Required measurement response time."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which mid-infrared wavelength range does the reaction monitoring actually need (e.g. fingerprint bands around 6-10 um, or C-H/O-H regions nearer 3-4 um)?",
+   "why_it_matters": "The fiber family (CIR to 6.5 um, PIR to 17 um, hollow waveguide to 18 um) and its achievable length depend on the required range.",
+   "affects": [
+    "technique",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Is the 150 m distance fixed, or could the spectrometer be placed closer to the reactor (e.g. at the reactor wall with only the data link remote)?",
+   "why_it_matters": "A shorter optical link, or a fibre-coupled sensing head with remote electronics, changes the whole installation concept.",
+   "affects": [
+    "installation",
+    "M1",
+    "O2"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Which species and concentration ranges must be followed, in which solvent, and at what process temperature and pressure?",
+   "why_it_matters": "This decides whether MIR-ATR can see the targets, which crystal and probe design fit, and what calibration is needed.",
+   "affects": [
+    "method",
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What measurement response time does the reaction monitoring require?",
+   "why_it_matters": "Acquisition speed influences the spectrometer and probe choice and any later multi-method synchronisation.",
+   "affects": [
+    "technique"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "MIR-ATR fiber probes are described for in-line liquid analysis without sampling, and MIR spectra give well-defined, selective bands for reaction components. It stays the first method to test, but only together with a fibre-link feasibility check, because no supplied source demonstrates a 150 m mid-infrared fiber link.",
+   "conditions": "Proceed only if a fibre (CIR, PIR or hollow waveguide) for the required spectral range can be sourced and tested at the required length with acceptable signal loss.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "3000 nm Polycrystalline Infrared Fibers 17 μm",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman probes use silica fibers, for which robust 100-300 m cables are explicitly stated, so the 150 m distance is not a blocker; Raman also tolerates water and gives complementary bands. It is the benchmark against which the MIR-ATR option must prove itself given the link uncertainty.",
+   "conditions": "Check fluorescence background of the solvent and reaction mixture on real samples before relying on it.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Immersion MIR-ATR fiber probe (e.g. diamond or ZrO2 ATR tip) in the reactor liquid for M1; Raman immersion probe for M2.",
+  "location": "Probe tip in the batch reactor; spectrometer in the analyser house about 150 m away.",
+  "fiber_link": "M1 requires a mid-infrared fiber (CIR, PIR or hollow waveguide per the required range); no source states an achievable length or loss for such a link at 150 m, so this must be tested. M2 uses low-OH silica fiber, for which 100-300 m cables are stated.",
+  "citations": [
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "Transmission for Different Fibers in 0.2-18μm - used for Fiber Probes",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "MIR",
+   "statement": "Nominal mid-IR range 4000-400 cm-1 (2.5-25 um); the usable range depends on the selected fiber (CIR approx. 1.1-6.5 um, PIR approx. 3-17 um, hollow waveguide approx. 2-18 um) and ATR crystal, which must be matched to the reaction bands.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1)",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "1100 nm Chalcogenide As-S IR Fibers 6500 nm",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1 with laser excitation (e.g. 785 nm in the pharma example) stated separately; excitation and probe design determine the usable shift range.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Raman spectrometer and Raman fiber probe for contact measurements with 785 nm excitation wavelength",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "A 150 m mid-infrared fiber link may not be achievable with acceptable signal loss; the sources show MIR fibers only at 1-2 m laboratory lengths.",
+   "rule_ids": [
+    "R-FIB-2"
+   ],
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 9,
+     "quote": "HWG-750-2m PIR 600/700 -2m",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "risk": "Hollow waveguides couple poorly to FTIR spectrometers, so the fiber choice interacts with the spectrometer type.",
+   "rule_ids": [
+    "R-FIB-3"
+   ],
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 10,
+     "quote": "too low NA>0.1 - which results in very poor coupling efficiency with FTIR-spectrometers",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "ATR samples only a surface layer a few micrometres deep, so crystal fouling and surface representativeness are risks in a reacting batch.",
+   "rule_ids": [
+    "R-MIR-3"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "typically at a depth of few microns",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Any calibration will be specific to this solvent/matrix and must be re-validated if the formulation changes.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "Weak signal, fluorescence background; calibration specific to the matrix.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative reaction-mixture samples across the expected conversion range (start, mid, end points) in the actual solvent.",
+    "purpose": "Cover the chemical variation the model must handle.",
+    "citations": []
+   },
+   {
+    "step": "Record independent reference concentrations for each sample with a laboratory method (e.g. off-line FTIR, GC or HPLC as agreed with the customer).",
+    "purpose": "Provide the reference data for calibration and validation.",
+    "citations": []
+   },
+   {
+    "step": "On the bench, measure the samples with a short (lab-length) MIR-ATR fiber probe and, in parallel, a Raman probe; identify which bands track the reaction.",
+    "purpose": "Test each single method on its own before any combination or long-link commitment.",
+    "citations": []
+   },
+   {
+    "step": "Test candidate mid-infrared fibers (CIR, PIR, hollow waveguide) for the required wavelength range at increasing lengths up to the installed length, measuring throughput against the bench baseline.",
+    "purpose": "Establish whether the 150 m link delivers usable signal; this is the deciding experiment for M1.",
+    "citations": []
+   },
+   {
+    "step": "Build and validate the calibration on held-out batches, and apply the customer's go/no-go criteria (e.g. acceptable prediction error and signal-to-noise at the analyser house) before specifying the in-line installation.",
+    "purpose": "Confirm the chosen method meets the customer's performance requirements.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Independent laboratory analysis (e.g. off-line FTIR, GC or HPLC, to be agreed) of each representative sample.",
+  "decision_basis": "Customer-defined go/no-go criteria: minimum acceptable signal throughput at 150 m for the MIR link, and a maximum prediction error for the reaction species, both to be set by the customer."
+ },
+ "assumptions": [
+  "The reaction mixture is a liquid suitable for ATR contact at the probe tip.",
+  "The 150 m distance is an optical fiber path length; the actual routing length may be longer and must be confirmed."
+ ],
+ "not_in_sources": [
+  "Achievable length and signal loss for a mid-infrared fiber link of about 150 m; the sources show MIR fibers only at 1-2 m laboratory lengths.",
+  "Attenuation figures (dB/km or dB/m) for CIR, PIR fibers or hollow waveguides."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Target reaction species and concentration ranges",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Needed to check that the chosen method and spectral range actually contain bands for the species to be followed.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "MIR",
+    "sensor": "off-line FTIR or GC/HPLC as agreed",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Solvent identity and composition",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "The solvent dominates the MIR spectrum and determines ATR compatibility and calibration matrix.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "MIR",
+    "sensor": "off-line FTIR",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P3",
+   "name": "Process temperature at the probe",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Temperature shifts band positions and affects probe and fiber material selection.",
+   "measured_by": {
+    "type": "auxiliary_sensor",
+    "method": null,
+    "sensor": "temperature sensor",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Required mid-infrared spectral range for the reaction bands",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "It decides which fiber family (CIR, PIR or hollow waveguide) can be used and whether the 150 m link is feasible.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "MIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 6,
+     "quote": "Transmission for Different Fibers in 0.2-18μm - used for Fiber Probes",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Standard silica fiber link, straightforward installation",
+   "maintenance": "Low; no fragile MIR fiber or crystal",
+   "performance_fit": "Fits the 150 m distance with stated 100-300 m silica cables",
+   "cost_drivers": "Raman spectrometer and laser, probe, fluorescence-background screening, calibration effort",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 7,
+     "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+     "claim_kind": "performance_figure"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "Established ATR probe concept, but unproven link length",
+   "maintenance": "ATR crystal cleaning and fouling checks needed",
+   "performance_fit": "Best chemical specificity for reaction components, pending fibre-link proof",
+   "cost_drivers": "MIR spectrometer, ATR probe, specialty MIR fiber at 150 m, link feasibility trial, calibration",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "Probe-based analysis is gaining widespread use in online analysis, such as in-line, in-process (chemical, biotechnological, natural) environments",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Quantitative reaction following will need a calibration model built on representative samples with independent reference values, validated on held-out batches; the calibration is specific to this solvent matrix.",
+ "realtime_tracking_note": "In-line, time-resolved tracking of the batch reaction is the goal; acquisition conditions should be chosen so the measurement rate matches the reaction kinetics.",
+ "future_direction": "If the MIR link proves infeasible at 150 m, a fibre-coupled sensing head near the reactor with remote data communication, or a compact LED/sensor approach, could be evaluated later.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If no mid-infrared fiber can deliver acceptable signal at 150 m for the required spectral range, the choice moves to O1 (Raman over silica fiber) or to relocating the spectrometer closer to the reactor. The required wavelength range and whether the distance is fixed are the deciding answers.",
+  "next_step": "Run the bench feasibility trial: measure representative reaction samples with a short MIR-ATR probe and test candidate MIR fibers at increasing lengths toward 150 m, with Raman as the comparison method."
+ },
+ "brief_answer": "MIR-ATR is a sensible method for your reactor liquid, but the supplied material does not show any mid-infrared fiber working at 150 m: long-reach cables are only stated for silica fibers, which do not transmit mid-IR, and MIR fibers appear only as 1-2 m lab samples. So neither the fiber choice nor a loss figure can be given yet. Test MIR-ATR with a fibre-link feasibility trial (CIR, PIR or hollow waveguide, depending on your required wavelength range), with Raman over silica fiber as the comparison option."
+}
