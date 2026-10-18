@@ -1,0 +1,353 @@
+{
+ "decision_status": "provisional_assessment",
+ "status_reason": "The enquiry outlines a dairy whey stream transitioning between clear and turbid conditions while tracking protein concentration. NIR transflection provides a proven starting technique to handle varying optical path conditions in dairy streams, subject to laboratory feasibility testing across the process turbidity range.",
+ "premise_checks": [
+  {
+   "premise": "In-line optical spectroscopy can track protein concentration in dairy whey as the stream transitions between clear and turbid conditions.",
+   "verdict": "precedent_only",
+   "explanation": "Dairy applications demonstrate using NIR spectroscopy to quantify protein in milk and dairy streams, with transflection probes noted as working across low-fat and high-fat products, but feasibility across this specific stream's turbidity fluctuations must be tested.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Track protein concentration in a dairy whey stream before a concentration stage",
+  "Handle stream turbidity changes ranging from clear to turbid",
+  "Use laboratory results as reference"
+ ],
+ "key_unknowns": [
+  "Extent and frequency of turbidity fluctuations",
+  "Expected protein concentration range",
+  "Process temperature and pressure",
+  "Pipe or flow cell dimensions"
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "What is the expected range of turbidity variations and how frequently do turbid conditions occur during processing?",
+   "why_it_matters": "Determines whether a single transflection probe can span the optical changes or if a more robust scattering compensation or alternative method is needed.",
+   "affects": [
+    "method",
+    "technique",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What is the expected quantitative concentration range of protein in the whey stream?",
+   "why_it_matters": "Informs sensitivity requirements and calibration model design.",
+   "affects": [
+    "method",
+    "technique"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the physical dimensions and flow characteristics of the pipe or process line where the probe will be installed?",
+   "why_it_matters": "Guides mechanical integration and probe mounting design.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "NIR",
+   "technique": "transmission_transflection",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "NIR transflection probes can accommodate both transparent and scattering dairy streams by controlling the optical path length.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "Raman spectroscopy exhibits low water interference and robust performance in aqueous process environments when turbidity scattering challenges infrared methods.",
+   "conditions": "Applies if NIR transflection experiences excessive signal loss during high turbidity states.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "NIR transflection fiber probe flush-mounted in the process pipe with a controlled optical path length to handle varying turbidity.",
+  "location": "Dairy whey stream before the concentration stage.",
+  "fiber_link": "Standard Vis-NIR silica fiber cables connecting the process probe to the spectrometer located safely away from the vibration and dust of the manufacturing floor.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 15,
+    "quote": "The use of fiber optics is critical here, as it allows the sensitive spectrometers to be located safely away from the vibration and dust of the manufacturing floor.",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S01",
+    "page": 18,
+    "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+    "claim_kind": "application_precedent"
+   },
+   {
+    "doc": "S02",
+    "page": 6,
+    "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "Nominal range 780-2500 nm; usable range depends on the actual instrument, fiber and probe configuration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "REF",
+     "page": 5,
+     "quote": "It is not a product specification: actual spectral coverage, fiber length, component ratings, detection limits and accuracy depend on the configuration and the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift expressed in cm-1 with laser excitation wavelength stated separately.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy, while the vertical axis shows the absolute intensity of the recorded signals",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Stream turbidity fluctuations can cause severe optical scattering or signal saturation in standard transmission setups.",
+   "rule_ids": [
+    "R-GEN-4",
+    "R-GEO-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "it fails when the milk becomes too \"thick\" or fat-rich, as the light cannot penetrate the sample.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Broad and overlapping NIR absorption bands require robust chemometric calibration that must be re-validated if the matrix composition drifts.",
+   "rule_ids": [
+    "R-CAL-1",
+    "R-NIR-2"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect representative whey samples across clear and turbid operating conditions.",
+    "purpose": "Gather representative whey samples covering the full range of clear and turbid operating conditions.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 3,
+      "quote": "The ability to test various optical spectroscopy approaches is crucial for solving complex analytical problems, such as analyzing natural and industrial samples of incompletely known composition",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Obtain independent laboratory reference measurements for protein concentration.",
+    "purpose": "Provide analytical reference data for model training and validation.",
+    "citations": []
+   },
+   {
+    "step": "Perform spectroscopic measurements using NIR transflection and Raman probes.",
+    "purpose": "Acquire spectral datasets across the varying turbidity states for both methods.",
+    "citations": []
+   },
+   {
+    "step": "Construct multivariate chemometric calibration models for protein tracking.",
+    "purpose": "Build and evaluate calibration models relating spectra to reference protein concentrations.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "Extracting the information necessary for quantitative and qualitative analysis from optical spectra requires special methods for analyzing multidimensional data, called the above-mentioned term chemometrics.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Validate calibration models on independent held-out runs against customer criteria.",
+    "purpose": "Evaluate model performance against customer-defined accuracy criteria on held-out runs.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Standard laboratory reference measurements for protein concentration.",
+  "decision_basis": "Go/no-go based on achieving customer-defined prediction accuracy across both clear and turbid operating states."
+ },
+ "assumptions": [
+  "Representative whey samples covering both clear and turbid conditions can be provided for initial testing",
+  "Laboratory reference methods for protein are available"
+ ],
+ "not_in_sources": [
+  "Exact protein concentration numerical ranges and required measurement response times"
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Protein concentration",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Primary target variable to track in the whey stream.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Partial Least Squares (PLS) regression to quantify fat and protein.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "Stream turbidity / scattering level",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Determines optical path behavior and probe suitability across operating conditions.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "NIR",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "Multiplicative Scatter Correction (MSC) or Standard Normal Variate (SNV) transformations to remove physical interference caused by the scattering nature of the milk particles",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Simple inline probe operation",
+   "maintenance": "Periodic optical window cleaning",
+   "performance_fit": "Handles clear to moderate turbidity via transflection",
+   "cost_drivers": "Standard NIR spectrometer and transflection probe",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Robust automated inline monitoring",
+   "maintenance": "Probe cleaning and laser safety check",
+   "performance_fit": "Combines NIR transflection with Raman for robust turbidity handling",
+   "cost_drivers": "NIR and Raman spectrometers with specialized fiber probes",
+   "fusion_note": "Combines NIR and Raman data blocks after synchronisation to a common time step, using block scaling to handle scattering and chemical variations; must outperform single-method calibration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "Data processing for pharmaceutical tasks relies on \"low-level data fusion,\" where the synchronized NIR and Raman spectra are merged into a single augmented matrix.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 18,
+     "quote": "In some cases, a Transflection probe can already be a combined solution working well for low-fat and high-fat containing milk products.",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Multivariate calibration using PLS regression with scattering corrections (such as MSC or SNV) is required due to broad overlapping NIR bands and physical scattering changes from turbidity.",
+ "realtime_tracking_note": "In-line probe installation before the concentration stage enables real-time near-continuous tracking of protein concentration.",
+ "future_direction": "Integration of automated process control feedback loops based on real-time chemometric concentration predictions.",
+ "proposal": {
+  "best_current_option": "O1",
+  "basis": "supplied",
+  "what_would_change_it": "If stream turbidity causes excessive signal loss or saturation in NIR transflection tests, transitioning to Raman or a combined multispectral approach (O2) would be warranted.",
+  "next_step": "Perform benchtop or trial loop multi-method testing on representative clear and turbid whey samples against laboratory reference data."
+ },
+ "brief_answer": "To track protein concentration in a dairy whey stream transitioning between clear and turbid states, start with an NIR transflection probe that accommodates varying optical path conditions. Laboratory reference measurements should be paired with multi-sample trials across both clear and turbid operating states. If scattering proves too high for NIR alone, Raman spectroscopy provides a robust alternative with lower water interference for aqueous process streams."
+}
