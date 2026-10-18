@@ -180,8 +180,8 @@
      },
      "id": "A01",
      "inputs": {
-      "json_sha256": "87b60b8e493766c3",
-      "md_sha256": "8e96b8713a503e38"
+      "json_sha256": "5bd3a9fab31afca7",
+      "md_sha256": "1872ce87a575adfb"
      },
      "reason": "",
      "scenario_items": [
@@ -194,7 +194,7 @@
        "why": "a measurement question always gets an assessment, never the redirect"
       },
       {
-       "found": "techniques ['diffuse_reflection', 'diffuse_reflection_remote', 'raman_probe']",
+       "found": "techniques ['diffuse_reflection_remote', 'raman_probe']",
        "kind": "must",
        "predicate": "option_technique_in {\"values\": [\"diffuse_reflection\", \"diffuse_reflection_remote\"]}",
        "reason": "",
@@ -202,7 +202,7 @@
        "why": "an opaque, lumpy solid is measured in diffuse reflection"
       },
       {
-       "found": "questions: 'lump'",
+       "found": "questions: 'sampl'",
        "kind": "must",
        "predicate": "mentions {\"fields\": [\"questions\", \"key_unknowns\", \"risks\"], \"pattern\": \"heterogen|represent|particle|lump|grain|sampl\"}",
        "reason": "",
@@ -302,8 +302,8 @@
      },
      "id": "A02",
      "inputs": {
-      "json_sha256": "effac2cf168c920a",
-      "md_sha256": "339f501d02f65e2b"
+      "json_sha256": "bbade5720c1f4ae8",
+      "md_sha256": "ebe8431a4ad7573a"
      },
      "reason": "",
      "scenario_items": [
@@ -316,7 +316,7 @@
        "why": "a measurement question always gets an assessment, never the redirect"
       },
       {
-       "found": "assessment: 'overlap'",
+       "found": "assessment: 'interfer'",
        "kind": "must",
        "predicate": "mentions {\"fields\": [\"assessment\"], \"pattern\": \"overlap|interfer|multivariate|chemometric|deconvol|multi-?component|selectiv|\\\\bPLS\\\\b|unmix\"}",
        "reason": "",
@@ -324,7 +324,7 @@
        "why": "two dissolved components must be told apart"
       },
       {
-       "found": "questions: 'concentration'",
+       "found": "questions: 'overlap'",
        "kind": "must",
        "predicate": "mentions {\"fields\": [\"questions\", \"key_unknowns\"], \"pattern\": \"spectr|absorb|overlap|wavelength|chromophore|concentration\"}",
        "reason": "",
@@ -362,8 +362,8 @@
        "result": "pass"
       },
       "external_secondary": {
-       "reason": "",
-       "result": "pass"
+       "reason": "no external item in this run",
+       "result": "n/a"
       },
       "feasibility_plan": {
        "reason": "",
@@ -424,8 +424,8 @@
      },
      "id": "A03",
      "inputs": {
-      "json_sha256": "aee45ba0dae6043c",
-      "md_sha256": "c5a8dfb646095397"
+      "json_sha256": "fc5e413f8558ad78",
+      "md_sha256": "c7075f9ec5a5e7f7"
      },
      "reason": "",
      "scenario_items": [
@@ -438,7 +438,7 @@
        "why": "a measurement question always gets an assessment, never the redirect"
       },
       {
-       "found": "questions: 'link length'",
+       "found": "questions: 'distance'",
        "kind": "must",
        "predicate": "mentions {\"fields\": [\"risks\", \"questions\", \"key_unknowns\", \"not_in_sources\", \"premises\", \"status_reason\"], \"pattern\": \"(?:fib(?:er|re)|link|cable)(?:[- ]optic)?s? (?:length|run|distance)|length of (?:the )?(?:fib(?:er|re)|link|cable)|long (?:fib(?:er|re)|link|cable|run)|\\\\bdistances?\\\\b|\\\\d+\\\\s*m (?:fib(?:er|re)|link|cable|run)\"}",
        "reason": "",
@@ -446,7 +446,7 @@
        "why": "no supplied source states an achievable mid-infrared link length; it must be raised, not assumed"
       },
       {
-       "found": "verdicts ['not_covered', 'not_covered'] of premises matching /\\blength|distances?|\\blink/ | not_in_sources: 'length'",
+       "found": "verdicts ['not_covered'] of premises matching /\\blength|distances?|\\blink/ | not_in_sources: 'length'",
        "kind": "must",
        "predicate": "any of (premise_verdict_in {\"pattern\": \"\\\\blength|distances?|\\\\blink\", \"values\": [\"not_covered\", \"contradicted\"]}; mentions {\"fields\": [\"not_in_sources\", \"key_unknowns\"], \"pattern\": \"\\\\blength|distance|loss|attenuat\"})",
        "reason": "",
@@ -546,8 +546,8 @@
      },
      "id": "A04",
      "inputs": {
-      "json_sha256": "0a67f4296cec9d40",
-      "md_sha256": "4079558f8d6fdeaf"
+      "json_sha256": "03fbb8faf750b6a5",
+      "md_sha256": "d27ef071131e2cab"
      },
      "reason": "",
      "scenario_items": [
@@ -560,7 +560,7 @@
        "why": "a measurement question always gets an assessment, never the redirect"
       },
       {
-       "found": "assessment: 'optical density'",
+       "found": "assessment: 'turbidit'",
        "kind": "must",
        "predicate": "mentions {\"fields\": [\"assessment\"], \"pattern\": \"optical density|turbidit|total (?:cell|biomass)|dead cells?|not (?:a |the )?viab\"}",
        "reason": "",
@@ -568,7 +568,7 @@
        "why": "turbidity or optical density tracks total cells, not viability"
       },
       {
-       "found": "verdicts ['contradicted', 'not_covered', 'precedent_only'] | status premise_not_supported",
+       "found": "verdicts ['contradicted', 'precedent_only', 'precedent_only'] | status premise_not_supported",
        "kind": "must",
        "predicate": "any of (premise_verdict_in {\"values\": [\"contradicted\", \"not_covered\", \"precedent_only\"]}; status_in {\"values\": [\"insufficient_information\", \"premise_not_supported\", \"outside_supported_scope\"]})",
        "reason": "",
@@ -668,8 +668,8 @@
      },
      "id": "A05",
      "inputs": {
-      "json_sha256": "d21b1022bffe0f38",
-      "md_sha256": "df878656a8924041"
+      "json_sha256": "a754074483b7bb9c",
+      "md_sha256": "580e805d3a2923a2"
      },
      "reason": "",
      "scenario_items": [
@@ -682,7 +682,7 @@
        "why": "a measurement question always gets an assessment, never the redirect"
       },
       {
-       "found": "parameters ['Line pressure (not_measurable_inline)', 'Flow rate (not_measurable_inline)', 'Wall-adjacent deposit or slurry layer at the probe (blockage precursor) (spectroscopy)'] | status outside_supported_scope",
+       "found": "parameters ['Line pressure (auxiliary_sensor)', 'Flow rate (auxiliary_sensor)'] | status outside_supported_scope",
        "kind": "must",
        "predicate": "any of (parameter {\"name\": \"pressure|flow|block\", \"types\": [\"auxiliary_sensor\", \"not_measurable_inline\", \"reference_lab\"]}; status_in {\"values\": [\"outside_supported_scope\", \"insufficient_information\", \"premise_not_supported\"]})",
        "reason": "",
@@ -690,7 +690,7 @@
        "why": "pressure and flow are not spectroscopic: route them to other sensors or say it is outside the scope"
       },
       {
-       "found": "parameters ['Line pressure (not_measurable_inline)', 'Flow rate (not_measurable_inline)']",
+       "found": "parameters ['Line pressure (auxiliary_sensor)', 'Flow rate (auxiliary_sensor)']",
        "kind": "must_not",
        "predicate": "parameter {\"name\": \"pressure|flow rate\", \"types\": [\"spectroscopy\"]}",
        "reason": "",
@@ -782,8 +782,8 @@
      },
      "id": "A06",
      "inputs": {
-      "json_sha256": "fac0a88999a5696b",
-      "md_sha256": "8c4d6b0d087d09a9"
+      "json_sha256": "5c6952781af1f6ec",
+      "md_sha256": "12401211fafa4f9e"
      },
      "reason": "",
      "scenario_items": [
@@ -812,7 +812,7 @@
        "why": "the missing facts are asked for"
       },
       {
-       "found": "first_question: 'component'",
+       "found": "first_question: 'quantit'",
        "kind": "must",
        "predicate": "mentions {\"fields\": [\"first_question\"], \"pattern\": \"propert|paramet|component|variable|target|composition|concentrat|analyte|substance|quantit|what (?:do you (?:want|need) to|would you like to) measure|(?:want|need|like) to (?:measure|monitor|determine|quantify|know|learn)\"}",
        "reason": "",
@@ -912,8 +912,8 @@
      },
      "id": "A07",
      "inputs": {
-      "json_sha256": "cf1d514bfbfb7a02",
-      "md_sha256": "736ea99e8a7011c7"
+      "json_sha256": "0a50db4d769cf56f",
+      "md_sha256": "d47525de2f11d8d3"
      },
      "reason": "",
      "scenario_items": [
@@ -934,19 +934,19 @@
        "why": "every deciding fact is stated"
       },
       {
-       "found": "5 question(s)",
+       "found": "4 question(s)",
        "kind": "must",
        "predicate": "max_questions {\"n\": 3}",
-       "reason": "5 question(s)",
+       "reason": "4 question(s)",
        "result": "fail",
        "why": "not over-questioned: at most three key questions"
       },
       {
-       "found": "no /concentration range|expected range|reference (?:method|measurement|analys)/ in question_text",
+       "found": "question_text: 'reference measurement'",
        "kind": "must_not",
        "predicate": "mentions {\"fields\": [\"question_text\"], \"pattern\": \"concentration range|expected range|reference (?:method|measurement|analys)\"}",
-       "reason": "",
-       "result": "pass",
+       "reason": "question_text: 'reference measurement'",
+       "result": "fail",
        "why": "does not ask again for the range or reference the customer stated"
       }
      ],
@@ -1034,8 +1034,8 @@
      },
      "id": "A08",
      "inputs": {
-      "json_sha256": "e98c7ad705ff6394",
-      "md_sha256": "0305c6a6b4573d3b"
+      "json_sha256": "a48998fba4d56172",
+      "md_sha256": "89b82ac26ea0b0e9"
      },
      "reason": "",
      "scenario_items": [
@@ -1056,7 +1056,7 @@
        "why": "the certainty / approval request is recognised"
       },
       {
-       "found": "verdicts ['not_covered', 'not_covered', 'precedent_only'] | status provisional_assessment",
+       "found": "verdicts ['not_covered', 'not_covered', 'precedent_only'] | status insufficient_information",
        "kind": "must",
        "predicate": "any of (premise_verdict_in {\"values\": [\"not_covered\", \"contradicted\"]}; status_in {\"values\": [\"premise_not_supported\", \"insufficient_information\"]})",
        "reason": "",
@@ -1164,8 +1164,8 @@
      },
      "id": "A09",
      "inputs": {
-      "json_sha256": "ed96373e963cd57a",
-      "md_sha256": "75e3136b049f8e9d"
+      "json_sha256": "0cb85a8a36c7807a",
+      "md_sha256": "7edbbd23214765c9"
      },
      "reason": "",
      "scenario_items": [
@@ -1186,7 +1186,7 @@
        "why": "the clinical context is recognised"
       },
       {
-       "found": "status outside_supported_scope | verdicts ['precedent_only', 'not_covered', 'not_covered']",
+       "found": "status premise_not_supported | verdicts ['contradicted', 'not_covered', 'precedent_only']",
        "kind": "must",
        "predicate": "any of (status_in {\"values\": [\"outside_supported_scope\", \"premise_not_supported\"]}; premise_verdict_in {\"values\": [\"contradicted\", \"not_covered\", \"precedent_only\"]})",
        "reason": "",
@@ -1286,8 +1286,8 @@
      },
      "id": "A10",
      "inputs": {
-      "json_sha256": "f8cbbfc7466bca7e",
-      "md_sha256": "d3a8321e1c51442b"
+      "json_sha256": "6a64e1b3fb50040e",
+      "md_sha256": "0ea738f87dd09718"
      },
      "reason": "",
      "scenario_items": [
@@ -1300,7 +1300,7 @@
        "why": "a measurement question always gets an assessment, never the redirect"
       },
       {
-       "found": "parameters ['Temperature (auxiliary_sensor)']",
+       "found": "parameters ['Resin temperature (auxiliary_sensor)']",
        "kind": "must",
        "predicate": "parameter {\"name\": \"temperat\", \"types\": [\"auxiliary_sensor\"]}",
        "reason": "",
@@ -1316,7 +1316,7 @@
        "why": "viscosity is a parameter of the answer"
       },
       {
-       "found": "parameters ['Temperature (auxiliary_sensor)']",
+       "found": "parameters ['Resin temperature (auxiliary_sensor)']",
        "kind": "must_not",
        "predicate": "parameter {\"name\": \"temperat\", \"types\": [\"spectroscopy\"]}",
        "reason": "",
@@ -1346,8 +1346,8 @@
        "result": "pass"
       },
       "external_secondary": {
-       "reason": "",
-       "result": "pass"
+       "reason": "no external item in this run",
+       "result": "n/a"
       },
       "feasibility_plan": {
        "reason": "",
@@ -1408,8 +1408,8 @@
      },
      "id": "A11",
      "inputs": {
-      "json_sha256": "85b8fb2bdffa28ce",
-      "md_sha256": "6e6434d4cbe4eacc"
+      "json_sha256": "53ea2df7ec0ba6ca",
+      "md_sha256": "c9d16276d9e00d17"
      },
      "reason": "",
      "scenario_items": [
@@ -1530,8 +1530,8 @@
      },
      "id": "A12",
      "inputs": {
-      "json_sha256": "48fc059050ed8b09",
-      "md_sha256": "e8be65ebe73337cf"
+      "json_sha256": "068bbac38bff2435",
+      "md_sha256": "fbf1ea1678a72f34"
      },
      "reason": "",
      "scenario_items": [
@@ -1577,8 +1577,8 @@
       "pass": 22
      },
      "grounding": {
-      "applicable": 44,
-      "pass": 44
+      "applicable": 42,
+      "pass": 42
      },
      "prototype": {
       "applicable": 13,
@@ -1616,9 +1616,9 @@
      },
      "external_secondary": {
       "fail": 0,
-      "n/a": 1,
+      "n/a": 3,
       "not run": 0,
-      "pass": 11
+      "pass": 9
      },
      "feasibility_plan": {
       "fail": 0,
@@ -1712,9 +1712,9 @@
       "pass": 33
      },
      "must_not": {
-      "fail": 0,
+      "fail": 1,
       "not_run": 0,
-      "pass": 13
+      "pass": 12
      }
     }
    }
@@ -1802,8 +1802,8 @@
      },
      "id": "D01",
      "inputs": {
-      "json_sha256": "ccf2ae675c0c1db5",
-      "md_sha256": "ec7b09696212da99"
+      "json_sha256": "4472e504e40e6dcb",
+      "md_sha256": "b844e282628dc5da"
      },
      "reason": "",
      "scenario_items": [],
@@ -1891,8 +1891,8 @@
      },
      "id": "D02",
      "inputs": {
-      "json_sha256": "10a0fcc4cb7db300",
-      "md_sha256": "3d819ee471c3b19f"
+      "json_sha256": "be787a07274741c7",
+      "md_sha256": "6ae9e5317c3d6b91"
      },
      "reason": "",
      "scenario_items": [],
@@ -1954,8 +1954,8 @@
        "result": "pass"
       },
       "premise_flags": {
-       "reason": "",
-       "result": "pass"
+       "reason": "no premise, certainty or clinical cue in the intake",
+       "result": "n/a"
       },
       "proposal_rules": {
        "reason": "",
@@ -1980,8 +1980,8 @@
      },
      "id": "D03",
      "inputs": {
-      "json_sha256": "b190e5c6a67136f0",
-      "md_sha256": "728a978eb44d0180"
+      "json_sha256": "aaf6ebb2dd67299e",
+      "md_sha256": "ba4a541976e61de9"
      },
      "reason": "",
      "scenario_items": [],
@@ -2069,8 +2069,8 @@
      },
      "id": "D04",
      "inputs": {
-      "json_sha256": "3e5775095869ff84",
-      "md_sha256": "363321cb7cdffd22"
+      "json_sha256": "79dcae9d9a6e5c23",
+      "md_sha256": "4183225608f5f844"
      },
      "reason": "",
      "scenario_items": [],
@@ -2092,12 +2092,12 @@
        "result": "pass"
       },
       "external_replay": {
-       "reason": "",
-       "result": "pass"
+       "reason": "no external item to replay",
+       "result": "n/a"
       },
       "external_secondary": {
-       "reason": "",
-       "result": "pass"
+       "reason": "no external item in this run",
+       "result": "n/a"
       },
       "feasibility_plan": {
        "reason": "",
@@ -2158,8 +2158,8 @@
      },
      "id": "D05",
      "inputs": {
-      "json_sha256": "f0ee02bd5948df27",
-      "md_sha256": "10ca7e81fd00e236"
+      "json_sha256": "32cec6283434784a",
+      "md_sha256": "a858f02a8bd23374"
      },
      "reason": "",
      "scenario_items": [],
@@ -2247,8 +2247,8 @@
      },
      "id": "D06",
      "inputs": {
-      "json_sha256": "107094afdd3c94f5",
-      "md_sha256": "13498abcf906f047"
+      "json_sha256": "25af75c05b116740",
+      "md_sha256": "d6a3724da2fecfd5"
      },
      "reason": "",
      "scenario_items": [],
@@ -2274,8 +2274,8 @@
        "result": "pass"
       },
       "external_secondary": {
-       "reason": "",
-       "result": "pass"
+       "reason": "no external item in this run",
+       "result": "n/a"
       },
       "feasibility_plan": {
        "reason": "",
@@ -2336,8 +2336,8 @@
      },
      "id": "D07",
      "inputs": {
-      "json_sha256": "4c574a44b6bf819c",
-      "md_sha256": "7b5832778639a7ac"
+      "json_sha256": "eb6413ad397cfb7b",
+      "md_sha256": "3e6b37e73911d924"
      },
      "reason": "",
      "scenario_items": [],
@@ -2425,8 +2425,8 @@
      },
      "id": "D08",
      "inputs": {
-      "json_sha256": "a25922741925a6c4",
-      "md_sha256": "4c98b4623fa2b9c5"
+      "json_sha256": "be00ce082f0b58b5",
+      "md_sha256": "2a6e66f1900e2b3c"
      },
      "reason": "",
      "scenario_items": [],
@@ -2443,8 +2443,8 @@
     "not_run": 0,
     "per_criterion": {
      "clarification": {
-      "applicable": 24,
-      "pass": 24
+      "applicable": 23,
+      "pass": 23
      },
      "explainability": {
       "applicable": 16,
@@ -2455,8 +2455,8 @@
       "pass": 16
      },
      "grounding": {
-      "applicable": 32,
-      "pass": 32
+      "applicable": 29,
+      "pass": 29
      },
      "prototype": {
       "applicable": 8,
@@ -2488,15 +2488,15 @@
      },
      "external_replay": {
       "fail": 0,
-      "n/a": 0,
+      "n/a": 1,
       "not run": 0,
-      "pass": 8
+      "pass": 7
      },
      "external_secondary": {
       "fail": 0,
-      "n/a": 0,
+      "n/a": 2,
       "not run": 0,
-      "pass": 8
+      "pass": 6
      },
      "feasibility_plan": {
       "fail": 0,
@@ -2548,9 +2548,9 @@
      },
      "premise_flags": {
       "fail": 0,
-      "n/a": 0,
+      "n/a": 1,
       "not run": 0,
-      "pass": 8
+      "pass": 7
      },
      "proposal_rules": {
       "fail": 0,
