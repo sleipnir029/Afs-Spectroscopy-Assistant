@@ -96,6 +96,24 @@ def _first_assessed() -> dict:
     return copy.deepcopy(next(d for d in map(_load, RUNS) if d.get("assessment")))
 
 
+@pytest.mark.parametrize("path", RUNS, ids=lambda p: f"{p.parent.name}/{p.stem}")
+def test_status_line_leads_with_the_runs_own_status_label(path):
+    data = _load(path)
+    label, _ = brief.STATUS_LINE[data["assessment"]["decision_status"]]
+    lines = [x for x in brief.to_markdown(data).splitlines() if x.startswith("**")]
+    assert lines[0].startswith(f"**{label}:** ")
+    assert "Decision status" not in lines[0]
+
+
+def test_every_status_has_a_plain_label_and_one_short_clause():
+    from afs_assistant.schema import Assessment
+    statuses = set(Assessment.model_fields["decision_status"].annotation.__args__)
+    assert set(brief.STATUS_LINE) == statuses
+    assert brief.STATUS_LINE["premise_not_supported"][0] == "Premise not supported"
+    for _, clause in brief.STATUS_LINE.values():
+        assert clause.endswith(".") and clause.count(".") == 1 and len(clause.split()) <= 20
+
+
 def test_unverified_citation_is_not_shown():
     data = _first_assessed()
     a = data["assessment"]

@@ -37,13 +37,24 @@ EXTERNAL_SHOWN = 1
 # Supplied documents that count as AFS material for a related rule source (REF is the organiser reference).
 AFS_DOCS = ("S01", "S02", "S03", "S04", "S05")
 
-# The organiser's three statuses (REF §3); our fourth status keeps its reason in brackets.
-STATUS_TEXT = {
-    "provisional_assessment": "Provisional feasibility assessment",
-    "insufficient_information": "Insufficient information for a method choice",
-    "outside_supported_scope": "Outside the supported scope",
-    "premise_not_supported": "Provisional assessment (the customer's premise is not supported by the sources)",
+# The run's own decision status is never relabelled: its plain label leads, then one short clause.
+STATUS_LINE = {
+    "provisional_assessment": ("Provisional feasibility assessment",
+                               "methods worth testing under the stated conditions, not a final configuration."),
+    "insufficient_information": ("Insufficient information",
+                                 ("the known facts cannot yet justify a method choice; the next step below "
+                                  "is meant to decide it.")),
+    "premise_not_supported": ("Premise not supported",
+                              ("the sources do not support the customer's premise as stated; the assessment "
+                               "below is provisional.")),
+    "outside_supported_scope": ("Outside the supported scope",
+                                "the request goes beyond what the supplied sources cover."),
 }
+
+
+def status_line(status: str) -> str:
+    label, clause = STATUS_LINE[status]
+    return f"**{label}:** {clause}"
 TIER_TEXT = {"simple": "Simple", "recommended": "Recommended", "extended": "Extended (multi-method)"}
 TIER_WORD = {"simple": "simple", "recommended": "recommended", "extended": "extended"}
 ROLE_TEXT = {"primary": "primary candidate", "comparison": "comparison candidate",
@@ -238,7 +249,7 @@ def off_topic_markdown(data: dict, title: str = "", full_answer: str = "") -> st
     out = [f"# Short brief{': ' + title if title else ''}", ""]
     if full_answer:
         out += [f"*{NOTE} Full answer: {full_answer}.*", ""]
-    out += ["**Decision status:** Outside the supported scope", "", data["off_topic"]["message"], ""]
+    out += [status_line("outside_supported_scope"), "", data["off_topic"]["message"], ""]
     return "\n".join(out)
 
 
@@ -257,7 +268,7 @@ def to_markdown(data: dict, title: str = "", full_answer: str = "") -> str:
     if data.get("flagged"):
         out += [f"⚠ {len(data['flagged'])} item(s) flagged by the run's checks; see the full answer.", ""]
 
-    out += [f"**Decision status:** {STATUS_TEXT[a['decision_status']]}", "", b.clean(a["brief_answer"]), ""]
+    out += [status_line(a["decision_status"]), "", b.clean(a["brief_answer"]), ""]
 
     out += ["## Requirements", ""]
     stated = b.stated() or [b.clean(s) for s in a["requirements_stated"]]

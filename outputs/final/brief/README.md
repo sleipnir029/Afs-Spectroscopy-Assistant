@@ -1,6 +1,6 @@
 # Short brief view
 
-One short page per final case (`H01.md` to `H06.md`, about 550 to 690 words each).
+One short page per final case (`H01.md` to `H06.md`, about 550 to 700 words each).
 
 - **How it is made:** code builds it (`uv run afs-assist brief outputs/final --out outputs/final/brief`, module `src/afs_assistant/brief.py`) from the frozen run JSON (`outputs/final/H0x.json`). No model is called. The code only selects, orders and copies fields the run already holds, and it adds no facts. Running it again on the same JSON gives the same files.
 - **The full answer is authoritative:** `outputs/final/H0x.md` (same case number) holds every section, the verified quote for each citation and the verification log. If the two ever differ, the full answer is right.
