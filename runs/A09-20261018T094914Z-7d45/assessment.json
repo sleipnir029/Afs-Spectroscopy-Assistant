@@ -1,0 +1,486 @@
+{
+ "decision_status": "premise_not_supported",
+ "status_reason": "The sources describe only ex vivo, proof-of-concept spectroscopic tissue studies and contain no approved or clinically validated probe, so starting on patients next month is not supported by anything supplied.",
+ "premise_checks": [
+  {
+   "premise": "A fiber Raman probe can be used on patients in the operating field next month.",
+   "verdict": "contradicted",
+   "explanation": "The supplied tissue studies are explicitly early-stage ex vivo work; nothing supports in-vivo clinical use on that timescale.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 3,
+     "quote": "It is common practice to use ex vivo samples at the early research stages, as in the present proof-of-concept study.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S03",
+     "page": 14,
+     "quote": "This study provides a proof-of-concept demonstration of the LED-based sensor for tumor discrimination.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "A specific Raman probe is already approved for clinical tissue discrimination.",
+   "verdict": "not_covered",
+   "explanation": "No supplied source states any regulatory approval or certification of a probe for in-vivo surgical use.",
+   "citations": []
+  },
+  {
+   "premise": "Raman spectroscopy can distinguish tumour from healthy tissue.",
+   "verdict": "precedent_only",
+   "explanation": "Published feasibility reports exist for spectroscopic tumour discrimination, but they are a reason to test, not proof for this team's use case.",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 1,
+     "quote": "Tumor detection feasibility in human kidney samples using mid- and near-infrared (NIR) spectroscopy, fluorescence spectroscopy, and Raman spectroscopy has been reported",
+     "claim_kind": "application_precedent"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [
+  "Real-time discrimination of tumour vs healthy tissue in the operating field.",
+  "Start of patient use next month (not supported; see premise checks).",
+  "An approved probe (none identified in the sources)."
+ ],
+ "key_unknowns": [
+  "Which organ and tumour type, since spectral biomarkers and probe design are tissue-specific.",
+  "The regulatory pathway and approval status required for in-vivo use.",
+  "Whether any ex vivo paired tumour/healthy samples are available for a feasibility study.",
+  "Sterilisation, biocompatibility and workflow constraints for a probe in the operating field.",
+  "Whether the tissue contains fluorescent components, relevant if a combined method is later considered."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Which organ and tumour type is involved, and do you have access to paired tumour/healthy ex vivo samples from operations?",
+   "why_it_matters": "Spectral biomarkers, probe choice and calibration are tissue-specific, and ex vivo samples are the only ethical starting point the sources show.",
+   "affects": [
+    "method",
+    "M1",
+    "M2"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What regulatory approval or certification does your hospital require for a spectroscopic probe used in-vivo, and who holds it?",
+   "why_it_matters": "No source identifies an approved probe, so the regulatory path decides whether and when patient use is possible at all.",
+   "affects": [
+    "status",
+    "installation"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What accuracy (sensitivity/specificity for tumour detection) would your surgeons require before clinical use?",
+   "why_it_matters": "The go/no-go criteria for any feasibility study must come from your clinical requirements, and false negatives are the critical error in oncology.",
+   "affects": [
+    "status",
+    "M1"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What sterilisation and biocompatibility constraints apply to a probe placed in the operating field?",
+   "why_it_matters": "These constraints can exclude probe designs and affect which technique is installable in the surgical workflow.",
+   "affects": [
+    "installation"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman is the method the team proposes and has published precedent for tissue discrimination, including aqueous tissue where water interferes less than in IR methods. Its screening status is unknown for soft solid tissue, so it must first be tested ex vivo, and no source shows an approved probe.",
+   "conditions": "Test first on ex vivo paired tumour/healthy samples with histopathology reference; no patient use before regulatory approval.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S03",
+     "page": 1,
+     "quote": "Tumor detection feasibility in human kidney samples using mid- and near-infrared (NIR) spectroscopy, fluorescence spectroscopy, and Raman spectroscopy has been reported",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "comparison",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection has a published ex vivo precedent for kidney tumour discrimination with a fiber probe and penetrates tissue up to several millimetres, complementing Raman's focal volume. Testing it beside Raman shows whether a simpler, cheaper method suffices.",
+   "conditions": "none",
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 2,
+     "quote": "Diffuse reflectance near-infrared (NIR) spectroscopy is one of the most promising methods for optical tissue analysis.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S03",
+     "page": 2,
+     "quote": "It is important that the NIR light penetrates into the sample by up to 3 mm [20,21]; this depth cannot be reached by suitable spectroscopic techniques in other wavelength regions.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "MIR",
+   "technique": "ATR",
+   "role": "conditional",
+   "combined_with": [
+    "Fluorescence"
+   ],
+   "rationale": "A combined MIR-ATR + fluorescence fiber probe has been demonstrated for simultaneous tissue classification at the same point, with the fused data separating tissue classes where single methods did not. This is a later hypothesis to test against the best single method, not a starting point.",
+   "conditions": "Only if single-method ex vivo tests prove insufficient and the tissue contains fluorescent components.",
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 1,
+     "quote": "A multispectral fiber optic probe has been developed that enables simultaneous analysis of various liquid and solid samples using attenuated total reflection mid-infrared spectroscopy and fluorimetry.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "the PCA model built on the concatenated IR and fluorescence data revealed three distinct groups of samples corresponding to tissue types",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "it is limited to the samples containing at least one fluorescent component",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Fiber Raman probe in contact with the tissue surface (ex vivo first); Raman shift in cm-1 with the laser excitation wavelength stated separately; optional comparison by an NIR diffuse-reflection fiber probe.",
+  "location": "Laboratory on excised tissue samples first; operating field only after validation and regulatory approval.",
+  "fiber_link": "Silica fibers suit Raman and NIR; metal-coated silica avoids polymer-jacket fluorescence background. No MIR link is needed unless the combined option is pursued.",
+  "citations": [
+   {
+    "doc": "S01",
+    "page": 11,
+    "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+    "claim_kind": "general"
+   },
+   {
+    "doc": "S02",
+    "page": 7,
+    "quote": "Free of Polymer jacket fluorescence for Raman and Fluo- Spectroscopy",
+    "claim_kind": "general"
+   }
+  ]
+ },
+ "spectral_ranges": [
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1; the laser excitation wavelength (e.g. visible/NIR excitation) must be stated separately for the selected probe. The usable range depends on the spectrometer, laser and probe chosen.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "NIR",
+   "statement": "Nominal NIR range 780-2500 nm; the usable range depends on the instrument, fiber and probe actually selected.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "Raman signals from tissue are weak and can be swamped by fluorescence background, which must be checked on real samples.",
+   "rule_ids": [
+    "R-RAM-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Any classification calibration is specific to the tissue matrix and patient variability, and the published studies used very few patients.",
+   "rule_ids": [
+    "R-CAL-1"
+   ],
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 6,
+     "quote": "conclusions about the general suitability of the NIR sensor analysis for cancer diagnostics and, in particular, of four theoretically chosen LEDs are made on the basis of a very limited number of investigated patients.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "Ex vivo (frozen/thawed) spectra can differ from in-vivo measurements, so ex vivo results do not establish in-vivo performance.",
+   "rule_ids": [
+    "R-EVI-3"
+   ],
+   "citations": [
+    {
+     "doc": "S03",
+     "page": 3,
+     "quote": "Although the spectra of frozen/thawed biopsies can differ from real-life in vivo measurements, the possibility to transfer the diagnostic model was shown in a previous work on Raman spectroscopy of cancer [28].",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "risk": "The tumor-margin application described in the supplied concept material is aspirational, not a demonstrated clinical capability.",
+   "rule_ids": [
+    "R-EVI-1"
+   ],
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 13,
+     "quote": "Below are descriptions of tasks, cases and potential applications where such multispectral systems and labs are extremely valuable.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Collect paired tumour and healthy ex vivo samples across the expected variation (tumour grade, patient, tissue region), with histopathology as the independent reference for every measurement point.",
+    "purpose": "Representative samples and ground truth.",
+    "citations": []
+   },
+   {
+    "step": "Measure each sample with the Raman fiber probe and, in parallel, the NIR diffuse-reflection probe, recording Raman shift spectra with the excitation wavelength documented.",
+    "purpose": "Single methods first, compared on the same samples.",
+    "citations": []
+   },
+   {
+    "step": "Build per-method classification models (e.g. PCA/PLS-DA) and validate them on held-out samples or patients, including a permutation check against overfitting.",
+    "purpose": "Honest per-method performance.",
+    "citations": [
+     {
+      "doc": "S03",
+      "page": 6,
+      "quote": "In order to reduce the risk of overfitting caused by the limited experimental data volume, a thorough validation of the discrimination models was required.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Only if single methods fall short, test the combined MIR-ATR + fluorescence probe on the same samples and check whether the fused model beats the best single method.",
+    "purpose": "Combinations only after single-method tests.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "collected from the same small, even pinpoint, area of the sample.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Apply the surgeon-defined sensitivity/specificity thresholds as the go/no-go basis; only a pass, plus a separate regulatory pathway, opens any path toward in-vivo use.",
+    "purpose": "Go/no-go decision.",
+    "citations": []
+   }
+  ],
+  "reference_measurements": "Histopathology classification of each measured tissue point.",
+  "decision_basis": "Customer-defined sensitivity and specificity for tumour vs healthy discrimination on held-out samples (Q3)."
+ },
+ "assumptions": [
+  "The target is soft solid tissue measured in contact at the surface.",
+  "The optical regime is assumed to be scattering (turbid), typical of biological soft tissue, suiting diffuse reflectance and contact Raman measurements.",
+  "No regulatory approval exists yet for the intended probe."
+ ],
+ "not_in_sources": [
+  "Any regulatory approval status or certified product for in-vivo surgical Raman probes.",
+  "Sterilisation and biocompatibility requirements for surgical probes.",
+  "In-vivo performance data for Raman tumour discrimination."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "Tissue class (tumour vs healthy)",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It is the classification target the probe must deliver in real time.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": "Raman",
+    "sensor": "histopathology of the measured tissue point",
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P2",
+   "name": "Raman spectral fingerprint of the tissue",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "The Raman spectrum carries the molecular information the classification model is built on.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 12,
+     "quote": "Raman spectra (as well as IR absorption spectra) can be used to construct chemometric models-calibration or classification ones.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "Presence of fluorescent tissue components",
+   "kind": "qualitative",
+   "necessity": "optional",
+   "why": "Needed only if the combined MIR-ATR + fluorescence option is considered, since fluorescence requires a fluorescent component.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Fluorescence",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S04",
+     "page": 4,
+     "quote": "it is limited to the samples containing at least one fluorescent component",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Single probe, straightforward ex vivo contact measurement",
+   "maintenance": "Low; one spectrometer and probe",
+   "performance_fit": "Directly tests the team's proposed Raman approach",
+   "cost_drivers": "Raman spectrometer, laser, fiber probe, histopathology reference measurements",
+   "fusion_note": null,
+   "citations": []
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1",
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2"
+   ],
+   "ease_of_use": "Two probes tested side by side in the lab",
+   "maintenance": "Moderate; two instruments during trials only",
+   "performance_fit": "Fits the unknown tissue fit by comparing methods before committing",
+   "cost_drivers": "Trial time on paired ex vivo samples, two spectrometers, histopathology reference data",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 3,
+     "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "ease_of_use": "Combined probe simplifies simultaneous measurement",
+   "maintenance": "Higher; two spectrometers and per-block calibration",
+   "performance_fit": "Fits heterogeneous tissue where single methods separate classes incompletely",
+   "cost_drivers": "Combined MIR-ATR/fluorescence probe, two spectrometers, fused-model development",
+   "fusion_note": "Low-level fusion: MIR-ATR and fluorescence spectra from the same probe tip are synchronised and concatenated into one matrix with block scaling, since variables from different methods are not equivalent. Each instrument keeps its own calibration and diagnostics. The fused model must beat the best single method on held-out samples, otherwise the extra method is dropped.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "If the variables have different units of measurement, the data should be normalized in some way, for example, using an autoscaling algorithm.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 9,
+     "quote": "One of the challenges of multispectral analysis is the need to simultaneously connect at least two independently operating measuring instruments.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "A classification model (e.g. PCA/PLS-DA) needs histopathology-labelled spectra from many patients covering tumour grade and patient variability; the published studies were exploratory with very few patients and stress thorough validation and permutation testing before any diagnostic claim.",
+ "realtime_tracking_note": "Real-time in-operation use requires validated models, synchronised fast acquisition and regulatory clearance; none of these exists in the supplied material, so real-time capability is a later goal, not the starting point.",
+ "future_direction": "If ex vivo trials succeed, a dedicated miniaturised or LED-based spectral sensor tuned to the found biomarker wavelengths could be developed for surgical use, as the sources suggest for sensor systems.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "supplied",
+  "what_would_change_it": "A confirmed regulatory pathway with an already-approved probe, or ex vivo results showing one method clearly meets the surgeons' accuracy thresholds, would change the plan.",
+  "next_step": "Run a multi-method ex vivo feasibility trial on paired tumour/healthy samples with histopathology reference, comparing the Raman probe against NIR diffuse reflection."
+ },
+ "brief_answer": "No - not next month. The supplied material shows only ex vivo proof-of-concept studies and no approved probe for in-vivo surgical tissue discrimination. The realistic first step is a laboratory feasibility trial on paired tumour/healthy tissue samples, testing your proposed Raman probe against NIR diffuse reflection with histopathology as reference. Regulatory approval and in-vivo evidence remain the open blockers."
+}
