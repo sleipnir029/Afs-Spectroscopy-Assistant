@@ -1,0 +1,536 @@
+{
+ "decision_status": "outside_supported_scope",
+ "status_reason": "The supplied material covers optical spectral information about chemistry and morphology, not line pressure or flow rate. Slurry blockage warning is also not demonstrated, so only a conditional optical test for a blockage proxy can be proposed.",
+ "premise_checks": [
+  {
+   "premise": "Fiber-optic products can measure line pressure and flow rate.",
+   "verdict": "not_covered",
+   "explanation": "The supplied pages describe spectral information about chemistry and morphology, not pressure or flow; no source shows a fiber-optic pressure or flow measurement.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 4,
+     "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "premise": "An optical fiber probe can give early warning when a slurry pipe starts to block.",
+   "verdict": "not_covered",
+   "explanation": "No supplied page reports slurry blockage warning; the sources show composition and morphology measurements, so any blockage link is a hypothesis to test.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 4,
+     "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "requirements_stated": [],
+ "key_unknowns": [
+  "Whether blockage onset produces a measurable optical change in the slurry or on a probe window.",
+  "Slurry composition, solids loading, particle size, opacity, colour and fluorescence.",
+  "Pipe access, diameter, wall thickness, operating pressure/temperature and distance to the analyzer.",
+  "Required pressure and flow ranges, accuracy and response time.",
+  "Required blockage lead time, false-alarm tolerance and reference method.",
+  "Cleaning and fouling tolerance for any in-line probe or window."
+ ],
+ "clarification_questions": [
+  {
+   "id": "Q1",
+   "question": "Are line pressure and flow rate to be measured by fiber-optic spectroscopy, or can conventional pressure and flow sensors be used alongside?",
+   "why_it_matters": "This decides whether the request is within the optical scope at all.",
+   "affects": [
+    "status"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "What optical change do you expect at the start of a blockage—solids concentration, turbidity, deposit on the pipe wall, or something else?",
+   "why_it_matters": "It decides whether a surface-sensitive or bulk-sensitive optical method is worth testing.",
+   "affects": [
+    "method"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "What are the slurry composition, solids loading, particle size, and is it opaque, coloured or fluorescent?",
+   "why_it_matters": "It decides whether NIR diffuse reflection is viable and whether Raman fluorescence is manageable.",
+   "affects": [
+    "technique"
+   ]
+  },
+  {
+   "id": "Q4",
+   "question": "What pipe access, diameter, wall thickness, operating pressure/temperature, and distance to the analyzer are available?",
+   "why_it_matters": "It decides the probe geometry, fiber link and installation.",
+   "affects": [
+    "installation"
+   ]
+  },
+  {
+   "id": "Q5",
+   "question": "What lead time, false-alarm tolerance and reference method define a successful blockage warning?",
+   "why_it_matters": "It sets the go/no-go criteria for M1 and any later combination.",
+   "affects": [
+    "M1"
+   ]
+  }
+ ],
+ "recommendations": [
+  {
+   "id": "M1",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "primary",
+   "combined_with": [],
+   "rationale": "Raman is a viable single method and is explicitly water-tolerant, so it is the least speculative first optical test for a slurry-related change. A blockage warning would still depend on a Raman-visible change in the slurry or deposit, which is not demonstrated.",
+   "conditions": "Test only if blockage onset is expected to change the slurry's molecular composition or the deposit at the probe, and if fluorescence background can be checked.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "method": "NIR",
+   "technique": "diffuse_reflection",
+   "role": "conditional",
+   "combined_with": [],
+   "rationale": "NIR diffuse reflection is a practical remote geometry for opaque, scattering media, but the slurry's optical regime is unknown. It applies only if the slurry is opaque/scattering and blockage correlates with solids or water changes.",
+   "conditions": "Proceed only if the slurry is confirmed opaque/scattering and a NIR-visible solids or water change accompanies blockage.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "method": "Raman",
+   "technique": "raman_probe",
+   "role": "conditional",
+   "combined_with": [
+    "NIR"
+   ],
+   "rationale": "Combining Raman with NIR diffuse reflection is a later hypothesis: NIR adds scattering/solids information while Raman adds molecular information, but no slurry blockage gain is shown. It must be tested only after the single-method tests and compared with the best single method.",
+   "conditions": "Test only if both single methods show a blockage-related signal and the same probe window can sample the same slurry volume.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "The combination of these techniques is particularly effective because it captures complementary chemical information: NIR detects hydrogen bonds and asymmetric polar groups, while Raman provides information on the molecular backbone and symmetrical non-polar groups.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "measurement_concept": {
+  "probe_and_geometry": "Raman or NIR diffuse-reflection probes inserted or flush-mounted at a pipe access point.",
+  "location": "transfer pipe, at a customer-approved access point",
+  "fiber_link": "fiber type and length are not specified; usable range depends on the selected instrument, fiber and probe.",
+  "citations": []
+ },
+ "spectral_ranges": [
+  {
+   "method": "NIR",
+   "statement": "NIR nominal range 780-2500 nm; usable range depends on instrument, fiber and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "method": "Raman",
+   "statement": "Raman shift in cm-1, with laser excitation wavelength stated separately; usable range depends on instrument, fiber and probe.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "risk": "The request may be fundamentally non-optical: line pressure and flow rate are not measured by the supplied fiber-optic spectroscopy material.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "Blockage may produce no measurable optical change at the probe, or the change may be masked by slurry variability and fouling.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "Raman signal may be swamped by fluorescence or particle scattering in the slurry.",
+   "rule_ids": [],
+   "citations": []
+  },
+  {
+   "risk": "NIR diffuse reflection may fail if the slurry is transparent, very dark or has an uncontrolled optical path.",
+   "rule_ids": [],
+   "citations": []
+  }
+ ],
+ "feasibility_plan": {
+  "steps": [
+   {
+    "step": "Agree the normal and incipient-blockage states with the customer, and record independent reference measurements for pressure, flow and blockage before any spectral test.",
+    "purpose": "Establish the reference states and the go/no-go basis.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Collect samples or runs across the expected variation in solids loading, particle size, temperature, flow and blockage state, keeping the probe position fixed.",
+    "purpose": "Cover chemical and physical variation without changing the sampling point.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "Run the Raman single-method test first on all states and record fluorescence background and signal quality.",
+    "purpose": "Test the primary single method before any combination.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "step": "If Raman shows no usable blockage-related change, run NIR diffuse reflection only on the confirmed opaque/scattering states.",
+    "purpose": "Test the conditional single method without overbuilding.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 17,
+      "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "step": "Validate the chosen single method on held-out runs or batches against the reference; only then test the Raman+NIR combination and require it to beat the best single method. The go/no-go thresholds for lead time, false alarms and sensitivity must come from the customer.",
+    "purpose": "Separate single-method validation from combination hypothesis testing.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "reference_measurements": "Customer-agreed pressure, flow and blockage reference measurements; no optical reference is assumed.",
+  "decision_basis": "Go/no-go thresholds for lead time, false alarms and sensitivity must be set by the customer."
+ },
+ "assumptions": [
+  "Pressure and flow rate can be measured by conventional sensors outside the optical assessment.",
+  "A blockage proxy, if any, is a change in the slurry or a deposit at the probe."
+ ],
+ "not_in_sources": [
+  "Measurement of line pressure by fiber-optic spectroscopy.",
+  "Measurement of flow rate by fiber-optic spectroscopy.",
+  "Demonstrated early blockage warning for a slurry transfer pipe.",
+  "Slurry-specific probe installation, fouling and cleaning practice."
+ ],
+ "parameters": [
+  {
+   "id": "P1",
+   "name": "line pressure",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Customer target; no supplied page shows pressure as an optical or spectroscopic measurement.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "conventional pressure transmitter or gauge"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 4,
+     "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "flow rate",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Customer target; no supplied page shows flow rate as an optical or spectroscopic measurement.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "conventional flow meter"
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 4,
+     "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "incipient pipe blockage",
+   "kind": "quantitative",
+   "necessity": "required",
+   "why": "Customer target; no source demonstrates an optical early-warning measurement for slurry blockage.",
+   "measured_by": {
+    "type": "not_measurable_inline",
+    "method": null,
+    "sensor": null,
+    "alternative": "customer-agreed differential-pressure, flow-derived or visual/deposit reference"
+   },
+   "citations": []
+  },
+  {
+   "id": "P4",
+   "name": "Raman-visible slurry or deposit change",
+   "kind": "quantitative",
+   "necessity": "optional",
+   "why": "It is the only optical proxy that could link a Raman spectrum to incipient blockage, but no source validates it; it should be available only as a test proxy.",
+   "measured_by": {
+    "type": "spectroscopy",
+    "method": "Raman",
+    "sensor": null,
+    "alternative": null
+   },
+   "citations": []
+  },
+  {
+   "id": "P5",
+   "name": "slurry optical regime: opacity, scattering and fluorescence",
+   "kind": "qualitative",
+   "necessity": "required",
+   "why": "It decides whether NIR diffuse reflection is viable and whether Raman fluorescence is manageable.",
+   "measured_by": {
+    "type": "reference_lab",
+    "method": null,
+    "sensor": "customer sample inspection or laboratory optical characterization",
+    "alternative": null
+   },
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "solution_options": [
+  {
+   "id": "O1",
+   "tier": "simple",
+   "recommendation_ids": [
+    "M2"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "ease_of_use": "remote silica fiber, simple optical access",
+   "maintenance": "window cleaning and calibration checks",
+   "performance_fit": "tests bulk scattering change; conditional on opacity",
+   "cost_drivers": "NIR spectrometer, light source, diffuse-reflection probe, reference sampling",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 17,
+     "quote": "NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates.",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "tier": "recommended",
+   "recommendation_ids": [
+    "M1"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ],
+   "ease_of_use": "immersion probe, fluorescence background to check",
+   "maintenance": "probe cleaning and fluorescence checks",
+   "performance_fit": "water-tolerant molecular fingerprint; blockage proxy only",
+   "cost_drivers": "Raman spectrometer, laser, Raman probe, calibration runs",
+   "fusion_note": null,
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 16,
+     "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "superposition of luminescence (fluorescence), which has a significantly higher intensity.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  {
+   "id": "O3",
+   "tier": "extended",
+   "recommendation_ids": [
+    "M3"
+   ],
+   "parameter_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "ease_of_use": "two instruments, alignment and timing needed",
+   "maintenance": "two probes, separate cleaning and calibration",
+   "performance_fit": "adds scattering to molecular data; hypothesis only",
+   "cost_drivers": "two spectrometers, combined or two probes, synchronisation, per-method calibration",
+   "fusion_note": "Low-level fusion of synchronised Raman and NIR diffuse-reflection spectra from the same probe window. Each method is calibrated separately, and the data are normalised to a common time step. The fused model must beat the best single method on held-out blockage states before the extra instrument is kept.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "The combination of these techniques is particularly effective because it captures complementary chemical information: NIR detects hydrogen bonds and asymmetric polar groups, while Raman provides information on the molecular backbone and symmetrical non-polar groups.",
+     "claim_kind": "method_gain"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "It is crucial that the spectral information obtained by different methods-Mid-IR, NIR, Raman, and fluorescence spectra-is collected from the same small, even pinpoint, area of the sample.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 8,
+     "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 11,
+     "quote": "The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy",
+     "claim_kind": "general"
+    }
+   ]
+  }
+ ],
+ "chemometrics_note": "Raman and NIR both need matrix-specific calibration or classification models; reference data must cover normal and incipient-blockage states and be validated on held-out runs.",
+ "realtime_tracking_note": "If a spectral proxy is found, it can be tracked in-line continuously, but response time and false alarms must be established against the customer's reference.",
+ "future_direction": "After single-method feasibility, evaluate a combined Raman/NIR probe only if the fused model beats the best single method.",
+ "proposal": {
+  "best_current_option": "O2",
+  "basis": "engineering_judgement",
+  "what_would_change_it": "If the customer confirms that pressure and flow must be optical, the request stays outside the supplied scope. If slurry tests show a clear NIR scattering change or a Raman-visible deposit, O1 or O3 would move ahead of O2.",
+  "next_step": "Clarify the pressure/flow measurement route and the expected optical change at blockage, then run the single-method Raman test on representative normal and incipient-blockage samples."
+ },
+ "brief_answer": "Fiber-optic spectroscopy is not a route to line pressure or flow rate in the supplied material; those need conventional pressure and flow sensors. For blockage, the first optical test should be a Raman probe, with NIR diffuse reflection only if the slurry is opaque and scattering. It is still open whether blockage produces a measurable optical change, and what lead time and false-alarm rate you need."
+}
