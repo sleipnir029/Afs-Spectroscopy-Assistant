@@ -35,76 +35,144 @@ body { display: flex; flex-direction: column; align-items: center; gap: 28px; pa
   position: relative;
   width: 1280px; height: 720px; flex: none;
   background: var(--paper);
-  padding: 56px 72px 52px;
+  padding: 52px 72px 64px;
   overflow: hidden;
   display: flex; flex-direction: column;
   box-shadow: 0 1px 0 var(--rule);
 }
-.kicker { font-family: var(--mono); font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.kicker { font-family: var(--mono); font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
 h1, h2 { font-family: var(--serif); font-weight: 500; margin: 0; letter-spacing: -0.01em; }
-h1 { font-size: 72px; line-height: 1.02; }
-h2 { font-size: 44px; line-height: 1.1; margin-bottom: 26px; }
-p, li { font-size: 22px; line-height: 1.42; }
+h1 { font-size: 76px; line-height: 1.02; }
+h2 { font-size: 46px; line-height: 1.1; margin-bottom: 28px; }
+p, li { font-size: 24px; line-height: 1.4; }
+p { margin: 0; }
 ul { margin: 0; padding-left: 1.1em; }
-li { margin: 0 0 10px; }
+li { margin: 0 0 14px; }
 li::marker { color: var(--accent); }
-.src { position: absolute; left: 72px; right: 72px; bottom: 22px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 8px; display: flex; justify-content: space-between; }
-.num { font-family: var(--mono); }
-.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; flex: 1; min-height: 0; }
-.cols.wide-left { grid-template-columns: 1.15fr .85fr; }
-.cols.wide-right { grid-template-columns: .62fr 1.38fr; gap: 36px; }
-.cols.shot3 { grid-template-columns: 300px 1fr; gap: 32px; }
+.src { position: absolute; left: 72px; right: 72px; bottom: 22px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 8px; display: flex; justify-content: space-between; gap: 24px; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; flex: 1; min-height: 0; }
 .shot { border: 1px solid var(--rule); background: #fff; display: block; max-width: 100%; }
-.note { font-size: 17px; color: var(--muted); line-height: 1.4; }
+.note { font-size: 19px; color: var(--muted); line-height: 1.4; }
+.lead { font-size: 22px; line-height: 1.4; }
+b.a { color: var(--accent); font-weight: 600; }
 
 /* title slide */
 .title { justify-content: center; }
 .title h1 { max-width: 15ch; }
-.title .sub { font-family: var(--serif); font-style: italic; font-size: 32px; color: var(--muted); margin: 22px 0 46px; max-width: 30ch; }
-.title .team { font-family: var(--mono); font-size: 18px; letter-spacing: .06em; text-transform: uppercase; border-top: 2px solid var(--ink); padding-top: 14px; width: 560px; }
+.title .sub { font-family: var(--serif); font-style: italic; font-size: 34px; line-height: 1.3; color: var(--muted); margin: 22px 0 48px; max-width: 30ch; }
+.title .team { border-top: 2px solid var(--ink); padding-top: 16px; width: 640px; }
+.title .team .name { font-family: var(--serif); font-size: 32px; font-weight: 500; margin: 0 0 6px; }
+.title .team .members { font-family: var(--mono); font-size: 20px; margin: 0 0 14px; }
+.title .team .meta { font-family: var(--mono); font-size: 15px; color: var(--muted); }
 
-/* pipeline strip */
-.flow { display: flex; align-items: stretch; gap: 0; margin: 4px 0 26px; }
-.flow .step { flex: 1; border: 1px solid var(--ink); padding: 10px 10px 9px; font-size: 15.5px; line-height: 1.25; background: #fffdf9; }
-.flow .step b { display: block; font-family: var(--mono); font-weight: 500; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
-.flow .step.llm b { color: var(--accent); }
-.flow .step.code { background: var(--ink); color: var(--paper); }
-.flow .step.code b { color: #e8b9a4; }
-.flow .arr { width: 22px; align-self: center; text-align: center; color: var(--muted); font-size: 18px; }
-.legend { font-family: var(--mono); font-size: 13px; color: var(--muted); margin: -16px 0 18px; }
-.legend span { display: inline-block; width: 12px; height: 12px; vertical-align: -1px; margin: 0 6px 0 0; border: 1px solid var(--ink); }
+/* criteria bars */
+.bars { display: grid; grid-template-columns: 250px 1fr 44px; align-items: center; row-gap: 14px; column-gap: 14px; }
+.bars .k { font-size: 20px; line-height: 1.2; }
+.bars .bar { height: 26px; background: var(--rule); position: relative; }
+.bars .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+.bars .v { font-family: var(--mono); font-size: 20px; text-align: right; }
+.bars-h { font-family: var(--mono); font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 16px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+.jury { margin-top: auto; border-top: 1px solid var(--rule); padding-top: 14px; font-size: 21px; line-height: 1.4; }
+.jury b { font-family: var(--mono); font-weight: 500; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-right: 8px; }
 
-/* stat tiles */
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); margin-bottom: 24px; }
-.stat { padding: 14px 16px 14px 0; }
-.stat + .stat { padding-left: 18px; border-left: 1px solid var(--rule); }
-.stat .v { font-family: var(--serif); font-size: 50px; line-height: 1; font-weight: 500; }
-.stat .v small { font-size: 26px; color: var(--muted); }
-.stat .l { font-size: 15.5px; color: var(--muted); margin-top: 6px; line-height: 1.3; }
+/* labelled list (slide 3, 11) */
+.labels { list-style: none; padding: 0; margin: 0; }
+.labels li { border-top: 1px solid var(--rule); padding: 8px 0 0; margin: 0 0 10px; font-size: 19px; line-height: 1.32; }
+.labels li b { display: block; font-family: var(--serif); font-weight: 500; font-size: 24px; line-height: 1.15; margin-bottom: 2px; }
+
+/* flow diagram */
+.flow { display: flex; align-items: stretch; margin: 6px 0 22px; }
+.flow .step { flex: 1; border: 1.5px solid var(--ink); padding: 14px 14px 16px; background: #fffdf9; display: flex; flex-direction: column; }
+.flow .step .who { font-family: var(--mono); font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.flow .step .t { font-family: var(--serif); font-size: 25px; line-height: 1.1; font-weight: 500; margin-bottom: 10px; }
+.flow .step .d { font-size: 17px; line-height: 1.35; }
+.flow .step.code { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.flow .step.code .who { color: #e8b9a4; }
+.flow .arr { width: 26px; flex: none; align-self: center; text-align: center; color: var(--muted); font-size: 24px; }
+.legend { font-family: var(--mono); font-size: 15px; color: var(--muted); margin: 0 0 22px; }
+.legend span { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; margin: 0 7px 0 0; border: 1.5px solid var(--ink); }
+.callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; font-size: 22px; line-height: 1.4; margin-bottom: 12px; }
+
+/* documents in -> knowledge out */
+.kb { display: grid; grid-template-columns: 380px 60px 1fr; flex: 1; min-height: 0; }
+.kb .arrow { align-self: center; text-align: center; font-size: 40px; color: var(--accent); }
+.kb .box-h { font-family: var(--mono); font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+.kb .in li { font-size: 21px; margin-bottom: 12px; line-height: 1.3; }
+.kb .in li small { display: block; font-size: 16px; color: var(--muted); }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tile { background: #fffdf9; border: 1px solid var(--rule); padding: 14px 16px 14px; }
+.tile .v { font-family: var(--serif); font-size: 40px; line-height: 1; font-weight: 500; }
+.tile .v small { font-size: 22px; color: var(--muted); }
+.tile .l { font-size: 18px; line-height: 1.32; margin-top: 8px; }
+.tile .l q { font-family: var(--serif); font-style: italic; }
+
+/* checks */
+.checks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 26px; }
+.check { border-top: 3px solid var(--ink); padding-top: 10px; }
+.check .n { font-family: var(--mono); font-size: 14px; color: var(--accent); letter-spacing: .06em; }
+.check .t { font-family: var(--serif); font-size: 26px; line-height: 1.12; font-weight: 500; margin: 4px 0 8px; }
+.check .d { font-size: 18px; line-height: 1.35; }
+.after { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; flex: 1; min-height: 0; }
+.mini-h { font-family: var(--mono); font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.chain { display: flex; flex-direction: column; gap: 6px; }
+.chain div { font-size: 20px; line-height: 1.3; border: 1px solid var(--rule); background: #fffdf9; padding: 8px 12px; }
+.chain .down { border: 0; background: none; padding: 0 0 0 14px; color: var(--muted); font-size: 18px; }
+.chips { list-style: none; padding: 0; margin: 0 0 16px; }
+.chips li { font-size: 19px; line-height: 1.3; margin: 0 0 12px; }
+.chip { display: inline-block; font-family: var(--mono); font-size: 15.5px; border: 1px solid var(--accent); color: var(--accent); padding: 1px 7px; border-radius: 2px; margin-bottom: 3px; }
+.proof { display: flex; align-items: baseline; gap: 14px; border-top: 2px solid var(--ink); padding-top: 10px; }
+.proof .v { font-family: var(--serif); font-size: 48px; line-height: 1; font-weight: 500; }
+.proof .l { font-size: 19px; color: var(--muted); line-height: 1.3; }
 
 /* tables */
-table { border-collapse: collapse; width: 100%; font-size: 19px; }
-th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule); }
-th { font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--ink); }
+table { border-collapse: collapse; width: 100%; font-size: 20px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--mono); font-weight: 500; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--ink); vertical-align: bottom; }
 td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
-tr.pick td { background: var(--wash); font-weight: 600; }
+tr.pick td { background: var(--wash); font-weight: 600; border-bottom-color: var(--wash); }
 tr.pick td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+td.role { font-family: var(--serif); font-size: 24px; font-weight: 500; }
+td.model { font-family: var(--mono); font-size: 17px; white-space: nowrap; }
 
-.tag { font-family: var(--mono); font-size: .82em; border: 1px solid var(--accent); color: var(--accent); padding: 0 5px; border-radius: 2px; white-space: nowrap; }
-.small li { font-size: 19.5px; margin-bottom: 8px; }
+/* held-out table */
+table.ho { font-size: 16.5px; }
+table.ho th { padding: 6px 10px; }
+table.ho td { padding: 6px 10px; line-height: 1.25; }
+table.ho td.id { font-family: var(--mono); font-size: 14px; color: var(--muted); width: 44px; padding-top: 8px; }
+table.ho td.q { font-family: var(--serif); font-size: 18.5px; width: 31%; }
+table.ho td.tr { width: 25%; }
+table.ho .st { display: block; font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); margin-bottom: 1px; }
 
 /* held-out answer excerpt */
-.cols.h04 { grid-template-columns: .9fr 1.1fr; gap: 40px; }
-.excerpt { border-left: 3px solid var(--accent); padding-left: 18px; font-family: var(--serif); }
-.excerpt p { font-size: 20px; line-height: 1.38; margin: 0 0 12px; }
-.xh { font-family: var(--mono); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
-.excerpt-list { margin: 0 0 16px; padding-left: 1.3em; }
-.excerpt-list li { font-size: 17px; line-height: 1.35; margin-bottom: 5px; }
+.cols.h04 { grid-template-columns: 1.05fr .95fr; gap: 48px; }
+.excerpt { border-left: 3px solid var(--accent); padding-left: 20px; font-family: var(--serif); }
+.excerpt p { font-size: 22px; line-height: 1.4; margin: 0 0 14px; }
+.xh { font-family: var(--mono); font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.excerpt-list { margin: 0; padding-left: 1.3em; }
+.excerpt-list li { font-family: var(--serif); font-size: 21px; line-height: 1.38; margin-bottom: 12px; }
 .excerpt-list li::marker { color: var(--accent); font-family: var(--mono); }
-table.xt { font-size: 15.5px; }
-table.xt td, table.xt th { padding: 6px 8px; vertical-align: top; }
-table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; vertical-align: bottom; }
-.repo { font-family: var(--mono); font-size: 22px; margin: -12px 0 22px; color: var(--accent); }
+
+/* stat grid */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--ink); margin-bottom: 22px; }
+.stat { padding: 18px 20px 18px 0; border-bottom: 1px solid var(--rule); }
+.stat:not(:nth-child(3n+1)) { padding-left: 22px; border-left: 1px solid var(--rule); }
+.stat .v { font-family: var(--serif); font-size: 64px; line-height: 1; font-weight: 500; }
+.stat .v small { font-size: 30px; color: var(--muted); }
+.stat .l { font-size: 19px; color: var(--ink); margin-top: 8px; line-height: 1.3; }
+
+/* roadmap */
+.road { list-style: none; padding: 0; margin: 0; }
+.road li { display: grid; grid-template-columns: 70px 1fr; column-gap: 8px; border-top: 1px solid var(--rule); padding: 11px 0 9px; margin: 0; font-size: 20px; line-height: 1.35; }
+.road li .tag { font-family: var(--mono); font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); padding-top: 6px; }
+.road li b { font-family: var(--serif); font-weight: 500; font-size: 26px; line-height: 1.15; display: block; margin-bottom: 2px; }
+.road li span.why { color: var(--muted); }
+
+/* closing */
+.end { justify-content: center; }
+.end h1 { font-size: 88px; }
+.end .team { margin-top: 36px; border-top: 2px solid var(--ink); padding-top: 16px; width: 640px; }
+.end .team p { font-family: var(--mono); font-size: 20px; margin: 0 0 10px; }
+.end .team p.name { font-family: var(--serif); font-size: 32px; font-weight: 500; }
 
 @page { size: 1280px 720px; margin: 0; }
 @media print {
@@ -119,209 +187,198 @@ table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0;
 
 <!-- 1 -->
 <section class="slide title">
-  <p class="kicker">Art Fiber Systems challenge · Team Helios</p>
+  <p class="kicker">Art Fiber Systems challenge · SchubKI National AI Hackathon 2026</p>
   <h1>AFS Spectroscopy Assistant</h1>
-  <p class="sub">From an in-line spectroscopy enquiry to a cited first technical assessment, with every quote checked against its page.</p>
-  <div class="team">Team Helios · October 2026</div>
+  <p class="sub">A customer enquiry goes in. A cited first technical assessment comes out.</p>
+  <div class="team">
+    <p class="name">Team Helios</p>
+    <p class="members">TEAM_MEMBERS_PENDING</p>
+    <p class="meta">REPO_URL_PENDING</p>
+  </div>
 </section>
 
 <!-- 2 -->
 <section class="slide">
-  <p class="kicker">The problem</p>
-  <h2>A good first answer is hard to write, and easy to get wrong</h2>
-  <div class="cols wide-left">
+  <p class="kicker">1 · The challenge</p>
+  <h2>Help an AFS expert answer a new customer</h2>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 56px;">
     <ul>
-      <li>Customers ask: <em>“we want to follow X in our process. Which method and probe should we test first?”</em></li>
-      <li>A useful first answer screens UV-Vis, NIR, MIR, Raman and fluorescence against the sample, probe and fiber limits. It proposes one option to test first and says what would change the choice.</li>
-      <li>It must rest on the AFS materials. It must never invent accuracy, detection limits, response times, fiber lengths or prices, and never promise approval.</li>
+      <li>A customer describes what they want to measure in their process. <b>Which method and probe should they test first?</b></li>
+      <li>The answer must rest on the <b>AFS documents</b>. Nothing invented: no prices, accuracy figures or fiber lengths.</li>
+      <li>It should <b>ask the right questions</b> and <b>propose a first feasibility test</b>.</li>
     </ul>
     <div>
-      <table>
-        <tr><th>Judging criterion</th><th class="n">Weight %</th></tr>
-        <tr><td>Technical quality</td><td class="n">30</td></tr>
-        <tr><td>Use of AFS knowledge</td><td class="n">20</td></tr>
-        <tr><td>Feasibility-study plan</td><td class="n">15</td></tr>
-        <tr><td>Clarification &amp; uncertainty</td><td class="n">15</td></tr>
-        <tr><td>Explainability</td><td class="n">10</td></tr>
-        <tr><td>Prototype &amp; presentation</td><td class="n">10</td></tr>
-      </table>
-      <p class="note">Every item of our eval checklist maps to one of these criteria.</p>
+      <p class="bars-h">How it is judged (weight %)</p>
+      <div class="bars">
+        <span class="k">Technical quality</span><span class="bar"><i style="width:100%"></i></span><span class="v">30</span>
+        <span class="k">Use of AFS knowledge</span><span class="bar"><i style="width:66.7%"></i></span><span class="v">20</span>
+        <span class="k">Feasibility-study plan</span><span class="bar"><i style="width:50%"></i></span><span class="v">15</span>
+        <span class="k">Clarification &amp; uncertainty</span><span class="bar"><i style="width:50%"></i></span><span class="v">15</span>
+        <span class="k">Explainability</span><span class="bar"><i style="width:33.3%"></i></span><span class="v">10</span>
+        <span class="k">Prototype &amp; presentation</span><span class="bar"><i style="width:33.3%"></i></span><span class="v">10</span>
+      </div>
     </div>
   </div>
-  <div class="src"><span>Criteria and weights: AFS challenge brief · mapping: outputs/eval/summary.md</span><span>2 / 11</span></div>
+  <p class="jury"><b>The jury also asked</b>Always make a proposal. Search the literature when the AFS documents don’t cover it. Handle setups that combine several methods.</p>
+  <div class="src"><span>AFS challenge brief (organiser PDF): tasks, rules, criteria and weights · jury input: STATUS.md (12:22)</span><span>2 / 12</span></div>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <p class="kicker">What it does</p>
-  <h2>A chat that answers like a careful applications engineer</h2>
-  <div class="cols shot3">
-    <ul class="small">
-      <li>The <b>recommendation headline</b> is built by code from the proposed option.</li>
-      <li>Status, confidence, next step. Margin notes show each verified quote with its page.</li>
-      <li>Options with a cost class from S01 Table 1 (p.6), never a price.</li>
-      <li>Open questions linked to the option they would change. Follow-ups and re-assessment in the same thread.</li>
+  <p class="kicker">2 · What we built</p>
+  <h2>A chat assistant that writes the first assessment</h2>
+  <div class="cols" style="grid-template-columns: 720px 1fr; gap: 36px;">
+    <div>
+      <img class="shot" src="answer-recommendation.png" alt="The assistant's answer in the web chat: recommendation headline, short answer with numbered sources, status, confidence and next step; each AFS quote with its page on the right" style="width: 100%; height: auto;">
+      <p class="note" style="margin-top: 10px;">A live answer. Each numbered source on the right is the exact AFS quote with its page.</p>
+    </div>
+    <ul class="labels">
+      <li><b>Recommendation</b>What to test first, with a decision status and a confidence level.</li>
+      <li><b>Three options</b>Simple, recommended, extended. Cost class from AFS Table 1, never a price.</li>
+      <li><b>Setup sketch</b>Process, probe, fiber, spectrometer.</li>
+      <li><b>Questions for the customer</b>The ones that could change the choice.</li>
+      <li style="border-top: 2px solid var(--ink);"><b>Chat</b>Ask a follow-up or add a fact: the answer updates.</li>
     </ul>
-    <img class="shot" src="answer-recommendation.png" alt="Web chat answer: status strip, recommendation headline, brief answer with footnotes, verified quotes in the margin, status, confidence and next step" style="width: 100%; height: auto; align-self: start;">
   </div>
-  <div class="src"><span>Screenshot: crop of docs/video/frames/09_recommendation.png (live run in uv run afs-assist ui)</span><span>3 / 11</span></div>
+  <div class="src"><span>Screenshot: crop of docs/video/frames/09_recommendation.png (live run in the web chat) · README.md “What it does”</span><span>3 / 12</span></div>
 </section>
 
 <!-- 4 -->
 <section class="slide">
-  <p class="kicker">How it stays grounded</p>
-  <h2>Models write. Code checks quotes, numbers, wording.</h2>
+  <p class="kicker">3 · How it works</p>
+  <h2>Models write. Code checks.</h2>
   <div class="flow">
-    <div class="step llm"><b>Intake</b>LLM, strict JSON</div><div class="arr">→</div>
-    <div class="step code"><b>Screen</b>44 rules, Table 1, fibers</div><div class="arr">→</div>
-    <div class="step llm"><b>Assess</b>LLM over 67 pages</div><div class="arr">→</div>
-    <div class="step code"><b>Verify</b>about 40 checks</div><div class="arr">→</div>
-    <div class="step llm"><b>Repair</b>stronger model</div><div class="arr">→</div>
-    <div class="step code"><b>Finalize</b>remove, flag, fallbacks</div><div class="arr">→</div>
-    <div class="step code"><b>Render</b>JSON, MD, provenance</div>
+    <div class="step"><span class="who">Model</span><span class="t">Understand the enquiry</span><span class="d">Picks out what the customer actually wrote, and what is missing.</span></div><div class="arr">→</div>
+    <div class="step code"><span class="who">Code</span><span class="t">Screen the 5 methods</span><span class="d">UV&#8209;Vis, NIR, mid&#8209;IR, Raman, fluorescence, against 44 AFS rules and fiber limits.</span></div><div class="arr">→</div>
+    <div class="step"><span class="who">Model</span><span class="t">Write the assessment</span><span class="d">Reads all 67 AFS pages. Every claim must quote its page.</span></div><div class="arr">→</div>
+    <div class="step code"><span class="who">Code</span><span class="t">Check every claim</span><span class="d">122 to 161 checks per answer: quotes, pages, numbers, wording.</span></div><div class="arr">→</div>
+    <div class="step"><span class="who">Stronger model</span><span class="t">Fix what failed</span><span class="d">Gets the list of failures and rewrites. At most 2 rounds.</span></div><div class="arr">→</div>
+    <div class="step code"><span class="who">Code</span><span class="t">Answer with sources</span><span class="d">Anything still failing is removed or labelled.</span></div>
   </div>
-  <p class="legend"><span style="background:var(--ink)"></span>code (deterministic) &nbsp; <span style="background:#fffdf9"></span>language model</p>
-  <div class="stats">
-    <div class="stat"><div class="v">120<small>/120</small></div><div class="l">H01–H06 citations verified on the cited page</div></div>
-    <div class="stat"><div class="v">0</div><div class="l">hard verification failures in H01–H06</div></div>
-    <div class="stat"><div class="v">100<small>%</small></div><div class="l">citations verified in each of the 19 gate-run cases</div></div>
-    <div class="stat"><div class="v">19<small>/19</small></div><div class="l">gate-run external replays equal</div></div>
-  </div>
-  <ul class="small">
-    <li>A quote counts only if it is an exact or loose match on the cited page. A fuzzy near match is not verified, and a changed number or negation never matches.</li>
-    <li>The page scope must fit the claim kind. Numbers come only from that claim’s own quotes or the enquiry. No prices, no guarantee or approval wording.</li>
-  </ul>
-  <div class="src"><span>outputs/final/*.json · STATUS.md (gate 11:52) · ARCHITECTURE.md (67 pages) · knowledge/rules.yaml · src/afs_assistant/verify.py</span><span>4 / 11</span></div>
+  <p class="legend"><span style="background:#fffdf9"></span>language model &nbsp;&nbsp; <span style="background:var(--ink)"></span>code: same input, same result</p>
+  <p class="callout">The literature is searched only for gaps the AFS documents leave open. Those quotes are shown apart and marked <b>secondary</b>, not AFS material.</p>
+  <p class="callout">The same steps run for every enquiry. Nothing is written for a specific case.</p>
+  <div class="src"><span>ARCHITECTURE.md · src/afs_assistant/pipeline.py (max 2 repair rounds) · checks per case: outputs/final/H0*.json · knowledge/rules.yaml</span><span>4 / 12</span></div>
 </section>
 
 <!-- 5 -->
 <section class="slide">
-  <p class="kicker">Chat with live result blocks</p>
-  <h2>Follow-ups get checked answers, and results arrive as blocks</h2>
-  <div class="cols">
+  <p class="kicker">3 · How it works: reading the AFS documents</p>
+  <h2>The AFS files become checkable knowledge</h2>
+  <div class="kb">
     <div>
-      <ul class="small">
-        <li>Routing is code: the first message assesses, new facts re-assess, any other text asks.</li>
-        <li>An ask is one model call. Each claim gets the pipeline checks. A claim that fails is removed, and the answer says so.</li>
-        <li>The server renders the blocks (options, setup, parameters, questions, risks, plan, sources, what changed) from the verified run. The model only names them.</li>
+      <p class="box-h">What AFS gave us</p>
+      <ul class="in">
+        <li>Lab report, slide deck, flyer<small>PDFs (S01, S02, S05); slide images typed in by hand</small></li>
+        <li>Two research papers<small>kidney tissue study (S03), mid-IR + fluorescence (S04)</small></li>
+        <li>Guidance document<small>answer structure and method overview (REF)</small></li>
+        <li>Table 1 spreadsheet<small>methods compared, with a cost rating</small></li>
+        <li>A laboratory web page<small>saved as text (S06)</small></li>
       </ul>
-      <div class="stats" style="grid-template-columns: repeat(3, 1fr); margin-top: 14px;">
-        <div class="stat"><div class="v">10<small>/11</small></div><div class="l">citations verified (1 dropped by the checks)</div></div>
-        <div class="stat"><div class="v" style="font-size:38px; white-space:nowrap;">1.4–6.3<small> s</small></div><div class="l">per question</div></div>
-        <div class="stat"><div class="v">$0.038</div><div class="l">for 10 questions</div></div>
-      </div>
-      <p class="note">Price question → cost class only and a quotation next step. Prompt injection → no guarantee. A question the sources do not cover (lifetime) → “not in the supplied sources” and a next step.</p>
     </div>
-    <div style="display:flex; flex-direction:column; gap:10px; min-height:0;">
-      <img class="shot" src="blocks-options-clean.png" alt="Options block: simple, recommended, extended, with methods and cost class from S01 Table 1" style="width: 100%; height: auto;">
-      <img class="shot" src="blocks-setup-clean.png" alt="Setup block: process point, probe, fiber link, spectrometer, chemometric model, result, with an auxiliary sensor" style="width: 100%; height: auto;">
+    <div class="arrow">→</div>
+    <div>
+      <p class="box-h">What the code builds from them</p>
+      <div class="tiles">
+        <div class="tile"><div class="v">67 <small>pages of text</small></div><div class="l">The model reads them. The checker compares every quote against them.</div></div>
+        <div class="tile"><div class="v">44 <small>rules</small></div><div class="l">Each backed by a word-for-word AFS quote. Example: silica fibers stop near 2.4 µm, so they cannot carry mid-IR (fiber chart, S02 p.6).</div></div>
+        <div class="tile"><div class="v">19 <small>Table 1 rows</small></div><div class="l">Method and probe type, with the cost class: low, average or high (S01 p.6).</div></div>
+        <div class="tile"><div class="v">7 <small>fiber families</small></div><div class="l">The wavelength range each one carries (S02 p.6).</div></div>
+      </div>
+      <p class="note" style="margin-top: 14px;">Same files in, same files out. A check confirms all 77 rule quotes are on their page.</p>
     </div>
   </div>
-  <div class="src"><span>docs/chat/live-check-20261018.json · STATUS.md 11:56 · crops of docs/video/frames/11_options.png, 12_setup.png</span><span>5 / 11</span></div>
+  <div class="src"><span>src/afs_assistant/kb_build.py · knowledge/rules.yaml, table1_methods.json, fibers.json · kb check 13/13 PASS · ARCHITECTURE.md</span><span>5 / 12</span></div>
 </section>
 
 <!-- 6 -->
 <section class="slide">
-  <p class="kicker">Multi-method and literature</p>
-  <h2>One method first; combine only when one is not enough</h2>
-  <div class="cols">
+  <p class="kicker">3 · How it works: checking every answer</p>
+  <h2>Four checks on every claim</h2>
+  <div class="checks">
+    <div class="check"><div class="n">1</div><div class="t">The quote is on the page</div><div class="d">Word for word. A changed number or a dropped “not” fails.</div></div>
+    <div class="check"><div class="n">2</div><div class="t">The page fits the claim</div><div class="d">A similar application elsewhere is not proof for this customer.</div></div>
+    <div class="check"><div class="n">3</div><div class="t">Numbers have a source</div><div class="d">Only from the quote or the customer’s own text.</div></div>
+    <div class="check"><div class="n">4</div><div class="t">No promises</div><div class="d">No prices, no guarantees, no approval wording.</div></div>
+  </div>
+  <div class="after">
     <div>
-      <ul class="small">
-        <li>The extended option combines methods only for a target or interference that one method cannot cover <span class="tag">S01 p.7</span>. Mid-IR and Raman are complementary <span class="tag">S01 p.11</span>.</li>
-        <li>A combined option must carry a fusion note:
-          <ul>
-            <li>same spot and volume <span class="tag">S01 p.8</span>;</li>
-            <li>data on a common time step <span class="tag">S01 p.8</span>;</li>
-            <li>one model per method first, then the fusion level.</li>
-          </ul>
-        </li>
-        <li>Calibration is specific to the matrix (REF §5), so accuracy is never promised before a feasibility study.</li>
-      </ul>
+      <p class="mini-h">If a check fails</p>
+      <div class="chain">
+        <div>The failures go to the stronger fixer model, which rewrites.</div>
+        <div class="down">↓ still failing?</div>
+        <div>The claim is removed, or labelled so the reader sees it.</div>
+      </div>
+      <div class="proof" style="margin-top: 22px;"><span class="v">120/120</span><span class="l">citations verified in the six<br>held-out answers</span></div>
     </div>
     <div>
-      <ul class="small">
-        <li>Literature runs <b>only for gaps</b> the AFS sources leave open.</li>
-        <li>It searches the curated open-access library (9 entries), then Europe PMC, OpenAlex and Unpaywall, all keyless. A guard keeps names and numbers from the enquiry out of the queries.</li>
-        <li>Quotes are verbatim (at most 400 characters) and shown as <em>secondary</em>, with URL and licence. They are cached and replayable offline.</li>
+      <p class="mini-h">What the reader sees next to each claim</p>
+      <ul class="chips">
+        <li><span class="chip">AFS source</span><br>backed by a checked AFS quote.</li>
+        <li><span class="chip">precedent only</span><br>a similar published use: a reason to test, not proof.</li>
+        <li><span class="chip">engineering judgement, no source</span><br>our reasoning, clearly marked as such.</li>
       </ul>
-      <div class="stats" style="grid-template-columns: repeat(3, 1fr); margin-top: 12px;">
-        <div class="stat"><div class="v">6</div><div class="l">verified items in H01–H06 (1 dropped)</div></div>
-        <div class="stat"><div class="v">4–7<small>s</small></div><div class="l">external step per case</div></div>
-        <div class="stat"><div class="v">≤$0.0014</div><div class="l">external cost per case</div></div>
-      </div>
     </div>
   </div>
-  <div class="src"><span>skills/multi-method-fusion.md · src/afs_assistant/external/step.py · outputs/final/*.json</span><span>6 / 11</span></div>
+  <div class="src"><span>src/afs_assistant/verify.py, scope.py, chat.py (labels) · outputs/final/H0*.json (120/120) · outputs/final/REVIEW.md</span><span>6 / 12</span></div>
 </section>
 
 <!-- 7 -->
 <section class="slide">
-  <p class="kicker">Model choice: evidence</p>
-  <h2>7 arms, blind-judged against the AFS data</h2>
-  <div class="cols wide-left">
-    <table>
-      <tr><th>Arm (D01–D08)</th><th class="n">Quality 1–5</th><th class="n">s / case</th><th class="n">$ / case</th><th class="n">Source recall</th></tr>
-      <tr><td>deepseek-v4.1-flash-1017</td><td class="n">4.15</td><td class="n">259</td><td class="n">0.013</td><td class="n">78 %</td></tr>
-      <tr><td>baseline v4.1-flash</td><td class="n">4.08</td><td class="n">504</td><td class="n">0.022</td><td class="n">82 %</td></tr>
-      <tr class="pick"><td>mix-a (chosen)</td><td class="n">4.06</td><td class="n">84</td><td class="n">0.030</td><td class="n">85 %</td></tr>
-      <tr><td>glm-5.3-flash</td><td class="n">3.96</td><td class="n">322</td><td class="n">0.006</td><td class="n">85 %</td></tr>
-      <tr><td>gemini-3.8-flash</td><td class="n">3.75</td><td class="n">173</td><td class="n">0.059</td><td class="n">82 %</td></tr>
-      <tr><td>mix-b</td><td class="n">3.38</td><td class="n">69</td><td class="n">0.030</td><td class="n">75 %</td></tr>
-      <tr><td>gemini-3.5-flash-lite</td><td class="n">3.23</td><td class="n">29</td><td class="n">0.015</td><td class="n">65 %</td></tr>
-    </table>
-    <ul class="small">
-      <li>The top three are close on quality (4.15 / 4.08 / 4.06). <b>mix-a</b> is 3–6× faster than the other two.</li>
-      <li><b>mix-a</b> uses:
-        <ul>
-          <li>Gemini 3.5 Flash-Lite for intake and literature;</li>
-          <li>GLM-5.3-Flash to write the assessment;</li>
-          <li>Gemini 3.8 Flash to repair, only when the checks fail.</li>
-        </ul>
-      </li>
-      <li>Every role retries a cut-off or timed-out reply on another model.</li>
-      <li>All arms had 0 hard failures. Four blind judge agents (LLM) saw anonymous letters.</li>
-    </ul>
+  <p class="kicker">3 · How it works: a team of models</p>
+  <h2>Each job goes to the model that does it best</h2>
+  <div class="cols" style="grid-template-columns: 1.1fr .9fr; gap: 48px;">
+    <div>
+      <table>
+        <tr><th>Role</th><th>Model</th><th>Job</th></tr>
+        <tr><td class="role">Reader</td><td class="model">Gemini 3.5 Flash-Lite</td><td>Understands the enquiry; writes literature searches.</td></tr>
+        <tr><td class="role">Writer</td><td class="model">GLM-5.3-Flash</td><td>Writes the first draft of the assessment.</td></tr>
+        <tr><td class="role">Fixer</td><td class="model">Gemini 3.8 Flash</td><td>Rewrites, only when checks fail.</td></tr>
+        <tr><td class="role">Backup</td><td class="model">every step</td><td>Retries on a different model if a reply breaks.</td></tr>
+      </table>
+      <p class="note" style="margin-top: 14px;">In all six held-out cases the checks caught problems in the first draft, so each answer shown is the fixer’s rewrite.</p>
+    </div>
+    <div>
+      <p class="mini-h">Why this mix</p>
+      <p class="lead" style="margin-bottom: 14px;">We tested 7 setups blind on 8 practice cases, scored by 4 judge agents.</p>
+      <table style="font-size: 19px;">
+        <tr><th>Setup</th><th class="n">Quality /5</th><th class="n">Time</th></tr>
+        <tr><td>Best single model</td><td class="n">4.15</td><td class="n">259 s</td></tr>
+        <tr><td>Our old setup</td><td class="n">4.08</td><td class="n">504 s</td></tr>
+        <tr class="pick"><td>This mix</td><td class="n">4.06</td><td class="n">84 s</td></tr>
+      </table>
+      <p class="lead" style="margin-top: 14px;">Quality on par, <b class="a">3–6× faster</b>, about <b class="a">$0.03</b> per case.</p>
+    </div>
   </div>
-  <div class="src"><span>outputs/bakeoff-dev/blind/summary.md · outputs/bakeoff-dev/afs-score.md · DEVIATIONS D-063</span><span>7 / 11</span></div>
+  <div class="src"><span>config/models.yaml · outputs/bakeoff-dev/blind/summary.md · README.md “Models”</span><span>7 / 12</span></div>
 </section>
 
 <!-- 8 -->
 <section class="slide">
-  <p class="kicker">Results on the held-out set</p>
-  <h2>H01–H06, run once on tag freeze-1</h2>
-  <div class="stats">
-    <div class="stat"><div class="v">6<small>/6</small></div><div class="l">complete; 0 hard failures, 0 runaways, 0 timeouts</div></div>
-    <div class="stat"><div class="v">120<small>/120</small></div><div class="l">citations verified</div></div>
-    <div class="stat"><div class="v">97–184<small>s</small></div><div class="l">per case</div></div>
-    <div class="stat"><div class="v">$0.288</div><div class="l">for all six cases</div></div>
-  </div>
-  <div class="cols">
-    <ul class="small">
-      <li>Status: premise_not_supported ×4, provisional ×1, insufficient_information ×1. Each is justified by a cited source.</li>
-      <li>External replay 13/13 equal. Cost class matches S01 Table 1 in 6/6 cases.</li>
-      <li>Independent rule-compliance review: <b>PASS WITH CAVEATS</b>, no blocking violation.</li>
-    </ul>
-    <ul class="small">
-      <li>Dev D01–D08 + adversarial A01–A12: checklist <b>0 failures</b>.</li>
-      <li>Adversarial must 33/34 and must-not 12/13. Both misses are A07: 4 questions where at most 3 are allowed, and a must-not pattern that matched a legitimate question about the reference's reproducibility. They are recorded, and the eval was not changed after seeing the outputs.</li>
-      <li>890 offline tests pass (2 skipped). A fresh clone without pages.jsonl: 357 passed, 535 skipped, 0 failed; with it rebuilt: 890/2.</li>
-    </ul>
-  </div>
-  <div class="src"><span>outputs/final/*.json, REVIEW.md · outputs/eval/summary.md · README.md (fresh-clone test) · docs/slides/README.md (pytest)</span><span>8 / 11</span></div>
+  <p class="kicker">4 · Proof</p>
+  <h2 style="margin-bottom: 16px;">The six held-out questions, answered by the agent</h2>
+  <table class="ho">
+    <tr><th></th><th>The customer asks</th><th>What was tricky</th><th>The agent’s verdict</th></tr>
+    <tr><td class="id">H01</td><td class="q">New powder blend: can we reuse our NIR calibration if we add Raman?</td><td class="tr">A calibration only fits the mixture it was built on.</td><td><span class="st">Premise not supported</span>Rebuild the NIR calibration on the new blend; test Raman separately.</td></tr>
+    <tr><td class="id">H02</td><td class="q">Clear whey and opaque milk concentrate: what should we test first?</td><td class="tr">Two very different streams.</td><td><span class="st">Provisional</span>NIR: transmission/transflection for the whey, diffuse reflection for the concentrate.</td></tr>
+    <tr><td class="id">H03</td><td class="q">Can our fluorescence spectrometer report glucose and viable biomass?</td><td class="tr">Glucose is not fluorescent; no marker named.</td><td><span class="st">Premise not supported</span>Test Raman first, NIR as the comparison.</td></tr>
+    <tr><td class="id">H04</td><td class="q">Reuse a silica cable for MIR ATR on a petroleum line?</td><td class="tr">Silica fibers cannot carry mid-IR light.</td><td><span class="st">Premise not supported</span>Test MIR ATR, with a CIR or PIR fiber.</td></tr>
+    <tr><td class="id">H05</td><td class="q">A liquid goes off-spec. Give us the exact sensor now.</td><td class="tr">Contaminant and quality variable unknown.</td><td><span class="st">Insufficient information</span>Lab trial first: Raman and mid-IR ATR on normal and off&#8209;spec samples.</td></tr>
+    <tr><td class="id">H06</td><td class="q">Does the kidney study prove our sensor is ready for live surgery?</td><td class="tr">It is an ex vivo proof of concept; no own data.</td><td><span class="st">Premise not supported</span>Ex vivo NIR test on own tissue, with histopathology as reference.</td></tr>
+  </table>
+  <p class="note" style="margin-top: 12px; color: var(--ink);">Run once on the frozen system; outputs not edited. An independent review found all six reach the right core verdict.</p>
+  <div class="src"><span>outputs/final/H0*.json (enquiries) · outputs/final/brief/H0*.md · docs/review-final/A-brief-and-outputs.md · outputs/final/REVIEW.md</span><span>8 / 12</span></div>
 </section>
 
 <!-- 9 -->
 <section class="slide">
-  <p class="kicker">One held-out answer · H04, short view, text unchanged</p>
+  <p class="kicker">4 · Proof: one answer up close · H04, short view, text unchanged</p>
   <h2>Reuse of a silica link for petroleum MIR ATR</h2>
   <div class="cols h04">
-    <div>
-      <div class="excerpt">
-        <p><b>Premise not supported:</b> the sources do not support the customer's premise as stated; the assessment below is provisional.</p>
-        <p>The concept cannot be approved as stated: silica fibers cannot carry mid-IR light, so MIR ATR needs a CIR or PIR fiber instead of the existing cable. MIR ATR itself is worth testing first, with a published precedent for water in petroleum. Open items: the MIR link length to the other building, the sample state, and the required accuracy.</p>
-        <p><b>Proposed now:</b> the recommended option (basis: supplied AFS sources): MIR, ATR probe as primary candidate [S02 p.13; S01 p.9].</p>
-      </div>
-      <p class="note">Excerpt. The short view is built by code from the saved JSON of the frozen H04 run (no model call). It also has requirements, measurement concept, spectral range, risks, feasibility plan and sources. Full answer: outputs/final/H04.md</p>
+    <div class="excerpt">
+      <p><b>Premise not supported:</b> the sources do not support the customer's premise as stated; the assessment below is provisional.</p>
+      <p>The concept cannot be approved as stated: silica fibers cannot carry mid-IR light, so MIR ATR needs a CIR or PIR fiber instead of the existing cable. MIR ATR itself is worth testing first, with a published precedent for water in petroleum. Open items: the MIR link length to the other building, the sample state, and the required accuracy.</p>
+      <p><b>Proposed now:</b> the recommended option (basis: supplied AFS sources): MIR, ATR probe as primary candidate [S02 p.13; S01 p.9].</p>
     </div>
     <div>
       <p class="xh">Clarification questions</p>
@@ -330,65 +387,51 @@ table.xt th { font-family: var(--sans); text-transform: none; letter-spacing: 0;
         <li>What is the physical state and condition of the petroleum at the measurement point (liquid, viscous, opaque, temperature, fouling)?</li>
         <li>What water-content range, accuracy and response time does the investigation require?</li>
       </ol>
-      <p class="xh">Recommendation</p>
-      <table class="xt">
-        <colgroup><col style="width:22%"><col style="width:38%"><col style="width:24%"><col style="width:16%"></colgroup>
-        <tr><th>Option</th><th>Methods</th><th>Cost class, S01 Table 1 (p.6)</th><th>Confidence</th></tr>
-        <tr><td>Simple</td><td>NIR, transmission/transflection probe</td><td>average</td><td>Low</td></tr>
-        <tr class="pick"><td>Recommended (proposed)</td><td>MIR, ATR probe</td><td>high</td><td>Low</td></tr>
-        <tr><td>Extended (multi-method)</td><td>NIR, transmission/transflection probe; MIR, ATR probe + NIR (combination)</td><td>high</td><td>Low</td></tr>
-      </table>
     </div>
   </div>
-  <div class="src"><span>outputs/final/brief/H04.md (uv run afs-assist brief outputs/final) · full answer outputs/final/H04.md · tag freeze-1</span><span>9 / 11</span></div>
+  <div class="src"><span>Excerpt of outputs/final/brief/H04.md (built by code from the saved run, no model call) · full answer: outputs/final/H04.md</span><span>9 / 12</span></div>
 </section>
 
 <!-- 10 -->
 <section class="slide">
-  <p class="kicker">Limitations</p>
-  <h2>What it does not do yet</h2>
-  <div class="cols">
-    <ul class="small">
-      <li><b>Too long:</b> 3,058–3,455 words per H output, against 303–400 words in the AFS worked answers. A short view built by code from the same runs has 560–698 words (<code>outputs/final/brief/</code>).</li>
-      <li><b>“Verified” means the quote is on the page and in scope</b>, not that it supports the claim. There is no entailment check yet.</li>
-      <li>Short table cells and page references typed inline are not checked. Fields are not checked against each other.</li>
-      <li>A literature item can be tagged to the wrong option or be only weakly relevant.</li>
-    </ul>
-    <ul class="small">
-      <li>A complete enquiry can still get 4–5 questions (A07).</li>
-      <li>Confidence rarely varies: 45 of 55 options were Low in the G5 review.</li>
-      <li>A follow-up can flip the method without a clear reason.</li>
-      <li>A full assessment takes about 1.5–3 minutes, and the flex tier can queue.</li>
-    </ul>
+  <p class="kicker">5 · Results in numbers</p>
+  <h2>The six held-out questions, run once</h2>
+  <div class="stats">
+    <div class="stat"><div class="v">6<small>/6</small></div><div class="l">questions answered in full</div></div>
+    <div class="stat"><div class="v">120<small>/120</small></div><div class="l">citations verified on the cited page</div></div>
+    <div class="stat"><div class="v">0</div><div class="l">blocking check failures left in any answer</div></div>
+    <div class="stat"><div class="v">1.5–3<small> min</small></div><div class="l">per question</div></div>
+    <div class="stat"><div class="v">$0.29</div><div class="l">for all six questions together</div></div>
+    <div class="stat"><div class="v">1.4–6.3<small> s</small></div><div class="l">per chat follow-up (10 tested)</div></div>
   </div>
-  <div class="src"><span>outputs/final/REVIEW.md · PHASES.md Review (G5) · DEVIATIONS D-051 · scenarios/dev_reference.jsonl</span><span>10 / 11</span></div>
+  <p class="lead">890 automated tests pass, with no model calls.</p>
+  <div class="src"><span>outputs/final/H0*.json (timings 97–184 s, cost $0.288) · docs/chat/live-check-20261018.json · tests: docs/slides/README.md</span><span>10 / 12</span></div>
 </section>
 
 <!-- 11 -->
 <section class="slide">
-  <p class="kicker">Team Helios · next steps</p>
-  <h2>Next</h2>
-  <p class="repo">REPO_URL_PENDING</p>
-  <div class="cols">
-    <ul>
-      <li>An entailment critic: does the quote really support the claim?</li>
-      <li>A short customer reply that matches the length of the AFS worked answers (the code-built short view is a first step).</li>
-      <li>Checks on table cells, inline page references and fields against each other.</li>
-      <li>Calibrated confidence and fewer questions on complete enquiries.</li>
-    </ul>
-    <div>
-      <p class="note" style="font-family: var(--mono); font-size: 18px; color: var(--ink); line-height: 1.7;">
-        uv sync<br>
-        uv run afs-assist kb build<br>
-        uv run afs-assist ui<br>
-        uv run afs-assist assess --text "…"<br>
-        uv run afs-assist eval<br>
-        uv run pytest
-      </p>
-      <p class="note">README.md · ARCHITECTURE.md · DEVIATIONS.md (every change from plan, logged). kb build needs the organiser materials in resources/. Demo video: docs/video/demo.mp4 (2:53).</p>
-    </div>
+  <p class="kicker">6 · What we’d add next</p>
+  <h2>Next steps</h2>
+  <ul class="road">
+    <li><span class="tag">Next</span><span><b>A short customer reply by default</b><span class="why">Full answers are about 3,000 words; the short view built by code is 560–698.</span></span></li>
+    <li><span class="tag">Next</span><span><b>A second checker: does the quote really support the sentence?</b><span class="why">Today a quote is verified when it is on the right page.</span></span></li>
+    <li><span class="tag">Next</span><span><b>Confidence that moves with what is known</b><span class="why">Today most options say “Low” (45 of 55 in our review).</span></span></li>
+    <li><span class="tag">Next</span><span><b>Fewer questions when the enquiry is already complete</b><span class="why">A complete test enquiry still got 4–5 questions.</span></span></li>
+    <li><span class="tag">Next</span><span><b>Faster runs</b><span class="why">The fixing step takes 46–72 % of each run.</span></span></li>
+  </ul>
+  <div class="src"><span>outputs/final/H0*.md, brief/ (word counts) · README.md “Known limitations” · outputs/final/H0*.json (timings)</span><span>11 / 12</span></div>
+</section>
+
+<!-- 12 -->
+<section class="slide end">
+  <p class="kicker">Thank you</p>
+  <h1>Team Helios</h1>
+  <div class="team">
+    <p class="name">TEAM_MEMBERS_PENDING</p>
+    <p>REPO_URL_PENDING</p>
+    <p style="color: var(--muted);">Demo video: 2:53</p>
   </div>
-  <div class="src"><span>Team Helios</span><span>11 / 11</span></div>
+  <div class="src"><span>Demo video: docs/video/demo.mp4 (173 s)</span><span>12 / 12</span></div>
 </section>
 
 </body>
