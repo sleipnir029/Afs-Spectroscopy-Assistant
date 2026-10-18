@@ -802,6 +802,7 @@ Reviewer agent: eval results, adversarial outputs, demo path. Fixes before the f
     4. Tests: activity no-op without a sink; notes reach a Job through a fake-client run; the job page renders the feed. pytest + ruff; Playwright screenshot of a fake run.
 - **5.10 Layout:** clearer separation and hierarchy (visual aids, white space, type size/weight), so it is obvious what is what and where to look.
 - **5.10/5.11 restart (user 09:46): "none of them looks good, total revamp, think from the beginning, forget what you already had".** Rounds 1–2 (docs/mockups/) kept as history, not used. A fresh, unanchored design agent researches and makes 4 new concepts in docs/fresh-ui/ (start, running, answer screens, phone, dark), with a UX check; then independent review → user picks → plan → review → build.
+- **5.10/5.11 decision (user 11:02): chat concept C1 "Brief" (docs/fresh-ui/), restyle of the 5.12 chat UI.**
 - **5.11 Look:** academic fonts with a professional, coherent UI; the setup diagram as a blueprint that flows into the sections. User asked for **mockups first** for both the blueprint style and 2–3 researched font pairings (canvas), then picks.
 
 **5.12 Chat with live result blocks (user ~09:55: "we need a proper chat interface with follow up questions and answers, on that we need to dynamically provide the results, recommendation, option, diagrams, tables, not just one off reports"). Status: plan v2 after review 10:00 (NEEDS_FIXES B1–B11, all applied); APPROVED by the user 10:02.**
