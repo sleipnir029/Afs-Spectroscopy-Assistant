@@ -1,0 +1,481 @@
+{
+ "round": 1,
+ "hard_failures_before": 10,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "premise_not_supported",
+  "status_reason": "The central premise that the existing silica fiber can be reused for MIR ATR is contradicted by the sources: silica fibers cannot carry mid-IR light, which requires CIR or PIR fibers or hollow waveguides. Approval of the concept as stated is therefore not possible; the MIR ATR method itself remains worth testing with the correct fiber.",
+  "premise_checks": [
+   {
+    "premise": "The existing silica fiber cable from a visible/NIR setup can be reused for MIR ATR.",
+    "verdict": "contradicted",
+    "explanation": "Silica fibers end near 2.4 um and cannot carry mid-IR light; MIR requires chalcogenide (CIR), polycrystalline (PIR) fibers or hollow waveguides.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 6,
+      "quote": "350 nm Standard VIS-NIR Silica Fibers Al/Cu-coated VIS-NIR Silica Fibers 2400 nm",
+      "claim_kind": "performance_figure"
+     },
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "The concept can be approved without knowing link length, routing and operating conditions.",
+    "verdict": "not_covered",
+    "explanation": "No supplied source states an achievable MIR fiber link length; long cables are documented only for low-OH silica fibers, while mid-IR fiber examples shown in the sources are short laboratory lengths, so the remote-analyzer concept cannot be assessed without knowing the actual distance.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 7,
+      "quote": "Robust 100-300m cables made with Silica fibers of low OH-content (<0.1ppm OH) enable remote industrial process-control",
+      "claim_kind": "performance_figure"
+     },
+     {
+      "doc": "S02",
+      "page": 10,
+      "quote": "1.25 Meter Silver Halide - straight run",
+      "claim_kind": "performance_figure"
+     }
+    ]
+   },
+   {
+    "premise": "MIR ATR is a suitable method for water in petroleum.",
+    "verdict": "precedent_only",
+    "explanation": "A published application example shows water content in petroleum measured with ATR probes, which is a reason to test, not proof for this line.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.)",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Water content in a petroleum line (customer enquiry)",
+   "MIR ATR as intended method (customer enquiry)",
+   "Analyzer in another building (customer enquiry)",
+   "Reuse of an existing silica fiber cable (customer enquiry)"
+  ],
+  "key_unknowns": [
+   "Link length and routing between the line and the analyzer in the other building",
+   "Physical state and optical regime of the petroleum (liquid, viscous, opaque, temperature)",
+   "Operating conditions (temperature, pressure, fouling tendency at the probe)",
+   "Required accuracy, detection limit and response time for water content",
+   "Whether the existing silica cable transmission range would suit an NIR fallback"
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "What is the actual link length and routing between the petroleum line and the analyzer building?",
+    "why_it_matters": "No source states an achievable MIR fiber link length, so the remote-analyzer concept stands or falls on this number.",
+    "affects": [
+     "installation",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What is the physical state and condition of the petroleum at the measurement point (liquid, viscous, opaque, temperature, fouling)?",
+    "why_it_matters": "ATR requires tight contact with a liquid, paste or soft solid, and the crystal samples only a surface layer a few micrometres deep.",
+    "affects": [
+     "technique",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What water-content range, accuracy and response time does the investigation require?",
+    "why_it_matters": "This determines whether MIR ATR alone suffices or whether a second method must be considered.",
+    "affects": [
+     "method",
+     "M1"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "What are the operating temperature and pressure at the probe location?",
+    "why_it_matters": "They determine probe and fiber compatibility and whether the ATR crystal can be immersed in the line.",
+    "affects": [
+     "installation",
+     "M1"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "MIR ATR has a published application precedent for water content in petroleum, and MIR spectra give well-defined bands with high selectivity. It must use CIR or PIR fiber, not the existing silica cable.",
+    "conditions": "Achievable link length for CIR or PIR fiber and liquid or soft-solid contact at the probe.",
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.)",
+      "claim_kind": "application_precedent"
+     },
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "NIR",
+    "technique": "transmission_transflection",
+    "role": "conditional",
+    "combined_with": [],
+    "rationale": "If the remote MIR fiber link is unachievable, an NIR transmission or transflection probe could reuse the existing silica fiber cable. NIR absorption bands overlap and require a multivariate calibration.",
+    "conditions": "Applies only if the MIR link is not feasible and the fluid optical regime allows transmission.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "The broad absorption bands observed in this region overlap, suggesting the use of chemometrics for quantitative and qualitative analysis of spectral data.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M3",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "comparison",
+    "combined_with": [
+     "NIR"
+    ],
+    "rationale": "Combining MIR ATR with NIR is a secondary hypothesis to evaluate whether data fusion improves prediction accuracy over single-method analysis. Any gain from combining methods must be verified experimentally.",
+    "conditions": "Evaluated only after single-method feasibility is tested and only if single-method accuracy is insufficient.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "The analysis of such systems may require a combination of two or even more spectral methods.",
+      "claim_kind": "method_gain"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "Immersible MIR ATR fiber probe (ZrO2 or diamond ATR tip) in contact with the petroleum stream, coupled via CIR or PIR fiber to an FTIR spectrometer.",
+   "location": "In-line on the petroleum line; analyzer location depends on the achievable MIR fiber link length, which is unknown.",
+   "fiber_link": "CIR or PIR fiber; the existing silica cable cannot be used for MIR. Achievable MIR link length is an open question.",
+   "citations": [
+    {
+     "doc": "S02",
+     "page": 13,
+     "quote": "ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.) sealed in PEEK-shaft",
+     "claim_kind": "application_precedent"
+    },
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "MIR",
+    "statement": "Nominal MIR range 4000-400 cm-1; usable range depends on the selected CIR or PIR fiber and ATR crystal, not to be confused with an instrument or fiber range.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1)",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "NIR",
+    "statement": "Nominal NIR range 780-2500 nm; usable range depends on the instrument, fiber, and probe selected rather than the nominal method boundaries.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "The MIR fiber link to another building may not be achievable at the required distance, as no source states an achievable industrial MIR link length.",
+    "rule_ids": [
+     "R-FIB-2"
+    ],
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 10,
+      "quote": "1 Meter PolyMicro hollow fiber 1mm ID",
+      "claim_kind": "performance_figure"
+     }
+    ]
+   },
+   {
+    "risk": "ATR samples only a surface layer a few micrometres deep, so crystal fouling and surface representativeness in a flowing petroleum line are risks.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "The physical state and optical regime of the petroleum are unknown, so the ATR contact requirement and Table 1 sample fit are unconfirmed.",
+    "rule_ids": [
+     "R-MIR-2"
+    ],
+    "citations": [
+     {
+      "doc": "S04",
+      "page": 4,
+      "quote": "suitability of analyzed samples for ATR measurements, which is true for liquid or soft solid samples and their components, allowing a tight contact with the probe head.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "An NIR fallback over the existing silica cable would need a matrix-specific calibration and may lack sensitivity for very low water contents.",
+    "rule_ids": [
+     "R-CAL-1",
+     "R-NIR-4"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "may lack the sensitivity to detect trace compounds below 0.1 percent.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Collect representative petroleum samples spanning the expected water-content range and physical variation (temperature, opacity, phase).",
+     "purpose": "Ensure the calibration space covers real line conditions.",
+     "citations": []
+    },
+    {
+     "step": "Measure each sample with a laboratory MIR ATR setup (ZrO2 or diamond ATR tip) using a CIR/PIR fiber probe.",
+     "purpose": "Establish whether MIR ATR spectra distinguish the water levels of interest.",
+     "citations": [
+      {
+       "doc": "S02",
+       "page": 13,
+       "quote": "Pure Oil | 0.1% Water | 0.5% Water | 1.0% Water | 2.0% Water",
+       "claim_kind": "application_precedent"
+      }
+     ]
+    },
+    {
+     "step": "Obtain independent reference water-content values for every sample by a laboratory method (e.g. Karl Fischer titration).",
+     "purpose": "Provide the ground truth for calibration and validation.",
+     "citations": []
+    },
+    {
+     "step": "Build and validate a chemometric calibration on held-out samples; if MIR ATR alone falls short of the target, test the MIR+NIR combination against the best single method.",
+     "purpose": "Quantify achievable accuracy and decide whether fusion adds value.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 5,
+       "quote": "Extracting the information necessary for quantitative and qualitative analysis from optical spectra requires special methods for analyzing multidimensional data, called the above-mentioned term chemometrics.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Confirm the achievable MIR fiber link length with AFS before fixing the analyzer location; define go/no-go criteria (accuracy, detection limit, response time) with the customer.",
+     "purpose": "The remote-analyzer concept depends on a link length no source specifies.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Karl Fischer titration or an equivalent laboratory water-in-oil method, supplied by the customer.",
+   "decision_basis": "Go/no-go criteria (required accuracy, detection limit, response time) to be defined numerically by the customer; the plan proceeds only if the MIR link length is confirmed feasible."
+  },
+  "assumptions": [
+   "The petroleum at the measurement point is a liquid or soft solid that can make tight contact with an ATR crystal (unconfirmed).",
+   "The existing silica cable is a standard VIS-NIR silica type (customer description, not verified against a datasheet)."
+  ],
+  "not_in_sources": [
+   "Achievable MIR (CIR/PIR) fiber link length for a building-to-building installation",
+   "Accuracy, detection limit or response time for water in petroleum by MIR ATR in-line"
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Water content in petroleum",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "It is the target variable the customer wants to investigate in-line.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "MIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.)",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "P2",
+    "name": "Reference water content (lab)",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Calibration and validation of the spectral model need independent reference values.",
+    "measured_by": {
+     "type": "reference_lab",
+     "method": null,
+     "sensor": "Karl Fischer titration or equivalent laboratory water-in-oil method",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Sample temperature at the probe",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "Temperature shifts spectral bands and affects ATR contact, so it should be available to correct or flag its influence.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "temperature sensor",
+     "alternative": null
+    },
+    "citations": []
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2"
+    ],
+    "ease_of_use": "Least effort reusing existing silica fiber",
+    "maintenance": "Routine transmission probe cleaning and calibration",
+    "performance_fit": "Reuses existing cable but broad bands",
+    "cost_drivers": "NIR spectrometer, transmission probe, chemometric calibration",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "NIR spectra (780-2500 nm) contain predominantly overtones and component bands of fundamental vibrations",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "Direct in-line ATR crystal immersion",
+    "maintenance": "ATR crystal cleaning and fouling checks",
+    "performance_fit": "Specific fundamental bands for water detection",
+    "cost_drivers": "FTIR spectrometer, CIR or PIR fiber, MIR ATR probe",
+    "fusion_note": null,
+    "citations": [
+     {
+      "doc": "S02",
+      "page": 13,
+      "quote": "Application: measurement of water content in petroleum ATR-Probes with ATR-tips from ZrO2 (& Diamond, etc.)",
+      "claim_kind": "application_precedent"
+     }
+    ]
+   },
+   {
+    "id": "O3",
+    "tier": "extended",
+    "recommendation_ids": [
+     "M2",
+     "M3"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "ease_of_use": "Complex with two separate spectrometers",
+    "maintenance": "Two probes and two calibrations upkeep",
+    "performance_fit": "Combines fundamental and overtone spectral features",
+    "cost_drivers": "Two spectrometers, dual probes, fiber cabling, data fusion",
+    "fusion_note": "Low-level data fusion combines synchronized MIR ATR and NIR spectra into a single augmented matrix with autoscaling. Both probes must sample the exact same process volume simultaneously to avoid turbulence-induced discrepancies. The multi-block model must demonstrate superior prediction accuracy over the best single method on independent validation batches before deployment.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "Ultimately, the measurement data must be normalized to a common time step.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 8,
+      "quote": "If the variables have different units of measurement, the data should be normalized in some way, for example, using an autoscaling algorithm.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "chemometrics_note": "A quantitative water-in-petroleum model (e.g. PLS on MIR ATR spectra) will need representative calibration samples and independent reference values; validation on held-out samples is essential before any in-line use.",
+  "realtime_tracking_note": "The target is continuous in-line tracking of water content; once calibrated, the fiber-probe setup supports near-real-time results, subject to the confirmed link and acquisition conditions.",
+  "future_direction": "If the process later needs more than water (e.g. composition fingerprinting), a multispectral extension building on the same probe infrastructure could be considered.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "supplied",
+   "what_would_change_it": "A confirmed MIR fiber link length and sample state would fix the installation; if the MIR link proves infeasible, the NIR fallback over the existing silica cable becomes the primary path.",
+   "next_step": "Supply the link length, routing and operating conditions, and run the laboratory MIR ATR feasibility test on representative petroleum samples with Karl Fischer reference values."
+  },
+  "brief_answer": "The concept cannot be approved as stated: silica fibers cannot carry mid-IR light, so MIR ATR needs a CIR or PIR fiber instead of the existing cable. MIR ATR itself is worth testing first, with a published precedent for water in petroleum. Open items: the MIR link length to the other building, the sample state, and the required accuracy."
+ }
+}
