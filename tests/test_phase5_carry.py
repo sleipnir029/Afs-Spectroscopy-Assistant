@@ -16,7 +16,8 @@ from test_phase3_r3 import _client, _collapsed_intake
 
 from afs_assistant import pipeline, render
 from afs_assistant.schema import Assessment, Intake
-from afs_assistant.ui import diagrams
+from afs_assistant.ui import diagrams, view
+from afs_assistant.ui.view import answers_to_facts
 
 FACT_LONG = "clear aqueous fermentation broth that flows through a pipe"
 FACT_REF = "Gas chromatography results from the lab are available as reference."
@@ -58,10 +59,31 @@ def test_stated_fallback_is_capped_when_it_covers_most_of_the_enquiry():
                      "- *Further statements: see the customer enquiry above.*")
 
 
+def test_quote_with_a_figure_survives_the_cap():
+    enquiry_fact = "We want to follow ethanol in a clear aqueous fermentation broth that flows through a pipe"
+    result = run_with(assess=with_(requirements_stated=[]))[0]
+    result.enquiry = ENQUIRY + " The probe sits about 15 m from the analyzer."
+    result.intake = Intake.model_validate(_intake([enquiry_fact, FACT_REF, "about 15 m from the analyzer"], []))
+    # Without the figure rule only the first quote would fit; the figure is kept first, then what fits.
+    assert render.stated_from_intake(result) == [f'"{FACT_REF}"', '"about 15 m from the analyzer"']
+
+
+def test_a_target_kept_only_inside_a_longer_fact_quote_survives_the_cap():
+    block = _stated_block(_intake([FACT_REF, f"We want to follow ethanol in a {FACT_LONG}"], ["follow ethanol"]))
+    assert block == (f'- "We want to follow ethanol in a {FACT_LONG}"\n'
+                     "- *Further statements: see the customer enquiry above.*")
+
+
+def test_whitespace_variants_of_a_quote_are_one_quote():
+    block = _stated_block(_intake(["clear  aqueous\n fermentation broth", "clear aqueous fermentation broth"],
+                                  ["follow ethanol"]))
+    assert block == '- "clear aqueous fermentation broth"\n- "follow ethanol"'
+
+
 def test_capped_fallback_keeps_at_least_one_quote():
-    long_target = "We want to follow ethanol in a clear aqueous fermentation broth that flows through a pipe."
-    block = _stated_block(_intake([FACT_REF], [long_target]))
-    assert block == f'- "{long_target}"\n- *Further statements: see the customer enquiry above.*'
+    long_fact = "We want to follow ethanol in a clear aqueous fermentation broth that flows through a pipe."
+    block = _stated_block(_intake([long_fact, FACT_REF], []))
+    assert block == f'- "{long_fact}"\n- *Further statements: see the customer enquiry above.*'
 
 
 def test_stated_fallback_under_the_cap_has_no_note():
@@ -97,14 +119,14 @@ def _m1_line(assess: dict) -> str:
 
 
 def test_later_hypothesis_tail_is_added_when_the_model_text_does_not_say_it():
-    assert _m1_line(_combined("Water interferes little with Raman.", "none")).endswith(
-        " Later hypothesis, after single-method tests.")
+    for rationale in ["Water interferes little with Raman.", "Any gain must beat the best single method."]:
+        assert _m1_line(_combined(rationale, "none")).endswith(" Later hypothesis, after single-method tests.")
 
 
 def test_later_hypothesis_tail_is_not_repeated_after_the_model_says_it():
     for rationale, conditions in [("Water interferes little with Raman.", "Only after the single-method tests."),
                                   ("A fused model is a later hypothesis.", "none"),
-                                  ("Any gain must beat the best single method.", "none")]:
+                                  ("It is a later test against the best single method.", "none")]:
         assert "Later hypothesis, after single-method tests." not in _m1_line(_combined(rationale, conditions))
 
 
@@ -124,16 +146,30 @@ def test_sketch_label_without_any_entry_for_the_combined_method_stays_unspecifie
     assert '"MIR (technique not specified)"' in render.mermaid_chart(a, a.solution_options[-1], {})
 
 
+def test_web_view_filters_the_spectral_ranges():
+    ranges = ASSESSMENT["spectral_ranges"] + [{"method": "MIR", "statement": "Nominal MIR range.", "citations": []}]
+    data = render.to_json(run_with(assess=with_(spectral_ranges=ranges))[0])
+    assert [s["method"] for s in view.build(data)["spectral"]] == ["NIR", "Raman"]
+
+
+def test_web_view_shows_every_customer_quote_uncapped():
+    intake = _intake([FACT_LONG, FACT_REF, "clear aqueous"], ["follow ethanol"])
+    for enquiry in [ENQUIRY, answers_to_facts(ENQUIRY, [{"question": "Which range?", "answer": "0-10 %"}])]:
+        result = run_with(intake=intake, assess=with_(requirements_stated=[]))[0]
+        result.enquiry = enquiry
+        stated = view.build(render.to_json(result))["requirements"]["stated"]
+        assert stated == [f'"{FACT_LONG}"', f'"{FACT_REF}"', '"follow ethanol"']
+        assert len(render.stated_from_intake(result)) < len(stated)        # the Markdown is capped
+
+
 # ----------------------------------------------------------------- 6. test gaps
 def test_open_question_and_two_weaknesses_stay_at_the_low_floor():
     a = _clean(solution_options=ASSESSMENT["solution_options"] + [EXTENDED])
     a.clarification_questions[0].affects = ["method"]
     conf = _conf(a, "O3", {"physical_state": "liquid"})          # clarity unknown: NIR transmission open
-    assert conf["level"] == "Low"
-    assert conf["reasons"][0] == "open question: Q1 (starts at Medium)"
-    assert "sample clarity unknown" in conf["reasons"]
-    assert "multi-method, fusion benefit not yet shown" in conf["reasons"]
-    assert len(conf["reasons"]) >= 3                              # Medium start + 2 weaknesses, floor Low
+    # Medium start + 2 weaknesses would be two levels below Medium: held at the Low floor.
+    assert conf == {"level": "Low", "reasons": ["open question: Q1 (starts at Medium)", "sample clarity unknown",
+                                                "multi-method, fusion benefit not yet shown"]}
 
 
 def test_intake_problems_reach_the_json_and_the_markdown_end_to_end():

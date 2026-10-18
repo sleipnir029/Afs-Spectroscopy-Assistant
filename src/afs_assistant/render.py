@@ -64,7 +64,7 @@ GAP_LABEL = {"status": "decision status", "auxiliary_sensor": "auxiliary sensor"
 STATED_MAX_SHARE = 0.5
 EXTERNAL_TITLE = "Secondary evidence (external, not AFS material)"
 # Model text that already says a combination waits for the single-method tests (no code tail then; 5.4 item 5).
-_SAYS_LATER = re.compile(r"single[- ]method|later hypothesis", re.IGNORECASE)
+_SAYS_LATER = re.compile(r"after (?:the )?single[- ]method|later (?:hypothesis|test)", re.IGNORECASE)
 # A step text that starts with its own number ("1." / "1)") would show the number twice in the list.
 _STEP_NUMBER = re.compile(r"^\s*\d+[.)](?!\d)\s*")   # not a decimal such as "1.5 mm"
 
@@ -254,19 +254,21 @@ def customer_quotes(r: RunResult) -> list[str]:
 
 def stated_from_intake(r: RunResult) -> list[str]:
     """The customer's own words for when the assessment states no requirement (3.R3 B5, 3.R4 B2):
-    `customer_quotes`, never the model's paraphrase. Quotes that would cover more than
-    `STATED_MAX_SHARE` of the enquiry are capped (the enquiry itself is shown in Expert detail):
-    target quotes are taken first, then facts, while they fit; at least one is kept; order kept."""
+    `customer_quotes`, never the model's paraphrase. Quotes holding a target quote and quotes with a
+    figure (a digit) are always kept; the others are added in order while all shown cover at most
+    `STATED_MAX_SHARE` of the enquiry (the enquiry itself is shown in Expert detail); order kept."""
     quotes = customer_quotes(r)
     budget = STATED_MAX_SHARE * len(" ".join(r.enquiry.split()))
     if sum(map(len, quotes)) > budget:
         targets = {" ".join(t.enquiry_quote.split()).casefold() for t in r.intake.targets}
-        keep: set[int] = set()
-        used = 0
-        for i in sorted(range(len(quotes)), key=lambda i: quotes[i].casefold() not in targets):
-            if not keep or used + len(quotes[i]) <= budget:
+        # A target quote may survive only inside a longer quote (substring rule): that one is kept then.
+        keep = {i for i, q in enumerate(quotes)
+                if any(t in q.casefold() for t in targets) or re.search(r"\d", q)}
+        used = sum(len(quotes[i]) for i in keep)
+        for i, q in enumerate(quotes):
+            if i not in keep and (not keep or used + len(q) <= budget):
                 keep.add(i)
-                used += len(quotes[i])
+                used += len(q)
         quotes = [q for i, q in enumerate(quotes) if i in keep]
     return [f'"{q}"' for q in quotes]
 
