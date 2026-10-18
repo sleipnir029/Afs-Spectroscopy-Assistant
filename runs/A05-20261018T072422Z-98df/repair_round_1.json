@@ -1,0 +1,442 @@
+{
+ "round": 1,
+ "hard_failures_before": 3,
+ "hard_failures_after": 0,
+ "assessment": {
+  "decision_status": "outside_supported_scope",
+  "status_reason": "The enquiry requests in-line measurement of line pressure, flow rate, and pipe blockage warning, which are mechanical and hydraulic process parameters rather than chemical or molecular properties. AFS fiber-optic products provide optical molecular spectroscopy (UV-Vis, NIR, MIR, Raman, fluorescence) for chemical composition and morphology, not physical pressure transducers or flowmeters.",
+  "premise_checks": [
+   {
+    "premise": "Fiber optic spectroscopy products can directly measure line pressure, slurry flow rate, and pipe blockage onset.",
+    "verdict": "not_covered",
+    "explanation": "The supplied technical sources cover optical molecular spectroscopy for qualitative and quantitative chemical analysis, not physical sensing transducers for pipe pressure, liquid flow rate, or hydraulic blockage.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 4,
+      "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 2,
+      "quote": "Optical spectral analysis occupies a special place among physicochemical methods for studying substances and materials. It is based on measuring the result of the interaction of electromagnetic radiation with a sample over a wide range of wavelengths, from hard ultraviolet to far infrared light. The result of this interaction, measured using a spectrometric or sensor analyzer, carries a lot of chemical information about the analyzed object.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "premise": "Early warning of pipe blockage can be determined directly by fiber optic spectroscopy.",
+    "verdict": "not_covered",
+    "explanation": "The supplied documentation contains no methodology for mechanical pipe blockage detection; optical probes can only detect localized optical changes or fouling at the optical interface.",
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "requirements_stated": [
+   "Measure line pressure of a slurry in a transfer pipe.",
+   "Measure flow rate of a slurry in a transfer pipe.",
+   "Provide an early warning when the transfer pipe starts to block."
+  ],
+  "key_unknowns": [
+   "Slurry chemical composition, carrier liquid identity, and suspended solid properties.",
+   "Operating hydraulic conditions including pipe diameter, flow velocity, line pressure, and temperature.",
+   "Whether chemical composition or solids concentration monitoring is desired alongside mechanical parameters.",
+   "Slurry abrasiveness, fouling tendencies, and pipe wall mounting constraints."
+  ],
+  "clarification_questions": [
+   {
+    "id": "Q1",
+    "question": "Are you seeking chemical composition or solids concentration monitoring of the slurry, or strictly mechanical line pressure and flow rate sensing?",
+    "why_it_matters": "AFS specializes in optical spectroscopy for chemical and molecular analysis, not mechanical pressure transmitters or flow meters.",
+    "affects": [
+     "status",
+     "method"
+    ]
+   },
+   {
+    "id": "Q2",
+    "question": "What is the chemical composition of the slurry, including carrier liquid and suspended solids?",
+    "why_it_matters": "Determines which optical spectroscopy method is viable if chemical tracking is required.",
+    "affects": [
+     "method"
+    ]
+   },
+   {
+    "id": "Q3",
+    "question": "What are the pipe operating conditions (pressure range, temperature, flow velocity, pipe inner diameter, and slurry abrasiveness)?",
+    "why_it_matters": "Abrasiveness and hydraulic ratings determine whether an optical probe window can survive in the pipe wall.",
+    "affects": [
+     "installation",
+     "technique"
+    ]
+   },
+   {
+    "id": "Q4",
+    "question": "How is pipe blockage characterized in your process (e.g. wall cake formation, settling, or upstream pressure rise)?",
+    "why_it_matters": "Clarifies whether blockage can be anticipated by optical window deposition or requires differential pressure instrumentation.",
+    "affects": [
+     "technique",
+     "status"
+    ]
+   }
+  ],
+  "recommendations": [
+   {
+    "id": "M1",
+    "method": "MIR",
+    "technique": "ATR",
+    "role": "primary",
+    "combined_with": [],
+    "rationale": "ATR mid-infrared spectroscopy allows sampling of opaque slurries and pastes via a shallow penetration depth of a few micrometres at the crystal interface. It captures fundamental molecular vibrational fingerprints of both liquid carrier and solid components without bulk path attenuation.",
+    "conditions": "Applies if the customer requires in-line chemical composition or solids monitoring and the slurry can maintain optical contact without abrasive damage to the ATR crystal.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 10,
+      "quote": "ATR fiber probes (Fig.1) enable the analysis of liquids and solid elastic samples, such as biological tissue, using specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 5,
+      "quote": "In contrast, strong absorption in the mid-IR region limits the corresponding spectral method to the analysis of very thin samples (usually less than 50 μm), but it opens up the possibility of using attenuated total reflectance (ATR) by connecting appropriate attachments and probes.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "M2",
+    "method": "Raman",
+    "technique": "raman_probe",
+    "role": "comparison",
+    "combined_with": [],
+    "rationale": "Raman spectroscopy evaluates molecular backbones and non-polar bonds, exhibiting minimal interference from water in aqueous slurry systems. However, Raman signals can be obscured by fluorescence or severe optical attenuation from high turbidity.",
+    "conditions": "none",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "This combination is practical because Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "From a technical standpoint, measuring Raman spectra is hampered by the low intensity of Raman signals, which are several orders of magnitude weaker than IR absorption peaks in the IR range (when these spectra are compared in the original photon count units).",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "measurement_concept": {
+   "probe_and_geometry": "If optical monitoring is integrated alongside conventional physical sensors, an in-line ATR immersion probe or Raman immersion probe flush-mounted in the pipe wall interacts with the flowing slurry layer. For physical parameters (pressure and flow), standard non-optical diaphragm pressure transducers and magnetic or coriolis flowmeters must be installed in the pipe.",
+   "location": "In-line in the slurry transfer pipe, flush with the inner wall to minimize flow disruption and avoid dead zones, ideally before and across potential constriction zones.",
+   "fiber_link": "Polycrystalline infrared (PIR) fibers or chalcogenide (CIR) fibers for mid-IR ATR; silica fibers transmitting in the visible and near-infrared range for Raman spectroscopy. Link lengths should be determined based on spectrometer distance from pipe vibration.",
+   "citations": [
+    {
+     "doc": "S01",
+     "page": 10,
+     "quote": "specialized probes utilizing high-transmission fiber optics in the Mid-IR region.",
+     "claim_kind": "general"
+    },
+    {
+     "doc": "S01",
+     "page": 15,
+     "quote": "The use of fiber optics is critical here, as it allows the sensitive spectrometers to be located safely away from the vibration and dust of the manufacturing floor.",
+     "claim_kind": "general"
+    }
+   ]
+  },
+  "spectral_ranges": [
+   {
+    "method": "MIR",
+    "statement": "The nominal mid-IR range is 4000-400 cm-1, representing fundamental molecular vibrations. The usable range depends on the instrument, fiber material, and the ATR crystal chosen, as the nominal range is not the range of a specific setup.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 9,
+      "quote": "Vibrational spectroscopy in the mid-IR range (4000-400 cm-1) is one of the most informative methods of chemical analysis.",
+      "claim_kind": "general"
+     },
+     {
+      "doc": "REF",
+      "page": 3,
+      "quote": "A nominal method range is not the range of a specific instrument, fiber or probe.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "method": "Raman",
+    "statement": "Raman spectra are reported as Raman shift in units of frequency-wavenumbers (cm-1), while the laser excitation wavelength is stated separately. The usable range is governed by the excitation laser, probe filtering, and spectrometer detector.",
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 11,
+      "quote": "The difference between the observed frequencies and the laser frequency is called the Raman shift, expressed in units of frequency-wavenumbers (cm-1). The Raman shift is used as the horizontal (spectral) axis in Raman spectroscopy, while the vertical axis shows the absolute intensity of the recorded signals (photon counts).",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "risks": [
+   {
+    "risk": "Optical spectroscopy cannot replace dedicated mechanical instruments for bulk line pressure and flow rate measurement.",
+    "rule_ids": [
+     "R-EVI-1"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 4,
+      "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Abrasive solids in the slurry flowing at high velocity could erode or damage the optical ATR crystal or probe window.",
+    "rule_ids": [
+     "R-MIR-2",
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "REF",
+      "page": 5,
+      "quote": "Usable range limited by fiber and crystal; contact, fouling, compatibility.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Severe pipe fouling or cake layer deposition would blind the optical probe, reflecting only the stationary surface layer rather than bulk slurry dynamics.",
+    "rule_ids": [
+     "R-MIR-3"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 13,
+      "quote": "typically at a depth of few microns",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "risk": "Turbulence and physical inhomogeneity in the slurry can cause severe baseline shifts and scatter fluctuations that mimic concentration changes.",
+    "rule_ids": [
+     "R-GEN-5",
+     "R-GEO-6"
+    ],
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 7,
+      "quote": "Morphological factors, such as sample inhomogeneity (e.g., biological tissue) or process turbulence, must also be considered when selecting a measurement technique.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "feasibility_plan": {
+   "steps": [
+    {
+     "step": "Evaluate dedicated non-optical process instrumentation (differential pressure transmitters and electromagnetic or coriolis flowmeters) for line pressure, flow rate, and blockage detection.",
+     "purpose": "Address the customer's primary mechanical requirements that fall outside optical spectroscopy.",
+     "citations": []
+    },
+    {
+     "step": "Collect representative slurry samples covering nominal solids concentration, carrier liquid variations, and potential settling conditions.",
+     "purpose": "Provide offline characterization of slurry chemistry, particle size distribution, and optical properties.",
+     "citations": [
+      {
+       "doc": "REF",
+       "page": 3,
+       "quote": "Representative samples or process states, independent reference measurements, what is compared, and the basis for the go / no-go decision.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Conduct benchtop multi-method trials testing single methods (MIR-ATR vs Raman) on static and agitated slurry aliquots to evaluate signal quality and window fouling.",
+     "purpose": "Determine whether optical spectroscopy yields useful chemical information and verify whether solids coat or abrade the probe interface.",
+     "citations": [
+      {
+       "doc": "S01",
+       "page": 3,
+       "quote": "samples of incompletely known composition, in order to select the most suitable method or combination of methods.",
+       "claim_kind": "general"
+      }
+     ]
+    },
+    {
+     "step": "Validate any spectroscopic calibration on independent test batches across varied flow shear and solids loading against laboratory reference measurements.",
+     "purpose": "Confirm predictive robustness of spectral models against physical matrix variation.",
+     "citations": []
+    },
+    {
+     "step": "Establish a go/no-go evaluation based on whether auxiliary sensors achieve pressure and flow targets, and whether optical probes resist fouling without abrasion.",
+     "purpose": "Form an objective operational basis for deployment in the transfer pipe.",
+     "citations": []
+    }
+   ],
+   "reference_measurements": "Calibrated standard pressure gauges, gravimetric/volumetric flow testing, and laboratory gravimetric solids/moisture analysis.",
+   "decision_basis": "Go/no-go criteria must be defined by customer-specified pressure accuracy, flow rate tolerance, and early warning lead time before pipe plugging."
+  },
+  "assumptions": [
+   "The customer's primary operational targets are line pressure, flow rate, and pipe blockage warning in a slurry transfer pipe.",
+   "The slurry consists of suspended solid particles in a liquid carrier medium under continuous pipe flow.",
+   "The customer contacted AFS inquiring if fiber optic products can serve these hydraulic monitoring functions."
+  ],
+  "not_in_sources": [
+   "Fiber optic sensing methods or instruments for direct in-line measurement of line pressure.",
+   "Fiber optic flowmeters or velocity sensors for slurry pipe flow.",
+   "Techniques or algorithms for hydraulic pipe blockage detection using optical spectroscopy.",
+   "Slurry chemical composition, abrasiveness, pipe dimensions, and operating pressure/temperature ratings."
+  ],
+  "parameters": [
+   {
+    "id": "P1",
+    "name": "Line pressure",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Explicitly requested by customer to monitor transfer pipe pressure.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "In-line pressure transmitter",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P2",
+    "name": "Slurry flow rate",
+    "kind": "quantitative",
+    "necessity": "required",
+    "why": "Explicitly requested by customer to track throughput in the transfer pipe.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "In-line flow meter (electromagnetic or Coriolis)",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P3",
+    "name": "Pipe blockage onset",
+    "kind": "qualitative",
+    "necessity": "required",
+    "why": "Explicitly requested by customer to provide early warning of pipe clogging.",
+    "measured_by": {
+     "type": "auxiliary_sensor",
+     "method": null,
+     "sensor": "Differential pressure transmitters across pipe section",
+     "alternative": null
+    },
+    "citations": []
+   },
+   {
+    "id": "P4",
+    "name": "Slurry chemical composition",
+    "kind": "quantitative",
+    "necessity": "optional",
+    "why": "Optional monitoring of carrier chemistry or solids identity if chemical process control is desired alongside physical monitoring.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "MIR",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 4,
+      "quote": "Spectral analysis provides information about the chemistry and morphology of the sample being studied: the concentrations of its components, their distribution, and particle sizes.",
+      "claim_kind": "general"
+     }
+    ]
+   },
+   {
+    "id": "P5",
+    "name": "Aqueous carrier / solvent band tracking",
+    "kind": "qualitative",
+    "necessity": "optional",
+    "why": "Optional evaluation of solvent vibrational signals using Raman in aqueous environments.",
+    "measured_by": {
+     "type": "spectroscopy",
+     "method": "Raman",
+     "sensor": null,
+     "alternative": null
+    },
+    "citations": [
+     {
+      "doc": "S01",
+      "page": 16,
+      "quote": "Raman is particularly well-suited for aqueous environments, as it exhibits low absorbance for water molecules compared to infrared methods.",
+      "claim_kind": "general"
+     }
+    ]
+   }
+  ],
+  "solution_options": [
+   {
+    "id": "O1",
+    "tier": "simple",
+    "recommendation_ids": [
+     "M2"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P5"
+    ],
+    "ease_of_use": "Single Raman probe and standard transmitters",
+    "maintenance": "Laser alignment checks and window cleaning",
+    "performance_fit": "Tolerates water while auxiliary sensors measure hydraulics",
+    "cost_drivers": "Raman spectrometer, laser source, physical flow and pressure sensors",
+    "fusion_note": null,
+    "citations": []
+   },
+   {
+    "id": "O2",
+    "tier": "recommended",
+    "recommendation_ids": [
+     "M1"
+    ],
+    "parameter_ids": [
+     "P1",
+     "P2",
+     "P3",
+     "P4"
+    ],
+    "ease_of_use": "Immersion ATR probe plus inline transmitters",
+    "maintenance": "Routine ATR surface de-fouling and sensor zeroing",
+    "performance_fit": "Direct fundamental fingerprinting combined with dedicated hydraulic instrumentation",
+    "cost_drivers": "FTIR spectrometer, PIR fiber cable, ATR diamond/ZrO2 probe, flow/pressure instrumentation",
+    "fusion_note": null,
+    "citations": []
+   }
+  ],
+  "chemometrics_note": "If optical spectroscopy is utilized to track chemical composition or solids loading, multivariate calibration (such as PLS regression) will be required to relate overlapping spectral variations to reference laboratory values, with scatter correction applied if scattering suspensions are measured.",
+  "realtime_tracking_note": "Real-time process tracking of line pressure and flow rate must be handled continuously by high-speed electronic transmitters connected to the plant control system; optical spectroscopy can provide periodic spectral scans (seconds to minutes) for composition.",
+  "future_direction": "If hydraulic pipe blockage is preceded by slurry composition shifts or phase separation, correlation studies could investigate whether real-time spectral changes can anticipate settling before pressure spikes occur.",
+  "proposal": {
+   "best_current_option": "O2",
+   "basis": "engineering_judgement",
+   "what_would_change_it": "If the customer does not require chemical or solids composition monitoring, all optical spectroscopy hardware can be omitted in favor of standard commercial pressure and flow instrumentation.",
+   "next_step": "Clarify whether chemical composition monitoring of the slurry is needed, and source dedicated in-line pressure transmitters and flow meters for the transfer pipe."
+  },
+  "brief_answer": "In-line fiber-optic spectroscopy cannot measure line pressure or flow rate, as optical spectroscopy is designed for chemical and molecular composition analysis rather than mechanical hydraulic properties. Dedicated commercial pressure transmitters and flow meters should be used for pressure, flow, and blockage monitoring. If you also need to monitor slurry chemical composition or solids identity, an in-line mid-infrared ATR probe can be tested once your slurry chemistry and operating conditions are clarified."
+ }
+}
