@@ -1,0 +1,159 @@
+{# Result blocks over one run's display model (view.build). Used by the answer page (run.html) and by the
+   conversation page (5.12), where `p` prefixes element ids so several turns can share one page. #}
+{% from "macros.html" import tags, judgement, flag, meter, figure %}
+
+{% macro changed_rows(rows, p='') -%}
+<section class="changed" aria-labelledby="{{ p }}changed-title">
+  <h2 id="{{ p }}changed-title" class="kicker kicker-accent">What changed</h2>
+  <dl class="changed-rows">
+    {% for row in rows %}
+    <div class="{{ 'is-changed' if row.changed }}"><dt>{{ row.label }}</dt>
+      <dd><span class="old">{{ row.before }}</span> <span aria-hidden="true">→</span><span class="sr-only">now</span> <span class="new">{{ row.after }}</span>{% if not row.changed %} <span class="muted small">(unchanged)</span>{% endif %}</dd></div>
+    {% endfor %}
+  </dl>
+</section>
+{%- endmacro %}
+
+{% macro recommendation(v, p='') -%}
+{% set rec = v.recommendation %}
+<section class="rec" aria-labelledby="{{ p }}rec-title">
+  <h2 class="kicker kicker-accent">Our recommendation</h2>
+  {% if p %}<h3 id="{{ p }}rec-title" class="rec-head">{{ rec.headline }}</h3>{% else %}<h1 id="rec-title" class="rec-head">{{ rec.headline }}</h1>{% endif %}
+  <p class="rec-text">{{ rec.text }} {{ flag(rec.flag) }}</p>
+  <div class="rec-meta">
+    {% if rec.confidence %}
+    <span class="conf">{{ meter(rec.confidence.level) }} <strong>{{ rec.confidence.level }} confidence</strong>{% if rec.confidence.plain %}<span class="muted"> — {{ rec.confidence.plain | join('; ') }}</span>{% endif %}</span>
+    {% endif %}
+    {{ tags(v, rec.cites) }}{% if rec.external_support %} {{ tags(v, rec.external_support) }} <span class="ext-note">external, not AFS material</span>{% endif %}
+  </div>
+  <p class="status-line small"><span class="muted">Status:</span> {{ v.status.label }}{% if v.still_open %} <span class="flag"><span aria-hidden="true">&#x26A0;&#xFE0E;</span> {{ v.still_open | length }} check(s) still open</span>{% endif %}
+    · <span class="muted">Next step:</span> {{ v.proposal.next_step }} {{ flag(v.proposal.flags.next) }}</p>
+</section>
+{%- endmacro %}
+
+{% macro options(v, p='', selected=none) -%}
+<section class="setup" aria-labelledby="{{ p }}setup-title" data-options>
+  <div class="sec-head">
+    <h2 id="{{ p }}setup-title" class="h2">How it would be set up</h2>
+    <span class="muted small hint">Switch the option to redraw the setup</span>
+  </div>
+  <div class="seg" role="tablist" aria-label="Solution option">
+    {% for o in v.options %}{% set on = (o.id == selected) if selected else o.is_best %}
+    <button type="button" role="tab" id="{{ p }}tab-{{ o.id }}" aria-controls="{{ p }}opt-{{ o.id }}" aria-selected="{{ 'true' if on else 'false' }}" tabindex="{{ '0' if on else '-1' }}">
+      <span class="seg-t">{{ o.tab }}{% if o.is_best %}<span class="sr-only"> (proposed)</span>{% endif %}</span>
+      <span class="seg-s">{{ o.tab_sub }}</span>
+    </button>
+    {% endfor %}
+  </div>
+  {% for o in v.options %}{% set on = (o.id == selected) if selected else o.is_best %}
+  <div class="opt" role="tabpanel" id="{{ p }}opt-{{ o.id }}" aria-labelledby="{{ p }}tab-{{ o.id }}"{% if not on %} data-hidden{% endif %}>
+    <p class="opt-title"><strong>{{ o.tier_label }}</strong>{% if o.is_best %} <span class="best-mark">proposed</span>{% endif %}
+      — {% for m in o.methods %}{{ m.label }}{% if m.combined_with %} + {{ m.combined_with | join(', ') }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %} {{ flag(o.flag) }}</p>
+    <figure class="fig-setup-wrap">
+      {{ figure(o.figure, 'fw-setup') }}
+      <figcaption>Drawn by code from this option: a schematic, not a configuration. Dashed: auxiliary sensor, availability to be confirmed with AFS.</figcaption>
+    </figure>
+    <dl class="specs">
+      <div data-parts="probe spec"><dt>Cost class</dt><dd>{{ o.cost.label or '—' }} <span class="d-block">{{ tags(v, o.cost.cites) }}</span></dd></div>
+      <div data-parts="probe"><dt>Ease of use</dt><dd>{{ o.ease }}</dd></div>
+      <div data-parts="probe fiber"><dt>Upkeep</dt><dd>{{ o.maintenance }}</dd></div>
+      <div data-parts="model"><dt>Confidence</dt><dd>{{ meter(o.confidence.level) }} {{ o.confidence.level }}{% if o.confidence.plain %}<span class="muted small d-block">{{ o.confidence.plain | join('; ') }}</span>{% endif %}</dd></div>
+    </dl>
+    <p class="opt-fit"><span class="muted">Why this option:</span> {{ o.performance_fit }} {{ tags(v, o.cites) }}{{ judgement(o.cites) }}</p>
+  </div>
+  {% endfor %}
+</section>
+{%- endmacro %}
+
+{% macro setup(v, oid=none) -%}
+{% set o = (v.options | selectattr('id', 'equalto', oid) | first) if oid else (v.options | selectattr('is_best') | first) %}
+{% if o %}
+<figure class="fig-setup-wrap block-setup">
+  <p class="opt-title"><strong>{{ o.tier_label }}</strong>{% if o.is_best %} <span class="best-mark">proposed</span>{% endif %}
+    — {% for m in o.methods %}{{ m.label }}{% if not loop.last %}; {% endif %}{% endfor %}</p>
+  {{ figure(o.figure, 'fw-setup') }}
+  <figcaption>Drawn by code from this option: a schematic, not a configuration.</figcaption>
+</figure>
+{% endif %}
+{%- endmacro %}
+
+{% macro questions(v, action=none, p='') -%}
+{% if v.top_questions %}
+<section class="sharpen" id="{{ p }}sharpen" aria-labelledby="{{ p }}sharpen-title">
+  <h2 id="{{ p }}sharpen-title" class="h2">Help us sharpen this</h2>
+  {% if action %}
+  <p class="muted">{{ v.top_questions | length }} answer{{ 's' if v.top_questions | length > 1 }} would change the advice. Fill in what you know.</p>
+  <form method="post" action="{{ action }}" class="sharpen-form">
+    {% for q in v.top_questions %}
+    <div class="q">
+      <label for="{{ p }}answer_{{ q.id }}"><strong>{{ loop.index }}.</strong> {{ q.question }} {{ flag(q.flag) }}</label>
+      <span class="why">Why it matters: {{ q.why }}</span>
+      <input type="text" id="{{ p }}answer_{{ q.id }}" name="answer_{{ q.id }}" maxlength="{{ MAX_CHARS }}" placeholder="The customer’s answer, if known" autocomplete="off">
+    </div>
+    {% endfor %}
+    <div class="form-row">
+      <button class="btn" type="submit"{% if busy %} disabled{% endif %}>Update the recommendation</button>
+      <span class="muted small">Takes a few minutes; the new answer appears below with what changed.</span>
+    </div>
+  </form>
+  {% else %}
+  <ol class="plain-ol">{% for q in v.top_questions %}<li>{{ q.question }} <span class="muted">Why it matters: {{ q.why }}</span></li>{% endfor %}</ol>
+  {% endif %}
+</section>
+{% endif %}
+{%- endmacro %}
+
+{% macro parameters(v, p='') -%}
+{% if v.figures.params.wide %}<figure class="fig-full">{{ figure(v.figures.params, 'fw-params') }}<figcaption>Each parameter and how it is measured; dashed: not by spectroscopy.</figcaption></figure>{% endif %}
+<div class="table-scroll" tabindex="0" role="region" aria-label="Parameters">
+<table class="grid">
+  <thead><tr><th scope="col">Parameter</th><th scope="col">Need</th><th scope="col">Measured by</th><th scope="col">Why</th><th scope="col">Sources</th></tr></thead>
+  <tbody>{% for prm in v.parameters %}<tr><td><span class="mono">{{ prm.id }}</span> {{ prm.name }}</td><td>{{ prm.necessity }}</td><td>{{ prm.measured_by }}</td><td>{{ prm.why }} {{ flag(prm.flag) }}</td><td>{{ tags(v, prm.cites) }}{{ judgement(prm.cites) }}</td></tr>{% endfor %}</tbody>
+</table>
+</div>
+<div class="two">
+  <div><h3 class="h3">Stated by the customer</h3><ul class="plain">{% for s in v.requirements.stated %}<li>{{ s }}</li>{% endfor %}</ul></div>
+  <div><h3 class="h3">Still unknown</h3><ul class="plain">{% for s in v.requirements.unknowns %}<li>{{ s }}</li>{% endfor %}</ul></div>
+</div>
+{%- endmacro %}
+
+{% macro risks(v) -%}
+<ul class="plain">{% for k in v.risks %}<li>{{ k.text }} {{ tags(v, k.cites) }} {{ flag(k.flag) }}</li>{% endfor %}</ul>
+{%- endmacro %}
+
+{% macro plan(v) -%}
+<ol class="plain-ol">{% for s in v.plan.steps %}<li><strong>{{ s.step }}</strong> {{ s.purpose }} {{ tags(v, s.cites) }} {{ flag(s.flag) }}</li>{% endfor %}</ol>
+<dl class="kv"><div><dt>Reference measurements</dt><dd>{{ v.plan.reference }}</dd></div><div><dt>Decision basis</dt><dd>{{ v.plan.decision_basis }}</dd></div></dl>
+{%- endmacro %}
+
+{% macro sources(v, cid=none) -%}
+{% set ids = [cid] if cid else (v.citations | list) %}
+<ul class="plain sources-list">
+  {% for i in ids %}{% set c = v.citations[i] %}
+  <li>{{ tags(v, [i]) }}{% if c.kind == 'external' %} <span class="ext-note">external, not AFS material</span>{% endif %} <span class="muted small">“{{ c.quote | truncate(160) }}”</span></li>
+  {% endfor %}
+</ul>
+{%- endmacro %}
+
+{% macro status(v) -%}
+<dl class="kv">
+  <div><dt>Decision status</dt><dd>{{ v.status.label }}{% if v.status.reason %}. {{ v.status.reason }}{% endif %} {{ flag(v.status.flag) }}</dd></div>
+  <div><dt>Next step</dt><dd>{{ v.proposal.next_step }}</dd></div>
+  <div><dt>Quotes verified</dt><dd>{{ v.made.verified }}{% if v.still_open %} · <span class="flag">{{ v.still_open | length }} check(s) still open</span>{% endif %}</dd></div>
+</dl>
+{%- endmacro %}
+
+{# One block the chat answer chose, by type; `changed` needs the rows (None: nothing to compare). #}
+{% macro block(v, b, p, changed=none) -%}
+{% if b.type == 'recommendation' %}{{ recommendation(v, p) }}
+{% elif b.type == 'options' and v.options %}{{ options(v, p, b.id) }}
+{% elif b.type == 'setup' and v.options %}{{ setup(v, b.id) }}
+{% elif b.type == 'questions' %}{{ questions(v, none, p) }}
+{% elif b.type == 'parameters' %}<section class="block"><h2 class="h2">What to measure and how</h2>{{ parameters(v, p) }}</section>
+{% elif b.type == 'risks' %}<section class="block"><h2 class="h2">Risks</h2>{{ risks(v) }}</section>
+{% elif b.type == 'plan' %}<section class="block"><h2 class="h2">First feasibility test</h2>{{ plan(v) }}</section>
+{% elif b.type == 'sources' %}<section class="block"><h2 class="h2">Sources</h2>{{ sources(v, b.id) }}</section>
+{% elif b.type == 'status' %}<section class="block"><h2 class="h2">Status</h2>{{ status(v) }}</section>
+{% elif b.type == 'changed' %}{% if changed %}{{ changed_rows(changed, p) }}{% else %}<p class="muted small">Nothing to compare yet: this is the first assessment.</p>{% endif %}
+{% endif %}
+{%- endmacro %}
