@@ -3,6 +3,7 @@
 _Last updated: 2026-10-18 14:05 CEST (Claude, Phase 6; final review session)._
 
 **14:05 review session started:** 4 read-only reviewer agents in parallel (A brief + outputs, items 1–2; B code, items 3–6; C docs/video/slides, items 7–9; D repo sanitize, item 10). Reports in the session scratchpad, to be committed under docs/review-final/. Next: fix plan → user approval → implement → re-review.
+- **14:23:** reviews done (docs/review-final/: A/B/C/D reports + PLAN.md, 631e5f4). User approved F1–F9 all; pages.jsonl → untracked + gitignored, public repo = cleaned copy (filter history), local history kept; MIT; "Team Helios" only (D-066). Backup bundle ~/Desktop/aails-backup-2026-10-18.bundle (all refs). Running: implementer F1–F4+F8+pages untrack (main tree), implementer F5 brief view (worktree), implementer F7 video rebuild (docs/video/). Then: F6 slides, merge F5, README brief line, one re-review (F9), publish (F10; user runs `gh auth login`).
 
 **08:41 session 5 started:** task 5.8 model research. Background research agent writing `docs/model-research.md` (OpenRouter live model list + endpoints, cited; no paid calls). Next: read it → shortlist + bake-off plan in PHASES 5.8 → independent plan review → user picks → run.
 
