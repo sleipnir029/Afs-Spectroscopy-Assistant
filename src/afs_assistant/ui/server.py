@@ -35,7 +35,7 @@ from fastapi.responses import (
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from afs_assistant import paths
+from afs_assistant import activity, paths
 from afs_assistant.pipeline import OFF_TOPIC_EXAMPLES
 from afs_assistant.ui import view
 
@@ -51,6 +51,10 @@ TOO_LONG = f"Please keep each text to {MAX_CHARS} characters or fewer; shorten i
 LOCAL_HOSTS = {"127.0.0.1", "localhost"}
 # Which display step a model call belongs to (external roles are named external_*).
 ROLE_STEP = {"intake": "intake", "assess": "assess", "repair": "assess"}
+# What the model is doing during each call, for the activity feed.
+ROLE_DOING = {"intake": "read the enquiry", "assess": "write the assessment", "repair": "fix the failed checks",
+              "external_queries": "plan literature searches", "external_evidence": "pick literature quotes"}
+FEED_KEEP, FEED_SHOW = 40, 8
 
 
 class Stopped(RuntimeError):
@@ -169,7 +173,17 @@ class Job:
     result: str | None = None                     # run id when done
     error: str | None = None
     stop_requested: bool = False
+    notes: list[tuple[float, str]] = field(default_factory=list)   # (seconds since start, text), newest last
+    waiting: tuple[float, str] | None = None      # (since, what the model is doing) while a call runs
     lock: threading.Lock = field(default_factory=threading.Lock)
+
+    def add_note(self, text: str) -> None:
+        with self.lock:
+            self.notes = [*self.notes, (time.monotonic() - self.started, text)][-FEED_KEEP:]
+
+    def wait_for(self, doing: str | None) -> None:
+        with self.lock:
+            self.waiting = (time.monotonic(), doing) if doing else None
 
     def enter(self, key: str) -> None:
         """Start a display step; earlier pending steps are done (screening has no model call)."""
@@ -213,10 +227,15 @@ class Job:
                 steps.append({"key": st["key"], "label": st["label"], "state": st["state"],
                               "seconds": round(seconds, 2), "time": view.seconds_text(seconds)})
             elapsed = (self.ended or now) - self.started
+            feed = [{"at": f"{int(t // 60)}:{int(t % 60):02d}", "text": x} for t, x in self.notes[-FEED_SHOW:]]
+            waiting = None
+            if self.waiting and self.state == "running":
+                w = now - self.waiting[0]
+                waiting = f"Waiting for the model to {self.waiting[1]} · {int(w // 60)}:{int(w % 60):02d}"
             return {"id": self.id, "state": self.state, "steps": steps, "parent": self.parent,
                     "question": self.question, "understood": self.understood, "elapsed": round(elapsed, 1),
                     "clock": f"{int(elapsed // 60)}:{int(elapsed % 60):02d}", "result": self.result,
-                    "error": self.error, "stop_requested": self.stop_requested}
+                    "error": self.error, "stop_requested": self.stop_requested, "feed": feed, "waiting": waiting}
 
 
 class ProgressClient:
@@ -235,7 +254,14 @@ class ProgressClient:
         if self._job.stop_requested:
             raise Stopped("stopped by the user")
         self._job.enter(ROLE_STEP.get(role, "external" if role.startswith("external") else "assess"))
-        result = self._inner.complete_json(role, *args, **kwargs)
+        self._job.wait_for(ROLE_DOING.get(role, "answer"))
+        try:
+            result = self._inner.complete_json(role, *args, **kwargs)
+        finally:
+            self._job.wait_for(None)
+        took, tokens = getattr(result, "latency_s", 0.0), getattr(result, "completion_tokens", 0)
+        self._job.add_note(f"The model answered ({ROLE_DOING.get(role, role)}) in {view.seconds_text(took)}"
+                           + (f", {tokens:,} tokens." if tokens else "."))
         if self._job.stop_requested:              # pressed while this call ran: drop its answer
             raise Stopped("stopped by the user")
         if role == "intake" and isinstance(getattr(result, "data", None), dict):
@@ -272,7 +298,8 @@ class Jobs:
         try:
             job.enter("intake")
             client = ProgressClient(self.client_factory(), job)
-            out = cli._assess_one(job.enquiry, None, client, self.out_dir, external=self.external)
+            with activity.sink(job.add_note):
+                out = cli._assess_one(job.enquiry, None, client, self.out_dir, external=self.external)
             rid = f"{LIVE_SET}-{out['run_id']}"
             if job.parent:
                 self.store.save_turn(rid, job.parent, job.question)

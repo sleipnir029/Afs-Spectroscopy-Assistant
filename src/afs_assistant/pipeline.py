@@ -23,10 +23,11 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import cache, lru_cache
 
-from afs_assistant import kb, paths, quotes
+from afs_assistant import activity, kb, paths, quotes
 from afs_assistant.external import step as external_step
 from afs_assistant.llm import RunCancelled
 from afs_assistant.methods import named_methods
+from afs_assistant.options import method_label
 from afs_assistant.schema import Assessment, Intake
 from afs_assistant.screen import UNKNOWN, Candidate, screen
 from afs_assistant.verify import (
@@ -508,6 +509,7 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
             break
     intake, intake_removed, problems = best_intake
     lap("intake")
+    _note_intake(intake, enquiry)
     if off_topic:
         timings["wall"] = round(time.monotonic() - wall, 3)
         calls = tracker.run_calls[first_call:] if tracker is not None else []
@@ -519,6 +521,7 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     slots = slots_from_intake(intake)
     candidates = screen(slots)
     lap("screen")
+    _note_screen(candidates)
 
     system = assess_system()
     base_user = _assess_user(enquiry, intake, candidates)
@@ -527,12 +530,14 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     lap("assess")
     current, report = raw, verify(enquiry, intake, raw, candidates, slots, intake_removed)
     lap("verify")
+    _note_verify(report)
     best, best_report, best_round = current, report, 0
 
     repairs = []
     for round_no in range(1, MAX_REPAIR_ROUNDS + 1):
         if report.passed:
             break
+        activity.note(f"Repair round {round_no}: sending the failed checks back to the model.")
         res = client.complete_json("repair", system + "\n\n" + prompt("repair"),
                                    _repair_user(current, report, base_user), "assessment",
                                    Assessment.model_json_schema())
@@ -541,6 +546,7 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
         lap("repair")
         report = verify(enquiry, intake, current, candidates, slots, intake_removed)
         lap("verify")
+        _note_verify(report)
         repairs[-1]["hard_failures_after"] = len(report.hard_failures)
         repairs[-1]["assessment"] = json.loads(current.model_dump_json())
         if len(report.hard_failures) <= len(best_report.hard_failures):   # ties: the later round
@@ -549,6 +555,8 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     final, removed, flagged = finalize(best, best_report, candidates)
     still_failing = recheck(final, candidates).hard_failures
     lap("finalize")
+    if removed:
+        activity.note(f"Final check: {activity.plural(len(removed), 'unsupported item')} removed or corrected.")
     ext = None
     if external != "off":      # the primary result is complete here; no failure of the step may discard it
         try:
@@ -570,6 +578,35 @@ def run(enquiry: str, client, run_id: str | None = None, external: str = "off", 
     return RunResult(run_id, enquiry, intake, slots, candidates, raw, final, best_report, repairs, removed,
                      intake_removed, calls, manifest, flagged, timings, named_methods(enquiry), still_failing,
                      ext)
+
+
+def _note_intake(intake: Intake, enquiry: str) -> None:
+    targets = ", ".join(t.variable for t in intake.targets[:3]) or "no clear target yet"
+    s = intake.sample
+    activity.note(f"Understood: target {targets}; sample {s.physical_state.value}, {s.optical_regime.value}.")
+    named = named_methods(enquiry)
+    if named:
+        activity.note("Methods named in the enquiry: " + ", ".join(sorted(named)) + ".")
+    if intake.unknowns:
+        activity.note(f"{activity.plural(len(intake.unknowns), 'open point')} to ask about or assume.")
+
+
+def _note_screen(candidates: list[Candidate]) -> None:
+    counts = {k: sum(1 for c in candidates if c.status == k) for k in ("pass", "unknown", "fail")}
+    activity.note(f"Screened {activity.plural(len(candidates), 'method and probe option')} against the AFS rules: "
+                  f"{counts['pass']} feasible, {counts['unknown']} uncertain, {counts['fail']} ruled out.")
+    for c in [c for c in candidates if c.status == "fail"][:2]:
+        why = c.reasons[0]["message"] if c.reasons else "a rule failed"
+        why = re.sub(r"\[([^\]]*)\]", lambda m: m.group(1).replace("'", ""), why)     # "['a', 'b']" -> "a, b"
+        activity.note(f"Ruled out {method_label(c.method, c.technique)}: {why[:120]}")
+
+
+def _note_verify(report) -> None:
+    total = len(report.citations)
+    ok = sum(1 for c in report.citations if c["verified"])
+    hard = len(report.hard_failures)
+    activity.note(f"Checked {ok}/{total} quotes word for word against the AFS documents; "
+                  + (f"{activity.plural(hard, 'check')} still failing." if hard else "all checks pass."))
 
 
 def _manifest(run_id: str, calls: list[dict], attempts: int, problems: list[str], repairs: list[dict],

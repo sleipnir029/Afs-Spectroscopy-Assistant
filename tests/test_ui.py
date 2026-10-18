@@ -297,12 +297,42 @@ def test_running_page_polls_and_can_be_stopped(outputs, no_provenance):
     assert 'hx-trigger="every 1s"' in page and "usually a few minutes" in page and ">Stop<" in page
     assert ENQUIRY in page and "Follow ethanol" in page                    # question turn + what we understood
     assert 'id="ask" type="text" disabled' in page
+    assert "What is happening" in page and "Waiting for the model to write the assessment" in page
+    assert "Screened " in page                                              # activity feed from the pipeline
     assert client.post("/assess", data={"enquiry": ENQUIRY}).status_code == 409     # one run at a time
     assert client.post(f"/jobs/{jid}/stop", follow_redirects=False).status_code == 303
     gate.set()
     snap = wait_job(client, jid)
     assert snap["state"] == "stopped" and snap["result"] is None
     assert client.get(f"/jobs/{jid}", headers=HX).status_code == 286
+
+
+def test_activity_feed_tells_what_happened(outputs, no_provenance):
+    client, app = app_client(outputs)
+    jid = start_job(client, {"enquiry": ENQUIRY})
+    assert wait_job(client, jid)["state"] == "done"
+    notes = [text for _, text in app.state.jobs.jobs[jid].notes]
+    assert notes[0].startswith("The model answered (read the enquiry)")
+    assert any(n.startswith("Understood: target ") for n in notes)
+    assert any(n.startswith("Screened ") and "against the AFS rules" in n for n in notes)
+    assert any(n.startswith("Checked ") and "quotes word for word" in n for n in notes)
+    snap = client.get(f"/api/jobs/{jid}").json()
+    assert 0 < len(snap["feed"]) <= server.FEED_SHOW and snap["waiting"] is None
+    assert snap["feed"][-1]["text"] == notes[-1] and re.fullmatch(r"\d+:\d\d", snap["feed"][-1]["at"])
+
+
+def test_activity_note_without_a_sink_is_a_no_op():
+    from afs_assistant import activity
+
+    activity.note("nobody listens")                      # CLI and set runs: nothing happens
+    seen = []
+    with activity.sink(seen.append):
+        activity.note("  two   words ")
+        with activity.sink(lambda text: 1 / 0):          # a broken display never stops a run
+            activity.note("ignored")
+        activity.note("back")
+    activity.note("after")
+    assert seen == ["two words", "back"]
 
 
 def test_failed_run_stops_polling(outputs, no_provenance):
